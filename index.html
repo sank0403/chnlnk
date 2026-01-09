@@ -1,0 +1,244 @@
+<html lang="en">
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+	<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-MEBRVZNPE4"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+	  
+	  gtag('config', 'G-MEBRVZNPE4');
+	</script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/tsparticles-preset-confetti@1.22.0/tsparticles.preset.confetti.bundle.min.js"></script>	
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>CHN LNK - Chain Link Game with a Twist!</title>
+	<link href="chnlnk.css" rel="stylesheet">
+	<script defer src="chnlnk.js"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+    <!-- add icon link for all standard browsers -->
+	
+  <!-- FB Meta Tags -->
+  <meta property="og:url" content="https://sank0403.github.io/chnlnk/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="CHN LNK - Chain Link Game with a Twist!">
+  <!-- <meta property="og:description" content="Guess the Country and Capital Pairing."> -->
+  <!-- <meta property="og:image" content="https://sank0403.github.io/geordle/wallpaper.jpg"> -->
+  <!-- <meta property="og:image" content="https://sank0403.github.io/geordle/mapiconlarge.jpg"> -->
+  <meta property="og:image" content="https://sank0403.github.io/chnlnk/icon.jpg">
+
+  <!-- Twitter Meta Tags -->
+  <!-- <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://sank0403.github.io/geordle/wallpaper.jpg" /> -->
+  
+    <link rel = "icon" href = "https://sank0403.github.io/chnlnk/icon.jpg" 
+            type = "image/x-icon">  
+	<link rel="manifest" href="https://sank0403.github.io/chnlnk/chnlnk_manifest.json" />		<!--for shortcut icons and transitions-->	
+	<link href="https://sank0403.github.io/chnlnk/icon.jpg" rel="icon shortcut" sizes="3232" /> <!--follow same as indle - usually a smaller version-->
+	<link href="https://sank0403.github.io/chnlnk/icon.jpg" rel="apple-touch-icon" />	<!--This is the phone icon web title image-->		
+</head>
+<body>
+	<button id="btnParty" type="button" hidden></button>
+	<div id="tsparticles"></div>
+	<div id="stats">
+		<div id="stats-item">
+			<span class="stats-item">
+				<class data-modal-target="#modal" id="rulesbutton"><img src="rulesicon.png" style="width:22px;height:22px;"></class>
+				<a href="mailto: geowordle@gmail.com" target="_"><img src="mail.png" style="width:22px;height:22px" alt ="EMAIL"></a>
+			</span>	
+			<span class="stats-item">
+			    <a href="https://www.buymeacoffee.com/sank0403/" target="_"><img src="hearticon.png" style="width:22px;height:22px" alt ="Buy Me A Coffee"></a>
+				<class data-summary-target="#summary" id="statsbutton"><img src="statsicon.png" style="width:27px;height:20px;"></class>
+			</span>			
+		</div>
+	</div>		
+	<img class="headerimage" src="bg.png">
+	<!-- <div id="title">
+		<div class="waviy">
+			<span style="--i:1">G</span>
+			<span style="--i:2">E</span>
+			<span style="--i:3">O</span>
+			<span style="--i:4">R</span>
+			<span style="--i:5">D</span>
+			<span style="--i:6">L</span>
+			<span style="--i:7">E</span>
+		</div>
+	</div> -->
+	<div class="waviy1">
+		<span style="--i:1">d</span>
+		<span style="--i:2">a</span>
+		<span style="--i:3">i</span>
+		<span style="--i:4">l</span>
+		<span style="--i:5">y</span>
+		<span style="--i:6"> </span>
+		<span style="--i:7">c</span>
+		<span style="--i:8">h</span>
+		<span style="--i:9">n</span>
+		<span style="--i:10"> </span>
+		<span style="--i:11">l</span>
+		<span style="--i:12">n</span>
+		<span style="--i:13">k</span>		
+		<span style="--i:14"> </span>
+		<span style="--i:15">#</span>
+		<span style="--i:16"></span>
+		<span style="--i:17" id="daycount"></span>
+	</div>
+	<!--<br>	
+	<a href="https://www.buymeacoffee.com/sank0403" target="_"><center><img src="1000.png"></center></a>-->		
+	<br>		
+ 		<!-- <input type="button" id="" value="🌎 PRACTICE" onclick="window.open('https://sank0403.github.io/geordle/practice/','_self'); this.blur();" class="buttonrad">	
+		<input type="button" id="" value="🌎 CLASSIC" onclick="window.open('https://sank0403.github.io/geordle/classic/','_self'); this.blur();" class="buttonrad">	 -->
+		<!-- <input type="button" value="❤️ GEORDLE️" onclick="window.open('https://www.buymeacoffee.com/sank0403/','_blank'); this.blur();" class="buttonrad">	 -->	
+	<div class="modal" id="modal">
+		<div class="modal-header">
+			<div class="title"><strong>
+					<!-- How To Play -->
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12 text-center">
+								<h3>HOW TO PLAY...</h3>
+							</div>
+						</div>
+					</div>
+				</strong></div>
+				<button data-close-button class="close-button">&times;</button>
+		</div>
+		<div class ="modal-body">
+		  CHN LNK is a spin-off on the popular Chain Link game but with a twist. 
+		  <br><br>
+		  Every word on the board forms a chained link with the word below it. The objective of the game is to identify all the words in the chain. If the letter you selected is part of the CHAIN, the corresponding tiles will be highlighted in Green. 
+		 <br><br>
+		 However, here come the Twist! VOWELS are disabled till you figure out all the CONSONANTS in the chain.  
+		  <br><br>
+		  Each incorrect letter will cost you a Life. You have a total of 5 lives after which you lose the game. Lives Remaining are depicted using 🔴 on the Game Board.
+<!--      <br><br>
+		  In the Easy Mode, the length of the guess NEED NOT match the lenth of the answer. To challenge yourself, try the Hard Mode.
+		  <br><br>
+		  In the Hard Mode, the lengths of the guesses and the answer MUST match. This mode is designed for Experts. -->
+		  <br><br>
+		  If you identify the entire CHAIN successfully, before running out of all lives, you convert the remaining lives into ⭐'s. You can get a maximum of 5 ⭐'s every day.   
+		  <br><br>
+<!-- 		  Use the Practice Button, to play an unlimited mode, and improve your COUNTRY and CAPITAL IQ.  
+		  <br><br> -->
+		  <!-- <center><b>EXAMPLES</b><br></center>
+		  <br><div><u>COUNTRY</u></div><br>
+			<div style="float:left; display:flex;">
+				<span class="tile "></span>
+				<span class="tile "></span>
+				<span class="tile correct">D</span>
+				<span class="tile "></span>
+				<span class="tile "></span>
+				<span class="tile "></span>
+			</div>
+			<br><br><br>
+			The letter 'D' is in the 3rd position of the Country.
+			<br><br>	
+		  <br><div><u>CAPITAL</u></div><br>
+			<div style="float:left; display:flex;">
+				<span class="tile correct">A</span>
+				<span class="tile "></span>
+				<span class="tile "></span>
+				<span class="tile correct">A</span>
+				<span class="tile "></span>
+				<span class="tile correct">A</span>
+			</div>
+			<br><br><br>
+			The letter 'A' is in the 1st, 4th and 6th position of the Capital. -->
+			<br><br>			
+		  <center><b>A new CHN LNK will be available each Day!<b></center>
+		</div>		
+	</div>
+	<div class="summary" id="summary">
+		<div class="summary-header">
+			<div class="title"><strong>
+					<!-- Statistics -->
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12 text-center">
+								<h3>STATISTICS</h3>
+							</div>
+						</div>
+					</div>
+				</strong></div>
+			<button data-close1-button class="close-button">&times;</button>
+		</div>
+		<div class="summary-body">
+			<div id="stats-item">
+				<span id="11" class="summary-item"></span>
+				<span id="12" class="summary-item"></span>
+				<span id="13" class="summary-item"></span>
+				<span id="14" class="summary-item"></span>
+			</div>
+			<br>
+			<!-- <div id="ffhdr"></div> -->
+			<!-- <div id="ffdtl"></div> -->
+			<!--<center><img src="1002.gif"style="width:30%;height:1%;"></center>-->
+			<!--<center><img src="1000.gif"style="width:35%;height:35%;"></center>-->
+			<!--<p style="color:darkgray" align="justify" >If you enjoyed playing this game, you can show your support by <strong style='color: var(--green);' ><a href="https://www.buymeacoffee.com/sank0403" target="_"><u>Buying Us A Coffee</u></a></strong> ☕️, to help future development and upkeep of this game. <b>THANK YOU for playing GEORDLE! 🌎 </b><br><br></p>-->
+			<p style="color:darkgray" align="justify" >If you enjoyed playing <strong style='color: white;' >CHN LNK</strong>, you can show your support by <strong style='color: var(--green);' ><a href="https://www.buymeacoffee.com/sank0403" target="_"><u>Buying Us A Coffee</u></a></strong> ☕️. <b>THANK YOU for all the Love! 💕 </b><br><br></p>
+			<div id="sdhdr">⭐ STAR DISTRIBUTION ⭐</div>
+			<canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+			<br>
+			<!-- The button used to copy the text -->
+			<div class="button-row">
+				<!-- &nbsp; -->
+				<button id="HTMLButton" class="buttonmode" title="Copy To Clipboard!" onclick="myFunction(); this.blur();">COPY STATS🔊</button>
+				<!-- <button id="FBButton" onclick="myFunction(); this.blur();"> <a href="https://www.facebook.com/groups/329553752723826/?ref=share" target="_blank"><img src="facebook2.png" height="30" alt="@Geordle on Facebook" title="@Geordle on Facebook"></a></button> -->
+				<!-- <button id="FBButton" onclick="FBFunction(); this.blur();"> <img src="facebook2.png" height="30" alt="@Geordle on Facebook" title="@Geordle on Facebook"></button> -->
+				<!-- <button id="TwitterButton" onclick="TwitterFunction(); this.blur();"> <img src="twitter2.png" height="30" alt="@Geordle on Twitter" title="@Geordle on Twitter"></button> -->
+				<!-- <button id="WAButton" onclick="WAFunction(); this.blur();"> <img src="whatsapp.png" height="30" alt="@Geordle on Whatsapp" title="Share to Whatsapp"></button> -->
+				<!-- &nbsp; &nbsp; &nbsp; &nbsp; -->
+				<!-- <a href="https://www.buymeacoffee.com/sank0403/" target="_"><input type="button" class="buttonrad1" onclick="this.blur();"
+						id="CoffeButton" value="❤️GEORDLE" title="Buy Me A Coffee!" /><a>-->
+				<!-- <a href="https://sank0403.github.io/geordle/statssaver/"><input type="button" class="buttonrad1" onclick="this.blur();"
+						id="CoffeButton" value="SAVE STATS📱" title="Save Stats to New Device!" /><a> -->
+			</div>
+		</div>
+		<hr>		
+		<div id="footer">
+			<div>
+				<div id="bbhdr">New Game In</div>
+				<div id="bb"></div>
+			</div>
+			<div>
+				<div id="pzlhdr">Try a different puzzle</div>
+				<div id="pzl"><b><a href="https://sank0403.github.io/geordle/" target="_">Play <u>GEORDE</u>🌎</a></b>
+				</div>
+			</div>
+		</div>
+		<!-- <center><div class="email"><a href="mailto: geowordle@gmail.com">📧</a></div></center> -->
+		<br>
+	</div>
+	<div id="overlay"></div>
+	<div id="overlay1"></div>
+	<hr><br>		
+    <div id="lives">
+	</div>	
+    <div id="board">
+		<!-- <br><div><u>COUNTRY</u></div><br> -->
+		 <br>
+		<div id="boardfirst"><div id="downarrowhide">⬇️</div></div>
+		<!-- <br><div><u>CAPITAL</u></div><br> -->
+		 <!-- <br> -->
+		<div id="boardsecond"><div id="downarrow">⬇️</div></div>	
+		 <!-- <br> -->
+		<div id="boardthird"><div id="downarrow">⬇️</div></div>	
+		 <!-- <br> -->
+		<div id="boardforth"><div id="downarrow">⬇️</div></div>	
+		 <!-- <br> -->
+		<div id="boardfifth"><div id="downarrow">⬇️</div></div>	
+		 <!-- <br> -->
+		<div id="boardsixth"><div id="downarrow">⬇️</div></div>							
+		 <!-- <br> -->
+		<div id="boardlast"><div id="downarrowhide">⬇️</div></div>	
+	</div>
+	<!-- <br> -->
+	<hr>
+	<br>	
+    <div id="answer" hidden></div>
+	<!-- <br><br> -->
+    </body>
+</html>

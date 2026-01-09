@@ -1,0 +1,16 @@
+{
+  "short_name": "CHN LNK",
+  "name": "CHN LNK",
+  "icons": [
+    {
+      "src": "https://sank0403.github.io/chnlnk/icon.jpg",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": "https://sank0403.github.io/chnlnk/",
+  "background_color": "#000000",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "description": "Chain Link Game with a Twist!"
+}
