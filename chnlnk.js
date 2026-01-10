@@ -598,7 +598,7 @@ function intialize() {
 				let currTile = document.getElementById("1" + '-' + i);
 				currTile.innerText = wordone[i];
 				currTile.classList.remove("poptile");
-				currTile.classList.add("animated","correct");
+				// currTile.classList.add("animated","correct");
 			}	
 			for (let i = 0; i < wordtwowidth; i++) {
 				let currTile = document.getElementById("2" + '-' + i);
@@ -634,7 +634,7 @@ function intialize() {
 				let currTile = document.getElementById("7" + '-' + i);
 				currTile.innerText = wordlast[i];
 				currTile.classList.remove("poptile");
-				currTile.classList.add("animated","correct");
+				// currTile.classList.add("animated","correct");
 			}		
 				document.getElementById("answer").style.color = "#6AAA64";
 				if (Number(localStorage.clstarscnt) == 0){
@@ -657,7 +657,7 @@ function intialize() {
 					}	
 					document.getElementById("lives").innerText = templives;
 					if (Number (localStorage.clstarscnt) != 0){
-						document.getElementById("lives").classList.add("animated");
+						// document.getElementById("lives").classList.add("animated");
 					}				
 				}
 		}
@@ -667,7 +667,7 @@ function intialize() {
 				let currTile = document.getElementById("1" + '-' + i);
 				currTile.innerText = wordone[i];
 				currTile.classList.remove("poptile","correct");
-				currTile.classList.add("failed", "animated");
+				// currTile.classList.add("failed", "animated");
 			}	
 			for (let i = 0; i < wordtwowidth; i++) {
 				let currTile = document.getElementById("2" + '-' + i);
@@ -703,7 +703,7 @@ function intialize() {
 				let currTile = document.getElementById("7" + '-' + i);
 				currTile.innerText = wordlast[i];
 				currTile.classList.remove("poptile","correct");
-				currTile.classList.add("failed", "animated");
+				// currTile.classList.add("failed", "animated");
 			}		
 				document.getElementById("answer").style.color = "red";
 				document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
