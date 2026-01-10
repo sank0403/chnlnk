@@ -103,7 +103,7 @@ localStorage.setItem("starclxcount", 0);
 
 //Baseline Date
 var a = new Date(); // Current date now.
-var b = new Date(2025, 12, 10, 0, 0, 0, 0); // Start of TENIZ.
+var b = new Date(2025, 12, 9, 0, 0, 0, 0); // Start of TENIZ.
 var d = (a - b); // Difference in milliseconds.
 var days = parseInt((d / 1000) / 86400);
 if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('gameovercl' + days) != 1) {
@@ -364,9 +364,12 @@ colorx = "brown"
 function UpdateChart() {
 	// var xValues = ["5 ⭐", "4 ⭐", "3 ⭐", "2 ⭐", "1 ⭐", "0 ⭐", "X"];;
 	var xValues = ["5 ⭐", "4 ⭐", "3 ⭐", "2 ⭐", "1 ⭐", "X"];;
-	var yValues = [localStorage.starcl5count, localStorage.starcl4count, localStorage.starcl3count, localStorage.starcl2count, localStorage.starcl1count, localStorage.starcl0count, localStorage.starclxcount];
+	// var yValues = [localStorage.starcl5count, localStorage.starcl4count, localStorage.starcl3count, localStorage.starcl2count, localStorage.starcl1count, localStorage.starcl0count, localStorage.starclxcount];
+	var yValues = [localStorage.starcl5count, localStorage.starcl4count, localStorage.starcl3count, localStorage.starcl2count, localStorage.starcl1count, localStorage.starclxcount];
 	//var barColors = ["red", "green","blue","orange","brown","yellow","cyan","white"];
-	var barColors = [color5, color4, color3, color2, color1, color0, colorx];
+	// var barColors = [color5, color4, color3, color2, color1, color0, colorx];
+	var barColors = [color5, color4, color3, color2, color1, colorx];
+
 
 	new Chart("myChart", {
 		type: "bar",
@@ -733,6 +736,11 @@ function intialize() {
 			document.getElementById("KeyX").classList.add("disabled");
 			document.getElementById("KeyY").classList.add("disabled");
 			document.getElementById("KeyZ").classList.add("disabled");	
+			document.getElementById("KeyA").classList.add( "key-tile-enabled");
+			document.getElementById("KeyE").classList.add( "key-tile-enabled");
+			document.getElementById("KeyI").classList.add( "key-tile-enabled");
+			document.getElementById("KeyO").classList.add( "key-tile-enabled");
+			document.getElementById("KeyU").classList.add( "key-tile-enabled");				
 			}
 		var disabled = JSON.parse(localStorage.getItem("cldisabledkey"));
 		for (let i = 0; i < disabled.length; i++){
@@ -956,7 +964,7 @@ if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.v
 		document.getElementById("KeyY").classList.add("disabled");
 		document.getElementById("KeyZ").classList.add("disabled");
 		document.getElementById("answer").style.color = "white";
-		document.getElementById("answer").innerText = "ONLY VOWELS LEFT"	
+		document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"	
 		localStorage.vowelactive = 1;	
 		setTimeout(FinalClue, 500);	
 	}		
@@ -1262,4 +1270,3 @@ if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.v
 		localStorage.clwordlast = clwordlast;
 	}		
 }
-
