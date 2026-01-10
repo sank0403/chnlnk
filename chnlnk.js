@@ -99,6 +99,7 @@ localStorage.setItem("starcl3count", 0);
 localStorage.setItem("starcl4count", 0);
 localStorage.setItem("starcl5count", 0);
 localStorage.setItem("starclxcount", 0);
+setTimeout(OpenRules, 1100);
 }
 
 //Baseline Date
@@ -186,6 +187,11 @@ function SetTier() {
 // 	window.open("https://wa.me/", "_blank");
 // }
 
+//Open Rules the very first time
+function OpenRules() {
+	document.getElementById("rulesbutton").click();
+}
+
 //Clipboard Code
 function myFunction() {
 	if (localStorage.clgamecnt == 6){
@@ -207,7 +213,7 @@ function myFunction() {
 					break;	
 				case 5: var clueicon = "⭐ ⭐ ⭐ ⭐ ⭐"
 					break;
-				case 6: var clueicon = "💀 💀 💀 💀 💀"
+				case 6: var clueicon = "❌❌❌❌❌"
 					break;					
 			}
 		
@@ -1033,7 +1039,7 @@ if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.v
 				// 	document.getElementById("answer").innerText = "LAST LIFE ALERT!"
 				// 	setTimeout(FinalClue, 500);	
 				// 	break;
-				case 5: localStorage.cllives = "💀💀💀💀💀";
+				case 5: localStorage.cllives = "❌❌❌❌❌";
 					break;					
 		}		
 		

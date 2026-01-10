@@ -184,11 +184,16 @@ a { text-decoration: none; }
 
 #downarrow{
   font-size:175%; 
+  position: relative;
+  top: 25px;
+  margin-right: 5px;
+
 } 
 
 #downarrowhide{
   font-size: 175%; 
   visibility: hidden;
+  margin-right: 5px;
 } 
  
 
@@ -516,7 +521,7 @@ a { text-decoration: none; }
 .modal-body {
     padding: 10px 15px;
 	text-align: left;
-	color: white;
+	color: lightgrey;
 	font-size: 12px;
 	text-align:justify;
 }
