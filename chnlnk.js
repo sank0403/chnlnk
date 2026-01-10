@@ -103,7 +103,7 @@ localStorage.setItem("starclxcount", 0);
 
 //Baseline Date
 var a = new Date(); // Current date now.
-var b = new Date(2025, 12, 9, 0, 0, 0, 0); // Start of TENIZ.
+var b = new Date(2025, 12, 10, 0, 0, 0, 0); // Start of TENIZ.
 var d = (a - b); // Difference in milliseconds.
 var days = parseInt((d / 1000) / 86400);
 if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('gameovercl' + days) != 1) {
@@ -1262,3 +1262,4 @@ if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.v
 		localStorage.clwordlast = clwordlast;
 	}		
 }
+
