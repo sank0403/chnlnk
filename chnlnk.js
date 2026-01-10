@@ -421,8 +421,7 @@ function intialize() {
             // <span id="0-0" class="tile">P</span>
             let tile = document.createElement("span");
             tile.id = "1" + "-" + c.toString();
-            tile.classList.add("tile");
-            tile.innerText = "";
+		    tile.classList.add("tile");
             document.getElementById("boardfirst").appendChild(tile);
         }
 			for (let i = 0; i < wordonewidth; i++) {
@@ -438,7 +437,13 @@ function intialize() {
             // <span id="0-0" class="tile">P</span>
             let tile = document.createElement("span");
             tile.id = "2" + "-" + c.toString();
-            tile.classList.add("tile");
+            // tile.classList.add("tile");
+			if (wordtwo[c] == "A" || wordtwo[c] == "E" || wordtwo[c] == "I" || wordtwo[c] == "O" || wordtwo[c] == "U"){
+            	tile.classList.add("voweltile");
+			}
+			else{
+				tile.classList.add("tile");
+			}	
             tile.innerText = "";
             document.getElementById("boardsecond").appendChild(tile);
         }		
@@ -449,7 +454,13 @@ function intialize() {
             // <span id="0-0" class="tile">P</span>
             let tile = document.createElement("span");
             tile.id = "3" + "-" + c.toString();
-            tile.classList.add("tile");
+            // tile.classList.add("tile");
+			if (wordthree[c] == "A" || wordthree[c] == "E" || wordthree[c] == "I" || wordthree[c] == "O" || wordthree[c] == "U"){
+            	tile.classList.add("voweltile");
+			}
+			else{
+				tile.classList.add("tile");
+			}				
             tile.innerText = "";
             document.getElementById("boardthird").appendChild(tile);
         }	
@@ -460,7 +471,13 @@ function intialize() {
             // <span id="0-0" class="tile">P</span>
             let tile = document.createElement("span");
             tile.id = "4" + "-" + c.toString();
-            tile.classList.add("tile");
+            // tile.classList.add("tile");
+			if (wordfour[c] == "A" || wordfour[c] == "E" || wordfour[c] == "I" || wordfour[c] == "O" || wordfour[c] == "U"){
+            	tile.classList.add("voweltile");
+			}
+			else{
+				tile.classList.add("tile");
+			}				
             tile.innerText = "";
             document.getElementById("boardforth").appendChild(tile);
         }
@@ -471,7 +488,13 @@ function intialize() {
             // <span id="0-0" class="tile">P</span>
             let tile = document.createElement("span");
             tile.id = "5" + "-" + c.toString();
-            tile.classList.add("tile");
+            // tile.classList.add("tile");
+			if (wordfive[c] == "A" || wordfive[c] == "E" || wordfive[c] == "I" || wordfive[c] == "O" || wordfive[c] == "U"){
+            	tile.classList.add("voweltile");
+			}
+			else{
+				tile.classList.add("tile");
+			}				
             tile.innerText = "";
             document.getElementById("boardfifth").appendChild(tile);
         }	
@@ -482,7 +505,13 @@ function intialize() {
             // <span id="0-0" class="tile">P</span>
             let tile = document.createElement("span");
             tile.id = "6" + "-" + c.toString();
-            tile.classList.add("tile");
+            // tile.classList.add("tile");
+			if (wordsix[c] == "A" || wordsix[c] == "E" || wordsix[c] == "I" || wordsix[c] == "O" || wordsix[c] == "U"){
+            	tile.classList.add("voweltile");
+			}
+			else{
+				tile.classList.add("tile");
+			}				
             tile.innerText = "";
             document.getElementById("boardsixth").appendChild(tile);
         }		
