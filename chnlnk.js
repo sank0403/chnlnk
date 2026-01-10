@@ -103,7 +103,7 @@ localStorage.setItem("starclxcount", 0);
 
 //Baseline Date
 var a = new Date(); // Current date now.
-var b = new Date(2025, 12, 8, 0, 0, 0, 0); // Start of TENIZ.
+var b = new Date(2025, 12, 9, 0, 0, 0, 0); // Start of TENIZ.
 var d = (a - b); // Difference in milliseconds.
 var days = parseInt((d / 1000) / 86400);
 if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('gameovercl' + days) != 1) {
@@ -275,7 +275,7 @@ var wordsixwidth = wordsix.length;
 var wordlastwidth = wordlast.length; 
 var disabledkeyarr = [];
 if (localStorage.vowelactive != 1){	
-document.getElementById("answer").style.color = "red";
+document.getElementById("answer").style.color = "white";
 document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND";
 }
 const openModalButtons = document.querySelectorAll('[data-modal-target]')
@@ -711,29 +711,29 @@ function intialize() {
 	}
 	// Default Path
 	else {
-				if(localStorage.vowelactive == 1){
-		document.getElementById("KeyB").classList.add("disabled");
-		document.getElementById("KeyC").classList.add("disabled");
-		document.getElementById("KeyD").classList.add("disabled");
-		document.getElementById("KeyF").classList.add("disabled");
-		document.getElementById("KeyG").classList.add("disabled");
-		document.getElementById("KeyH").classList.add("disabled");
-		document.getElementById("KeyJ").classList.add("disabled");
-		document.getElementById("KeyK").classList.add("disabled");	
-		document.getElementById("KeyL").classList.add("disabled");
-		document.getElementById("KeyM").classList.add("disabled");
-		document.getElementById("KeyN").classList.add("disabled");
-		document.getElementById("KeyP").classList.add("disabled");
-		document.getElementById("KeyQ").classList.add("disabled");
-		document.getElementById("KeyR").classList.add("disabled");
-		document.getElementById("KeyS").classList.add("disabled");
-		document.getElementById("KeyT").classList.add("disabled");
-		document.getElementById("KeyV").classList.add("disabled");
-		document.getElementById("KeyW").classList.add("disabled");
-		document.getElementById("KeyX").classList.add("disabled");
-		document.getElementById("KeyY").classList.add("disabled");
-		document.getElementById("KeyZ").classList.add("disabled");	
-		}
+			if(localStorage.vowelactive == 1){
+			document.getElementById("KeyB").classList.add("disabled");
+			document.getElementById("KeyC").classList.add("disabled");
+			document.getElementById("KeyD").classList.add("disabled");
+			document.getElementById("KeyF").classList.add("disabled");
+			document.getElementById("KeyG").classList.add("disabled");
+			document.getElementById("KeyH").classList.add("disabled");
+			document.getElementById("KeyJ").classList.add("disabled");
+			document.getElementById("KeyK").classList.add("disabled");	
+			document.getElementById("KeyL").classList.add("disabled");
+			document.getElementById("KeyM").classList.add("disabled");
+			document.getElementById("KeyN").classList.add("disabled");
+			document.getElementById("KeyP").classList.add("disabled");
+			document.getElementById("KeyQ").classList.add("disabled");
+			document.getElementById("KeyR").classList.add("disabled");
+			document.getElementById("KeyS").classList.add("disabled");
+			document.getElementById("KeyT").classList.add("disabled");
+			document.getElementById("KeyV").classList.add("disabled");
+			document.getElementById("KeyW").classList.add("disabled");
+			document.getElementById("KeyX").classList.add("disabled");
+			document.getElementById("KeyY").classList.add("disabled");
+			document.getElementById("KeyZ").classList.add("disabled");	
+			}
 		var disabled = JSON.parse(localStorage.getItem("cldisabledkey"));
 		for (let i = 0; i < disabled.length; i++){
 			document.getElementById("Key" + disabled[i]).classList.add("disabled");
@@ -922,19 +922,8 @@ function processInput(e) {
 				// LetterFound = 0;				
 			}
 		}	
-		document.getElementById(e.code).classList.add("disabled");
-		var disabledkey = e.code[3];
-		if (disabledkeyarr.length == 0){
-			var temp = JSON.parse(localStorage.getItem("cldisabledkey"));
-			if (temp != ""){
-				disabledkeyarr.push(temp);
-			}
-		}
-		disabledkeyarr.push(disabledkey);
-		disabledkeyarr = [].concat.apply([], disabledkeyarr);
-		localStorage.setItem("cldisabledkey", JSON.stringify(disabledkeyarr));		
-    }
-		if (Number(localStorage.consocount) == solveword.length - Number(localStorage.vowelcount)){
+
+if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.vowelcount)) && localStorage.vowelactive == 0){
 		document.getElementById("KeyA").classList.remove("disabled", "key-tile-disabled");
 		document.getElementById("KeyE").classList.remove("disabled", "key-tile-disabled");
 		document.getElementById("KeyI").classList.remove("disabled", "key-tile-disabled");
@@ -966,14 +955,27 @@ function processInput(e) {
 		document.getElementById("KeyX").classList.add("disabled");
 		document.getElementById("KeyY").classList.add("disabled");
 		document.getElementById("KeyZ").classList.add("disabled");
-		document.getElementById("answer").style.color = "green";
+		document.getElementById("answer").style.color = "white";
 		document.getElementById("answer").innerText = "ONLY VOWELS LEFT"	
 		localStorage.vowelactive = 1;	
 		setTimeout(FinalClue, 500);	
-	}
+	}		
+		document.getElementById(e.code).classList.add("disabled");
+		var disabledkey = e.code[3];
+		if (disabledkeyarr.length == 0){
+			var temp = JSON.parse(localStorage.getItem("cldisabledkey"));
+			if (temp != ""){
+				disabledkeyarr.push(temp);
+			}
+		}
+		disabledkeyarr.push(disabledkey);
+		disabledkeyarr = [].concat.apply([], disabledkeyarr);
+		localStorage.setItem("cldisabledkey", JSON.stringify(disabledkeyarr));		
+    }
+		
 	if (LetterFound == 0){
 		localStorage.cllivescnt = Number(localStorage.cllivescnt) + 1;
-		document.getElementById("answer").style.color = "red";
+		document.getElementById("answer").style.color = "white";
 		switch (Number(localStorage.cllivescnt)) {
 				case 0: localStorage.cllives = "🔴🔴🔴🔴🔴";
 					break;
