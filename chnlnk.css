@@ -449,12 +449,12 @@ a { text-decoration: none; }
 
 .key-tile-disabled {
   border: 1px solid rgb(250, 0, 0);
-  color: #FF0000;
+  /* color: #FF0000; */
   opacity: 0.5;
 }
 
 .key-tile-enabled {
-  border: 1px solid green;
+  border: 1px solid  rgb(250, 0, 0);
 }
 
 .enter-key-tile {
