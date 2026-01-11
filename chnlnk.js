@@ -997,11 +997,11 @@ if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.v
 		document.getElementById("KeyI").classList.remove("disabled", "key-tile-disabled");
 		document.getElementById("KeyO").classList.remove("disabled", "key-tile-disabled");
 		document.getElementById("KeyU").classList.remove("disabled", "key-tile-disabled");
-		document.getElementById("KeyA").classList.add( "key-tile-enabled");
-		document.getElementById("KeyE").classList.add( "key-tile-enabled");
-		document.getElementById("KeyI").classList.add( "key-tile-enabled");
-		document.getElementById("KeyO").classList.add( "key-tile-enabled");
-		document.getElementById("KeyU").classList.add( "key-tile-enabled");	
+		document.getElementById("KeyA").classList.add( "key-tile-enabled","popanswer");
+		document.getElementById("KeyE").classList.add( "key-tile-enabled","poptile");
+		document.getElementById("KeyI").classList.add( "key-tile-enabled","poptile");
+		document.getElementById("KeyO").classList.add( "key-tile-enabled","poptile");
+		document.getElementById("KeyU").classList.add( "key-tile-enabled","poptile");	
 		document.getElementById("KeyB").classList.add("disabled");
 		document.getElementById("KeyC").classList.add("disabled");
 		document.getElementById("KeyD").classList.add("disabled");
@@ -1026,7 +1026,7 @@ if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.v
 		document.getElementById("answer").style.color = "white";
 		document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"	
 		localStorage.vowelactive = 1;	
-		setTimeout(FinalClue, 500);	
+		setTimeout(FinalClue, 0);	
 	}		
 		document.getElementById(e.code).classList.add("disabled");
 		var disabledkey = e.code[3];
