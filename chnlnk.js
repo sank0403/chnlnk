@@ -997,7 +997,7 @@ if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.v
 		document.getElementById("KeyI").classList.remove("disabled", "key-tile-disabled");
 		document.getElementById("KeyO").classList.remove("disabled", "key-tile-disabled");
 		document.getElementById("KeyU").classList.remove("disabled", "key-tile-disabled");
-		document.getElementById("KeyA").classList.add( "key-tile-enabled","popanswer");
+		document.getElementById("KeyA").classList.add( "key-tile-enabled","poptile");
 		document.getElementById("KeyE").classList.add( "key-tile-enabled","poptile");
 		document.getElementById("KeyI").classList.add( "key-tile-enabled","poptile");
 		document.getElementById("KeyO").classList.add( "key-tile-enabled","poptile");
