@@ -881,26 +881,31 @@ function processInput(e) {
 	document.getElementById("answer").innerText = "";
 	var LetterFound = 0;
     if ("KeyA" <= e.code && e.code <= "KeyZ") {
-		for (let i = 0; i < wordonewidth; i++){
-			let currTile = document.getElementById("1" + '-' + i);
-			if (e.code[3] == wordone[i]){
-				if (currTile.innerText == ""){
-					currTile.innerText = e.code[3];
-					currTile.classList.add("correct","poptile");
-					localStorage.clcorrect = Number(localStorage.clcorrect) + 1;	
-					localStorage.consocount = Number(localStorage.consocount) + 1;			
-				}
-				// LetterFound = 0;
-			}	
-		}
+		// for (let i = 0; i < wordonewidth; i++){
+		// 	let currTile = document.getElementById("1" + '-' + i);
+		// 	if (e.code[3] == wordone[i]){
+		// 		if (currTile.innerText == ""){
+		// 			currTile.innerText = e.code[3];
+		// 			currTile.classList.add("correct","poptile");
+		// 			localStorage.clcorrect = Number(localStorage.clcorrect) + 1;	
+		// 			localStorage.consocount = Number(localStorage.consocount) + 1;			
+		// 		}
+		// 		// LetterFound = 0;
+		// 	}	
+		// }
 		for (let i = 0; i < wordtwowidth; i++){
 			let currTile = document.getElementById("2" + '-' + i);
 			if (e.code[3] == wordtwo[i]){
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
 					currTile.classList.add("correct","poptile");
-					localStorage.clcorrect = Number(localStorage.clcorrect) + 1;	
-					localStorage.consocount = Number(localStorage.consocount) + 1;			
+					if (localStorage.cldisabledkey.includes(e.code[3])){
+						// do nothing
+					}
+					else{
+						localStorage.consocount = Number(localStorage.consocount) + 1;			
+						localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
+					}			
 				}
 				LetterFound = 1;
 			}	
@@ -911,8 +916,13 @@ function processInput(e) {
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
 					currTile.classList.add("correct","poptile");
-					localStorage.clcorrect = Number(localStorage.clcorrect) + 1;	
-					localStorage.consocount = Number(localStorage.consocount) + 1;			
+					if (localStorage.cldisabledkey.includes(e.code[3])){
+						// do nothing
+					}
+					else{
+						localStorage.consocount = Number(localStorage.consocount) + 1;			
+						localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
+					}		
 				}
 				LetterFound = 1;
 			}	
@@ -923,8 +933,13 @@ function processInput(e) {
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
 					currTile.classList.add("correct","poptile");
-					localStorage.clcorrect = Number(localStorage.clcorrect) + 1;	
-					localStorage.consocount = Number(localStorage.consocount) + 1;			
+					if (localStorage.cldisabledkey.includes(e.code[3])){
+						// do nothing
+					}
+					else{
+						localStorage.consocount = Number(localStorage.consocount) + 1;			
+						localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
+					}		
 				}
 				LetterFound = 1;
 			}	
@@ -935,8 +950,13 @@ function processInput(e) {
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
 					currTile.classList.add("correct","poptile");
-					localStorage.clcorrect = Number(localStorage.clcorrect) + 1;	
-					localStorage.consocount = Number(localStorage.consocount) + 1;			
+					if (localStorage.cldisabledkey.includes(e.code[3])){
+						// do nothing
+					}
+					else{
+						localStorage.consocount = Number(localStorage.consocount) + 1;			
+						localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
+					}		
 				}
 				LetterFound = 1;
 			}	
@@ -947,24 +967,29 @@ function processInput(e) {
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
 					currTile.classList.add("correct","poptile");
-					localStorage.clcorrect = Number(localStorage.clcorrect) + 1;	
-					localStorage.consocount = Number(localStorage.consocount) + 1;			
+					if (localStorage.cldisabledkey.includes(e.code[3])){
+						// do nothing
+					}
+					else{
+						localStorage.consocount = Number(localStorage.consocount) + 1;			
+						localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
+					}			
 				}
 				LetterFound = 1;
 			}	
 		}		
-		for (let i = 0; i < wordlastwidth; i++){
-			let currTile = document.getElementById("7" + '-' + i);
-			if (e.code[3] == wordlast[i]){
-				if (currTile.innerText == ""){
-					currTile.innerText = e.code[3];
-					currTile.classList.add("correct","poptile");
-					localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
-					localStorage.consocount = Number(localStorage.consocount) + 1;
-				}
-				// LetterFound = 0;				
-			}
-		}	
+		// for (let i = 0; i < wordlastwidth; i++){
+		// 	let currTile = document.getElementById("7" + '-' + i);
+		// 	if (e.code[3] == wordlast[i]){
+		// 		if (currTile.innerText == ""){
+		// 			currTile.innerText = e.code[3];
+		// 			currTile.classList.add("correct","poptile");
+		// 			localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
+		// 			localStorage.consocount = Number(localStorage.consocount) + 1;
+		// 		}
+		// 		// LetterFound = 0;				
+		// 	}
+		// }	
 
 if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.vowelcount)) && localStorage.vowelactive == 0){
 		document.getElementById("KeyA").classList.remove("disabled", "key-tile-disabled");
