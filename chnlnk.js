@@ -281,7 +281,7 @@ var wordsixwidth = wordsix.length;
 var wordlastwidth = wordlast.length; 
 var disabledkeyarr = [];
 if (localStorage.vowelactive != 1){	
-document.getElementById("answer").style.color = "white";
+document.getElementById("answer").style.color = "lightgray";
 document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND";
 }
 const openModalButtons = document.querySelectorAll('[data-modal-target]')
@@ -671,7 +671,7 @@ function intialize() {
 				currTile.classList.remove("poptile");
 				// currTile.classList.add("animated","correct");
 			}		
-				document.getElementById("answer").style.color = "#6AAA64";
+				document.getElementById("answer").style.color = "lightgray";
 				if (Number(localStorage.clstarscnt) == 0){
 					document.getElementById("answer").innerText = "STREAK INTACT. THOUGH, NO STARS WON!";
 				}
@@ -1023,7 +1023,7 @@ if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.v
 		document.getElementById("KeyX").classList.add("disabled");
 		document.getElementById("KeyY").classList.add("disabled");
 		document.getElementById("KeyZ").classList.add("disabled");
-		document.getElementById("answer").style.color = "white";
+		document.getElementById("answer").style.color = "lightgray";
 		document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"	
 		localStorage.vowelactive = 1;	
 		setTimeout(FinalClue, 0);	
@@ -1043,7 +1043,7 @@ if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.v
 		
 	if (LetterFound == 0){
 		localStorage.cllivescnt = Number(localStorage.cllivescnt) + 1;
-		document.getElementById("answer").style.color = "white";
+		document.getElementById("answer").style.color = "lightgray";
 		switch (Number(localStorage.cllivescnt)) {
 				case 0: localStorage.cllives = "🔴🔴🔴🔴🔴";
 					break;
@@ -1207,7 +1207,7 @@ if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.v
 					localStorage.clgamecnt = 5;
 					break;
 			}
-			document.getElementById("answer").style.color = "#6AAA64";
+			document.getElementById("answer").style.color = "lightgray";
 			if (Number(localStorage.clstarscnt) == 0){
 				document.getElementById("answer").innerText = "STREAK INTACT. THOUGH, NO STARS WON!";
 			}
