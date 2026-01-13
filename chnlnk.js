@@ -279,6 +279,7 @@ if (wordone.length > 8 || wordtwo.length > 8 || wordthree.length > 8 || wordfour
 	const box7 = document.getElementById ("boardlast");
     box7.style.setProperty("padding-left", "0px");
 }    
+
 var word = (wordone + wordtwo + wordthree + wordfour + wordfive + wordsix + wordlast).toUpperCase();
 var solveword = (wordtwo + wordthree + wordfour + wordfive + wordsix).toUpperCase();
 if (localStorage.vowelcount == 0){
@@ -443,15 +444,21 @@ function intialize() {
             // <span id="0-0" class="tile">P</span>
             let tile = document.createElement("span");
             tile.id = "1" + "-" + c.toString();
-		    tile.classList.add("tile");
-            document.getElementById("boardfirst").appendChild(tile);
+			if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9){
+				tile.classList.add("tilesmall");
+			}
+			else{
+				tile.classList.add("tile");
+			}
+			document.getElementById("boardfirst").appendChild(tile);
+			
         }
-			for (let i = 0; i < wordonewidth; i++) {
-				let currTile = document.getElementById("1" + '-' + i);
-				currTile.innerText = wordone[i];
-				currTile.classList.remove("poptile");
-				currTile.classList.add("starting");
-			}			
+		for (let i = 0; i < wordonewidth; i++) {
+			let currTile = document.getElementById("1" + '-' + i);
+			currTile.innerText = wordone[i];
+			currTile.classList.remove("poptile");
+			currTile.classList.add("starting");
+		}			
 
 	var element = document.getElementById("boardsecond");
         //element.style.width = boardWidth;
@@ -461,11 +468,22 @@ function intialize() {
             tile.id = "2" + "-" + c.toString();
             // tile.classList.add("tile");
 			if (wordtwo[c] == "A" || wordtwo[c] == "E" || wordtwo[c] == "I" || wordtwo[c] == "O" || wordtwo[c] == "U"){
-            	tile.classList.add("voweltile");
+				if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9){
+					tile.classList.add("voweltilesmall");
+				}
+				else{
+					tile.classList.add("voweltile");
+				}
 			}
 			else{
-				tile.classList.add("tile");
+				if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9){
+					tile.classList.add("tilesmall");
+				}
+				else{
+					tile.classList.add("tile");
+				}
 			}	
+					
             tile.innerText = "";
             document.getElementById("boardsecond").appendChild(tile);
         }		
@@ -478,10 +496,20 @@ function intialize() {
             tile.id = "3" + "-" + c.toString();
             // tile.classList.add("tile");
 			if (wordthree[c] == "A" || wordthree[c] == "E" || wordthree[c] == "I" || wordthree[c] == "O" || wordthree[c] == "U"){
-            	tile.classList.add("voweltile");
+				if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9){
+					tile.classList.add("voweltilesmall");
+				}
+				else{
+					tile.classList.add("voweltile");
+				}
 			}
 			else{
-				tile.classList.add("tile");
+				if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9){
+					tile.classList.add("tilesmall");
+				}
+				else{
+					tile.classList.add("tile");
+				}
 			}				
             tile.innerText = "";
             document.getElementById("boardthird").appendChild(tile);
@@ -495,11 +523,21 @@ function intialize() {
             tile.id = "4" + "-" + c.toString();
             // tile.classList.add("tile");
 			if (wordfour[c] == "A" || wordfour[c] == "E" || wordfour[c] == "I" || wordfour[c] == "O" || wordfour[c] == "U"){
-            	tile.classList.add("voweltile");
+				if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9){
+					tile.classList.add("voweltilesmall");
+				}
+				else{
+					tile.classList.add("voweltile");
+				}
 			}
 			else{
-				tile.classList.add("tile");
-			}				
+				if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9){
+					tile.classList.add("tilesmall");
+				}
+				else{
+					tile.classList.add("tile");
+				}
+			}					
             tile.innerText = "";
             document.getElementById("boardforth").appendChild(tile);
         }
@@ -512,11 +550,21 @@ function intialize() {
             tile.id = "5" + "-" + c.toString();
             // tile.classList.add("tile");
 			if (wordfive[c] == "A" || wordfive[c] == "E" || wordfive[c] == "I" || wordfive[c] == "O" || wordfive[c] == "U"){
-            	tile.classList.add("voweltile");
+				if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9){
+					tile.classList.add("voweltilesmall");
+				}
+				else{
+					tile.classList.add("voweltile");
+				}
 			}
 			else{
-				tile.classList.add("tile");
-			}				
+				if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9){
+					tile.classList.add("tilesmall");
+				}
+				else{
+					tile.classList.add("tile");
+				}
+			}					
             tile.innerText = "";
             document.getElementById("boardfifth").appendChild(tile);
         }	
@@ -529,10 +577,20 @@ function intialize() {
             tile.id = "6" + "-" + c.toString();
             // tile.classList.add("tile");
 			if (wordsix[c] == "A" || wordsix[c] == "E" || wordsix[c] == "I" || wordsix[c] == "O" || wordsix[c] == "U"){
-            	tile.classList.add("voweltile");
+				if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9){
+					tile.classList.add("voweltilesmall");
+				}
+				else{
+					tile.classList.add("voweltile");
+				}
 			}
 			else{
-				tile.classList.add("tile");
+				if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9){
+					tile.classList.add("tilesmall");
+				}
+				else{
+					tile.classList.add("tile");
+				}
 			}				
             tile.innerText = "";
             document.getElementById("boardsixth").appendChild(tile);
@@ -544,18 +602,24 @@ function intialize() {
             // <span id="0-0" class="tile">P</span>
             let tile = document.createElement("span");
             tile.id = "7" + "-" + c.toString();
-            tile.classList.add("tile");
+			if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9){
+				tile.classList.add("tilesmall");
+			}
+			else{
+				tile.classList.add("tile");
+			}
             tile.innerText = "";
             document.getElementById("boardlast").appendChild(tile);
         }		
 
-			for (let i = 0; i < wordlastwidth; i++) {
-				let currTile = document.getElementById("7" + '-' + i);
-				currTile.innerText = wordlast[i];
-				currTile.classList.remove("poptile");
-				currTile.classList.add("starting");
-			}		
+		for (let i = 0; i < wordlastwidth; i++) {
+			let currTile = document.getElementById("7" + '-' + i);
+			currTile.innerText = wordlast[i];
+			currTile.classList.remove("poptile");
+			currTile.classList.add("starting");
+		}		
   
+ 
     // Create the key board
     let keyboard = [
         ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
