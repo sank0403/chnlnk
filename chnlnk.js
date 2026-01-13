@@ -156,6 +156,39 @@ function SetTier() {
 	}		
 }
 
+
+function disablevowels(){
+	document.getElementById("KeyA").classList.add("disabled");	
+	document.getElementById("KeyE").classList.add("disabled");	
+	document.getElementById("KeyI").classList.add("disabled");	
+	document.getElementById("KeyO").classList.add("disabled");	
+	document.getElementById("KeyU").classList.add("disabled");	
+}
+
+
+function disableconsos(){
+	document.getElementById("KeyB").classList.add("disabled");
+	document.getElementById("KeyC").classList.add("disabled");
+	document.getElementById("KeyD").classList.add("disabled");
+	document.getElementById("KeyF").classList.add("disabled");
+	document.getElementById("KeyG").classList.add("disabled");
+	document.getElementById("KeyH").classList.add("disabled");
+	document.getElementById("KeyJ").classList.add("disabled");
+	document.getElementById("KeyK").classList.add("disabled");	
+	document.getElementById("KeyL").classList.add("disabled");
+	document.getElementById("KeyM").classList.add("disabled");
+	document.getElementById("KeyN").classList.add("disabled");
+	document.getElementById("KeyP").classList.add("disabled");
+	document.getElementById("KeyQ").classList.add("disabled");
+	document.getElementById("KeyR").classList.add("disabled");
+	document.getElementById("KeyS").classList.add("disabled");
+	document.getElementById("KeyT").classList.add("disabled");
+	document.getElementById("KeyV").classList.add("disabled");
+	document.getElementById("KeyW").classList.add("disabled");
+	document.getElementById("KeyX").classList.add("disabled");
+	document.getElementById("KeyY").classList.add("disabled");
+	document.getElementById("KeyZ").classList.add("disabled");
+}
 // function FBFunction() {
 // 	myFunction();
 // 	setTimeout(myFunctionOpenFB, 100);
@@ -310,6 +343,8 @@ openModalButtons.forEach(button => {
     openModal(modal)
   })
 })
+
+
 
 overlay.addEventListener('click', () => {
   const modals = document.querySelectorAll('.modal.active')
@@ -824,33 +859,20 @@ function intialize() {
 				document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
 		}
 		gameOver = true;
+		document.getElementById("KeyA").classList.add("key-tile-disabled");
+		document.getElementById("KeyE").classList.add("key-tile-disabled");
+		document.getElementById("KeyI").classList.add("key-tile-disabled");
+		document.getElementById("KeyO").classList.add("key-tile-disabled");
+		document.getElementById("KeyU").classList.add("key-tile-disabled");		
+		disableconsos();
+		disablevowels();
 		setTimeout(OpenStats, 1100);
 		displayFooter();		
 	}
 	// Default Path
 	else {
 			if(localStorage.vowelactive == 1){
-			document.getElementById("KeyB").classList.add("disabled");
-			document.getElementById("KeyC").classList.add("disabled");
-			document.getElementById("KeyD").classList.add("disabled");
-			document.getElementById("KeyF").classList.add("disabled");
-			document.getElementById("KeyG").classList.add("disabled");
-			document.getElementById("KeyH").classList.add("disabled");
-			document.getElementById("KeyJ").classList.add("disabled");
-			document.getElementById("KeyK").classList.add("disabled");	
-			document.getElementById("KeyL").classList.add("disabled");
-			document.getElementById("KeyM").classList.add("disabled");
-			document.getElementById("KeyN").classList.add("disabled");
-			document.getElementById("KeyP").classList.add("disabled");
-			document.getElementById("KeyQ").classList.add("disabled");
-			document.getElementById("KeyR").classList.add("disabled");
-			document.getElementById("KeyS").classList.add("disabled");
-			document.getElementById("KeyT").classList.add("disabled");
-			document.getElementById("KeyV").classList.add("disabled");
-			document.getElementById("KeyW").classList.add("disabled");
-			document.getElementById("KeyX").classList.add("disabled");
-			document.getElementById("KeyY").classList.add("disabled");
-			document.getElementById("KeyZ").classList.add("disabled");	
+			disableconsos();
 			document.getElementById("KeyA").classList.add( "key-tile-enabled");
 			document.getElementById("KeyE").classList.add( "key-tile-enabled");
 			document.getElementById("KeyI").classList.add( "key-tile-enabled");
@@ -1082,27 +1104,7 @@ if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.v
 		document.getElementById("KeyI").classList.add( "key-tile-enabled","poptile");
 		document.getElementById("KeyO").classList.add( "key-tile-enabled","poptile");
 		document.getElementById("KeyU").classList.add( "key-tile-enabled","poptile");	
-		document.getElementById("KeyB").classList.add("disabled");
-		document.getElementById("KeyC").classList.add("disabled");
-		document.getElementById("KeyD").classList.add("disabled");
-		document.getElementById("KeyF").classList.add("disabled");
-		document.getElementById("KeyG").classList.add("disabled");
-		document.getElementById("KeyH").classList.add("disabled");
-		document.getElementById("KeyJ").classList.add("disabled");
-		document.getElementById("KeyK").classList.add("disabled");	
-		document.getElementById("KeyL").classList.add("disabled");
-		document.getElementById("KeyM").classList.add("disabled");
-		document.getElementById("KeyN").classList.add("disabled");
-		document.getElementById("KeyP").classList.add("disabled");
-		document.getElementById("KeyQ").classList.add("disabled");
-		document.getElementById("KeyR").classList.add("disabled");
-		document.getElementById("KeyS").classList.add("disabled");
-		document.getElementById("KeyT").classList.add("disabled");
-		document.getElementById("KeyV").classList.add("disabled");
-		document.getElementById("KeyW").classList.add("disabled");
-		document.getElementById("KeyX").classList.add("disabled");
-		document.getElementById("KeyY").classList.add("disabled");
-		document.getElementById("KeyZ").classList.add("disabled");
+		disableconsos();
 		document.getElementById("answer").style.color = "lightgray";
 		document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"	
 		localStorage.vowelactive = 1;	
@@ -1197,6 +1199,8 @@ if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.v
 			// currTile.classList.add("failed", "animated");
 		}		
 			gameOver = true;
+			disableconsos();
+			disablevowels();
 			localStorage.starclxcount = Number(localStorage.starclxcount) + 1;
 			colorx = "green";
 			localStorage.clgamecnt = 6;
@@ -1260,6 +1264,7 @@ if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.v
 			// currTile.classList.add("animated");
 		}		
 			gameOver = true;
+			disablevowels();
 			localStorage.clstarscnt = 5 - Number(localStorage.cllivescnt);
 			switch (Number(localStorage.clstarscnt)) {
 				case 0: localStorage.starcl0count = Number(localStorage.starcl0count) + 1;
