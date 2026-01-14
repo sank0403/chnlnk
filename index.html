@@ -164,11 +164,9 @@
 				<!-- &nbsp; -->
 				<button id="HTMLButton" class="buttonmode" title="Copy To Clipboard!" onclick="myFunction(); this.blur();">SHARE</button>
 				<div style="display:none;"<class data-addmodal-target="#addmodal" id="addbutton"><button id="addpop" class="buttonmode" ></button></class>	</div>
-				<class data-hintmodal-target="#hintmodal" id="hintbutton"><button id="Rafflebutton" class="buttonmode">RAFFLE</button></class>	
-
-				
+				<class data-hintmodal-target="#hintmodal" id="hintbutton"><button id="Rafflebutton" class="buttonmode">RAFFLE</button></class>			
 			</div>
-			<p style="color:darkgray" align="justify" >If you enjoyed playing 🔗<strong style="color:white;">CHN LNK</strong>🧩, you can show your support by <strong style='color: var(--green);' ><a href="https://www.buymeacoffee.com/sank0403" target="_"><u>Buying Us A Coffee</u></a></strong> ☕️. THANK YOU for all the Love! 💕 </p>			
+			<p style="color:lightgray" align="justify" >If you enjoyed playing 🔗<strong style="color:white;">CHN LNK</strong>🧩, you can show your support by <strong style='color: var(--green);' ><a href="https://www.buymeacoffee.com/sank0403" target="_"><u>Buying Us A Coffee</u></a></strong> ☕️. THANK YOU for all the Love! 💕 </p>			
 		</div>
 		<hr>		
 		<div id="footer">
@@ -182,6 +180,7 @@
 				</div>
 			</div> -->
 		</div>
+		<center><class data-pastmodal-target="#pastmodal" id="pastbutton"><button id="Archivebutton" class="buttonmodetext" onclick="playArchive()"><u>PLAY PAST CHAINS</u></button></class>	</center>
 		<!-- <center><div class="email"><a href="mailto: geowordle@gmail.com">📧</a></div></center> -->
 		<br>
 	</div>
@@ -201,9 +200,9 @@
 		</div>
 		<div class="hintmodal-body">
 				<!-- <strong style="color:white;">Length of First Name and Last Name</strong> along with the <strong style="color:white;">STARTING LETTERS </strong>are given below. Use this wisely to identify the player! -->
-				We are trying to spread the word about <strong style="color:white;">CHN LNK </strong>and you can help by spreading the word. If you enjoyed the game, use the link below to EMAIL your Friends and Family, and invite them to play. In return, we will enter you into a monthly raffle️, where one lucky winner will win an Amazon gift card 🎁. <br>
-				<center><br><br><a id="emailLink" href="#" class="email">📧 SEND INVITE EMAIL 📧</a><br><br></center>
-				PS: Only add the email address of the recepients, and leave all other content of the email as such. You can invite as many people as you want. The more people you invite the better your chances are in the draw.<br>	
+				We are trying to spread the word about <strong style="color:white;">CHN LNK </strong>and you can help by spreading the word. If you enjoyed the game, use the link below to EMAIL your Friends and Family, and invite them to play. In return, we will enter you into a monthly raffle️, where one lucky winner will win an Amazon Gift Card 🎁. <br>
+				<center><br><br><a id="emailLink" href="#" class="email">📧 SEND INVITE EMAIL 📧</a><br><br></center><br>
+				PS: Only add the email address of the recepients, and leave all other content of the email as such. You can send as many invites as you want. The more folks you invite the better your chances are in the draw.<br>	
 				<br>
 			
 			<script>
@@ -248,14 +247,33 @@ document.getElementById("emailLink").href = "mailto:?cc=geowordle@gmail.com&subj
 			<br><br>				
 			</p>				
 		</div>
+	</div>			
+	<div class="pastmodal" id="pastmodal">
+		<div class="pastmodal-header">
+			<div class="title"><strong>
+					<!-- Feedback -->
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12 text-center">
+								<h3>CHN LNK ARCHIVE</h3>
+							</div>
+						</div>
+					</div>
+				</strong></div>
+			<button data-close4-button class="close-button">&times;</button>
+		</div>
+		<div class="pastmodal-body">	
+			Welcome to the CHN LNK Archives where you can play all the Chains from the past. Please note that these DO NOT COUNT to main game Stats. <br><br>
+			<div id="archiveboard" class="scroll" href="#">	</div>
+			<script>document.getElementById("emailLink").href</script>
+			</p>				
+		</div>
 	</div>		
-	
-	
-	
 	<div id="overlay"></div>
 	<div id="overlay1"></div>
 	<div id="overlay2"></div>
 	<div id="overlay3"></div>
+	<div id="overlay4"></div>
 	<hr>	
     <div id="lives">
 	</div>	

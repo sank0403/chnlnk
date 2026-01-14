@@ -1,62 +1,4 @@
 var gameOver = false;
-//Confetti Begin
-btnParty.addEventListener("click", () => {
-  confetti("tsparticles", {
-    angle: 90,
-    count: 300,
-    position: { x: 50, y: 50 },
-    spread: 90,
-    startVelocity: 50,
-    decay: 0.9,
-    gravity: 1,
-    drift: 0,
-    ticks: 200,
-    colors: ["#fff", "#f00"],
-    shapes: ["square", "circle"],
-    scalar: 1,
-    zIndex: 2000,
-    disableForReducedMotion: true
-  });
-});
-//Confetti End
-//Counter Construct
-var div = document.getElementById("bb");
-setInterval(function () {
-	var toDate = new Date();
-	var tomorrow = new Date();
-	tomorrow.setHours(24, 0, 0, 0);
-	var diffMS = tomorrow.getTime() / 1000 - toDate.getTime() / 1000;
-	var diffHr = Math.floor(diffMS / 3600);
-	diffMS = diffMS - diffHr * 3600;
-	var diffMi = Math.floor(diffMS / 60);
-	diffMS = diffMS - diffMi * 60;
-	var diffS = Math.floor(diffMS);
-	var result = ((diffHr < 10) ? "0" + diffHr : diffHr);
-	result += ":" + ((diffMi < 10) ? "0" + diffMi : diffMi);
-	result += ":" + ((diffS < 10) ? "0" + diffS : diffS);
-	if (localStorage.getItem('gameovercl' + days) == 1) {
-		div.innerHTML = result;
-	}
-}, 1000);
-
-//Open Stats at end of game
-function OpenStats() {
-	document.getElementById("statsbutton").click();
-}
-
-function OpenADDModal() {
-	document.getElementById("addpop").click();
-}
-
-//Open Rules the very first time
-function OpenRules() {
-	document.getElementById("rulesbutton").click();
-}
-
-//Confetti after game successfully completed 
-function ConfettiStart() {
-	document.getElementById("btnParty").click();
-}
 
 function removeblink() {
 	if (!gameOver){
@@ -70,29 +12,8 @@ function FinalClue() {
 	document.getElementById("answer").classList.add("popanswer");
 }
 
-//Button Text
-function ResetButton() {
-	let HTMLButton = document.getElementById("HTMLButton");
-	HTMLButton.innerText = "SHARE"
-}
 
-
-//Display Footer after game
-function displayFooter() {
-	// document.getElementById("pzlhdr").style.display = "block";
-	// document.getElementById("pzl").style.display = "block";
-	document.getElementById("bbhdr").style.display = "block";
-	document.getElementById("bb").style.display = "block";
-	document.getElementById("HTMLButton").style.display = "block";
-	document.getElementById("Rafflebutton").style.display = "block";
-	document.getElementById("Archivebutton").style.display = "block";
-
-	// document.getElementById("CoffeButton").style.display = "block";	
-	// document.getElementById("FBButton").style.display = "block";	
-	// document.getElementById("TwitterButton").style.display = "block";	
-}
-
-window.localStorage;
+/* window.localStorage;
 if (!localStorage.totalclplayed){
 localStorage.setItem("totalclplayed",0);
 localStorage.setItem("totalclwins",0);
@@ -108,14 +29,14 @@ localStorage.setItem("starcl5count", 0);
 localStorage.setItem("starclxcount", 0);
 localStorage.setItem("clshowalert",0);
 setTimeout(OpenRules, 1100);
-}
+} */
 
 //Baseline Date
 var a = new Date(); // Current date now.
 var b = new Date(2025, 12, 9, 0, 0, 0, 0); // Start of TENIZ.
 var d = (a - b); // Difference in milliseconds.
-var days = parseInt((d / 1000) / 86400);
-if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('gameovercl' + days) != 1) {
+var maxdays = parseInt((d / 1000) / 86400);
+/* if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('gameovercl' + days) != 1) {
 	localStorage['gameovercl' + days] = 0;
 	localStorage.setItem("cllives","🔴🔴🔴🔴🔴");
 	localStorage.setItem("clcorrect"," ");
@@ -134,34 +55,14 @@ if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('game
 	localStorage.setItem("cldisabledkey", JSON.stringify(""));
 	localStorage.setItem("clgamecnt",0);
 }
+ */
+ 
 
-/* for (var d = 1; d < Number(days) ; d++){
-	localStorage.removeItem('gameovercl' + d);
-} */
 
-var tierlevel = ""		
-var tiericon = ""	
-function SetTier() {
-	if (localStorage.totalclstreak >= 10 && localStorage.totalclstreak <= 24)  {
-		tierlevel = "Bronze (Streak 10 - 24)";
-		tiericon = "🥉"; 
-	}
-	else if (localStorage.totalclstreak >= 25 && localStorage.totalclstreak <= 49) {
-		tierlevel = "Silver (Streak 25 - 49)";
-		tiericon = "🥈"; 
-	}
-	else if (localStorage.totalclstreak >= 50 && localStorage.totalclstreak <= 99) {
-		tierlevel = "Gold (Streak 50 - 99)";
-		tiericon = "🥇";
-	}
-	else if (localStorage.totalclstreak >= 100) {
-		tierlevel = "Ultimate (Streak 100+)";
-		tiericon = "🏆";
-	}
-	else {
-		tierlevel = "";
-		tiericon = "";
-	}		
+const params = new URLSearchParams(window.location.search);
+var days = params.get("q"); 
+if (days >= maxdays){
+	days = maxdays - 1;
 }
 
 
@@ -229,51 +130,51 @@ function disableconsos(){
 // }
 
 //Open Rules the very first time
-function OpenRules() {
-	document.getElementById("rulesbutton").click();
-}
+// function OpenRules() {
+	// document.getElementById("rulesbutton").click();
+// }
 
 //Clipboard Code
-function myFunction() {
-	if (localStorage.clgamecnt == 6){
-		var cluehdr = "X/5";
-	}
-	else {
-		cluehdr = localStorage.clgamecnt + "/5";
-	}
-	switch (Number(localStorage.clgamecnt)) {
-				case 0: var clueicon = "🔴 🔴 🔴 🔴 🔴"
-					break;
-				case 1: var clueicon = "🔴 🔴 🔴 🔴 ⭐"
-					break;	
-				case 2: var clueicon = "🔴 🔴 🔴 ⭐ ⭐"
-					break;				
-				case 3: var clueicon = "🔴 🔴 ⭐ ⭐ ⭐"
-					break;	
-				case 4: var clueicon = "🔴 ⭐ ⭐ ⭐ ⭐"
-					break;	
-				case 5: var clueicon = "⭐ ⭐ ⭐ ⭐ ⭐"
-					break;
-				case 6: var clueicon = "❌❌❌❌❌"
-					break;					
-			}
+// function myFunction() {
+	// if (localStorage.clgamecnt == 6){
+		// var cluehdr = "X/5";
+	// }
+	// else {
+		// cluehdr = localStorage.clgamecnt + "/5";
+	// }
+	// switch (Number(localStorage.clgamecnt)) {
+				// case 0: var clueicon = "🔴 🔴 🔴 🔴 🔴"
+					// break;
+				// case 1: var clueicon = "🔴 🔴 🔴 🔴 ⭐"
+					// break;	
+				// case 2: var clueicon = "🔴 🔴 🔴 ⭐ ⭐"
+					// break;				
+				// case 3: var clueicon = "🔴 🔴 ⭐ ⭐ ⭐"
+					// break;	
+				// case 4: var clueicon = "🔴 ⭐ ⭐ ⭐ ⭐"
+					// break;	
+				// case 5: var clueicon = "⭐ ⭐ ⭐ ⭐ ⭐"
+					// break;
+				// case 6: var clueicon = "❌❌❌❌❌"
+					// break;					
+			// }
 		
-	if (tierlevel == ""){
-		var copyText = "🔗 CHN LNK # " + days + " 🧩 \n\n" + cluehdr + " - " + clueicon + "\n🔥 Streak: " + localStorage.totalclstreak + " | ⭐ Stars: " + localStorage.totalclstars + "\n\nhttps://sank0403.github.io/chnlnk/";
-	}
-	else {
-		var copyText = "🔗 CHN LNK # " + days + " 🧩 \n\n" + cluehdr + " - " + clueicon + "\n🔥 Streak: " + localStorage.totalclstreak + " | ⭐ Stars: " + localStorage.totalclstars + "\n" + tiericon +  " Tier: " + tierlevel + "\n\nhttps://sank0403.github.io/chnlnk/";
-	}
+	// if (tierlevel == ""){
+		// var copyText = "🔗 CHN LNK # " + days + " 🧩 \n\n" + cluehdr + " - " + clueicon + "\n🔥 Streak: " + localStorage.totalclstreak + " | ⭐ Stars: " + localStorage.totalclstars + "\n\nhttps://sank0403.github.io/chnlnk/";
+	// }
+	// else {
+		// var copyText = "🔗 CHN LNK # " + days + " 🧩 \n\n" + cluehdr + " - " + clueicon + "\n🔥 Streak: " + localStorage.totalclstreak + " | ⭐ Stars: " + localStorage.totalclstars + "\n" + tiericon +  " Tier: " + tierlevel + "\n\nhttps://sank0403.github.io/chnlnk/";
+	// }
 			
 		
 	/* Copy the text inside the text field */
-	navigator.clipboard.writeText(copyText);
+	// navigator.clipboard.writeText(copyText);
 
 	//Button Text
-	let HTMLButton = document.getElementById("HTMLButton");
-	HTMLButton.innerText = "COPIED"
-	setTimeout(ResetButton, 1000);
-}
+	// let HTMLButton = document.getElementById("HTMLButton");
+	// HTMLButton.innerText = "COPIED"
+	// setTimeout(ResetButton, 1000);
+// }
 
 var firstwordlist = ["river","garden","coffee","market","harbor","winter","silver","forest","ocean","music","desert","morning","traffic","crystal","thunder","island","candle","rocket","family","summer","cotton","marble","dragon","pepper","harbor","riverbank","meadow","lantern","timber","coral","velvet","canyon","orchard","glacier","prairie","summit","harborfront","compass","lantern","canyon","meadow","timber","coral","velvet","glacier","prairie","summit","compass","lantern","canyon","harbor","maple","copper","puzzle","shadow","signal","berry","iron","canyon","harbor","falcon","marble","timber","lantern","meadow","glacier","prairie","summit","compass","coral","velvet","harborfront","riverbed","gardenia","coffee","market","winter","silver","forest","ocean","music","desert","morning","traffic","crystal","thunder","island","candle","rocket","family","summer","cotton","marble","dragon","pepper","lantern","canyon","meadow","timber","coral","harbor","maple","copper","puzzle","shadow","signal","berry","iron","canyon","harbor","falcon","marble","timber","lantern","meadow","glacier","prairie","summit","compass","coral","velvet","harborfront","riverbed","gardenia","coffee","market","winter","silver","forest","ocean","music","desert","morning","traffic","crystal","thunder","island","candle","rocket","family","summer","cotton","marble","dragon","pepper","lantern","canyon","meadow","timber","coral","harbor","maple","copper","puzzle","shadow","signal","berry","iron","canyon","harbor","falcon","marble","timber","lantern","meadow","glacier","prairie","summit","compass","coral","velvet","harborfront","riverbed","gardenia","coffee","market","winter","silver","forest","ocean","music","desert","morning","traffic","crystal","thunder","island","candle","rocket","family","summer","cotton","marble","dragon","pepper","lantern","canyon","meadow","timber","coral","harbor","maple","copper","puzzle","shadow","signal","berry","iron","canyon","harbor","falcon","marble","timber","lantern","meadow","glacier","prairie","summit","compass","coral","velvet","harborfront","riverbed","gardenia","coffee","market","winter","silver","forest","ocean","music","desert","morning","traffic","crystal","thunder","island","candle","rocket","family","summer","cotton","marble","dragon","pepper","lantern","canyon","meadow","timber","coral"];
 var secondwordlist = ["stone","path","break","share","dock","storm","spoon","trail","tide","sheet","wind","dew","light","clear","clap","nation","flame","fuel","bond","heat","thread","statue","scale","mill","seal","erosion","lark","light","wolf","reef","rope","wall","apple","melt","dog","peak","market","rose","glow","echo","grass","frame","sand","curtain","ice","fire","meeting","point","festival","rim","light","leaf","wire","piece","cast","tower","patch","forge","floor","mist","wing","floor","yard","post","bloom","runoff","trail","ridge","needle","bloom","touch","pier","clay","bloom","roast","stall","coat","lining","edge","spray","box","sand","star","jam","ball","roll","breeze","wax","launch","tree","camp","candy","arch","fire","spray","glow","trail","grassland","log","stone","crane","syrup","mine","lock","line","flare","smoothie","nail","ridge","crane","crest","quarry","beam","hook","stream","drift","wind","trailhead","bearing","cove","ribbon","cafe","silt","scent","bean","trend","frost","ore","canopy","current","scale","mirage","routine","circle","shard","burst","reef","holder","booster","album","breeze","thread","step","wing","grinder","shade","echo","larkspur","wolfhound","bloomfield","rope","grove","plate","board","puppet","jammer","tart","grip","bend","watch","dive","tile","cut","flame","brook","crust","field","crest","card","branch","fabric","rail","stonework","petal","mug","basket","chill","chain","fire","floor","note","bloom","glory","lane","cave","stormfront","dockside","smoke","stage","crest","solstice","bale","column","crest","seed","hook","rimstone","grasshopper","sawdust","lagoon","pilot","timberline","circuit","master","ridge","pulse","harvest","alloy","switchback","jetty","crestline","quarryman","ridgepole","wick","clover","icefall","homestead","outlook","heading","shoal","drapery","pavilion","gravel","blossom","grinder","forecast","icicle","pendant","understory","breaker","harmony","outpost","routine","merge","prism","rumble","ferry","lantern","nozzle","reunion","monsoon","textile","mosaic","crestfall","kernel","signal","overlook","pasture","outbuilding","tidepool"];
@@ -284,19 +185,19 @@ var sixthwordlist = ["cook","change","link","spirit","operation","spray","langua
 var lastwordlist = ["book","order","cable","level","manual","bottle","barrier","ladder","maker","time","line","check","shop","car","game","map","net","jacket","floor","bag","root","office","holder","center","ticket","keeper","point","lock","table","trick","shot","keeper","time","path","link","club","shift","blade","room","code","case","clock","chart","chair","complex","line","holder","key","shift","plan","citizen","party","major","valve","player","shaft","score","stove","marker","reader","counter","rules","duty","caller","station","trick","tower","layout","crunch","point","key","word","board","kit","light","worker","rail","shop","role","ladder","booth","party","store","runner","limit","tag","holder","ground","down","caller","maker","lane","game","badge","down","cutter","duty","booklet","score","board","shift","count","board","guard","set","role","word","cutter","step","rack","chain","dance","service","reader","life","case","car","lift","rope","box","stand","climb","complex","duty","bag","crash","stand","flow","line","step","key","shot","point","weight","leader","rack","metal","badge","punch","dock","caller","marker","station","room","chair","holder","carrier","worker","piece","bar","top","level","rail","press","weight","trick","letter","station","bar","dance","meeting","line","alone","station","plan","bowl","shop","mount","number","crash","keeper","key","duty","light","worker","role","keeper","rate","station","chip","rail","shift","seat","tool","down","scale","number","rope","stove","word","store","floor","cover","line","badge","rack","hill","reader","guard","head","word","path","flow","service","scale","floor","badge","chair","bar","bell","weight","edge","room","worker","release","bar","counter","master","head","favor","plate","cook","badge","guard","step","code","cook","net","bowl","chart","charge","key","score","finder","store","lane","marker","ticket","role","role","cleaner","plate","tree","measure","favor","dance","booth","pipe","number","tower"];
 
 
-if (days%firstwordlist.length > 0){
-	var offset = Math.floor(days/firstwordlist.length);
-}
-else{
-	var offset = (days/firstwordlist.length) - 1;
-}
-if (days > firstwordlist.length){
-	var index  = days - 1 - (offset * firstwordlist.length);
-}
-else {
-	var index = days - 1;
-}
-
+// if (days%firstwordlist.length > 0){
+	// var offset = Math.floor(days/firstwordlist.length);
+// }
+// else{
+	// var offset = (days/firstwordlist.length) - 1;
+// }
+// if (days > firstwordlist.length){
+	// var index  = days - 1 - (offset * firstwordlist.length);
+// }
+// else {
+	// var index = days - 1;
+// }
+var index = days-1;
 var wordone = firstwordlist[index].toUpperCase();
 var wordtwo = secondwordlist[index].toUpperCase();
 var wordthree = thirdwordlist[index].toUpperCase();
@@ -323,10 +224,15 @@ if (wordone.length > 8 || wordtwo.length > 8 || wordthree.length > 8 || wordfour
 
 var word = (wordone + wordtwo + wordthree + wordfour + wordfive + wordsix + wordlast).toUpperCase();
 var solveword = (wordtwo + wordthree + wordfour + wordfive + wordsix).toUpperCase();
-if (localStorage.vowelcount == 0){
+var vowelcount = 0;
+var consocount = 0;
+var correct = 0;
+var livescnt  = 0;
+var lives = "🔴🔴🔴🔴🔴";
+if (vowelcount == 0){
 for (let i = 0; i < solveword.length; i++) {
 		if (solveword[i] == "A" || solveword[i] == "E" || solveword[i] == "I" || solveword[i] == "O" || solveword[i] == "U"){
-			localStorage.vowelcount = Number(localStorage.vowelcount) + 1;
+			vowelcount = vowelcount + 1;
 		}
 	}	
 }	
@@ -338,288 +244,38 @@ var wordfivewidth = wordfive.length;
 var wordsixwidth = wordsix.length; 
 var wordlastwidth = wordlast.length; 
 var disabledkeyarr = [];
-if (localStorage.vowelactive != 1){	
+var vowelactive = 0;
+if (vowelactive != 1){	
 document.getElementById("answer").style.color = "lightgray";
 document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND";
 }
-const openModalButtons = document.querySelectorAll('[data-modal-target]')
-const closeModalButtons = document.querySelectorAll('[data-close-button]')
-const overlay = document.getElementById('overlay')
-openModalButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    const modal = document.querySelector(button.dataset.modalTarget)
-    openModal(modal)
-  })
-})
-
-
-
-overlay.addEventListener('click', () => {
-  const modals = document.querySelectorAll('.modal.active')
-  modals.forEach(modal => {
-    closeModal(modal)
-  })
-})
-
-closeModalButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    const modal = button.closest('.modal')
-    closeModal(modal)
-  })
-})
-
-function openModal(modal) {
-  if (modal == null) return
-  modal.classList.add('active')
-  overlay.classList.add('active')
-}
-
-function closeModal(modal) {
-  if (modal == null) return
-  modal.classList.remove('active')
-  overlay.classList.remove('active')
-}
-
-
-const openHintmodalButtons = document.querySelectorAll('[data-hintmodal-target]')
-const closeHintmodalButtons = document.querySelectorAll('[data-close2-button]')
-const overlay2 = document.getElementById('overlay2')
-
-
-openHintmodalButtons.forEach(button => {
-	button.addEventListener('click', () => {
-		const hintmodal = document.querySelector(button.dataset.hintmodalTarget)
-		openHintmodal(hintmodal)
-		closeSummary(summary)
-	})
-})
-
-overlay2.addEventListener('click', () => {
-	const hintmodals = document.querySelectorAll('.hintmodal.active')
-	hintmodals.forEach(hintmodal => {
-		closeHintmodal(hintmodal)
-	})
-})
-
-closeHintmodalButtons.forEach(button => {
-	button.addEventListener('click', () => {
-		const hintmodal = button.closest('.hintmodal')
-		closeHintmodal(hintmodal)
-	})
-})
-
-function openHintmodal(hintmodal) {
-	if (hintmodal == null) return
-	hintmodal.classList.add('active')
-	overlay2.classList.add('active')
-}
-
-function closeHintmodal(hintmodal) {
-	if (hintmodal == null) return
-	hintmodal.classList.remove('active')
-	overlay2.classList.remove('active')
-}
-
-const openSummaryButtons = document.querySelectorAll('[data-summary-target]')
-const closeSummaryButtons = document.querySelectorAll('[data-close1-button]')
-const overlay1 = document.getElementById('overlay1')
-
-
-openSummaryButtons.forEach(button => {
-	button.addEventListener('click', () => {
-		const summary = document.querySelector(button.dataset.summaryTarget)
-		openSummary(summary)
-	})
-})
-
-overlay1.addEventListener('click', () => {
-	const summarys = document.querySelectorAll('.summary.active')
-	summarys.forEach(summary => {
-		closeSummary(summary)
-	})
-})
-
-closeSummaryButtons.forEach(button => {
-	button.addEventListener('click', () => {
-		const summary = button.closest('.summary')
-		closeSummary(summary)
-	})
-})
-
-function openSummary(summary) {
-	if (summary == null) return
-	UpdateChart();
-	summary.classList.add('active')
-	overlay1.classList.add('active')
-}
-
-function closeSummary(summary) {
-	if (summary == null) return
-	summary.classList.remove('active')
-	overlay1.classList.remove('active')
-}
-
-const openaddmodalButtons = document.querySelectorAll('[data-addmodal-target]')
-const closeaddmodalButtons = document.querySelectorAll('[data-close3-button]')
-const overlay3 = document.getElementById('overlay3')
-
-
-openaddmodalButtons.forEach(button => {
-	button.addEventListener('click', () => {
-		const addmodal = document.querySelector(button.dataset.addmodalTarget)
-		openaddmodal(addmodal)
-	})
-})
-
-overlay3.addEventListener('click', () => {
-	const addmodals = document.querySelectorAll('.addmodal.active')
-	addmodals.forEach(addmodal => {
-		closeaddmodal(addmodal)
-	})
-})
-
-closeaddmodalButtons.forEach(button => {
-	button.addEventListener('click', () => {
-		const addmodal = button.closest('.addmodal')
-		closeaddmodal(addmodal)
-	})
-})
-
-function openaddmodal(addmodal) {
-	if (addmodal == null) return
-	addmodal.classList.add('active')
-	overlay3.classList.add('active')
-}
-
-function closeaddmodal(addmodal) {
-	if (addmodal == null) return
-	addmodal.classList.remove('active')
-	overlay3.classList.remove('active')
-}
-
-const openpastmodalButtons = document.querySelectorAll('[data-pastmodal-target]')
-const closepastmodalButtons = document.querySelectorAll('[data-close4-button]')
-const overlay4 = document.getElementById('overlay4')
-
-
-openpastmodalButtons.forEach(button => {
-	button.addEventListener('click', () => {
-		const pastmodal = document.querySelector(button.dataset.pastmodalTarget)
-		openpastmodal(pastmodal)
-		closeSummary(summary)
-	})
-})
-
-overlay4.addEventListener('click', () => {
-	const pastmodals = document.querySelectorAll('.pastmodal.active')
-	pastmodals.forEach(pastmodal => {
-		closepastmodal(pastmodal)
-	})
-})
-
-closepastmodalButtons.forEach(button => {
-	button.addEventListener('click', () => {
-		const pastmodal = button.closest('.pastmodal')
-		closepastmodal(pastmodal)
-	})
-})
-
-function openpastmodal(pastmodal) {
-	if (pastmodal == null) return
-	pastmodal.classList.add('active')
-	overlay4.classList.add('active')
-}
-
-function closepastmodal(pastmodal) {
-	if (pastmodal == null) return
-	pastmodal.classList.remove('active')
-	overlay4.classList.remove('active')
-}
-
-function playArchive(){
-		const div = document.getElementById("archiveboard");
-		div.innerHTML = ""; // Clears all child elements	
-        for (let q = 1; q < days; q++) {
-            // <span id="0-0" class="tile">P</span>
-            let archivetile = document.createElement("span");
-            archivetile.id = q.toString();
-			archivetile.classList.add("archivetile");
-			archivetile.innerText = "Day "+q;
-			if ((localStorage.getItem('archovercl' + q) == "1")){
-				archivetile.classList.add("correct");
-			}
-			const link = document.createElement("a");
-			link.href = `archive.html?q=${q}`;
-			link.target = "_blank";   // ← opens in a new tab/window
-			link.appendChild(archivetile);
-			document.getElementById("archiveboard").appendChild(link);			
-        }			
-}
-
-//Chart Code
-color0 = "brown"
-color1 = "brown"
-color2 = "brown"
-color3 = "brown"
-color4 = "brown"
-color5 = "brown"
-colorx = "brown"
-function UpdateChart() {
-	// var xValues = ["5 ⭐", "4 ⭐", "3 ⭐", "2 ⭐", "1 ⭐", "0 ⭐", "X"];;
-	var xValues = ["5 ⭐", "4 ⭐", "3 ⭐", "2 ⭐", "1 ⭐", "X"];;
-	// var yValues = [localStorage.starcl5count, localStorage.starcl4count, localStorage.starcl3count, localStorage.starcl2count, localStorage.starcl1count, localStorage.starcl0count, localStorage.starclxcount];
-	var yValues = [localStorage.starcl5count, localStorage.starcl4count, localStorage.starcl3count, localStorage.starcl2count, localStorage.starcl1count, localStorage.starclxcount];
-	//var barColors = ["red", "green","blue","orange","brown","yellow","cyan","white"];
-	// var barColors = [color5, color4, color3, color2, color1, color0, colorx];
-	var barColors = [color5, color4, color3, color2, color1, colorx];
-
-
-	new Chart("myChart", {
-		type: "bar",
-		data: {
-			labels: xValues,
-			datasets: [{
-				backgroundColor: barColors,
-				data: yValues
-			}]
-		},
-		options: {
-			legend: { display: false },
-			title: {
-				display: false,
-				text: "⭐ STAR DISTRIBUTION ⭐"
-			}
-		}
-	});
-}
-
 window.onload = function(){
     intialize();
-	UpdateChart();
 }
 
 
 function intialize() {
-	if (Number (localStorage.clcorrect) == 0){
-		localStorage.clcorrect = wordonewidth + wordlastwidth;
+	if (correct == 0){
+		correct = wordonewidth + wordlastwidth;
 	} 
 	let ele = document.getElementById("daycount");
-	ele.innerHTML += (days);
+	ele.innerHTML += days;
+	if (localStorage.getItem('archovercl' + days) != 0 && localStorage.getItem('archovercl' + days) != 1) {
+		localStorage['archovercl' + days] = 0; 
+	}	
 /* 	document.getElementById("pzlhdr").style.display = "none";
 	document.getElementById("pzl").style.display = "none"; */
-	document.getElementById("bbhdr").style.display = "none";
-	document.getElementById("bb").style.display = "none";
-	document.getElementById("HTMLButton").style.display = "none";
-	document.getElementById("Rafflebutton").style.display = "none";
-	document.getElementById("Archivebutton").style.display = "none";
-	
+	// document.getElementById("bbhdr").style.display = "none";
+	// document.getElementById("bb").style.display = "none";
+	// document.getElementById("HTMLButton").style.display = "none";
+	// document.getElementById("Rafflebutton").style.display = "none";
 	// document.getElementById("CoffeButton").style.display = "block";
 	// document.getElementById("FBButton").style.display = "none";
 	// document.getElementById("TwitterButton").style.display = "none";
 	/* document.getElementById("WAButton").style.display = "none"; */
 	// document.getElementById("ffhdr").style.display = "none";
 	// document.getElementById("ffdtl").style.display = "none";
-	document.getElementById("lives").innerText = localStorage.cllives;		
+	document.getElementById("lives").innerText = lives;		
     // Create the game board
 	var element = document.getElementById("boardfirst");
         //element.style.width = boardWidth;
@@ -853,7 +509,7 @@ function intialize() {
         }
         document.body.appendChild(keyboardRow);
     }
-	if (localStorage.vowelactive == 0){
+	if (vowelactive == 0){
 	document.getElementById("KeyA").classList.add("disabled", "key-tile-disabled");
 	document.getElementById("KeyE").classList.add("disabled", "key-tile-disabled");
 	document.getElementById("KeyI").classList.add("disabled", "key-tile-disabled");
@@ -861,6 +517,56 @@ function intialize() {
 	document.getElementById("KeyU").classList.add("disabled", "key-tile-disabled");
 	}
     // Listen for Key Press
+	
+	if ((localStorage.getItem('archovercl' + days) == "1")){
+			for (let i = 0; i < wordonewidth; i++) {
+				let currTile = document.getElementById("1" + '-' + i);
+				currTile.innerText = wordone[i];
+				currTile.classList.remove("poptile");
+				currTile.classList.add("starting");		
+			}	
+			for (let i = 0; i < wordtwowidth; i++) {
+				let currTile = document.getElementById("2" + '-' + i);
+				currTile.innerText = wordtwo[i];
+				currTile.classList.remove("poptile");
+				currTile.classList.add("animated","correct");
+			}		
+			for (let i = 0; i < wordthreewidth; i++) {
+				let currTile = document.getElementById("3" + '-' + i);
+				currTile.innerText = wordthree[i];
+				currTile.classList.remove("poptile");
+				currTile.classList.add("animated","correct");
+			}				
+			for (let i = 0; i < wordfourwidth; i++) {
+				let currTile = document.getElementById("4" + '-' + i);
+				currTile.innerText = wordfour[i];
+				currTile.classList.remove("poptile");
+				currTile.classList.add("animated","correct");
+			}			
+			for (let i = 0; i < wordfivewidth; i++) {
+				let currTile = document.getElementById("5" + '-' + i);
+				currTile.innerText = wordfive[i];
+				currTile.classList.remove("poptile");
+				currTile.classList.add("animated","correct");
+			}			
+			for (let i = 0; i < wordsixwidth; i++) {
+				let currTile = document.getElementById("6" + '-' + i);
+				currTile.innerText = wordsix[i];
+				currTile.classList.remove("poptile");
+				currTile.classList.add("animated","correct");
+			}			
+			for (let i = 0; i < wordlastwidth; i++) {
+				let currTile = document.getElementById("7" + '-' + i);
+				currTile.innerText = wordlast[i];
+				currTile.classList.remove("poptile");
+				currTile.classList.add("starting");		
+			}
+			document.getElementById("answer").style.color = "lightgray";
+			document.getElementById("answer").innerText = "YOU HAVE ALREADY ATTEMPTED THIS CHAIN!"		
+			disableconsos();
+			disablevowels();
+	}
+	else{
 		document.addEventListener("keyup", (e) => {
 			if ("KeyA" <= e.code && e.code <= "KeyZ") {
 				if (!document.getElementById(e.code).classList.contains("disabled")){
@@ -868,256 +574,257 @@ function intialize() {
 				}
 			}
 		})
-    SetTier();
-	var winpct = Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100);
-	document.getElementById(11).innerText = "PLAYED: " + localStorage.totalclplayed;
-	document.getElementById(12).innerText = "WIN %: " + winpct;
-	document.getElementById(13).innerText = "STREAK: " + localStorage.totalclstreak + tiericon;
-	document.getElementById(14).innerText = "STARS: " + localStorage.totalclstars;
+	}
+    // SetTier();
+	// var winpct = Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100);
+	// document.getElementById(11).innerText = "PLAYED: " + localStorage.totalclplayed;
+	// document.getElementById(12).innerText = "WIN %: " + winpct;
+	// document.getElementById(13).innerText = "STREAK: " + localStorage.totalclstreak + tiericon;
+	// document.getElementById(14).innerText = "STARS: " + localStorage.totalclstars;
 
 	//Current Day Game Over
-	if (localStorage.getItem('gameovercl' + days) == "1") {
-		if (localStorage.gameclwon == 1) {
-			switch (Number(localStorage.clstarscnt)) {
-				case 0: color0 = "green";
-					break;
-				case 1: color1 = "green";
-					break;
-				case 2: color2 = "green";
-					break;
-				case 3: color3 = "green";
-					break;
-				case 4: color4 = "green";
-					break;
-				case 5: color5 = "green";
-					break;
-			}			
-			for (let i = 0; i < wordonewidth; i++) {
-				let currTile = document.getElementById("1" + '-' + i);
-				currTile.innerText = wordone[i];
-				currTile.classList.remove("poptile");
+	// if (localStorage.getItem('gameovercl' + days) == "1") {
+		// if (localStorage.gameclwon == 1) {
+			// switch (Number(localStorage.clstarscnt)) {
+				// case 0: color0 = "green";
+					// break;
+				// case 1: color1 = "green";
+					// break;
+				// case 2: color2 = "green";
+					// break;
+				// case 3: color3 = "green";
+					// break;
+				// case 4: color4 = "green";
+					// break;
+				// case 5: color5 = "green";
+					// break;
+			// }			
+			// for (let i = 0; i < wordonewidth; i++) {
+				// let currTile = document.getElementById("1" + '-' + i);
+				// currTile.innerText = wordone[i];
+				// currTile.classList.remove("poptile");
 				// currTile.classList.add("animated","correct");
-			}	
-			for (let i = 0; i < wordtwowidth; i++) {
-				let currTile = document.getElementById("2" + '-' + i);
-				currTile.innerText = wordtwo[i];
-				currTile.classList.remove("poptile");
-				currTile.classList.add("animated","correct");
-			}		
-			for (let i = 0; i < wordthreewidth; i++) {
-				let currTile = document.getElementById("3" + '-' + i);
-				currTile.innerText = wordthree[i];
-				currTile.classList.remove("poptile");
-				currTile.classList.add("animated","correct");
-			}				
-			for (let i = 0; i < wordfourwidth; i++) {
-				let currTile = document.getElementById("4" + '-' + i);
-				currTile.innerText = wordfour[i];
-				currTile.classList.remove("poptile");
-				currTile.classList.add("animated","correct");
-			}			
-			for (let i = 0; i < wordfivewidth; i++) {
-				let currTile = document.getElementById("5" + '-' + i);
-				currTile.innerText = wordfive[i];
-				currTile.classList.remove("poptile");
-				currTile.classList.add("animated","correct");
-			}			
-			for (let i = 0; i < wordsixwidth; i++) {
-				let currTile = document.getElementById("6" + '-' + i);
-				currTile.innerText = wordsix[i];
-				currTile.classList.remove("poptile");
-				currTile.classList.add("animated","correct");
-			}			
-			for (let i = 0; i < wordlastwidth; i++) {
-				let currTile = document.getElementById("7" + '-' + i);
-				currTile.innerText = wordlast[i];
-				currTile.classList.remove("poptile");
+			// }	
+			// for (let i = 0; i < wordtwowidth; i++) {
+				// let currTile = document.getElementById("2" + '-' + i);
+				// currTile.innerText = wordtwo[i];
+				// currTile.classList.remove("poptile");
 				// currTile.classList.add("animated","correct");
-			}		
-				document.getElementById("answer").style.color = "lightgray";
-				if (Number(localStorage.clstarscnt) == 0){
-					document.getElementById("answer").innerText = "STREAK INTACT. THOUGH, NO STARS WON!";
-				}
-				else if (Number(localStorage.clstarscnt) > 0){
-					if (localStorage.clstarscnt == 1){
-						document.getElementById("answer").innerText = "GREAT GOING! YOU WON " + localStorage.clstarscnt +" STAR TODAY.";
-					}
-					else {
-						document.getElementById("answer").innerText = "GREAT GOING! YOU WON " + localStorage.clstarscnt +" STARS TODAY.";
-					}					
+			// }		
+			// for (let i = 0; i < wordthreewidth; i++) {
+				// let currTile = document.getElementById("3" + '-' + i);
+				// currTile.innerText = wordthree[i];
+				// currTile.classList.remove("poptile");
+				// currTile.classList.add("animated","correct");
+			// }				
+			// for (let i = 0; i < wordfourwidth; i++) {
+				// let currTile = document.getElementById("4" + '-' + i);
+				// currTile.innerText = wordfour[i];
+				// currTile.classList.remove("poptile");
+				// currTile.classList.add("animated","correct");
+			// }			
+			// for (let i = 0; i < wordfivewidth; i++) {
+				// let currTile = document.getElementById("5" + '-' + i);
+				// currTile.innerText = wordfive[i];
+				// currTile.classList.remove("poptile");
+				// currTile.classList.add("animated","correct");
+			// }			
+			// for (let i = 0; i < wordsixwidth; i++) {
+				// let currTile = document.getElementById("6" + '-' + i);
+				// currTile.innerText = wordsix[i];
+				// currTile.classList.remove("poptile");
+				// currTile.classList.add("animated","correct");
+			// }			
+			// for (let i = 0; i < wordlastwidth; i++) {
+				// let currTile = document.getElementById("7" + '-' + i);
+				// currTile.innerText = wordlast[i];
+				// currTile.classList.remove("poptile");
+				// currTile.classList.add("animated","correct");
+			// }		
+				// document.getElementById("answer").style.color = "lightgray";
+				// if (Number(localStorage.clstarscnt) == 0){
+					// document.getElementById("answer").innerText = "STREAK INTACT. THOUGH, NO STARS WON!";
+				// }
+				// else if (Number(localStorage.clstarscnt) > 0){
+					// if (localStorage.clstarscnt == 1){
+						// document.getElementById("answer").innerText = "GREAT GOING! YOU WON " + localStorage.clstarscnt +" STAR TODAY.";
+					// }
+					// else {
+						// document.getElementById("answer").innerText = "GREAT GOING! YOU WON " + localStorage.clstarscnt +" STARS TODAY.";
+					// }					
 /* 					for (let s = 0; s < localStorage.clstarscnt; s++){
 						document.getElementById("answerstar").innerText += "⭐";
 					} */	
-					var templives = "";
-					templives = document.getElementById("lives").innerText;
-					for (i=0; i<5; i++){
-						templives = templives.replace("🔴", "⭐");
-					}	
-					document.getElementById("lives").innerText = templives;
-					if (Number (localStorage.clstarscnt) != 0){
+					// var templives = "";
+					// templives = document.getElementById("lives").innerText;
+					// for (i=0; i<5; i++){
+						// templives = templives.replace("🔴", "⭐");
+					// }	
+					// document.getElementById("lives").innerText = templives;
+					// if (Number (localStorage.clstarscnt) != 0){
 						// document.getElementById("lives").classList.add("animated");
-					}				
-				}
-		}
-		else {
-			colorx = "green";
-			for (let i = 0; i < wordonewidth; i++) {
-				let currTile = document.getElementById("1" + '-' + i);
-				currTile.innerText = wordone[i];
-				currTile.classList.remove("poptile","correct");
+					// }				
+				// }
+		// }
+		// else {
+			// colorx = "green";
+			// for (let i = 0; i < wordonewidth; i++) {
+				// let currTile = document.getElementById("1" + '-' + i);
+				// currTile.innerText = wordone[i];
+				// currTile.classList.remove("poptile","correct");
 				// currTile.classList.add("failed", "animated");
-			}	
-			for (let i = 0; i < wordtwowidth; i++) {
-				let currTile = document.getElementById("2" + '-' + i);
-				currTile.innerText = wordtwo[i];
-				currTile.classList.remove("poptile","correct");
-				currTile.classList.add("failed", "animated");
-			}				
-			for (let i = 0; i < wordthreewidth; i++) {
-				let currTile = document.getElementById("3" + '-' + i);
-				currTile.innerText = wordthree[i];
-				currTile.classList.remove("poptile","correct");
-				currTile.classList.add("failed", "animated");
-			}				
-			for (let i = 0; i < wordfourwidth; i++) {
-				let currTile = document.getElementById("4" + '-' + i);
-				currTile.innerText = wordfour[i];
-				currTile.classList.remove("poptile","correct");
-				currTile.classList.add("failed", "animated");
-			}				
-			for (let i = 0; i < wordfivewidth; i++) {
-				let currTile = document.getElementById("5" + '-' + i);
-				currTile.innerText = wordfive[i];
-				currTile.classList.remove("poptile","correct");
-				currTile.classList.add("failed", "animated");
-			}				
-			for (let i = 0; i < wordsixwidth; i++) {
-				let currTile = document.getElementById("6" + '-' + i);
-				currTile.innerText = wordsix[i];
-				currTile.classList.remove("poptile","correct");
-				currTile.classList.add("failed", "animated");
-			}				
-			for (let i = 0; i < wordlastwidth; i++) {
-				let currTile = document.getElementById("7" + '-' + i);
-				currTile.innerText = wordlast[i];
-				currTile.classList.remove("poptile","correct");
+			// }	
+			// for (let i = 0; i < wordtwowidth; i++) {
+				// let currTile = document.getElementById("2" + '-' + i);
+				// currTile.innerText = wordtwo[i];
+				// currTile.classList.remove("poptile","correct");
 				// currTile.classList.add("failed", "animated");
-			}		
-				document.getElementById("answer").style.color = "red";
-				document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
-		}
-		gameOver = true;
-		document.getElementById("KeyA").classList.add("key-tile-disabled");
-		document.getElementById("KeyE").classList.add("key-tile-disabled");
-		document.getElementById("KeyI").classList.add("key-tile-disabled");
-		document.getElementById("KeyO").classList.add("key-tile-disabled");
-		document.getElementById("KeyU").classList.add("key-tile-disabled");		
-		disableconsos();
-		disablevowels();
-		setTimeout(OpenStats, 1100);
-		displayFooter();		
-	}
+			// }				
+			// for (let i = 0; i < wordthreewidth; i++) {
+				// let currTile = document.getElementById("3" + '-' + i);
+				// currTile.innerText = wordthree[i];
+				// currTile.classList.remove("poptile","correct");
+				// currTile.classList.add("failed", "animated");
+			// }				
+			// for (let i = 0; i < wordfourwidth; i++) {
+				// let currTile = document.getElementById("4" + '-' + i);
+				// currTile.innerText = wordfour[i];
+				// currTile.classList.remove("poptile","correct");
+				// currTile.classList.add("failed", "animated");
+			// }				
+			// for (let i = 0; i < wordfivewidth; i++) {
+				// let currTile = document.getElementById("5" + '-' + i);
+				// currTile.innerText = wordfive[i];
+				// currTile.classList.remove("poptile","correct");
+				// currTile.classList.add("failed", "animated");
+			// }				
+			// for (let i = 0; i < wordsixwidth; i++) {
+				// let currTile = document.getElementById("6" + '-' + i);
+				// currTile.innerText = wordsix[i];
+				// currTile.classList.remove("poptile","correct");
+				// currTile.classList.add("failed", "animated");
+			// }				
+			// for (let i = 0; i < wordlastwidth; i++) {
+				// let currTile = document.getElementById("7" + '-' + i);
+				// currTile.innerText = wordlast[i];
+				// currTile.classList.remove("poptile","correct");
+				// currTile.classList.add("failed", "animated");
+			// }		
+				// document.getElementById("answer").style.color = "red";
+				// document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
+		// }
+		// gameOver = true;
+		// document.getElementById("KeyA").classList.add("key-tile-disabled");
+		// document.getElementById("KeyE").classList.add("key-tile-disabled");
+		// document.getElementById("KeyI").classList.add("key-tile-disabled");
+		// document.getElementById("KeyO").classList.add("key-tile-disabled");
+		// document.getElementById("KeyU").classList.add("key-tile-disabled");		
+		// disableconsos();
+		// disablevowels();
+		// setTimeout(OpenStats, 1100);
+		// displayFooter();		
+	// }
 	// Default Path
-	else {
-			if(localStorage.vowelactive == 1){
-			disableconsos();
-			document.getElementById("KeyA").classList.add( "key-tile-enabled");
-			document.getElementById("KeyE").classList.add( "key-tile-enabled");
-			document.getElementById("KeyI").classList.add( "key-tile-enabled");
-			document.getElementById("KeyO").classList.add( "key-tile-enabled");
-			document.getElementById("KeyU").classList.add( "key-tile-enabled");				
-			}
-		var disabled = JSON.parse(localStorage.getItem("cldisabledkey"));
-		for (let i = 0; i < disabled.length; i++){
-			document.getElementById("Key" + disabled[i]).classList.add("disabled");
-		}
-		if (localStorage.clwordone != ""){
-			for (let i = 0; i < wordonewidth; i++){
-				let currTile = document.getElementById("1" + '-' + i);
-				if (localStorage.clwordone[i] == "?"){
-					currTile.innerText = "";
-				}
-				else if (localStorage.clwordone[i] != ""){
-					currTile.innerText = localStorage.clwordone[i];
-					currTile.classList.add("correct");
-				}
-			}	
-		}
-		if (localStorage.clwordtwo != ""){
-			for (let i = 0; i < wordtwowidth; i++){
-				let currTile = document.getElementById("2" + '-' + i);
-				if (localStorage.clwordtwo[i] == "?"){
-					currTile.innerText = "";
-				}
-				else if (localStorage.clwordtwo[i] != ""){
-					currTile.innerText = localStorage.clwordtwo[i];
-					currTile.classList.add("correct");
-				}
-			}	
-		}		
-		if (localStorage.clwordthree != ""){
-			for (let i = 0; i < wordthreewidth; i++){
-				let currTile = document.getElementById("3" + '-' + i);
-				if (localStorage.clwordthree[i] == "?"){
-					currTile.innerText = "";
-				}
-				else if (localStorage.clwordthree[i] != ""){
-					currTile.innerText = localStorage.clwordthree[i];
-					currTile.classList.add("correct");
-				}
-			}	
-		}		
-		if (localStorage.clwordfour != ""){
-			for (let i = 0; i < wordfourwidth; i++){
-				let currTile = document.getElementById("4" + '-' + i);
-				if (localStorage.clwordfour[i] == "?"){
-					currTile.innerText = "";
-				}
-				else if (localStorage.clwordfour[i] != ""){
-					currTile.innerText = localStorage.clwordfour[i];
-					currTile.classList.add("correct");
-				}
-			}	
-		}		
-		if (localStorage.clwordfive != ""){
-			for (let i = 0; i < wordfivewidth; i++){
-				let currTile = document.getElementById("5" + '-' + i);
-				if (localStorage.clwordfive[i] == "?"){
-					currTile.innerText = "";
-				}
-				else if (localStorage.clwordfive[i] != ""){
-					currTile.innerText = localStorage.clwordfive[i];
-					currTile.classList.add("correct");
-				}
-			}	
-		}		
-		if (localStorage.clwordsix != ""){
-			for (let i = 0; i < wordsixwidth; i++){
-				let currTile = document.getElementById("6" + '-' + i);
-				if (localStorage.clwordsix[i] == "?"){
-					currTile.innerText = "";
-				}
-				else if (localStorage.clwordsix[i] != ""){
-					currTile.innerText = localStorage.clwordsix[i];
-					currTile.classList.add("correct");
-				}
-			}	
-		}			
-		if (localStorage.clwordlast != ""){
-			for (let i = 0; i < wordlastwidth; i++){
-				let currTile = document.getElementById("7" + '-' + i);
-				if (localStorage.clwordlast[i] == "?"){
-					currTile.innerText = "";
-				}
-				else if (localStorage.clwordlast[i] != ""){
-					currTile.innerText = localStorage.clwordlast[i];
-					currTile.classList.add("correct");
-				}
-			}	
-		}
-	}
+	// else {
+			// if(localStorage.vowelactive == 1){
+			// disableconsos();
+			// document.getElementById("KeyA").classList.add( "key-tile-enabled");
+			// document.getElementById("KeyE").classList.add( "key-tile-enabled");
+			// document.getElementById("KeyI").classList.add( "key-tile-enabled");
+			// document.getElementById("KeyO").classList.add( "key-tile-enabled");
+			// document.getElementById("KeyU").classList.add( "key-tile-enabled");				
+			// }
+		// var disabled = JSON.parse(localStorage.getItem("cldisabledkey"));
+		// for (let i = 0; i < disabled.length; i++){
+			// document.getElementById("Key" + disabled[i]).classList.add("disabled");
+		// }
+		// if (localStorage.clwordone != ""){
+			// for (let i = 0; i < wordonewidth; i++){
+				// let currTile = document.getElementById("1" + '-' + i);
+				// if (localStorage.clwordone[i] == "?"){
+					// currTile.innerText = "";
+				// }
+				// else if (localStorage.clwordone[i] != ""){
+					// currTile.innerText = localStorage.clwordone[i];
+					// currTile.classList.add("correct");
+				// }
+			// }	
+		// }
+		// if (localStorage.clwordtwo != ""){
+			// for (let i = 0; i < wordtwowidth; i++){
+				// let currTile = document.getElementById("2" + '-' + i);
+				// if (localStorage.clwordtwo[i] == "?"){
+					// currTile.innerText = "";
+				// }
+				// else if (localStorage.clwordtwo[i] != ""){
+					// currTile.innerText = localStorage.clwordtwo[i];
+					// currTile.classList.add("correct");
+				// }
+			// }	
+		// }		
+		// if (localStorage.clwordthree != ""){
+			// for (let i = 0; i < wordthreewidth; i++){
+				// let currTile = document.getElementById("3" + '-' + i);
+				// if (localStorage.clwordthree[i] == "?"){
+					// currTile.innerText = "";
+				// }
+				// else if (localStorage.clwordthree[i] != ""){
+					// currTile.innerText = localStorage.clwordthree[i];
+					// currTile.classList.add("correct");
+				// }
+			// }	
+		// }		
+		// if (localStorage.clwordfour != ""){
+			// for (let i = 0; i < wordfourwidth; i++){
+				// let currTile = document.getElementById("4" + '-' + i);
+				// if (localStorage.clwordfour[i] == "?"){
+					// currTile.innerText = "";
+				// }
+				// else if (localStorage.clwordfour[i] != ""){
+					// currTile.innerText = localStorage.clwordfour[i];
+					// currTile.classList.add("correct");
+				// }
+			// }	
+		// }		
+		// if (localStorage.clwordfive != ""){
+			// for (let i = 0; i < wordfivewidth; i++){
+				// let currTile = document.getElementById("5" + '-' + i);
+				// if (localStorage.clwordfive[i] == "?"){
+					// currTile.innerText = "";
+				// }
+				// else if (localStorage.clwordfive[i] != ""){
+					// currTile.innerText = localStorage.clwordfive[i];
+					// currTile.classList.add("correct");
+				// }
+			// }	
+		// }		
+		// if (localStorage.clwordsix != ""){
+			// for (let i = 0; i < wordsixwidth; i++){
+				// let currTile = document.getElementById("6" + '-' + i);
+				// if (localStorage.clwordsix[i] == "?"){
+					// currTile.innerText = "";
+				// }
+				// else if (localStorage.clwordsix[i] != ""){
+					// currTile.innerText = localStorage.clwordsix[i];
+					// currTile.classList.add("correct");
+				// }
+			// }	
+		// }			
+		// if (localStorage.clwordlast != ""){
+			// for (let i = 0; i < wordlastwidth; i++){
+				// let currTile = document.getElementById("7" + '-' + i);
+				// if (localStorage.clwordlast[i] == "?"){
+					// currTile.innerText = "";
+				// }
+				// else if (localStorage.clwordlast[i] != ""){
+					// currTile.innerText = localStorage.clwordlast[i];
+					// currTile.classList.add("correct");
+				// }
+			// }	
+		// }
+	// }
 
-}
+ }
 
 
 function processKey() {
@@ -1149,13 +856,15 @@ function processInput(e) {
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
 					currTile.classList.add("correct","poptile");
-					if (localStorage.cldisabledkey.includes(e.code[3])){
+					// if (localStorage.cldisabledkey.includes(e.code[3])){
 						// do nothing
-					}
-					else{
-						localStorage.consocount = Number(localStorage.consocount) + 1;			
-						localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
-					}			
+					// }
+					// else{
+						// localStorage.consocount = Number(localStorage.consocount) + 1;			
+						// localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
+						consocount = consocount + 1;
+						correct = correct + 1;
+					// }			
 				}
 				LetterFound = 1;
 			}	
@@ -1166,13 +875,15 @@ function processInput(e) {
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
 					currTile.classList.add("correct","poptile");
-					if (localStorage.cldisabledkey.includes(e.code[3])){
+					// if (localStorage.cldisabledkey.includes(e.code[3])){
 						// do nothing
-					}
-					else{
-						localStorage.consocount = Number(localStorage.consocount) + 1;			
-						localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
-					}		
+					// }
+					// else{
+						// localStorage.consocount = Number(localStorage.consocount) + 1;			
+						// localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
+						consocount = consocount + 1;
+						correct = correct + 1;
+					// }		
 				}
 				LetterFound = 1;
 			}	
@@ -1183,13 +894,15 @@ function processInput(e) {
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
 					currTile.classList.add("correct","poptile");
-					if (localStorage.cldisabledkey.includes(e.code[3])){
+					// if (localStorage.cldisabledkey.includes(e.code[3])){
 						// do nothing
-					}
-					else{
-						localStorage.consocount = Number(localStorage.consocount) + 1;			
-						localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
-					}		
+					// }
+					// else{
+						// localStorage.consocount = Number(localStorage.consocount) + 1;			
+						// localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
+						consocount = consocount + 1;
+						correct = correct + 1;
+					// }		
 				}
 				LetterFound = 1;
 			}	
@@ -1200,13 +913,15 @@ function processInput(e) {
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
 					currTile.classList.add("correct","poptile");
-					if (localStorage.cldisabledkey.includes(e.code[3])){
+					// if (localStorage.cldisabledkey.includes(e.code[3])){
 						// do nothing
-					}
-					else{
-						localStorage.consocount = Number(localStorage.consocount) + 1;			
-						localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
-					}		
+					// }
+					// else{
+						// localStorage.consocount = Number(localStorage.consocount) + 1;			
+						// localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
+						consocount = consocount + 1;
+						correct = correct + 1;
+					// }		
 				}
 				LetterFound = 1;
 			}	
@@ -1217,13 +932,15 @@ function processInput(e) {
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
 					currTile.classList.add("correct","poptile");
-					if (localStorage.cldisabledkey.includes(e.code[3])){
+					// if (localStorage.cldisabledkey.includes(e.code[3])){
 						// do nothing
-					}
-					else{
-						localStorage.consocount = Number(localStorage.consocount) + 1;			
-						localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
-					}			
+					// }
+					// else{
+						// localStorage.consocount = Number(localStorage.consocount) + 1;			
+						// localStorage.clcorrect = Number(localStorage.clcorrect) + 1;
+						consocount = consocount + 1;
+						correct = correct + 1;
+					// }			
 				}
 				LetterFound = 1;
 			}	
@@ -1240,11 +957,11 @@ function processInput(e) {
 		// 		// LetterFound = 0;				
 		// 	}
 		// }	
-		if (localStorage.consocount > 5 && localStorage.clshowalert == 0 && localStorage.totalclplayed > 0){
-			OpenADDModal();
-			localStorage.clshowalert = 1;
-		}
-	if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.vowelcount)) && localStorage.vowelactive == 0){
+		// if (localStorage.consocount > 5 && localStorage.clshowalert == 0 && localStorage.totalclplayed > 0){
+			// OpenADDModal();
+			// localStorage.clshowalert = 1;
+		// }
+	if ((consocount == solveword.length - vowelcount) && vowelactive == 0){
 		document.getElementById("KeyA").classList.remove("disabled", "key-tile-disabled");
 		document.getElementById("KeyE").classList.remove("disabled", "key-tile-disabled");
 		document.getElementById("KeyI").classList.remove("disabled", "key-tile-disabled");
@@ -1258,38 +975,38 @@ function processInput(e) {
 		disableconsos();
 		document.getElementById("answer").style.color = "lightgray";
 		document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"	
-		localStorage.vowelactive = 1;	
+		vowelactive = 1;	
 		setTimeout(FinalClue, 0);	
 	}		
 		document.getElementById(e.code).classList.add("disabled");
-		var disabledkey = e.code[3];
-		if (disabledkeyarr.length == 0){
-			var temp = JSON.parse(localStorage.getItem("cldisabledkey"));
-			if (temp != ""){
-				disabledkeyarr.push(temp);
-			}
-		}
-		disabledkeyarr.push(disabledkey);
-		disabledkeyarr = [].concat.apply([], disabledkeyarr);
-		localStorage.setItem("cldisabledkey", JSON.stringify(disabledkeyarr));		
+		// var disabledkey = e.code[3];
+		// if (disabledkeyarr.length == 0){
+			// var temp = JSON.parse(localStorage.getItem("cldisabledkey"));
+			// if (temp != ""){
+				// disabledkeyarr.push(temp);
+			// }
+		// }
+		// disabledkeyarr.push(disabledkey);
+		// disabledkeyarr = [].concat.apply([], disabledkeyarr);
+		// localStorage.setItem("cldisabledkey", JSON.stringify(disabledkeyarr));		
     }
 		
 	if (LetterFound == 0){
-		localStorage.cllivescnt = Number(localStorage.cllivescnt) + 1;
+		livescnt += 1;
 		document.getElementById("answer").style.color = "lightgray";
-		switch (Number(localStorage.cllivescnt)) {
-				case 0: localStorage.cllives = "🔴🔴🔴🔴🔴";
+		switch (livescnt) {
+				case 0: lives = "🔴🔴🔴🔴🔴";
 					break;
-				case 1: localStorage.cllives = "🔴🔴🔴🔴";
+				case 1: lives = "🔴🔴🔴🔴";
 					document.getElementById("answer").innerText = "FIRST LIFE LOST!"
 					break;	
-				case 2: localStorage.cllives = "🔴🔴🔴";
+				case 2: lives = "🔴🔴🔴";
 					document.getElementById("answer").innerText = "SECOND LIFE LOST!"
 					break;				
-				case 3: localStorage.cllives = "🔴🔴";
+				case 3: lives = "🔴🔴";
 					document.getElementById("answer").innerText = "THIRD LIFE LOST!"				
 					break;	
-				case 4: localStorage.cllives = "🔴";
+				case 4: lives = "🔴";
 					document.getElementById("answer").innerText = "FOURTH LIFE LOST - LAST LIFE ALERT!"		
 					setTimeout(FinalClue, 500);			
 					break;	
@@ -1297,16 +1014,16 @@ function processInput(e) {
 				// 	document.getElementById("answer").innerText = "LAST LIFE ALERT!"
 				// 	setTimeout(FinalClue, 500);	
 				// 	break;
-				case 5: localStorage.cllives = "❌❌❌❌❌";
+				case 5: lives = "❌❌❌❌❌";
 					break;					
 		}		
 		
-		document.getElementById("lives").innerText = localStorage.cllives;
+		document.getElementById("lives").innerText = lives;
 		document.getElementById("lives").classList.add("blink");
 		setTimeout(removeblink, 3000);	
 	}
 	
-	if (Number(localStorage.cllivescnt == 5)){
+	if (livescnt == 5){
 		for (let i = 0; i < wordonewidth; i++) {
 			let currTile = document.getElementById("1" + '-' + i);
 			currTile.innerText = wordone[i];
@@ -1352,26 +1069,12 @@ function processInput(e) {
 			gameOver = true;
 			disableconsos();
 			disablevowels();
-			localStorage.starclxcount = Number(localStorage.starclxcount) + 1;
-			colorx = "green";
-			localStorage.clgamecnt = 6;
 			document.getElementById("answer").style.color = "red";
 			document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
-			localStorage.setItem(('gameovercl' + days), 1);	
-			localStorage.totalclplayed = Number(localStorage.totalclplayed) + 1;	
-			localStorage.totalclstreak = 0;		
-			SetTier();			
-			var winpct = Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100);
-			document.getElementById(11).innerText = "PLAYED: " + localStorage.totalclplayed;
-			document.getElementById(12).innerText = "WIN %: " + winpct;
-			document.getElementById(13).innerText = "STREAK: " + localStorage.totalclstreak + tiericon;
-			document.getElementById(14).innerText = "STARS: " + localStorage.totalclstars;			
-			displayFooter();
-			localStorage.gameclwon = 0;
-			setTimeout(OpenStats, 3200);				
+				
 	}	
 	
-	if (Number(localStorage.clcorrect) == word.length){
+	if (correct == word.length){
 		for (let i = 0; i < wordonewidth; i++) {
 			let currTile = document.getElementById("1" + '-' + i);
 			currTile.innerText = wordone[i];
@@ -1415,154 +1118,119 @@ function processInput(e) {
 			// currTile.classList.add("animated");
 		}		
 			gameOver = true;
+			localStorage['archovercl' + days] = 1; 
 			disablevowels();
-			localStorage.clstarscnt = 5 - Number(localStorage.cllivescnt);
-			switch (Number(localStorage.clstarscnt)) {
-				case 0: localStorage.starcl0count = Number(localStorage.starcl0count) + 1;
-					color0 = "green";
-					localStorage.clgamecnt = 0;
-					break;
-				case 1: localStorage.starcl1count = Number(localStorage.starcl1count) + 1;
-					color1 = "green";
-					localStorage.clgamecnt = 1;
-					break;
-				case 2: localStorage.starcl2count = Number(localStorage.starcl2count) + 1;
-					color2 = "green";
-					localStorage.clgamecnt = 2;
-					break;
-				case 3: localStorage.starcl3count = Number(localStorage.starcl3count) + 1;
-					color3 = "green";
-					localStorage.clgamecnt = 3;
-					break;
-				case 4: localStorage.starcl4count = Number(localStorage.starcl4count) + 1;
-					color4 = "green";
-					localStorage.clgamecnt = 4;
-					break;
-				case 5: localStorage.starcl5count = Number(localStorage.starcl5count) + 1;
-					color5 = "green";
-					localStorage.clgamecnt = 5;
-					break;
-			}
 			document.getElementById("answer").style.color = "lightgray";
-			if (Number(localStorage.clstarscnt) == 0){
-				document.getElementById("answer").innerText = "STREAK INTACT. THOUGH, NO STARS WON!";
-			}
-			else if (Number(localStorage.clstarscnt) > 0){
-					if (localStorage.clstarscnt == 1){
-						document.getElementById("answer").innerText = "GREAT GOING! YOU WON " + localStorage.clstarscnt +" STAR TODAY.";
-					}
-					else {
-						document.getElementById("answer").innerText = "GREAT GOING! YOU WON " + localStorage.clstarscnt +" STARS TODAY.";
-					}
-			}
+			document.getElementById("answer").innerText = "GREAT GOING! YOU HAVE SUCCESSFULLY COMPLETED THE CHAIN.";	
 /* 			for (let s = 0; s < localStorage.clstarscnt; s++){
 				document.getElementById("answerstar").innerText += "⭐";
 			} */
-			var templives = "";
-			templives = document.getElementById("lives").innerText;
-			for (i=0; i<5; i++){
-				templives = templives.replace("🔴", "⭐");
-			}	
-			document.getElementById("lives").innerText = templives;
-			if (Number (localStorage.clstarscnt) != 0){
-				document.getElementById("lives").classList.add("animated");
-			}
-			localStorage.setItem(('gameovercl' + days), 1);	
-			localStorage.totalclplayed = Number(localStorage.totalclplayed) + 1;
-			localStorage.totalclwins = Number(localStorage.totalclwins) + 1;
-			localStorage.totalclstreak = Number(localStorage.totalclstreak) + 1;
-			localStorage.totalclstars = Number(localStorage.totalclstars) + Number(localStorage.clstarscnt);
-			SetTier();
-			var winpct = Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100);
-			document.getElementById(11).innerText = "PLAYED: " + localStorage.totalclplayed;
-			document.getElementById(12).innerText = "WIN %: " + winpct;
-			document.getElementById(13).innerText = "STREAK: " + localStorage.totalclstreak + tiericon;
-			document.getElementById(14).innerText = "STARS: " + localStorage.totalclstars;			
-			displayFooter();
-			localStorage.gameclwon = 1;
-			setTimeout(ConfettiStart, 1000);
-			setTimeout(OpenStats, 4800);
+			// var templives = "";
+			// templives = document.getElementById("lives").innerText;
+			// for (i=0; i<5; i++){
+				// templives = templives.replace("🔴", "⭐");
+			// }	
+			// document.getElementById("lives").innerText = templives;
+			// if (Number (localStorage.clstarscnt) != 0){
+				// document.getElementById("lives").classList.add("animated");
+			// }
+			// localStorage.setItem(('gameovercl' + days), 1);	
+			// localStorage.totalclplayed = Number(localStorage.totalclplayed) + 1;
+			// localStorage.totalclwins = Number(localStorage.totalclwins) + 1;
+			// localStorage.totalclstreak = Number(localStorage.totalclstreak) + 1;
+			// localStorage.totalclstars = Number(localStorage.totalclstars) + Number(localStorage.clstarscnt);
+			// SetTier();
+			// var winpct = Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100);
+			// document.getElementById(11).innerText = "PLAYED: " + localStorage.totalclplayed;
+			// document.getElementById(12).innerText = "WIN %: " + winpct;
+			// document.getElementById(13).innerText = "STREAK: " + localStorage.totalclstreak + tiericon;
+			// document.getElementById(14).innerText = "STARS: " + localStorage.totalclstars;			
+			// displayFooter();
+			// localStorage.gameclwon = 1;
+			// setTimeout(ConfettiStart, 1000);
+			// setTimeout(OpenStats, 4800);
 	}	
-	let clwordone = "";
-	for (let i = 0; i < wordonewidth; i++){
-		let currTile = document.getElementById("1" + '-' + i);
-		if (currTile.innerText == ""){
-			clwordone += "?";
-		}
-		else{
-			clwordone += currTile.innerText;
-		}
-		localStorage.clwordone = clwordone;
-	}	
-	let clwordtwo = "";
-	for (let i = 0; i < wordtwowidth; i++){
-		let currTile = document.getElementById("2" + '-' + i);
-		if (currTile.innerText == ""){
-			clwordtwo += "?";
-		}
-		else{
-			clwordtwo += currTile.innerText;
-		}
-		localStorage.clwordtwo = clwordtwo;
-	}	
+	// let clwordone = "";
+	// for (let i = 0; i < wordonewidth; i++){
+		// let currTile = document.getElementById("1" + '-' + i);
+		// if (currTile.innerText == ""){
+			// clwordone += "?";
+		// }
+		// else{
+			// clwordone += currTile.innerText;
+		// }
+		// localStorage.clwordone = clwordone;
+	// }	
+	// let clwordtwo = "";
+	// for (let i = 0; i < wordtwowidth; i++){
+		// let currTile = document.getElementById("2" + '-' + i);
+		// if (currTile.innerText == ""){
+			// clwordtwo += "?";
+		// }
+		// else{
+			// clwordtwo += currTile.innerText;
+		// }
+		// localStorage.clwordtwo = clwordtwo;
+	// }	
 	
-	let clwordthree = "";
-	for (let i = 0; i < wordthreewidth; i++){
-		let currTile = document.getElementById("3" + '-' + i);
-		if (currTile.innerText == ""){
-			clwordthree += "?";
-		}
-		else{
-			clwordthree += currTile.innerText;
-		}
-		localStorage.clwordthree = clwordthree;
-	}	
+	// let clwordthree = "";
+	// for (let i = 0; i < wordthreewidth; i++){
+		// let currTile = document.getElementById("3" + '-' + i);
+		// if (currTile.innerText == ""){
+			// clwordthree += "?";
+		// }
+		// else{
+			// clwordthree += currTile.innerText;
+		// }
+		// localStorage.clwordthree = clwordthree;
+	// }	
 
-	let clwordfour = "";
-	for (let i = 0; i < wordfourwidth; i++){
-		let currTile = document.getElementById("4" + '-' + i);
-		if (currTile.innerText == ""){
-			clwordfour += "?";
-		}
-		else{
-			clwordfour += currTile.innerText;
-		}
-		localStorage.clwordfour = clwordfour;
-	}	
+	// let clwordfour = "";
+	// for (let i = 0; i < wordfourwidth; i++){
+		// let currTile = document.getElementById("4" + '-' + i);
+		// if (currTile.innerText == ""){
+			// clwordfour += "?";
+		// }
+		// else{
+			// clwordfour += currTile.innerText;
+		// }
+		// localStorage.clwordfour = clwordfour;
+	// }	
 	
-	let clwordfive = "";
-	for (let i = 0; i < wordfivewidth; i++){
-		let currTile = document.getElementById("5" + '-' + i);
-		if (currTile.innerText == ""){
-			clwordfive += "?";
-		}
-		else{
-			clwordfive += currTile.innerText;
-		}
-		localStorage.clwordfive = clwordfive;
-	}		
+	// let clwordfive = "";
+	// for (let i = 0; i < wordfivewidth; i++){
+		// let currTile = document.getElementById("5" + '-' + i);
+		// if (currTile.innerText == ""){
+			// clwordfive += "?";
+		// }
+		// else{
+			// clwordfive += currTile.innerText;
+		// }
+		// localStorage.clwordfive = clwordfive;
+	// }		
 
-	let clwordsix = "";
-	for (let i = 0; i < wordsixwidth; i++){
-		let currTile = document.getElementById("6" + '-' + i);
-		if (currTile.innerText == ""){
-			clwordsix += "?";
-		}
-		else{
-			clwordsix += currTile.innerText;
-		}
-		localStorage.clwordsix = clwordsix;
-	}	
+	// let clwordsix = "";
+	// for (let i = 0; i < wordsixwidth; i++){
+		// let currTile = document.getElementById("6" + '-' + i);
+		// if (currTile.innerText == ""){
+			// clwordsix += "?";
+		// }
+		// else{
+			// clwordsix += currTile.innerText;
+		// }
+		// localStorage.clwordsix = clwordsix;
+	// }	
 
-	let clwordlast = "";
-	for (let i = 0; i < wordlastwidth; i++){
-		let currTile = document.getElementById("7" + '-' + i);
-		if (currTile.innerText == ""){
-			clwordlast += "?";
-		}
-		else{
-			clwordlast += currTile.innerText;
-		}
-		localStorage.clwordlast = clwordlast;
-	}		
+	// let clwordlast = "";
+	// for (let i = 0; i < wordlastwidth; i++){
+		// let currTile = document.getElementById("7" + '-' + i);
+		// if (currTile.innerText == ""){
+			// clwordlast += "?";
+		// }
+		// else{
+			// clwordlast += currTile.innerText;
+		// }
+		// localStorage.clwordlast = clwordlast;
+	// }		
+
 }
