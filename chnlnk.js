@@ -1177,7 +1177,7 @@ function processInput(e) {
 		// 		// LetterFound = 0;				
 		// 	}
 		// }	
-		if (localStorage.consocount > 5 && localStorage.clshowalert == 0 && localStorage.totalclplayed > 1){
+		if (localStorage.consocount > 5 && localStorage.clshowalert == 0 && localStorage.totalclplayed > 0){
 			OpenADDModal();
 			localStorage.clshowalert = 1;
 		}
