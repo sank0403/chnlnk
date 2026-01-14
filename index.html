@@ -218,25 +218,27 @@ function randomStr(len, arr) {
 }
 			
 // Function to create a mailto link with subject and optional body
-function createMailtoLink(subject, body = "", cc = "") {
-    // Encode parameters to handle spaces and special characters	
+function createMailtoLink(to, subject, body = "", cc = "", bcc = "") {
+    // Encode parameters to handle spaces and special characters
     const params = new URLSearchParams();
     if (subject) params.append("subject", subject);
     if (body) params.append("body", body);
     if (cc) params.append("cc", cc);
+    if (bcc) params.append("bcc", bcc);
 
-    return `mailto:?${params.toString()}`;
+    return `mailto:${encodeURIComponent(to)}?${params.toString()}`;
 }
 
 // Example usage
-<!-- const email = "example@example.com"; -->
 var randomstng = randomStr(10, '12345abcde');
-const subject = "CHN%20LNK%20:%20Invitation%20-%20Unique%20Code%20is%20" + randomstng;
-const body = "Hello,\n\nTry CHN LNK - new daily word game. \n\n https://sank0403.github.io/chnlnk";
-const cc = "geowordle@gmail.com";
+const email = "example@example.com";
+const subject = "Project Update "  + randomstng;
+const body = "Hello,\n\nHere is the latest update on the project.";
+const cc = "manager@example.com";
+const bcc = "audit@example.com";
 
 // Set the link dynamically
-document.getElementById("emailLink").href = createMailtoLink(subject, body, cc);
+document.getElementById("emailLink").href = createMailtoLink(email, subject, body, cc, bcc);
 </script>
 			
 			
