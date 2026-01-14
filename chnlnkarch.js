@@ -262,6 +262,7 @@ function intialize() {
 	ele.innerHTML += days;
 	if (localStorage.getItem('archovercl' + days) != 0 && localStorage.getItem('archovercl' + days) != 1) {
 		localStorage['archovercl' + days] = 0; 
+		localStorage['archstatcl' + days] = 0; 
 	}	
 /* 	document.getElementById("pzlhdr").style.display = "none";
 	document.getElementById("pzl").style.display = "none"; */
@@ -529,32 +530,53 @@ function intialize() {
 				let currTile = document.getElementById("2" + '-' + i);
 				currTile.innerText = wordtwo[i];
 				currTile.classList.remove("poptile");
-				currTile.classList.add("animated","correct");
+				if ((localStorage.getItem('archstatcl' + days) == "1")){
+					currTile.classList.add("animated","correct");
+				}
+				else{
+					currTile.classList.add("animated","failed");
+				}
 			}		
 			for (let i = 0; i < wordthreewidth; i++) {
 				let currTile = document.getElementById("3" + '-' + i);
 				currTile.innerText = wordthree[i];
 				currTile.classList.remove("poptile");
-				currTile.classList.add("animated","correct");
-			}				
+				if ((localStorage.getItem('archstatcl' + days) == "1")){
+					currTile.classList.add("animated","correct");
+				}
+				else{
+					currTile.classList.add("animated","failed");
+				}			}				
 			for (let i = 0; i < wordfourwidth; i++) {
 				let currTile = document.getElementById("4" + '-' + i);
 				currTile.innerText = wordfour[i];
 				currTile.classList.remove("poptile");
-				currTile.classList.add("animated","correct");
-			}			
+				if ((localStorage.getItem('archstatcl' + days) == "1")){
+					currTile.classList.add("animated","correct");
+				}
+				else{
+					currTile.classList.add("animated","failed");
+				}			}			
 			for (let i = 0; i < wordfivewidth; i++) {
 				let currTile = document.getElementById("5" + '-' + i);
 				currTile.innerText = wordfive[i];
 				currTile.classList.remove("poptile");
-				currTile.classList.add("animated","correct");
-			}			
+				if ((localStorage.getItem('archstatcl' + days) == "1")){
+					currTile.classList.add("animated","correct");
+				}
+				else{
+					currTile.classList.add("animated","failed");
+				}			}			
 			for (let i = 0; i < wordsixwidth; i++) {
 				let currTile = document.getElementById("6" + '-' + i);
 				currTile.innerText = wordsix[i];
 				currTile.classList.remove("poptile");
-				currTile.classList.add("animated","correct");
-			}			
+				if ((localStorage.getItem('archstatcl' + days) == "1")){
+					currTile.classList.add("animated","correct");
+				}
+				else{
+					currTile.classList.add("animated","failed");
+				}			}			
 			for (let i = 0; i < wordlastwidth; i++) {
 				let currTile = document.getElementById("7" + '-' + i);
 				currTile.innerText = wordlast[i];
@@ -562,7 +584,7 @@ function intialize() {
 				currTile.classList.add("starting");		
 			}
 			document.getElementById("answer").style.color = "lightgray";
-			document.getElementById("answer").innerText = "YOU HAVE ALREADY ATTEMPTED THIS CHAIN!"		
+			document.getElementById("answer").innerText = "YOU HAVE ALREADY PLAYED THIS CHAIN!"		
 			disableconsos();
 			disablevowels();
 	}
@@ -1067,6 +1089,7 @@ function processInput(e) {
 			// currTile.classList.add("failed", "animated");
 		}		
 			gameOver = true;
+			localStorage['archovercl' + days] = 1;
 			disableconsos();
 			disablevowels();
 			document.getElementById("answer").style.color = "red";
@@ -1119,9 +1142,10 @@ function processInput(e) {
 		}		
 			gameOver = true;
 			localStorage['archovercl' + days] = 1; 
+			localStorage['archstatcl' + days] = 1; 
 			disablevowels();
 			document.getElementById("answer").style.color = "lightgray";
-			document.getElementById("answer").innerText = "GREAT GOING! YOU HAVE SUCCESSFULLY COMPLETED THE CHAIN.";	
+			document.getElementById("answer").innerText = "CHAIN COMPLETED SUCCESSFULLY!";	
 /* 			for (let s = 0; s < localStorage.clstarscnt; s++){
 				document.getElementById("answerstar").innerText += "⭐";
 			} */

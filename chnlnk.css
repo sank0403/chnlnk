@@ -886,6 +886,23 @@ padding: 0px;
   pointer-events: all;
 }
 
+#overlay4 {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: GrayText;
+  opacity: 0;
+  pointer-events: none;
+  transition: 200ms ease-in-out;
+}
+
+#overlay4.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
 #ffhdr, #sdhdr{
 	color: white;
 	font-size: 12px;

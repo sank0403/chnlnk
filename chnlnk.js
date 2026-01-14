@@ -507,6 +507,13 @@ openpastmodalButtons.forEach(button => {
 		const pastmodal = document.querySelector(button.dataset.pastmodalTarget)
 		openpastmodal(pastmodal)
 		closeSummary(summary)
+		document.getElementById("boardfirst").style.visibility = "hidden";
+		document.getElementById("boardsecond").style.visibility = "hidden";
+		document.getElementById("boardthird").style.visibility = "hidden";
+		document.getElementById("boardforth").style.visibility = "hidden";
+		document.getElementById("boardfifth").style.visibility = "hidden";
+		document.getElementById("boardsixth").style.visibility = "hidden";
+		document.getElementById("boardlast").style.visibility = "hidden";
 	})
 })
 
@@ -514,6 +521,13 @@ overlay4.addEventListener('click', () => {
 	const pastmodals = document.querySelectorAll('.pastmodal.active')
 	pastmodals.forEach(pastmodal => {
 		closepastmodal(pastmodal)
+		document.getElementById("boardfirst").style.visibility = "visible";
+		document.getElementById("boardsecond").style.visibility = "visible";
+		document.getElementById("boardthird").style.visibility = "visible";
+		document.getElementById("boardforth").style.visibility = "visible";
+		document.getElementById("boardfifth").style.visibility = "visible";
+		document.getElementById("boardsixth").style.visibility = "visible";
+		document.getElementById("boardlast").style.visibility = "visible";		
 	})
 })
 
@@ -521,6 +535,13 @@ closepastmodalButtons.forEach(button => {
 	button.addEventListener('click', () => {
 		const pastmodal = button.closest('.pastmodal')
 		closepastmodal(pastmodal)
+		document.getElementById("boardfirst").style.visibility = "visible";
+		document.getElementById("boardsecond").style.visibility = "visible";
+		document.getElementById("boardthird").style.visibility = "visible";
+		document.getElementById("boardforth").style.visibility = "visible";
+		document.getElementById("boardfifth").style.visibility = "visible";
+		document.getElementById("boardsixth").style.visibility = "visible";
+		document.getElementById("boardlast").style.visibility = "visible";
 	})
 })
 
@@ -546,7 +567,12 @@ function playArchive(){
 			archivetile.classList.add("archivetile");
 			archivetile.innerText = "Day "+q;
 			if ((localStorage.getItem('archovercl' + q) == "1")){
-				archivetile.classList.add("correct");
+				if ((localStorage.getItem('archstatcl' + q) == "1")){
+					archivetile.classList.add("correct");
+				}
+				else{
+					archivetile.classList.add("failed");
+				}
 			}
 			const link = document.createElement("a");
 			link.href = `archive.html?q=${q}`;
