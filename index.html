@@ -163,15 +163,7 @@
 			<div class="button-row">
 				<!-- &nbsp; -->
 				<button id="HTMLButton" class="buttonmode" title="Copy To Clipboard!" onclick="myFunction(); this.blur();">SHARE</button>
-				<!-- <button id="FBButton" onclick="myFunction(); this.blur();"> <a href="https://www.facebook.com/groups/329553752723826/?ref=share" target="_blank"><img src="facebook2.png" height="30" alt="@Geordle on Facebook" title="@Geordle on Facebook"></a></button> -->
-				<!-- <button id="FBButton" onclick="FBFunction(); this.blur();"> <img src="facebook2.png" height="30" alt="@Geordle on Facebook" title="@Geordle on Facebook"></button> -->
-				<!-- <button id="TwitterButton" onclick="TwitterFunction(); this.blur();"> <img src="twitter2.png" height="30" alt="@Geordle on Twitter" title="@Geordle on Twitter"></button> -->
-				<!-- <button id="WAButton" onclick="WAFunction(); this.blur();"> <img src="whatsapp.png" height="30" alt="@Geordle on Whatsapp" title="Share to Whatsapp"></button> -->
-				<!-- &nbsp; &nbsp; &nbsp; &nbsp; -->
-				<!-- <a href="https://www.buymeacoffee.com/sank0403/" target="_"><input type="button" class="buttonrad1" onclick="this.blur();"
-						id="CoffeButton" value="❤️GEORDLE" title="Buy Me A Coffee!" /><a>-->
-				<!-- <a href="https://sank0403.github.io/geordle/statssaver/"><input type="button" class="buttonrad1" onclick="this.blur();"
-						id="CoffeButton" value="SAVE STATS📱" title="Save Stats to New Device!" /><a> -->
+				<class data-hintmodal-target="#hintmodal" id="hintbutton"><button id="Rafflebutton" class="buttonmode" onclick="	additionalhint();">RAFFLE</button></class>	
 			</div>
 			<p style="color:darkgray" align="justify" >If you enjoyed playing 🔗<strong style="color:white;">CHN LNK</strong>🧩, you can show your support by <strong style='color: var(--green);' ><a href="https://www.buymeacoffee.com/sank0403" target="_"><u>Buying Us A Coffee</u></a></strong> ☕️. THANK YOU for all the Love! 💕 </p>			
 		</div>
@@ -190,8 +182,36 @@
 		<!-- <center><div class="email"><a href="mailto: geowordle@gmail.com">📧</a></div></center> -->
 		<br>
 	</div>
+	<div class="hintmodal" id="hintmodal">
+		<div class="hintmodal-header">
+			<div class="title"><strong>
+					<!-- Hint -->
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12 text-center">
+								<h3>JOIN THE MONTHLY RAFFLE</h3>
+							</div>
+						</div>
+					</div>
+				</strong></div>
+			<button data-close2-button class="close-button">&times;</button>
+		</div>
+		<div class="hintmodal-body">
+				<!-- <strong style="color:white;">Length of First Name and Last Name</strong> along with the <strong style="color:white;">STARTING LETTERS </strong>are given below. Use this wisely to identify the player! -->
+				We are trying to spread the word about <strong style="color:white;">CHN LNK </strong>and you can help a great deal. If you enjoyed the game, use the link below to EMAIL your friends and family and let them know about CHN LNK. For every person who tries out the game, you enter 1 draw each towards a monthly raffle to win an Amazon gift card. <br>
+				<a href="mailto:recepients@emails.com?cc=geowordle@gmail.com&subject=CHN LNK - Invitation &body=Try%20this%20new%20word%20game%20-%20https://sank0403.github.io/chnlnk/"><br><br>
+				<div class="email"><center><u>📧 SEND INVITE EMAIL 📧</u><br><br></center></div>
+				</a>
+				PS: Only add the email address of the recepients, and leave all other content of the email as such. <br>
+				
+			<br><br><br>
+			<div id="additionalhint"></div>	
+			<br><br>
+		</div>
+	</div>		
 	<div id="overlay"></div>
 	<div id="overlay1"></div>
+	<div id="overlay2"></div>
 	<hr>	
     <div id="lives">
 	</div>	

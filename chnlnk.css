@@ -127,7 +127,7 @@ a { text-decoration: none; }
 .button-row {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-evenly;
 }
 
 ul {
@@ -618,6 +618,64 @@ ul {
   font-size: 12px;
 }
 
+
+.hintmodal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: 200ms ease-in-out;
+  border: 1px solid black;
+  border-radius: 5%;
+  z-index: 5;
+  background-color: black;
+  width: 400px;
+  max-width: 100%;
+}
+
+.hintmodal.active {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.hintmodal-header {
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid white;
+
+}
+
+.hintmodal-header .hintmodal-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.hintmodal-header .close-button {
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.hintmodal-body {
+  padding: 10px 15px;
+  text-align: justify;
+  color: lightgray;
+  font-size: 11px;
+}
+
+
+
+.email {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+
+
 #overlay {
     position:fixed;
 	top: 0;
@@ -633,6 +691,23 @@ ul {
 #overlay.active {
 	opacity: 1;
 	pointer-events: all;
+}
+
+#overlay2 {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: GrayText;
+  opacity: 0;
+  pointer-events: none;
+  transition: 200ms ease-in-out;
+}
+
+#overlay2.active {
+  opacity: 1;
+  pointer-events: all;
 }
 
 #overlay1 {

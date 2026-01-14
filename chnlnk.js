@@ -372,6 +372,46 @@ function closeModal(modal) {
   overlay.classList.remove('active')
 }
 
+
+const openHintmodalButtons = document.querySelectorAll('[data-hintmodal-target]')
+const closeHintmodalButtons = document.querySelectorAll('[data-close2-button]')
+const overlay2 = document.getElementById('overlay2')
+
+
+openHintmodalButtons.forEach(button => {
+	button.addEventListener('click', () => {
+		const hintmodal = document.querySelector(button.dataset.hintmodalTarget)
+		openHintmodal(hintmodal)
+		closeSummary(summary)
+	})
+})
+
+overlay2.addEventListener('click', () => {
+	const hintmodals = document.querySelectorAll('.hintmodal.active')
+	hintmodals.forEach(hintmodal => {
+		closeHintmodal(hintmodal)
+	})
+})
+
+closeHintmodalButtons.forEach(button => {
+	button.addEventListener('click', () => {
+		const hintmodal = button.closest('.hintmodal')
+		closeHintmodal(hintmodal)
+	})
+})
+
+function openHintmodal(hintmodal) {
+	if (hintmodal == null) return
+	hintmodal.classList.add('active')
+	overlay2.classList.add('active')
+}
+
+function closeHintmodal(hintmodal) {
+	if (hintmodal == null) return
+	hintmodal.classList.remove('active')
+	overlay2.classList.remove('active')
+}
+
 const openSummaryButtons = document.querySelectorAll('[data-summary-target]')
 const closeSummaryButtons = document.querySelectorAll('[data-close1-button]')
 const overlay1 = document.getElementById('overlay1')
