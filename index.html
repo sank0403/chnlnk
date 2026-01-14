@@ -217,28 +217,9 @@ function randomStr(len, arr) {
     return(ans);
 }
 			
-// Function to create a mailto link with subject and optional body
-function createMailtoLink(to, subject, body = "", cc = "", bcc = "") {
-    // Encode parameters to handle spaces and special characters
-    const params = new URLSearchParams();
-    if (subject) params.append("subject", subject);
-    if (body) params.append("body", body);
-    if (cc) params.append("cc", cc);
-    if (bcc) params.append("bcc", bcc);
-
-    return `mailto:${encodeURIComponent(to)}?${params.toString()}`;
-}
-
-// Example usage
 var randomstng = randomStr(10, '12345abcde');
-const email = "example@example.com";
-const subject = "Project Update "  + randomstng;
-const body = "Hello,\n\nHere is the latest update on the project.";
-const cc = "manager@example.com";
-const bcc = "audit@example.com";
-
 // Set the link dynamically
-document.getElementById("emailLink").href = createMailtoLink(email, subject, body, cc, bcc);
+document.getElementById("emailLink").href = "mailto:?cc=geowordle@gmail.com&subject=CHN LNK - Unique Invitation Code :" + randomstng + "&body=Try%20this%20new%20word%20game%20-%20https://sank0403.github.io/chnlnk/";
 </script>
 			
 			
