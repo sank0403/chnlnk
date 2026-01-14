@@ -44,6 +44,10 @@ function OpenStats() {
 	document.getElementById("statsbutton").click();
 }
 
+function OpenADDModal() {
+	document.getElementById("addpop").click();
+}
+
 //Open Rules the very first time
 function OpenRules() {
 	document.getElementById("rulesbutton").click();
@@ -75,11 +79,12 @@ function ResetButton() {
 
 //Display Footer after game
 function displayFooter() {
-	document.getElementById("pzlhdr").style.display = "block";
-	document.getElementById("pzl").style.display = "block";
+	// document.getElementById("pzlhdr").style.display = "block";
+	// document.getElementById("pzl").style.display = "block";
 	document.getElementById("bbhdr").style.display = "block";
 	document.getElementById("bb").style.display = "block";
 	document.getElementById("HTMLButton").style.display = "block";
+	document.getElementById("Rafflebutton").style.display = "block";
 	// document.getElementById("CoffeButton").style.display = "block";	
 	// document.getElementById("FBButton").style.display = "block";	
 	// document.getElementById("TwitterButton").style.display = "block";	
@@ -99,6 +104,7 @@ localStorage.setItem("starcl3count", 0);
 localStorage.setItem("starcl4count", 0);
 localStorage.setItem("starcl5count", 0);
 localStorage.setItem("starclxcount", 0);
+localStorage.setItem("clshowalert",0);
 setTimeout(OpenRules, 1100);
 }
 
@@ -451,6 +457,44 @@ function closeSummary(summary) {
 	overlay1.classList.remove('active')
 }
 
+const openaddmodalButtons = document.querySelectorAll('[data-addmodal-target]')
+const closeaddmodalButtons = document.querySelectorAll('[data-close3-button]')
+const overlay3 = document.getElementById('overlay3')
+
+
+openaddmodalButtons.forEach(button => {
+	button.addEventListener('click', () => {
+		const addmodal = document.querySelector(button.dataset.addmodalTarget)
+		openaddmodal(addmodal)
+	})
+})
+
+overlay3.addEventListener('click', () => {
+	const addmodals = document.querySelectorAll('.addmodal.active')
+	addmodals.forEach(addmodal => {
+		closeaddmodal(addmodal)
+	})
+})
+
+closeaddmodalButtons.forEach(button => {
+	button.addEventListener('click', () => {
+		const addmodal = button.closest('.addmodal')
+		closeaddmodal(addmodal)
+	})
+})
+
+function openaddmodal(addmodal) {
+	if (addmodal == null) return
+	addmodal.classList.add('active')
+	overlay3.classList.add('active')
+}
+
+function closeaddmodal(addmodal) {
+	if (addmodal == null) return
+	addmodal.classList.remove('active')
+	overlay3.classList.remove('active')
+}
+
 //Chart Code
 color0 = "brown"
 color1 = "brown"
@@ -500,11 +544,12 @@ function intialize() {
 	} 
 	let ele = document.getElementById("daycount");
 	ele.innerHTML += (days);
-	document.getElementById("pzlhdr").style.display = "none";
-	document.getElementById("pzl").style.display = "none";
+/* 	document.getElementById("pzlhdr").style.display = "none";
+	document.getElementById("pzl").style.display = "none"; */
 	document.getElementById("bbhdr").style.display = "none";
 	document.getElementById("bb").style.display = "none";
 	document.getElementById("HTMLButton").style.display = "none";
+	document.getElementById("Rafflebutton").style.display = "none";
 	// document.getElementById("CoffeButton").style.display = "block";
 	// document.getElementById("FBButton").style.display = "none";
 	// document.getElementById("TwitterButton").style.display = "none";
@@ -1132,8 +1177,11 @@ function processInput(e) {
 		// 		// LetterFound = 0;				
 		// 	}
 		// }	
-
-if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.vowelcount)) && localStorage.vowelactive == 0){
+		if (localStorage.consocount > 5 && localStorage.clshowalert == 0 && localStorage.totalclplayed > 1){
+			OpenADDModal();
+			localStorage.clshowalert = 1;
+		}
+	if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.vowelcount)) && localStorage.vowelactive == 0){
 		document.getElementById("KeyA").classList.remove("disabled", "key-tile-disabled");
 		document.getElementById("KeyE").classList.remove("disabled", "key-tile-disabled");
 		document.getElementById("KeyI").classList.remove("disabled", "key-tile-disabled");

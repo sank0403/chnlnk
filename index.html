@@ -163,7 +163,10 @@
 			<div class="button-row">
 				<!-- &nbsp; -->
 				<button id="HTMLButton" class="buttonmode" title="Copy To Clipboard!" onclick="myFunction(); this.blur();">SHARE</button>
-				<class data-hintmodal-target="#hintmodal" id="hintbutton"><button id="Rafflebutton" class="buttonmode" onclick="	additionalhint();">RAFFLE</button></class>	
+				<div style="display:none;"<class data-addmodal-target="#addmodal" id="addbutton"><button id="addpop" class="buttonmode" ></button></class>	</div>
+				<class data-hintmodal-target="#hintmodal" id="hintbutton"><button id="Rafflebutton" class="buttonmode">RAFFLE</button></class>	
+
+				
 			</div>
 			<p style="color:darkgray" align="justify" >If you enjoyed playing 🔗<strong style="color:white;">CHN LNK</strong>🧩, you can show your support by <strong style='color: var(--green);' ><a href="https://www.buymeacoffee.com/sank0403" target="_"><u>Buying Us A Coffee</u></a></strong> ☕️. THANK YOU for all the Love! 💕 </p>			
 		</div>
@@ -173,11 +176,11 @@
 				<div id="bbhdr">New Game In</div>
 				<div id="bb"></div>
 			</div>
-			<div>
+<!-- 			<div>
 				<div id="pzlhdr">Try a different puzzle</div>
 				<div id="pzl"><b><a href="https://sank0403.github.io/geordle/" target="_">Play <u>GEORDLE</u>🌎</a></b>
 				</div>
-			</div>
+			</div> -->
 		</div>
 		<!-- <center><div class="email"><a href="mailto: geowordle@gmail.com">📧</a></div></center> -->
 		<br>
@@ -199,19 +202,77 @@
 		<div class="hintmodal-body">
 				<!-- <strong style="color:white;">Length of First Name and Last Name</strong> along with the <strong style="color:white;">STARTING LETTERS </strong>are given below. Use this wisely to identify the player! -->
 				We are trying to spread the word about <strong style="color:white;">CHN LNK </strong>and you can help a great deal. If you enjoyed the game, use the link below to EMAIL your friends and family and let them know about CHN LNK. For every person who tries out the game, you enter 1 draw each towards a monthly raffle to win an Amazon gift card. <br>
-				<a href="mailto:?cc=geowordle@gmail.com&subject=CHN LNK - Invitation &body=Try%20this%20new%20word%20game%20-%20https://sank0403.github.io/chnlnk/"><br><br>
-				<div class="email"><center><u>📧 SEND INVITE EMAIL 📧</u><br><br></center></div>
-				</a>
-				PS: Only add the email address of the recepients, and leave all other content of the email as such. <br>
-				
+				<center><br><br><a id="emailLink" href="#" class="email">📧 SEND INVITE EMAIL 📧</a><br><br></center>
+				PS: Only add the email address of the recepients, and leave all other content of the email as such. <br>	
 			<br><br><br>
+			
+			<script>
+			
+function randomStr(len, arr) {
+    let ans = '';
+    for (let i = len; i > 0; i--) {
+        ans +=
+            arr[(Math.floor(Math.random() * arr.length))];
+    }
+    return(ans);
+}
+			
+// Function to create a mailto link with subject and optional body
+function createMailtoLink(subject, body = "", cc = "") {
+    // Encode parameters to handle spaces and special characters	
+    const params = new URLSearchParams();
+    if (subject) params.append("subject", subject);
+    if (body) params.append("body", body);
+    if (cc) params.append("cc", cc);
+
+    return `mailto:?${params.toString()}`;
+}
+
+// Example usage
+<!-- const email = "example@example.com"; -->
+var randomstng = randomStr(10, '12345abcde');
+const subject = "CHN LNK : Invitation - Unique Code is " + randomstng;
+const body = "Hello,\n\nTry CHN LNK - new daily word game. \n\n https://sank0403.github.io/chnlnk";
+const cc = "geowordle@gmail.com";
+
+// Set the link dynamically
+document.getElementById("emailLink").href = createMailtoLink(subject, body, cc);
+</script>
+			
+			
 			<div id="additionalhint"></div>	
 			<br><br>
 		</div>
 	</div>		
+	
+	<div class="addmodal" id="addmodal">
+		<div class="addmodal-header">
+			<div class="title"><strong>
+					<!-- Feedback -->
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12 text-center">
+								<h3>GIVEAWAY ALERT!</h3>
+							</div>
+						</div>
+					</div>
+				</strong></div>
+			<button data-close3-button class="close-button">&times;</button>
+		</div>
+		<div class="addmodal-body">	
+			Thank you for coming back to play CHN LNK! <br><br>
+			At the end of the game, look for the <strong style="color:white;">RAFFLE</strong> button on the Statistics page to enter yourself in a <strong style="color:white;">GIVEAWAY</strong>!
+			<br><br>				
+			</p>				
+		</div>
+	</div>		
+	
+	
+	
 	<div id="overlay"></div>
 	<div id="overlay1"></div>
 	<div id="overlay2"></div>
+	<div id="overlay3"></div>
 	<hr>	
     <div id="lives">
 	</div>	

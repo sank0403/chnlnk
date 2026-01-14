@@ -619,6 +619,56 @@ ul {
 }
 
 
+
+.addmodal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: 200ms ease-in-out;
+  border: 1px solid black;
+  border-radius: 5%;
+  z-index: 5;
+  background-color: black;
+  width: 400px;
+  max-width: 100%;
+}
+
+.addmodal.active {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.addmodal-header {
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid white;
+
+}
+
+.addmodal-header .addmodal-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.addmodal-header .close-button {
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.addmodal-body {
+  padding: 10px 15px;
+  text-align: justify;
+  color: lightgray;
+  font-size: 11px;
+}
+
+
 .hintmodal {
   position: fixed;
   top: 50%;
@@ -710,6 +760,7 @@ ul {
   pointer-events: all;
 }
 
+
 #overlay1 {
   position: fixed;
   top: 0;
@@ -750,6 +801,7 @@ ul {
 	color: #ff9900;
 	font-weight: bold;
 }
+
 
 #lives{
 	height: 20px;
