@@ -665,7 +665,7 @@ ul {
   padding: 10px 15px;
   text-align: justify;
   color: lightgray;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 
@@ -714,7 +714,7 @@ ul {
   padding: 10px 15px;
   text-align: justify;
   color: lightgray;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 
@@ -759,6 +759,26 @@ ul {
   opacity: 1;
   pointer-events: all;
 }
+
+
+
+#overlay3 {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: GrayText;
+  opacity: 0;
+  pointer-events: none;
+  transition: 200ms ease-in-out;
+}
+
+#overlay3.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
 
 
 #overlay1 {
