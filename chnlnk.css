@@ -234,24 +234,26 @@ ul {
 #archiveboard {
   display: flex;
   flex-wrap: wrap;
-  flex-direction: row-reverse;
+  justify-content: flex-start;   /* rows start from the left */
+  width: 320px;                  /* pick a width that fits N tiles per row */
+  margin: 0 auto;                /* center the board as a block */
 }
 
+
 .archivetile {
-    /* Box */
-    border: 2px solid lightgray;
-	border-radius: 5px;
-    width: 50px;
-    height: 50px;
-    margin: 7px;
-    /* Text */
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    display: flex;
-    justify-content: center;
-    align-items: center; 
+  border: 2px solid lightgray;
+  border-radius: 5px;
+  width: 45px;
+  height: 45px;
+  margin: 7px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
 /* #boardlast1 {
 
   display: flex;
@@ -819,8 +821,9 @@ padding: 0px;
   text-transform: uppercase;	
   font-family: 'Courier New', cursive;	
   text-align: center;
-  color: orange;
-  font-size: 16px;
+  color: red;
+  font-size: 14.5px;
+  font-weight: bold;
 }
 
 
@@ -924,8 +927,6 @@ padding: 0px;
   0%, 100% { opacity: 1; }
   50% { opacity: 0.2; }
 }
-
-
 
 /* #submission { */
   /* position: relative; */

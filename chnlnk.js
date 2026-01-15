@@ -563,7 +563,7 @@ function closepastmodal(pastmodal) {
 function playArchive(){
 		const div = document.getElementById("archiveboard");
 		div.innerHTML = ""; // Clears all child elements	
-        for (let q = 1; q < days; q++) {
+        for  (let q = days-1; q >= 1; q--)  {
             // <span id="0-0" class="tile">P</span>
             let archivetile = document.createElement("span");
             archivetile.id = q.toString();
@@ -666,8 +666,8 @@ function intialize() {
 	ele.innerHTML += (days);
 	if (submitterlist[index] != ""){
 		let ele1 = document.getElementById("submitter");
-		ele1.innerHTML += " By " + submitterlist[index];
-		ele1.classList.add("special");
+		ele1.innerHTML += "Submitted By " + submitterlist[index];
+		// ele1.classList.add("flash2");
 	}
 	
 /* 	document.getElementById("pzlhdr").style.display = "none";
