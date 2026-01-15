@@ -349,6 +349,7 @@ openModalButtons.forEach(button => {
   button.addEventListener('click', () => {
     const modal = document.querySelector(button.dataset.modalTarget)
     openModal(modal)
+	modalhide();
   })
 })
 
@@ -358,6 +359,7 @@ overlay.addEventListener('click', () => {
   const modals = document.querySelectorAll('.modal.active')
   modals.forEach(modal => {
     closeModal(modal)
+	modalshow();
   })
 })
 
@@ -365,6 +367,7 @@ closeModalButtons.forEach(button => {
   button.addEventListener('click', () => {
     const modal = button.closest('.modal')
     closeModal(modal)
+	modalshow();
   })
 })
 
@@ -391,6 +394,7 @@ openHintmodalButtons.forEach(button => {
 		const hintmodal = document.querySelector(button.dataset.hintmodalTarget)
 		openHintmodal(hintmodal)
 		closeSummary(summary)
+		modalhide();
 	})
 })
 
@@ -398,6 +402,7 @@ overlay2.addEventListener('click', () => {
 	const hintmodals = document.querySelectorAll('.hintmodal.active')
 	hintmodals.forEach(hintmodal => {
 		closeHintmodal(hintmodal)
+		modalshow();
 	})
 })
 
@@ -405,6 +410,7 @@ closeHintmodalButtons.forEach(button => {
 	button.addEventListener('click', () => {
 		const hintmodal = button.closest('.hintmodal')
 		closeHintmodal(hintmodal)
+		modalshow();
 	})
 })
 
@@ -429,6 +435,7 @@ openSummaryButtons.forEach(button => {
 	button.addEventListener('click', () => {
 		const summary = document.querySelector(button.dataset.summaryTarget)
 		openSummary(summary)
+		modalhide();
 	})
 })
 
@@ -436,6 +443,7 @@ overlay1.addEventListener('click', () => {
 	const summarys = document.querySelectorAll('.summary.active')
 	summarys.forEach(summary => {
 		closeSummary(summary)
+		modalshow();
 	})
 })
 
@@ -443,6 +451,7 @@ closeSummaryButtons.forEach(button => {
 	button.addEventListener('click', () => {
 		const summary = button.closest('.summary')
 		closeSummary(summary)
+		modalshow();
 	})
 })
 
@@ -468,6 +477,7 @@ openaddmodalButtons.forEach(button => {
 	button.addEventListener('click', () => {
 		const addmodal = document.querySelector(button.dataset.addmodalTarget)
 		openaddmodal(addmodal)
+		modalhide();
 	})
 })
 
@@ -475,6 +485,7 @@ overlay3.addEventListener('click', () => {
 	const addmodals = document.querySelectorAll('.addmodal.active')
 	addmodals.forEach(addmodal => {
 		closeaddmodal(addmodal)
+		modalshow();
 	})
 })
 
@@ -482,6 +493,7 @@ closeaddmodalButtons.forEach(button => {
 	button.addEventListener('click', () => {
 		const addmodal = button.closest('.addmodal')
 		closeaddmodal(addmodal)
+		modalshow();
 	})
 })
 
@@ -507,13 +519,7 @@ openpastmodalButtons.forEach(button => {
 		const pastmodal = document.querySelector(button.dataset.pastmodalTarget)
 		openpastmodal(pastmodal)
 		closeSummary(summary)
-		document.getElementById("boardfirst").style.visibility = "hidden";
-		document.getElementById("boardsecond").style.visibility = "hidden";
-		document.getElementById("boardthird").style.visibility = "hidden";
-		document.getElementById("boardforth").style.visibility = "hidden";
-		document.getElementById("boardfifth").style.visibility = "hidden";
-		document.getElementById("boardsixth").style.visibility = "hidden";
-		document.getElementById("boardlast").style.visibility = "hidden";
+		modalhide();
 	})
 })
 
@@ -521,13 +527,7 @@ overlay4.addEventListener('click', () => {
 	const pastmodals = document.querySelectorAll('.pastmodal.active')
 	pastmodals.forEach(pastmodal => {
 		closepastmodal(pastmodal)
-		document.getElementById("boardfirst").style.visibility = "visible";
-		document.getElementById("boardsecond").style.visibility = "visible";
-		document.getElementById("boardthird").style.visibility = "visible";
-		document.getElementById("boardforth").style.visibility = "visible";
-		document.getElementById("boardfifth").style.visibility = "visible";
-		document.getElementById("boardsixth").style.visibility = "visible";
-		document.getElementById("boardlast").style.visibility = "visible";		
+		modalshow();		
 	})
 })
 
@@ -535,13 +535,7 @@ closepastmodalButtons.forEach(button => {
 	button.addEventListener('click', () => {
 		const pastmodal = button.closest('.pastmodal')
 		closepastmodal(pastmodal)
-		document.getElementById("boardfirst").style.visibility = "visible";
-		document.getElementById("boardsecond").style.visibility = "visible";
-		document.getElementById("boardthird").style.visibility = "visible";
-		document.getElementById("boardforth").style.visibility = "visible";
-		document.getElementById("boardfifth").style.visibility = "visible";
-		document.getElementById("boardsixth").style.visibility = "visible";
-		document.getElementById("boardlast").style.visibility = "visible";
+		modalshow();				
 	})
 })
 
@@ -581,6 +575,36 @@ function playArchive(){
 			document.getElementById("archiveboard").appendChild(link);			
         }			
 }
+
+function modalhide(){
+		document.getElementById("boardfirst").style.visibility = "hidden";
+		document.getElementById("boardsecond").style.visibility = "hidden";
+		document.getElementById("boardthird").style.visibility = "hidden";
+		document.getElementById("boardforth").style.visibility = "hidden";
+		document.getElementById("boardfifth").style.visibility = "hidden";
+		document.getElementById("boardsixth").style.visibility = "hidden";
+		document.getElementById("boardlast").style.visibility = "hidden";
+		const rows = document.getElementsByClassName("keyboard-row");
+		for (let row of rows) {
+		row.style.visibility = "hidden";
+		}	
+}
+
+
+function modalshow(){
+		document.getElementById("boardfirst").style.visibility = "visible";
+		document.getElementById("boardsecond").style.visibility = "visible";
+		document.getElementById("boardthird").style.visibility = "visible";
+		document.getElementById("boardforth").style.visibility = "visible";
+		document.getElementById("boardfifth").style.visibility = "visible";
+		document.getElementById("boardsixth").style.visibility = "visible";
+		document.getElementById("boardlast").style.visibility = "visible";
+		const rows = document.getElementsByClassName("keyboard-row");
+		for (let row of rows) {
+		row.style.visibility = "visible";
+		}	
+}
+
 
 //Chart Code
 color0 = "brown"

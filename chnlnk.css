@@ -906,6 +906,7 @@ padding: 0px;
 
 
 
+
 #submission {
   position: relative;
   font-family: sans-serif;
@@ -916,7 +917,7 @@ padding: 0px;
   background: linear-gradient(90deg, #000, #fff, #000);
   background-repeat: no-repeat;
   background-size: 80%;
-  animation: animate 3s linear infinite;
+  animation: animate 6s linear infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: rgba(255, 255, 255, 0);
 }
