@@ -235,7 +235,7 @@ ul {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;   /* rows start from the left */
-  width: 320px;                  /* pick a width that fits N tiles per row */
+  width: 345px;                  /* pick a width that fits N tiles per row */
   margin: 0 auto;                /* center the board as a block */
 }
 
