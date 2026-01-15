@@ -48,6 +48,10 @@ function OpenADDModal() {
 	document.getElementById("addpop").click();
 }
 
+function OpenHINTModal() {
+	document.getElementById("Rafflebutton").click();
+}
+
 //Open Rules the very first time
 function OpenRules() {
 	document.getElementById("rulesbutton").click();
@@ -86,7 +90,7 @@ function displayFooter() {
 	document.getElementById("HTMLButton").style.display = "block";
 	document.getElementById("Rafflebutton").style.display = "block";
 	document.getElementById("Archivebutton").style.display = "block";
-
+	document.getElementById("submission").style.visibility = "visible";
 	// document.getElementById("CoffeButton").style.display = "block";	
 	// document.getElementById("FBButton").style.display = "block";	
 	// document.getElementById("TwitterButton").style.display = "block";	
@@ -108,6 +112,10 @@ localStorage.setItem("starcl5count", 0);
 localStorage.setItem("starclxcount", 0);
 localStorage.setItem("clshowalert",0);
 setTimeout(OpenRules, 1100);
+}
+
+if (!localStorage.clshowalert){
+localStorage.setItem("clshowalert",0);
 }
 
 //Baseline Date
@@ -434,6 +442,7 @@ const overlay1 = document.getElementById('overlay1')
 openSummaryButtons.forEach(button => {
 	button.addEventListener('click', () => {
 		const summary = document.querySelector(button.dataset.summaryTarget)
+		document.getElementById("submission").classList.add("flash2");
 		openSummary(summary)
 		modalhide();
 	})
@@ -481,13 +490,13 @@ openaddmodalButtons.forEach(button => {
 	})
 })
 
-overlay3.addEventListener('click', () => {
-	const addmodals = document.querySelectorAll('.addmodal.active')
-	addmodals.forEach(addmodal => {
-		closeaddmodal(addmodal)
-		modalshow();
-	})
-})
+// overlay3.addEventListener('click', () => {
+	// const addmodals = document.querySelectorAll('.addmodal.active')
+	// addmodals.forEach(addmodal => {
+		// closeaddmodal(addmodal)
+		// modalshow();
+	// })
+// })
 
 closeaddmodalButtons.forEach(button => {
 	button.addEventListener('click', () => {
@@ -668,6 +677,8 @@ function intialize() {
 	document.getElementById("HTMLButton").style.display = "none";
 	document.getElementById("Rafflebutton").style.display = "none";
 	document.getElementById("Archivebutton").style.display = "none";
+	document.getElementById("submission").style.visibility = "hidden";
+
 	
 	// document.getElementById("CoffeButton").style.display = "block";
 	// document.getElementById("FBButton").style.display = "none";
@@ -1537,7 +1548,17 @@ function processInput(e) {
 			displayFooter();
 			localStorage.gameclwon = 1;
 			setTimeout(ConfettiStart, 1000);
-			setTimeout(OpenStats, 4800);
+			if(localStorage.clshowalert > 1 && localStorage.clshowalert < 4){
+				setTimeout(OpenStats, 6800);
+				setTimeout(OpenHINTModal, 4800);
+				localStorage.clshowalert = Number(localStorage.clshowalert)+1;
+			}
+			else{
+				setTimeout(OpenStats, 4800)
+				if (localStorage.clshowalert == 1){
+				localStorage.clshowalert = Number(localStorage.clshowalert)+1;	
+				}
+			}
 	}	
 	let clwordone = "";
 	for (let i = 0; i < wordonewidth; i++){

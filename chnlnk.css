@@ -234,6 +234,7 @@ ul {
 #archiveboard {
   display: flex;
   flex-wrap: wrap;
+  flex-direction: row-reverse;
 }
 
 .archivetile {
@@ -911,33 +912,44 @@ padding: 0px;
   pointer-events: all;
 }
 
-
-
-
-
-#submission {
-  position: relative;
-  font-family: sans-serif;
-  color: red;
-  text-transform: uppercase;
-    letter-spacing: 2px;
-  overflow: hidden;
-  background: linear-gradient(90deg, #000, #fff, #000);
-  background-repeat: no-repeat;
-  background-size: 80%;
-  animation: animate 6s linear infinite;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: rgba(255, 255, 255, 0);
+.flash1{
+  color: orange;
 }
 
-@keyframes animate {
-  0% {
-    background-position: -500%;
-  }
-  100% {
-    background-position: 500%;
-  }
+.flash2 {
+  animation: flash 3s ease-in-out 5;
 }
+
+@keyframes flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+
+
+/* #submission { */
+  /* position: relative; */
+  /* font-family: sans-serif; */
+  /* color: red; */
+  /* text-transform: uppercase; */
+    /* letter-spacing: 2px; */
+  /* overflow: hidden; */
+  /* background: linear-gradient(90deg, #000, #fff, #000); */
+  /* background-repeat: no-repeat; */
+  /* background-size: 80%; */
+  /* animation: animate 6s linear infinite; */
+  /* -webkit-background-clip: text; */
+  /* -webkit-text-fill-color: rgba(255, 255, 255, 0); */
+/* } */
+
+/* @keyframes animate { */
+  /* 0% { */
+    /* background-position: -500%; */
+  /* } */
+  /* 100% { */
+    /* background-position: 500%; */
+  /* } */
+/* } */
 
 
 
