@@ -262,8 +262,8 @@ function intialize() {
 	ele.innerHTML += days;
 	if (submitterlist[index] != ""){
 		let ele1 = document.getElementById("submitter");
-		ele1.innerHTML += " By " + submitterlist[index];
-		ele1.classList.add("special");
+		ele1.innerHTML += "Submitted By " + submitterlist[index];
+		// ele1.classList.add("flash2");
 	}	
 	if (localStorage.getItem('archovercl' + days) != 0 && localStorage.getItem('archovercl' + days) != 1) {
 		localStorage['archovercl' + days] = 0; 
