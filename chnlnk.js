@@ -1,4 +1,16 @@
 var gameOver = false;
+let isPaused = false;
+
+function pauseMomentumTimer() {
+  isPaused = true;
+}
+
+function resumeMomentumTimer() {
+  isPaused = false;
+}
+
+localStorage.setItem("cldynamiteUsedThisRound", "false");
+
 //Confetti Begin
 btnParty.addEventListener("click", () => {
   confetti("tsparticles", {
@@ -21,23 +33,29 @@ btnParty.addEventListener("click", () => {
 //Confetti End
 //Counter Construct
 var div = document.getElementById("bb");
-setInterval(function () {
-	var toDate = new Date();
-	var tomorrow = new Date();
-	tomorrow.setHours(24, 0, 0, 0);
-	var diffMS = tomorrow.getTime() / 1000 - toDate.getTime() / 1000;
-	var diffHr = Math.floor(diffMS / 3600);
-	diffMS = diffMS - diffHr * 3600;
-	var diffMi = Math.floor(diffMS / 60);
-	diffMS = diffMS - diffMi * 60;
-	var diffS = Math.floor(diffMS);
-	var result = ((diffHr < 10) ? "0" + diffHr : diffHr);
-	result += ":" + ((diffMi < 10) ? "0" + diffMi : diffMi);
-	result += ":" + ((diffS < 10) ? "0" + diffS : diffS);
-	if (localStorage.getItem('gameovercl' + days) == 1) {
-		div.innerHTML = result;
-	}
+var bbInterval = setInterval(function () {
+    var toDate = new Date();
+    var tomorrow = new Date();
+    tomorrow.setHours(24, 0, 0, 0);
+
+    var diffMS = (tomorrow - toDate) / 1000;
+    var diffHr = Math.floor(diffMS / 3600);
+    diffMS -= diffHr * 3600;
+    var diffMi = Math.floor(diffMS / 60);
+    diffMS -= diffMi * 60;
+    var diffS = Math.floor(diffMS);
+
+    var result =
+        (diffHr < 10 ? "0" + diffHr : diffHr) + ":" +
+        (diffMi < 10 ? "0" + diffMi : diffMi) + ":" +
+        (diffS < 10 ? "0" + diffS : diffS);
+
+    if (localStorage.getItem("gameovercl" + days) == 1) {
+        div.innerHTML = result;
+        clearInterval(bbInterval); // ← stops runaway intervals
+    }
 }, 1000);
+
 
 //Open Stats at end of game
 function OpenStats() {
@@ -46,6 +64,10 @@ function OpenStats() {
 
 function OpenADDModal() {
 	document.getElementById("addpop").click();
+}
+
+function OpenTIMEModal() {
+	document.getElementById("timepop").click();
 }
 
 function OpenHINTModal() {
@@ -91,6 +113,7 @@ function displayFooter() {
 	document.getElementById("Rafflebutton").style.display = "block";
 	document.getElementById("Archivebutton").style.display = "block";
 	document.getElementById("submission").style.visibility = "visible";
+	document.getElementById("toggle-row").style.visibility = "visible";
 	// document.getElementById("CoffeButton").style.display = "block";	
 	// document.getElementById("FBButton").style.display = "block";	
 	// document.getElementById("TwitterButton").style.display = "block";	
@@ -111,12 +134,22 @@ localStorage.setItem("starcl4count", 0);
 localStorage.setItem("starcl5count", 0);
 localStorage.setItem("starclxcount", 0);
 localStorage.setItem("clshowalert",0);
-setTimeout(OpenRules, 1100);
 }
 
 if (!localStorage.clshowalert){
 localStorage.setItem("clshowalert",0);
 }
+
+if (!localStorage.clhardmode){
+localStorage.setItem("clhardmode",0);
+}
+
+if (!localStorage.clshowrules){
+localStorage.setItem("clshowrules",1);
+setTimeout(OpenRules, 1100);
+}
+
+
 
 //Baseline Date
 var a = new Date(); // Current date now.
@@ -141,6 +174,10 @@ if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('game
 	localStorage.setItem("clwordlast","");
 	localStorage.setItem("cldisabledkey", JSON.stringify(""));
 	localStorage.setItem("clgamecnt",0);
+	if(localStorage.clhardmode==1){
+		localStorage.setItem("momentumStart", Date.now());
+		localStorage.setItem("momentumRemaining", 60);
+	}
 }
 
 /* for (var d = 1; d < Number(days) ; d++){
@@ -172,39 +209,223 @@ function SetTier() {
 	}		
 }
 
+function disableKeys(keys) {
+  keys.forEach(k => document.getElementById("Key" + k).classList.add("disabled"));
+}
 
-function disablevowels(){
-	document.getElementById("KeyA").classList.add("disabled");	
-	document.getElementById("KeyE").classList.add("disabled");	
-	document.getElementById("KeyI").classList.add("disabled");	
-	document.getElementById("KeyO").classList.add("disabled");	
-	document.getElementById("KeyU").classList.add("disabled");	
+function showTimedBonus() {
+    const bonus = document.createElement("div");
+    bonus.id = "timed-bonus";
+
+    bonus.innerHTML = `
+        <div class="burst"></div>
+        <div class="bonus-text">⏱️ TIMED MODE BONUS ⭐ +1</div>
+    `;
+
+    document.body.appendChild(bonus);
+
+    // Remove after animation completes
+    setTimeout(() => bonus.remove(), 3200);
 }
 
 
-function disableconsos(){
-	document.getElementById("KeyB").classList.add("disabled");
-	document.getElementById("KeyC").classList.add("disabled");
-	document.getElementById("KeyD").classList.add("disabled");
-	document.getElementById("KeyF").classList.add("disabled");
-	document.getElementById("KeyG").classList.add("disabled");
-	document.getElementById("KeyH").classList.add("disabled");
-	document.getElementById("KeyJ").classList.add("disabled");
-	document.getElementById("KeyK").classList.add("disabled");	
-	document.getElementById("KeyL").classList.add("disabled");
-	document.getElementById("KeyM").classList.add("disabled");
-	document.getElementById("KeyN").classList.add("disabled");
-	document.getElementById("KeyP").classList.add("disabled");
-	document.getElementById("KeyQ").classList.add("disabled");
-	document.getElementById("KeyR").classList.add("disabled");
-	document.getElementById("KeyS").classList.add("disabled");
-	document.getElementById("KeyT").classList.add("disabled");
-	document.getElementById("KeyV").classList.add("disabled");
-	document.getElementById("KeyW").classList.add("disabled");
-	document.getElementById("KeyX").classList.add("disabled");
-	document.getElementById("KeyY").classList.add("disabled");
-	document.getElementById("KeyZ").classList.add("disabled");
+
+function openLifeTradeModal() {
+    isPaused = true;; // pause timer
+    const modal = document.createElement("div");
+    modal.id = "life-trade-modal";
+    modal.innerHTML = `
+        <div class="life-trade-box">
+            <div class="life-trade-title">TRADE OFFER</div>
+            <div class="life-trade-msg">Trade 2 Stars for an Extra Life?</div>
+            <div class="life-trade-buttons">
+                <button id="trade-yes">YES</button>
+                <button id="trade-no">NO</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    document.getElementById("trade-yes").onclick = () => {
+        modal.remove();
+        applyLifeTrade();
+        isPaused = false; // resume timer
+    };
+
+    document.getElementById("trade-no").onclick = () => {
+        modal.remove();
+        isPaused = false; // resume timer
+    };
 }
+
+
+function applyLifeTrade() {
+    // Deduct stars
+    localStorage.totalclstars = Number(localStorage.totalclstars) - 2;
+
+    // Restore 1 life
+    localStorage.cllivescnt = Number(localStorage.cllivescnt) - 1;
+
+    // Update life display
+    const livesLeft = 5 - Number(localStorage.cllivescnt);
+    localStorage.cllives = "🔴".repeat(livesLeft);
+    document.getElementById("lives").innerText = localStorage.cllives;
+	document.getElementById("answer").innerText = "";
+    // Animation
+    showLifeRestored();
+}
+
+
+function showLifeRestored() {
+    const pop = document.createElement("div");
+    pop.id = "life-restored";
+    pop.innerText = "+1 LIFE 🔴";
+    document.body.appendChild(pop);
+
+    setTimeout(() => pop.remove(), 2000);
+}
+
+function showPerfectSolve() {
+    const box = document.createElement("div");
+    box.id = "perfect-solve";
+	if (localStorage.clhardmode == 1){
+		box.innerHTML = `
+			<div class="perfect-burst"></div>
+			<div class="perfect-text">PERFECT SOLVE (TIMED) ⭐ +2 💣</div>
+		`;
+	}
+	else{
+		box.innerHTML = `
+			<div class="perfect-burst"></div>
+			<div class="perfect-text">PERFECT SOLVE ⭐ +1 💣</div>
+		`;		
+	}
+
+    document.body.appendChild(box);
+
+    setTimeout(() => box.remove(), 3000);
+}
+
+
+
+function updateDynamiteUI() {
+    const dyn = Number(localStorage.cldynamite || 0);
+    document.getElementById("dynamite-btn").innerText = "💣 x" + dyn;
+}
+updateDynamiteUI();
+
+
+document.getElementById("dynamite-btn").onclick = () => {
+    let dyn = Number(localStorage.cldynamite || 0);
+
+    if (dyn <= 0) {
+        shakeDynamiteButton();
+        return;
+    }
+
+    useDynamite();
+};
+
+// Shuffle helper
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function useDynamite() {
+    if (!gameOver) {
+
+        // ⭐ First-time tutorial message
+        if (!localStorage.getItem("cldynamiteTutorialShown")) {
+            showMessage("DYNAMITE ELIMINATES 2 LETTERS NOT PART OF THE CHAIN. HIT AGAIN TO USE!");
+            localStorage.setItem("cldynamiteTutorialShown", "true");
+            return;
+        }
+
+        let dyn = Number(localStorage.cldynamite || 0);
+
+        const forbiddenLetters = new Set(
+            (wordtwo + wordthree + wordfour + wordfive + wordsix).split("")
+        );
+
+        const keys = [...document.querySelectorAll(".key-tile")];
+
+        const eligibleKeys = keys.filter(k => {
+            if (k.classList.contains("disabled")) return false;
+
+            const letter = k.id.replace("Key", "");
+            if (forbiddenLetters.has(letter)) return false;
+
+            return true;
+        });
+
+        if (eligibleKeys.length < 2) {
+            showMessage("NOT ENOUGH KEYS TO BE ELIMINATED!");
+			shakeDynamiteButton();
+            return;
+        }
+
+        // ⭐ Consume 1 dynamite
+        localStorage.cldynamite = dyn - 1;
+        updateDynamiteUI();
+
+        // Shuffle to make selection random
+        shuffle(eligibleKeys);
+
+        const toRemove = eligibleKeys.slice(0, 2);
+
+        let disabledkeyarr = [];
+        let temp = JSON.parse(localStorage.getItem("cldisabledkey"));
+        if (temp && temp.length > 0) disabledkeyarr = temp;
+
+        const removedLetters = [];
+
+        toRemove.forEach(k => {
+            k.classList.add("disabled");
+
+            const letter = k.id.replace("Key", "");
+            removedLetters.push(letter);
+
+            disabledkeyarr.push(letter);
+        });
+
+        localStorage.setItem("cldisabledkey", JSON.stringify(disabledkeyarr));
+
+        showMessage("DYNAMITE ELIMINATED: " + removedLetters.join(", "));
+        localStorage.setItem("cldynamiteUsedThisRound", "true");
+
+        showDynamiteBlast();
+    }
+}
+
+
+function showMessage(msg) {
+    document.getElementById("answer").innerText = msg;
+}
+
+function showDynamiteBlast() {
+    const blast = document.createElement("div");
+    blast.id = "dynamite-blast";
+    blast.innerText = "💥";
+    document.body.appendChild(blast);
+    setTimeout(() => blast.remove(), 1200);
+}
+
+function shakeDynamiteButton() {
+    const btn = document.getElementById("dynamite-btn");
+	if ((!localStorage.cldynamite)|| (Number(localStorage.cldynamite) === 0)){
+		showMessage("NO DYNAMITES AVAILABLE");
+	}
+    btn.classList.add("shake");
+    setTimeout(() => btn.classList.remove("shake"), 400);
+}
+
+
+
+
 // function FBFunction() {
 // 	myFunction();
 // 	setTimeout(myFunctionOpenFB, 100);
@@ -236,10 +457,18 @@ function disableconsos(){
 // 	window.open("https://wa.me/", "_blank");
 // }
 
-//Open Rules the very first time
-function OpenRules() {
-	document.getElementById("rulesbutton").click();
-}
+
+document.getElementById("hardmodetoggle").addEventListener("change", function () {
+  if (this.checked) {
+    // console.log("Timed Mode Enabled");
+	localStorage.clhardmode = 1;
+    // enable timed mode logic here
+  } else {
+    // console.log("Timed Mode Disabled");
+	localStorage.clhardmode = 0;
+    // disable timed mode logic here
+  }
+});
 
 //Clipboard Code
 function myFunction() {
@@ -357,6 +586,7 @@ openModalButtons.forEach(button => {
   button.addEventListener('click', () => {
     const modal = document.querySelector(button.dataset.modalTarget)
     openModal(modal)
+	pauseMomentumTimer();
 	modalhide();
   })
 })
@@ -367,6 +597,7 @@ overlay.addEventListener('click', () => {
   const modals = document.querySelectorAll('.modal.active')
   modals.forEach(modal => {
     closeModal(modal)
+	resumeMomentumTimer();
 	modalshow();
   })
 })
@@ -375,6 +606,7 @@ closeModalButtons.forEach(button => {
   button.addEventListener('click', () => {
     const modal = button.closest('.modal')
     closeModal(modal)
+	resumeMomentumTimer();
 	modalshow();
   })
 })
@@ -443,7 +675,12 @@ openSummaryButtons.forEach(button => {
 	button.addEventListener('click', () => {
 		const summary = document.querySelector(button.dataset.summaryTarget)
 		document.getElementById("submission").classList.add("flash2");
+		const elems = document.getElementsByClassName("toggle-label");
+		for (let el of elems) {
+		  el.classList.add("flash2");
+		}
 		openSummary(summary)
+		pauseMomentumTimer();
 		modalhide();
 	})
 })
@@ -452,6 +689,7 @@ overlay1.addEventListener('click', () => {
 	const summarys = document.querySelectorAll('.summary.active')
 	summarys.forEach(summary => {
 		closeSummary(summary)
+		resumeMomentumTimer();
 		modalshow();
 	})
 })
@@ -460,6 +698,7 @@ closeSummaryButtons.forEach(button => {
 	button.addEventListener('click', () => {
 		const summary = button.closest('.summary')
 		closeSummary(summary)
+		resumeMomentumTimer();
 		modalshow();
 	})
 })
@@ -486,6 +725,7 @@ openaddmodalButtons.forEach(button => {
 	button.addEventListener('click', () => {
 		const addmodal = document.querySelector(button.dataset.addmodalTarget)
 		openaddmodal(addmodal)
+		pauseMomentumTimer();
 		modalhide();
 	})
 })
@@ -502,6 +742,7 @@ closeaddmodalButtons.forEach(button => {
 	button.addEventListener('click', () => {
 		const addmodal = button.closest('.addmodal')
 		closeaddmodal(addmodal)
+		resumeMomentumTimer();
 		modalshow();
 	})
 })
@@ -516,6 +757,49 @@ function closeaddmodal(addmodal) {
 	if (addmodal == null) return
 	addmodal.classList.remove('active')
 	overlay3.classList.remove('active')
+}
+
+const opentimemodalButtons = document.querySelectorAll('[data-timemodal-target]')
+const closetimemodalButtons = document.querySelectorAll('[data-close3-button]')
+const overlay5 = document.getElementById('overlay5')
+
+
+opentimemodalButtons.forEach(button => {
+	button.addEventListener('click', () => {
+		const timemodal = document.querySelector(button.dataset.timemodalTarget)
+		opentimemodal(timemodal)
+		pauseMomentumTimer();
+		modalhide();
+	})
+})
+
+// overlay5.addEventListener('click', () => {
+	// const timemodals = document.querySelectorAll('.timemodal.active')
+	// timemodals.forEach(timemodal => {
+		// closetimemodal(timemodal)
+		// modalshow();
+	// })
+// })
+
+closetimemodalButtons.forEach(button => {
+	button.addEventListener('click', () => {
+		const timemodal = button.closest('.timemodal')
+		closetimemodal(timemodal)
+		resumeMomentumTimer();
+		modalshow();
+	})
+})
+
+function opentimemodal(timemodal) {
+	if (timemodal == null) return
+	timemodal.classList.add('active')
+	overlay5.classList.add('active')
+}
+
+function closetimemodal(timemodal) {
+	if (timemodal == null) return
+	timemodal.classList.remove('active')
+	overlay5.classList.remove('active')
 }
 
 const openpastmodalButtons = document.querySelectorAll('[data-pastmodal-target]')
@@ -593,6 +877,9 @@ function modalhide(){
 		document.getElementById("boardfifth").style.visibility = "hidden";
 		document.getElementById("boardsixth").style.visibility = "hidden";
 		document.getElementById("boardlast").style.visibility = "hidden";
+		if(localStorage.clhardmode == 1){
+			document.getElementById("momentum-bar-container").style.display = "none";
+		}
 		const rows = document.getElementsByClassName("keyboard-row");
 		for (let row of rows) {
 		row.style.visibility = "hidden";
@@ -608,12 +895,254 @@ function modalshow(){
 		document.getElementById("boardfifth").style.visibility = "visible";
 		document.getElementById("boardsixth").style.visibility = "visible";
 		document.getElementById("boardlast").style.visibility = "visible";
+		if(localStorage.clhardmode == 1){
+			if (localStorage.getItem('gameovercl' + days) == "1"){
+			document.getElementById("momentum-counter").innerText = "60";
+			}
+			document.getElementById("momentum-bar-container").style.display = "block";
+		}
 		const rows = document.getElementsByClassName("keyboard-row");
 		for (let row of rows) {
 		row.style.visibility = "visible";
 		}	
 }
 
+function restoreMomentumTimer() {
+  const savedStart = localStorage.getItem("momentumStart");
+  const savedRemaining = localStorage.getItem("momentumRemaining");
+
+  if (!savedStart || !savedRemaining) {
+    startMomentumTimer();
+    return;
+  }
+
+  const elapsed = Math.floor((Date.now() - savedStart) / 1000);
+  const remaining = savedRemaining - elapsed;
+
+  if (remaining > 0) {
+    momentumTime = remaining;
+    updateMomentumBar();
+    startMomentumInterval(); // resume ticking
+  } else {
+    handleMomentumFailure(); // timer expired while page was closed
+    startMomentumTimer();    // start a new cycle
+  }
+}
+
+// if (localStorage.clhardmode == 1) {
+	let momentumTime = 60; // seconds
+	let momentumInterval;
+	// let lives = 5;
+	// let lastSolvedCount = 0;
+	// localStorage.setItem("momentumStart", Date.now());
+	// localStorage.setItem("momentumRemaining", momentumTime);
+// }
+function startMomentumTimer() {
+  momentumTime = 60;
+  updateMomentumBar();
+  startMomentumInterval();
+}
+
+
+function startMomentumInterval() {
+if (!gameOver){	
+  clearInterval(momentumInterval);
+
+	momentumInterval = setInterval(() => {
+
+if (gameOver) {
+    clearInterval(momentumInterval);
+    return;
+}
+if (isPaused) return;
+ // NEW: skip ticking
+
+    momentumTime--;
+    updateMomentumBar();
+
+    localStorage.setItem("momentumStart", Date.now());
+    localStorage.setItem("momentumRemaining", momentumTime);
+
+    if (momentumTime <= 0) {
+      handleMomentumFailure();
+      momentumTime = 60; // reset without creating new interval
+    }
+
+}, 1000);
+
+}
+}
+
+
+function updateMomentumBar() {
+  // if (!gameOver) {
+    const bar = document.getElementById("momentum-bar");
+    const counter = document.getElementById("momentum-counter");
+
+    const percent = (momentumTime / 60) * 100;
+    bar.style.width = percent + "%";
+
+    counter.innerText = Math.max(0, momentumTime);
+
+
+    if (percent > 40) {
+      bar.style.backgroundColor = "#4caf50";
+    } else if (percent > 20) {
+      bar.style.backgroundColor = "#ff9800";
+    } else {
+      bar.style.backgroundColor = "#f44336";
+    // }
+  }
+}
+
+
+
+
+
+
+function handleMomentumFailure() {
+  if (localStorage.cllivescnt < 5) {
+    localStorage.cllivescnt = Number(localStorage.cllivescnt) + 1;
+    flashBarRed();
+    updateLivesDisplay();
+  }
+}
+
+function flashBarRed() {
+  const bar = document.getElementById("momentum-bar");
+  bar.style.backgroundColor = "#ff0000";
+  setTimeout(() => updateMomentumBar(), 500);
+}
+
+function updateLivesDisplay() {
+	// if (LetterFound == 0){
+		// localStorage.cllivescnt = Number(localStorage.cllivescnt) + 1;
+		document.getElementById("answer").style.color = "lightgray";
+		switch (Number(localStorage.cllivescnt)) {
+				case 0: localStorage.cllives = "🔴🔴🔴🔴🔴";
+					break;
+				case 1: localStorage.cllives = "🔴🔴🔴🔴";
+					document.getElementById("answer").innerText = "TIME UP - FIRST LIFE LOST!"
+					break;	
+				case 2: localStorage.cllives = "🔴🔴🔴";
+					document.getElementById("answer").innerText = "TIME UP - SECOND LIFE LOST!"
+					break;				
+				case 3: localStorage.cllives = "🔴🔴";
+					document.getElementById("answer").innerText = "TIME UP - THIRD LIFE LOST!"				
+					break;	
+				case 4: localStorage.cllives = "🔴";
+					document.getElementById("answer").innerText = "TIME UP - LAST LIFE ALERT!"		
+					setTimeout(FinalClue, 500);			
+					// Offer star-for-life trade when only 1 life remains
+					if (Number(localStorage.cllivescnt) == 4 &&
+						Number(localStorage.totalclstars) >= 2 &&
+						localStorage.cltradeoffered != 1) {
+
+						localStorage.cltradeoffered = 1; // prevent repeat offers
+						openLifeTradeModal();
+					}					
+					break;	
+				// case 5: localStorage.cllives = "⚠️";
+				// 	document.getElementById("answer").innerText = "LAST LIFE ALERT!"
+				// 	setTimeout(FinalClue, 500);	
+				// 	break;
+				case 5: localStorage.cllives = "❌❌❌❌❌";
+					break;					
+		}		
+		
+		document.getElementById("lives").innerText = localStorage.cllives;
+		document.getElementById("lives").classList.add("blink");
+		setTimeout(removeblink, 3000);	
+		
+		
+		
+	if (Number(localStorage.cllivescnt == 5)){
+		for (let i = 0; i < wordonewidth; i++) {
+			let currTile = document.getElementById("1" + '-' + i);
+			currTile.innerText = wordone[i];
+			currTile.classList.remove("poptile","correct");
+			// currTile.classList.add("failed", "animated");
+		}	
+		for (let i = 0; i < wordtwowidth; i++) {
+			let currTile = document.getElementById("2" + '-' + i);
+			currTile.innerText = wordtwo[i];
+			currTile.classList.remove("poptile","correct");
+			currTile.classList.add("failed", "animated");
+		}		
+		for (let i = 0; i < wordthreewidth; i++) {
+			let currTile = document.getElementById("3" + '-' + i);
+			currTile.innerText = wordthree[i];
+			currTile.classList.remove("poptile","correct");
+			currTile.classList.add("failed", "animated");
+		}		
+		for (let i = 0; i < wordfourwidth; i++) {
+			let currTile = document.getElementById("4" + '-' + i);
+			currTile.innerText = wordfour[i];
+			currTile.classList.remove("poptile","correct");
+			currTile.classList.add("failed", "animated");
+		}		
+		for (let i = 0; i < wordfivewidth; i++) {
+			let currTile = document.getElementById("5" + '-' + i);
+			currTile.innerText = wordfive[i];
+			currTile.classList.remove("poptile","correct");
+			currTile.classList.add("failed", "animated");
+		}		
+		for (let i = 0; i < wordsixwidth; i++) {
+			let currTile = document.getElementById("6" + '-' + i);
+			currTile.innerText = wordsix[i];
+			currTile.classList.remove("poptile","correct");
+			currTile.classList.add("failed", "animated");
+		}
+		for (let i = 0; i < wordlastwidth; i++) {
+			let currTile = document.getElementById("7" + '-' + i);
+			currTile.innerText = wordlast[i];
+			currTile.classList.remove("poptile","correct");
+			// currTile.classList.add("failed", "animated");
+		}		
+			gameOver = true;
+			disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
+			disableKeys(["A","E","I","O","U"]); // vowels
+			if (localStorage.clhardmode == 1){
+				// NEW: delete saved timer so refresh cannot restore it
+				localStorage.removeItem("momentumStart");
+				localStorage.removeItem("momentumRemaining");
+
+				// NEW: freeze bar at full
+				momentumTime = 60;
+				updateMomentumBar();
+
+				// NEW: stop the timer forever
+				clearInterval(momentumInterval);
+			}
+			localStorage.starclxcount = Number(localStorage.starclxcount) + 1;
+			colorx = "green";
+			localStorage.clgamecnt = 6;
+			document.getElementById("answer").style.color = "red";
+			document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
+			localStorage.setItem(('gameovercl' + days), 1);	
+			localStorage.totalclplayed = Number(localStorage.totalclplayed) + 1;	
+			localStorage.totalclstreak = 0;		
+			SetTier();			
+			var winpct = localStorage.totalclplayed > 0
+						? Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100)
+						: 0;
+			document.getElementById(11).innerText = "PLAYED: " + localStorage.totalclplayed;
+			document.getElementById(12).innerText = "WIN %: " + winpct;
+			document.getElementById(13).innerText = "STREAK: " + localStorage.totalclstreak + tiericon;
+			document.getElementById(14).innerText = "STARS: " + localStorage.totalclstars;			
+			displayFooter();
+			localStorage.gameclwon = 0;
+			setTimeout(OpenStats, 3200);				
+	}	
+	// }
+}
+
+function onConsonantSolved() {
+  // Call this whenever a new consonant is correctly guessed
+momentumTime = 60;
+updateMomentumBar();
+
+}
 
 //Chart Code
 color0 = "brown"
@@ -658,7 +1187,27 @@ window.onload = function(){
 }
 
 
+window.addEventListener("DOMContentLoaded", () => {
+  const toggle = document.getElementById("hardmodetoggle");
+  const saved = localStorage.getItem("clhardmode");
+
+  if (saved === "1") {
+    toggle.checked = true;
+    // enable timed mode logic here
+  } else {
+    toggle.checked = false;
+    // disable timed mode logic here
+  }
+});
+
+
 function intialize() {
+	document.getElementById("momentum-bar-container").style.display = "none";
+	// if ((localStorage.clhardmode == 1) && (!localStorage.getItem('gameovercl' + days))){
+	if (localStorage.clhardmode == 1) {			
+		restoreMomentumTimer();	
+		document.getElementById("momentum-bar-container").style.display = "block";
+	}
 	if (Number (localStorage.clcorrect) == 0){
 		localStorage.clcorrect = wordonewidth + wordlastwidth;
 	} 
@@ -678,7 +1227,7 @@ function intialize() {
 	document.getElementById("Rafflebutton").style.display = "none";
 	document.getElementById("Archivebutton").style.display = "none";
 	document.getElementById("submission").style.visibility = "hidden";
-
+	document.getElementById("toggle-row").style.visibility = "hidden";
 	
 	// document.getElementById("CoffeButton").style.display = "block";
 	// document.getElementById("FBButton").style.display = "none";
@@ -936,7 +1485,9 @@ function intialize() {
 			}
 		})
     SetTier();
-	var winpct = Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100);
+			var winpct = localStorage.totalclplayed > 0
+						? Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100)
+						: 0;
 	document.getElementById(11).innerText = "PLAYED: " + localStorage.totalclplayed;
 	document.getElementById(12).innerText = "WIN %: " + winpct;
 	document.getElementById(13).innerText = "STREAK: " + localStorage.totalclstreak + tiericon;
@@ -1002,16 +1553,29 @@ function intialize() {
 				// currTile.classList.add("animated","correct");
 			}		
 				document.getElementById("answer").style.color = "lightgray";
-				if (Number(localStorage.clstarscnt) == 0){
-					document.getElementById("answer").innerText = "STREAK INTACT. THOUGH, NO STARS WON!";
-				}
-				else if (Number(localStorage.clstarscnt) > 0){
-					if (localStorage.clstarscnt == 1){
-						document.getElementById("answer").innerText = "GREAT GOING! YOU WON " + localStorage.clstarscnt +" STAR TODAY.";
+				// if (Number(localStorage.clstarscnt) == 0){
+					// document.getElementById("answer").innerText = "STREAK INTACT. THOUGH, NO STARS WON!";
+				// }
+				
+				const baseStars = 5 - Number(localStorage.cllivescnt);
+				const bonusApplied = (Number(localStorage.clstarscnt) > baseStars); // true only if timed-mode bonus increased stars
+				
+				
+				if (Number(localStorage.clstarscnt) > 0){
+					let msg = "";
+
+					if (localStorage.clstarscnt === 1) {
+						msg = "GREAT GOING! YOU WON 1 STAR TODAY.";
+					} else {
+						msg = "GREAT GOING! YOU WON " + localStorage.clstarscnt + " STARS TODAY.";
 					}
-					else {
-						document.getElementById("answer").innerText = "GREAT GOING! YOU WON " + localStorage.clstarscnt +" STARS TODAY.";
-					}					
+
+					if (bonusApplied) {
+						msg += " (+1 TIMED MODE BONUS!)";
+					}
+
+					document.getElementById("answer").innerText = msg;
+				
 /* 					for (let s = 0; s < localStorage.clstarscnt; s++){
 						document.getElementById("answerstar").innerText += "⭐";
 					} */	
@@ -1079,15 +1643,27 @@ function intialize() {
 		document.getElementById("KeyI").classList.add("key-tile-disabled");
 		document.getElementById("KeyO").classList.add("key-tile-disabled");
 		document.getElementById("KeyU").classList.add("key-tile-disabled");		
-		disableconsos();
-		disablevowels();
+		disableKeys(["A","E","I","O","U"]); // vowels
+		disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
+		if (localStorage.clhardmode == 1){
+			// NEW: delete saved timer so refresh cannot restore it
+			localStorage.removeItem("momentumStart");
+			localStorage.removeItem("momentumRemaining");
+
+			// NEW: freeze bar at full
+			momentumTime = 60;
+			updateMomentumBar();
+
+			// NEW: stop the timer forever
+			clearInterval(momentumInterval);
+		}
 		setTimeout(OpenStats, 1100);
 		displayFooter();		
 	}
 	// Default Path
 	else {
 			if(localStorage.vowelactive == 1){
-			disableconsos();
+			disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
 			document.getElementById("KeyA").classList.add( "key-tile-enabled");
 			document.getElementById("KeyE").classList.add( "key-tile-enabled");
 			document.getElementById("KeyI").classList.add( "key-tile-enabled");
@@ -1212,6 +1788,9 @@ function processInput(e) {
 		// }
 		for (let i = 0; i < wordtwowidth; i++){
 			let currTile = document.getElementById("2" + '-' + i);
+			if (localStorage.clhardmode == 1){
+				onConsonantSolved();
+			}
 			if (e.code[3] == wordtwo[i]){
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
@@ -1229,7 +1808,9 @@ function processInput(e) {
 		}	
 		for (let i = 0; i < wordthreewidth; i++){
 			let currTile = document.getElementById("3" + '-' + i);
-			if (e.code[3] == wordthree[i]){
+			if (localStorage.clhardmode == 1){
+				onConsonantSolved();
+			}			if (e.code[3] == wordthree[i]){
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
 					currTile.classList.add("correct","poptile");
@@ -1246,7 +1827,9 @@ function processInput(e) {
 		}			
 		for (let i = 0; i < wordfourwidth; i++){
 			let currTile = document.getElementById("4" + '-' + i);
-			if (e.code[3] == wordfour[i]){
+			if (localStorage.clhardmode == 1){
+				onConsonantSolved();
+			}			if (e.code[3] == wordfour[i]){
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
 					currTile.classList.add("correct","poptile");
@@ -1263,7 +1846,9 @@ function processInput(e) {
 		}		
 		for (let i = 0; i < wordfivewidth; i++){
 			let currTile = document.getElementById("5" + '-' + i);
-			if (e.code[3] == wordfive[i]){
+			if (localStorage.clhardmode == 1){
+				onConsonantSolved();
+			}			if (e.code[3] == wordfive[i]){
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
 					currTile.classList.add("correct","poptile");
@@ -1280,7 +1865,9 @@ function processInput(e) {
 		}		
 		for (let i = 0; i < wordsixwidth; i++){
 			let currTile = document.getElementById("6" + '-' + i);
-			if (e.code[3] == wordsix[i]){
+			if (localStorage.clhardmode == 1){
+				onConsonantSolved();
+			}			if (e.code[3] == wordsix[i]){
 				if (currTile.innerText == ""){
 					currTile.innerText = e.code[3];
 					currTile.classList.add("correct","poptile");
@@ -1311,6 +1898,11 @@ function processInput(e) {
 			OpenADDModal();
 			localStorage.clshowalert = 1;
 		}
+		
+		if (localStorage.consocount > 5 && localStorage.clshowalert == 4 && localStorage.totalclplayed > 0){
+			OpenTIMEModal();
+			localStorage.clshowalert = 5;
+		}		
 	if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.vowelcount)) && localStorage.vowelactive == 0){
 		document.getElementById("KeyA").classList.remove("disabled", "key-tile-disabled");
 		document.getElementById("KeyE").classList.remove("disabled", "key-tile-disabled");
@@ -1322,7 +1914,7 @@ function processInput(e) {
 		document.getElementById("KeyI").classList.add( "key-tile-enabled","poptile");
 		document.getElementById("KeyO").classList.add( "key-tile-enabled","poptile");
 		document.getElementById("KeyU").classList.add( "key-tile-enabled","poptile");	
-		disableconsos();
+		disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
 		document.getElementById("answer").style.color = "lightgray";
 		document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"	
 		localStorage.vowelactive = 1;	
@@ -1359,6 +1951,15 @@ function processInput(e) {
 				case 4: localStorage.cllives = "🔴";
 					document.getElementById("answer").innerText = "FOURTH LIFE LOST - LAST LIFE ALERT!"		
 					setTimeout(FinalClue, 500);			
+					
+					// Offer star-for-life trade when only 1 life remains
+					if (Number(localStorage.cllivescnt) == 4 &&
+						Number(localStorage.totalclstars) >= 2 &&
+						localStorage.cltradeoffered != 1) {
+
+						localStorage.cltradeoffered = 1; // prevent repeat offers
+						openLifeTradeModal();
+					}
 					break;	
 				// case 5: localStorage.cllives = "⚠️";
 				// 	document.getElementById("answer").innerText = "LAST LIFE ALERT!"
@@ -1417,8 +2018,21 @@ function processInput(e) {
 			// currTile.classList.add("failed", "animated");
 		}		
 			gameOver = true;
-			disableconsos();
-			disablevowels();
+			disableKeys(["A","E","I","O","U"]); // vowels
+			disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
+			if (localStorage.clhardmode == 1){
+				// NEW: delete saved timer so refresh cannot restore it
+				localStorage.removeItem("momentumStart");
+				localStorage.removeItem("momentumRemaining");
+
+				// NEW: freeze bar at full
+				momentumTime = 60;
+				updateMomentumBar();
+
+				// NEW: stop the timer forever
+				clearInterval(momentumInterval);
+			}
+
 			localStorage.starclxcount = Number(localStorage.starclxcount) + 1;
 			colorx = "green";
 			localStorage.clgamecnt = 6;
@@ -1428,7 +2042,9 @@ function processInput(e) {
 			localStorage.totalclplayed = Number(localStorage.totalclplayed) + 1;	
 			localStorage.totalclstreak = 0;		
 			SetTier();			
-			var winpct = Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100);
+			var winpct = localStorage.totalclplayed > 0
+						? Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100)
+						: 0;
 			document.getElementById(11).innerText = "PLAYED: " + localStorage.totalclplayed;
 			document.getElementById(12).innerText = "WIN %: " + winpct;
 			document.getElementById(13).innerText = "STREAK: " + localStorage.totalclstreak + tiericon;
@@ -1482,8 +2098,53 @@ function processInput(e) {
 			// currTile.classList.add("animated");
 		}		
 			gameOver = true;
-			disablevowels();
+			disableKeys(["A","E","I","O","U"]); // vowels
+			if (localStorage.clhardmode == 1){
+				// NEW: delete saved timer so refresh cannot restore it
+				localStorage.removeItem("momentumStart");
+				localStorage.removeItem("momentumRemaining");
+
+				// NEW: freeze bar at full
+				momentumTime = 60;
+				updateMomentumBar();
+
+				// NEW: stop the timer forever
+				clearInterval(momentumInterval);
+			}
+			    // PERFECT SOLVE CHECK
+				if ((Number(localStorage.cllivescnt) === 0) && (localStorage.getItem("cldynamiteUsedThisRound") === "false")) {
+					showPerfectSolve();
+					// Award dynamite
+					let dyn = Number(localStorage.cldynamite || 0);
+					if (localStorage.clhardmode == 1){
+					   localStorage.cldynamite = dyn + 2;	
+					}
+					else{
+						localStorage.cldynamite = dyn + 1;
+					}
+					updateDynamiteUI();
+					
+				}
+
 			localStorage.clstarscnt = 5 - Number(localStorage.cllivescnt);
+			// Bonus star for timed mode win
+			// Only apply bonus if hard mode is active
+			if (localStorage.clhardmode == 1) {
+
+				// Save the original star count
+				const beforeBonus = Number(localStorage.clstarscnt);
+
+				// Apply bonus with cap
+				const afterBonus = Math.min(5, beforeBonus + 1);
+
+				localStorage.clstarscnt = afterBonus;
+
+				// Only show animation if the bonus actually increased stars
+				if (afterBonus > beforeBonus) {
+					showTimedBonus();
+				}
+			}
+
 			switch (Number(localStorage.clstarscnt)) {
 				case 0: localStorage.starcl0count = Number(localStorage.starcl0count) + 1;
 					color0 = "green";
@@ -1511,17 +2172,34 @@ function processInput(e) {
 					break;
 			}
 			document.getElementById("answer").style.color = "lightgray";
-			if (Number(localStorage.clstarscnt) == 0){
-				document.getElementById("answer").innerText = "STREAK INTACT. THOUGH, NO STARS WON!";
+			// if (Number(localStorage.clstarscnt) == 0){
+				// document.getElementById("answer").innerText = "STREAK INTACT. THOUGH, NO STARS WON!";
+			// }
+			// else if (Number(localStorage.clstarscnt) > 0){
+					// if (localStorage.clstarscnt == 1){
+						// document.getElementById("answer").innerText = "GREAT GOING! YOU WON " + localStorage.clstarscnt +" STAR TODAY.";
+					// }
+					// else {
+						// document.getElementById("answer").innerText = "GREAT GOING! YOU WON " + localStorage.clstarscnt +" STARS TODAY.";
+					// }
+			// }
+			const baseStars = 5 - Number(localStorage.cllivescnt);
+			const bonusApplied = (Number(localStorage.clstarscnt) > baseStars); // true only if timed-mode bonus increased stars
+
+			let msg = "";
+
+			if (localStorage.clstarscnt === 1) {
+				msg = "GREAT GOING! YOU WON 1 STAR TODAY.";
+			} else {
+				msg = "GREAT GOING! YOU WON " + localStorage.clstarscnt + " STARS TODAY.";
 			}
-			else if (Number(localStorage.clstarscnt) > 0){
-					if (localStorage.clstarscnt == 1){
-						document.getElementById("answer").innerText = "GREAT GOING! YOU WON " + localStorage.clstarscnt +" STAR TODAY.";
-					}
-					else {
-						document.getElementById("answer").innerText = "GREAT GOING! YOU WON " + localStorage.clstarscnt +" STARS TODAY.";
-					}
+
+			if (bonusApplied) {
+				msg += " (+1 TIMED MODE BONUS!)";
 			}
+
+			document.getElementById("answer").innerText = msg;
+						
 /* 			for (let s = 0; s < localStorage.clstarscnt; s++){
 				document.getElementById("answerstar").innerText += "⭐";
 			} */
@@ -1540,7 +2218,9 @@ function processInput(e) {
 			localStorage.totalclstreak = Number(localStorage.totalclstreak) + 1;
 			localStorage.totalclstars = Number(localStorage.totalclstars) + Number(localStorage.clstarscnt);
 			SetTier();
-			var winpct = Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100);
+			var winpct = localStorage.totalclplayed > 0
+						? Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100)
+						: 0;
 			document.getElementById(11).innerText = "PLAYED: " + localStorage.totalclplayed;
 			document.getElementById(12).innerText = "WIN %: " + winpct;
 			document.getElementById(13).innerText = "STREAK: " + localStorage.totalclstreak + tiericon;
