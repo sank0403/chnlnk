@@ -2129,9 +2129,8 @@ function processInput(e) {
 
 			localStorage.clstarscnt = 5 - Number(localStorage.cllivescnt);
 			// Bonus star for timed mode win
-			// Only apply bonus if hard mode is active
-			if (localStorage.clhardmode == 1) {
-
+			// Only apply bonus if hard mode is active and dynamite is not used
+			if ((Number(localStorage.clhardmode) === 1) && (localStorage.getItem("cldynamiteUsedThisRound") === "false")) {
 				// Save the original star count
 				const beforeBonus = Number(localStorage.clstarscnt);
 
