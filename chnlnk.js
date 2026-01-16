@@ -316,14 +316,16 @@ updateDynamiteUI();
 
 
 document.getElementById("dynamite-btn").onclick = () => {
-    let dyn = Number(localStorage.cldynamite || 0);
+   if (!gameOver) {	
+		let dyn = Number(localStorage.cldynamite || 0);
 
-    if (dyn <= 0) {
-        shakeDynamiteButton();
-        return;
-    }
+		if (dyn <= 0) {
+			shakeDynamiteButton();
+			return;
+		}
 
-    useDynamite();
+		useDynamite();
+   }
 };
 
 // Shuffle helper
