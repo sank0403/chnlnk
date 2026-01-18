@@ -1043,6 +1043,7 @@ function modalhide(){
 		for (let row of rows) {
 		row.style.visibility = "hidden";
 		}	
+		document.getElementById("toggle-row").style.visibility = "hidden";
 }
 
 
@@ -1064,6 +1065,7 @@ function modalshow(){
 		for (let row of rows) {
 		row.style.visibility = "visible";
 		}	
+		document.getElementById("toggle-row").style.visibility = "visible";
 }
 
 function restoreMomentumTimer() {
