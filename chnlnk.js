@@ -112,8 +112,8 @@ function displayFooter() {
 	document.getElementById("HTMLButton").style.display = "block";
 	document.getElementById("Rafflebutton").style.display = "block";
 	document.getElementById("Archivebutton").style.display = "block";
-	document.getElementById("submission").style.visibility = "visible";
-	document.getElementById("toggle-row").style.visibility = "visible";
+	document.getElementById("submission").style.display = "block";
+	//document.getElementById("toggle-row").style.visibility = "visible";
 	// document.getElementById("CoffeButton").style.display = "block";	
 	// document.getElementById("FBButton").style.display = "block";	
 	// document.getElementById("TwitterButton").style.display = "block";	
@@ -166,6 +166,7 @@ if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('game
 	localStorage.setItem("cllivescnt",0);
 	localStorage.setItem("clstarscnt",0);
 	localStorage.setItem("clguesscnt",0);
+	localStorage.setItem("clgamestarted",0);
 	localStorage.setItem("clwordone","");
 	localStorage.setItem("clwordtwo","");
 	localStorage.setItem("clwordthree","");	
@@ -618,12 +619,14 @@ document.getElementById("hardmodetoggle").addEventListener("change", function ()
   if (this.checked) {
     // console.log("Timed Mode Enabled");
 	localStorage.clhardmode = 1;
+	localStorage.clgamestarted = 1;
     // enable timed mode logic here
   } else {
     // console.log("Timed Mode Disabled");
 	localStorage.clhardmode = 0;
     // disable timed mode logic here
   }
+  setTimeout(() => location.reload(), 150);
 });
 
 //Clipboard Code
@@ -831,10 +834,10 @@ openSummaryButtons.forEach(button => {
 	button.addEventListener('click', () => {
 		const summary = document.querySelector(button.dataset.summaryTarget)
 		document.getElementById("submission").classList.add("flash2");
-		const elems = document.getElementsByClassName("toggle-label");
-		for (let el of elems) {
-		  el.classList.add("flash2");
-		}
+		// const elems = document.getElementsByClassName("toggle-label");
+		// for (let el of elems) {
+		  // el.classList.add("flash2");
+		// }
 		openSummary(summary)
 		pauseMomentumTimer();
 		modalhide();
@@ -1256,9 +1259,11 @@ function updateLivesDisplay() {
 			// currTile.classList.add("failed", "animated");
 		}		
 			gameOver = true;
+			localStorage.clgamestarted = 0;
+			document.getElementById("toggle-row").style.display = "none";
 			disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
 			disableKeys(["A","E","I","O","U"]); // vowels
-			if (localStorage.clhardmode == 1){
+			// if (localStorage.clhardmode == 1){
 				// NEW: delete saved timer so refresh cannot restore it
 				localStorage.removeItem("momentumStart");
 				localStorage.removeItem("momentumRemaining");
@@ -1269,7 +1274,7 @@ function updateLivesDisplay() {
 
 				// NEW: stop the timer forever
 				clearInterval(momentumInterval);
-			}
+			// }
 			localStorage.starclxcount = Number(localStorage.starclxcount) + 1;
 			colorx = "green";
 			localStorage.clgamecnt = 6;
@@ -1349,15 +1354,18 @@ window.addEventListener("DOMContentLoaded", () => {
 
   if (saved === "1") {
     toggle.checked = true;
-    // enable timed mode logic here
+   // enable timed mode logic here
   } else {
     toggle.checked = false;
-    // disable timed mode logic here
+   // disable timed mode logic here
   }
 });
 
 
 function intialize() {
+	if (localStorage.clgamestarted == 1){
+		document.getElementById("toggle-row").style.display = "none";
+	}
 	document.getElementById("momentum-bar-container").style.display = "none";
 	// if ((localStorage.clhardmode == 1) && (!localStorage.getItem('gameovercl' + days))){
 	if (localStorage.clhardmode == 1) {			
@@ -1382,8 +1390,8 @@ function intialize() {
 	document.getElementById("HTMLButton").style.display = "none";
 	document.getElementById("Rafflebutton").style.display = "none";
 	document.getElementById("Archivebutton").style.display = "none";
-	document.getElementById("submission").style.visibility = "hidden";
-	document.getElementById("toggle-row").style.visibility = "hidden";
+	document.getElementById("submission").style.display = "none";
+	// document.getElementById("toggle-row").style.visibility = "hidden";
 	
 	// document.getElementById("CoffeButton").style.display = "block";
 	// document.getElementById("FBButton").style.display = "none";
@@ -1794,6 +1802,8 @@ function intialize() {
 				document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
 		}
 		gameOver = true;
+		localStorage.clgamestarted = 0;
+		document.getElementById("toggle-row").style.display = "none";
 		document.getElementById("KeyA").classList.add("key-tile-disabled");
 		document.getElementById("KeyE").classList.add("key-tile-disabled");
 		document.getElementById("KeyI").classList.add("key-tile-disabled");
@@ -1801,7 +1811,7 @@ function intialize() {
 		document.getElementById("KeyU").classList.add("key-tile-disabled");		
 		disableKeys(["A","E","I","O","U"]); // vowels
 		disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
-		if (localStorage.clhardmode == 1){
+		// if (localStorage.clhardmode == 1){
 			// NEW: delete saved timer so refresh cannot restore it
 			localStorage.removeItem("momentumStart");
 			localStorage.removeItem("momentumRemaining");
@@ -1812,7 +1822,7 @@ function intialize() {
 
 			// NEW: stop the timer forever
 			clearInterval(momentumInterval);
-		}
+		// }
 		setTimeout(OpenStats, 1100);
 		displayFooter();		
 	}
@@ -1951,6 +1961,8 @@ function processKey() {
 
 function processInput(e) {
     if (gameOver) return; 
+	localStorage.clgamestarted = 1;
+	document.getElementById("toggle-row").style.display = "none";
 	localStorage.clguesscnt = Number(localStorage.clguesscnt) + 1;
 	document.getElementById("lives").classList.remove("blink");	
 	document.getElementById("answer").innerText = "";	
@@ -2267,9 +2279,11 @@ function processInput(e) {
 			// currTile.classList.add("failed", "animated");
 		}		
 			gameOver = true;
+			localStorage.clgamestarted = 0;
+			document.getElementById("toggle-row").style.display = "none";
 			disableKeys(["A","E","I","O","U"]); // vowels
 			disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
-			if (localStorage.clhardmode == 1){
+			// if (localStorage.clhardmode == 1){
 				// NEW: delete saved timer so refresh cannot restore it
 				localStorage.removeItem("momentumStart");
 				localStorage.removeItem("momentumRemaining");
@@ -2280,7 +2294,7 @@ function processInput(e) {
 
 				// NEW: stop the timer forever
 				clearInterval(momentumInterval);
-			}
+			// }
 
 			localStorage.starclxcount = Number(localStorage.starclxcount) + 1;
 			colorx = "green";
@@ -2347,8 +2361,10 @@ function processInput(e) {
 			// currTile.classList.add("animated");
 		}		
 			gameOver = true;
+			localStorage.clgamestarted = 0;
+			document.getElementById("toggle-row").style.display = "none";
 			disableKeys(["A","E","I","O","U"]); // vowels
-			if (localStorage.clhardmode == 1){
+			// if (localStorage.clhardmode == 1){
 				// NEW: delete saved timer so refresh cannot restore it
 				localStorage.removeItem("momentumStart");
 				localStorage.removeItem("momentumRemaining");
@@ -2359,7 +2375,7 @@ function processInput(e) {
 
 				// NEW: stop the timer forever
 				clearInterval(momentumInterval);
-			}
+			// }
 			    // PERFECT SOLVE CHECK
 				if ((Number(localStorage.cllivescnt) === 0) && (localStorage.getItem("cldynamiteUsedThisRound") === "false")) {
 					showPerfectSolve();
