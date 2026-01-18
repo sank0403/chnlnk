@@ -736,7 +736,7 @@ var wordlastwidth = wordlast.length;
 var disabledkeyarr = [];
 if (localStorage.vowelactive != 1){	
 document.getElementById("answer").style.color = "lightgray";
-document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND";
+document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND.";
 }
 const openModalButtons = document.querySelectorAll('[data-modal-target]')
 const closeModalButtons = document.querySelectorAll('[data-close-button]')
