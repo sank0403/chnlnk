@@ -1258,8 +1258,7 @@ function updateLivesDisplay() {
 			currTile.classList.remove("poptile","correct");
 			// currTile.classList.add("failed", "animated");
 		}		
-			gameOver = true;
-			localStorage.clgamestarted = 0;
+			gameOver = true;			
 			document.getElementById("toggle-row").style.display = "none";
 			disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
 			disableKeys(["A","E","I","O","U"]); // vowels
@@ -1293,6 +1292,8 @@ function updateLivesDisplay() {
 			document.getElementById(14).innerText = "STARS: " + localStorage.totalclstars;			
 			displayFooter();
 			localStorage.gameclwon = 0;
+			localStorage.clgamestarted = 0;
+			localStorage.clhardmode = 0;			
 			setTimeout(OpenStats, 3200);				
 	}	
 	// }
@@ -1364,6 +1365,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 function intialize() {
 	if (localStorage.clgamestarted == 1){
+	// if (localStorage.clhardmode ==1){	
 		document.getElementById("toggle-row").style.display = "none";
 	}
 	document.getElementById("momentum-bar-container").style.display = "none";
@@ -1802,7 +1804,6 @@ function intialize() {
 				document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
 		}
 		gameOver = true;
-		localStorage.clgamestarted = 0;
 		document.getElementById("toggle-row").style.display = "none";
 		document.getElementById("KeyA").classList.add("key-tile-disabled");
 		document.getElementById("KeyE").classList.add("key-tile-disabled");
@@ -1825,9 +1826,14 @@ function intialize() {
 		// }
 		setTimeout(OpenStats, 1100);
 		displayFooter();		
+		localStorage.clgamestarted = 0;
+		localStorage.clhardmode = 0;		
 	}
 	// Default Path
-	else {
+	else {	
+			if (localStorage.clgamestarted == 1){
+				document.getElementById("toggle-row").style.display = "none";
+			}
 			if(localStorage.vowelactive == 1){
 			disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
 			document.getElementById("KeyA").classList.add( "key-tile-enabled");
@@ -2279,7 +2285,6 @@ function processInput(e) {
 			// currTile.classList.add("failed", "animated");
 		}		
 			gameOver = true;
-			localStorage.clgamestarted = 0;
 			document.getElementById("toggle-row").style.display = "none";
 			disableKeys(["A","E","I","O","U"]); // vowels
 			disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
@@ -2314,6 +2319,8 @@ function processInput(e) {
 			document.getElementById(14).innerText = "STARS: " + localStorage.totalclstars;			
 			displayFooter();
 			localStorage.gameclwon = 0;
+			localStorage.clgamestarted = 0;
+			localStorage.clhardmode = 0;
 			setTimeout(OpenStats, 3200);				
 	}	
 	
@@ -2361,7 +2368,6 @@ function processInput(e) {
 			// currTile.classList.add("animated");
 		}		
 			gameOver = true;
-			localStorage.clgamestarted = 0;
 			document.getElementById("toggle-row").style.display = "none";
 			disableKeys(["A","E","I","O","U"]); // vowels
 			// if (localStorage.clhardmode == 1){
@@ -2524,6 +2530,8 @@ function processInput(e) {
 			document.getElementById(14).innerText = "STARS: " + localStorage.totalclstars;			
 			displayFooter();
 			localStorage.gameclwon = 1;
+			localStorage.clgamestarted = 0;
+			localStorage.clhardmode = 0;
 			setTimeout(ConfettiStart, 1000);
 			if(localStorage.clshowalert > 1 && localStorage.clshowalert < 4){
 				setTimeout(OpenStats, 6800);
