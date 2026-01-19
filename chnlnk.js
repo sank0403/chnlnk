@@ -112,7 +112,8 @@ function displayFooter() {
 	document.getElementById("bbhdr").style.display = "block";
 	document.getElementById("bb").style.display = "block";
 	document.getElementById("HTMLButton").style.display = "block";
-	// document.getElementById("Rafflebutton").style.display = "block";
+	document.getElementById("wabutton").style.display = "block";
+	document.getElementById("Rafflebutton").style.display = "block";
 	// document.getElementById("Archivebutton").style.display = "block";
 	// document.getElementById("submission").style.display = "block";
 	//document.getElementById("toggle-row").style.visibility = "visible";
@@ -1654,7 +1655,8 @@ function intialize() {
 	document.getElementById("bbhdr").style.display = "none";
 	document.getElementById("bb").style.display = "none";
 	document.getElementById("HTMLButton").style.display = "none";
-	// document.getElementById("Rafflebutton").style.display = "none";
+	document.getElementById("wabutton").style.display = "none";
+	document.getElementById("Rafflebutton").style.display = "none";
 	// document.getElementById("Archivebutton").style.display = "none";
 	// document.getElementById("submission").style.display = "none";
 	// document.getElementById("toggle-row").style.visibility = "hidden";
