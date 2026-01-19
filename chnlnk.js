@@ -444,13 +444,13 @@ function showPerfectSolve() {
 	if (localStorage.clhardmode == 1){
 		box.innerHTML = `
 			<div class="perfect-burst"></div>
-			<div class="perfect-text">PERFECT SOLVE (TIMED) ⭐ +2 💣</div>
+			<div class="perfect-text">👌 PERFECT SOLVE +2 💣</div>
 		`;
 	}
 	else{
 		box.innerHTML = `
 			<div class="perfect-burst"></div>
-			<div class="perfect-text">PERFECT SOLVE ⭐ +1 💣</div>
+			<div class="perfect-text">👌 PERFECT SOLVE +1 💣</div>
 		`;		
 	}
 
@@ -1156,11 +1156,6 @@ function updateMomentumBar() {
   }
 }
 
-
-
-
-
-
 function handleMomentumFailure() {
   if (localStorage.cllivescnt < 5) {
     localStorage.cllivescnt = Number(localStorage.cllivescnt) + 1;
@@ -1179,6 +1174,11 @@ function updateLivesDisplay() {
 	// if (LetterFound == 0){
 		// localStorage.cllivescnt = Number(localStorage.cllivescnt) + 1;
 		document.getElementById("answer").style.color = "lightgray";
+		if (localStorage.clMysteryActive === "true") {
+			const MysteryLetter = localStorage.clMysteryLetter;
+			removeQuestionFromTile(MysteryLetter);
+			localStorage.clMysteryActive = "false";
+		}
 		switch (Number(localStorage.cllivescnt)) {
 				case 0: localStorage.cllives = "🔴🔴🔴🔴🔴";
 					break;
