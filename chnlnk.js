@@ -93,6 +93,8 @@ function removeblink() {
 
 //Final Clue Text Attenion 
 function FinalClue() {
+	document.getElementById("answer").classList.remove("popanswer");
+	document.getElementById("answer").offsetWidth;
 	document.getElementById("answer").classList.add("popanswer");
 }
 
