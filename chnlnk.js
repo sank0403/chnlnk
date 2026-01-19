@@ -390,6 +390,8 @@ function openLifeTradeModal() {
 }
 
 
+
+
 function applyLifeTrade() {
     // Deduct stars
     localStorage.totalclstars = Number(localStorage.totalclstars) - 2;
@@ -495,8 +497,8 @@ function useDynamite() {
 
         // ⭐ First-time tutorial message
         if (!localStorage.getItem("cldynamiteTutorialShown")) {
-            // showMessage("DYNAMITE ELIMINATES 2 LETTERS NOT PART OF THE CHAIN. HIT AGAIN TO USE!");
-			showStreakPopup("💣 DYNAMITE ELIMINATES 2 LETTERS NOT PART OF THE CHAIN. HIT AGAIN TO USE!");
+            // showMessage("DYNAMITE ELIMINATES 2 INVALID LETTERS FROM THE KEYBOARD. HIT AGAIN TO USE!");
+			showStreakPopup("💣 DYNAMITE ELIMINATES 2 INVALID LETTERS FROM THE KEYBOARD ⌨️. \n HIT AGAIN TO USE!");
 			showMessage("");
             localStorage.setItem("cldynamiteTutorialShown", "true");
             return;
