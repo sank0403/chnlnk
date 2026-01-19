@@ -1,3 +1,23 @@
+// FIRST VISIT CHECK (must run before any reload logic)
+if (!localStorage.clshowrules){
+	localStorage.setItem("clshowrules",1);
+	setTimeout(OpenRules, 1100);
+    // Prevent deployment reload from firing on first visit
+    localStorage.setItem("skipReloadOnce", "1");
+}
+
+const BUILD_VERSION = "2025.01.19.01";
+
+if (localStorage.getItem("skipReloadOnce") === "1") {
+    // Clear the flag and skip reload this one time
+    localStorage.removeItem("skipReloadOnce");
+} else {
+    // Normal deployment reload logic
+    if (localStorage.getItem("clBuildVersion") !== BUILD_VERSION) {
+        localStorage.setItem("clBuildVersion", BUILD_VERSION);
+        location.reload();
+    }
+}
 var gameOver = false;
 let isPaused = false;
 
@@ -147,16 +167,9 @@ if (!localStorage.clhardmode){
 localStorage.setItem("clhardmode",0);
 }
 
-if (!localStorage.clshowrules){
-localStorage.setItem("clshowrules",1);
-setTimeout(OpenRules, 1100);
-}
-
-
-
 //Baseline Date
 var a = new Date(); // Current date now.
-var b = new Date(2025, 12, 9, 0, 0, 0, 0); // Start of TENIZ.
+var b = new Date(2025, 12, 9, 0, 0, 0, 0); // Start of CHN LNK.
 var d = (a - b); // Difference in milliseconds.
 var days = parseInt((d / 1000) / 86400);
 if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('gameovercl' + days) != 1) {
@@ -183,7 +196,7 @@ if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('game
 		localStorage.setItem("momentumStart", Date.now());
 		localStorage.setItem("momentumRemaining", 60);
 	}
-	location.reload();
+	// location.reload();
 }
 
 /* for (var d = 1; d < Number(days) ; d++){
