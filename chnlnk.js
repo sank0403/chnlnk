@@ -6,7 +6,7 @@ if (!localStorage.clshowrules){
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.19.01";
+const BUILD_VERSION = "2025.01.20.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -1312,9 +1312,9 @@ function modalhide(){
 		document.getElementById("boardfifth").style.visibility = "hidden";
 		document.getElementById("boardsixth").style.visibility = "hidden";
 		document.getElementById("boardlast").style.visibility = "hidden";
-		if(localStorage.clhardmode == 1){
-			document.getElementById("momentum-bar-container").style.display = "none";
-		}
+		// if(localStorage.clhardmode == 1){
+		document.getElementById("momentum-bar-container").style.display = "none";
+		// }
 		const rows = document.getElementsByClassName("keyboard-row");
 		for (let row of rows) {
 		row.style.visibility = "hidden";
