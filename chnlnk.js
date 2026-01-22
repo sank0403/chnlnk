@@ -6,7 +6,7 @@ if (!localStorage.clshowrules){
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.20.01";
+const BUILD_VERSION = "2025.01.21.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -72,7 +72,7 @@ var bbInterval = setInterval(function () {
 
     if (localStorage.getItem("gameovercl" + days) == 1) {
         div.innerHTML = result;
-        clearInterval(bbInterval); // ← stops runaway intervals
+        // clearInterval(bbInterval); // ← stops runaway intervals
     }
 }, 1000);
 
@@ -715,6 +715,9 @@ var masterwordlist = [
 ["yellow","banana","split","personality","test","pilot","episode","Divya"],
 ["ocean","tide","pool","table","cloth","pattern","maker",""],
 ["music","sheet","metal","plate","number","crunch","time",""],
+["lucky","stone","cold","blood","group","photo","finish","k.achu"],
+["light","weight","lifting","gear","change","over","time","gouri"],
+["coffee","table","tennis","match","point","break","room","h_ll"],
 ["desert","wind","mill","stone","age","limit","line",""],
 ["morning","dew","drop","zone","defense","system","check",""],
 ["traffic","light","speed","trap","door","frame","shop",""],
