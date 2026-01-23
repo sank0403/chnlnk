@@ -6,7 +6,7 @@ if (!localStorage.clshowrules){
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.21.01";
+const BUILD_VERSION = "2025.01.23.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -76,6 +76,31 @@ var bbInterval = setInterval(function () {
     }
 }, 1000);
 
+document.getElementById("wabutton").addEventListener("click", function () {
+    const menu = document.getElementById("waMenu");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+});
+
+// Optional: close menu when clicking outside
+document.addEventListener("click", function (e) {
+    const wrapper = document.querySelector(".wa-wrapper");
+    if (!wrapper.contains(e.target)) {
+        document.getElementById("waMenu").style.display = "none";
+    }
+});
+
+function postStatsToWhatsApp() {
+	myFunction();
+	setTimeout(myFunctionOpenWA, 100);
+}
+
+function myFunctionOpenWA() {
+	/* window.open("https://wa.me/?text=urlencodedtext", "_blank"); */
+	/* var linktext = "Paste Stats and Share!"; */
+	/* var walink = "https://wa.me/?text=" + linktext; */
+	/* window.open(walink); */
+	window.open("https://wa.me/", "_blank");
+}
 
 //Open Stats at end of game
 function OpenStats() {

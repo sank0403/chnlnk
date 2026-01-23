@@ -282,9 +282,23 @@
 			<div class="button-row">
 				<!-- &nbsp; -->
 				<button id="HTMLButton" class="buttonmode" title="Copy To Clipboard" onclick="myFunction(); this.blur();">SHARE</button>
-				<a href="https://whatsapp.com/channel/0029VbC8UHRKbYMKkXJJag0w" target="_blank">
-				<img src="whatsapp.png" id="wabutton" title="Join Whatsapp Channel" style="height:35px;">
-				</a>
+				<!-- <a href="https://whatsapp.com/channel/0029VbC8UHRKbYMKkXJJag0w" target="_blank"> -->
+				<!-- <img src="whatsapp.png" id="wabutton" title="Join Whatsapp Channel" style="height:35px;"> -->
+				<!-- </a> -->
+				
+				<div class="wa-wrapper">
+					<img src="whatsapp.png" id="wabutton" class="wa-icon" title="WhatsApp Options" style="height:35px;">
+					
+					<div class="wa-menu" id="waMenu">
+						<a href="https://whatsapp.com/channel/0029VbC8UHRKbYMKkXJJag0w" target="_blank">
+							1. CHN LNK CHANNEL
+						</a>
+						<a href="#" onclick="postStatsToWhatsApp()">
+							2. POST STATS
+						</a>
+					</div>
+				</div>
+				
 				<div style="display:none;"<class data-addmodal-target="#addmodal" id="addbutton"><button id="addpop" class="buttonmode" ></button></class>	</div>
 				<div style="display:none;"<class data-timemodal-target="#timemodal" id="timebutton"><button id="timepop" class="buttonmode" ></button></class>	</div>
 				<class data-hintmodal-target="#hintmodal" id="hintbutton"><button id="Rafflebutton" class="buttonmode" title="Join Monthly Raffle">RAFFLE</button></class>			

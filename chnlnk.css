@@ -82,6 +82,44 @@ a { text-decoration: none; }
   }
 }
 
+
+.wa-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* .wa-icon { */
+    /* height: 5px; */
+    /* cursor: pointer; */
+/* } */
+
+.wa-menu {
+    position: absolute;
+    top: 40px;
+    /* left: 30px; */
+    background: black;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 8px 0;
+    width: 130px;
+    display: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    z-index: 999;
+}
+
+.wa-menu a {
+    display: block;
+    padding: 5px 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 10px;
+}
+
+.wa-menu a:hover {
+    background: gray;
+}
+
+
 .buttonrad {
   border-radius: 12px;
     font-weight: bold;
