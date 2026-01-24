@@ -90,11 +90,18 @@ document.addEventListener("click", function (e) {
 });
 
 function postStatsToWhatsApp() {
-    myFunction(); // copies stats to clipboard
-    setTimeout(() => {
-        window.open("https://api.whatsapp.com/send?text=", "_blank");
-    }, 100);
+    const stats =
+`🔗 CHN LNK # 14 🧩
+
+2/5 - 🔴 🔴 🔴 ⭐ ⭐
+🔥 Streak: 1 | ⭐ Stars: 2
+
+https://sank0403.github.io/chnlnk/`;
+
+    const url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(stats);
+    window.open(url, "_blank");
 }
+
 
 //Open Stats at end of game
 function OpenStats() {
