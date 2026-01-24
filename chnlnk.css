@@ -576,7 +576,7 @@ scroll-behavior : smooth;
 
 .voweltile {
     /* Box */
-    border: 2px solid darkred;
+    border: 2px solid red;
 	border-radius: 5px;
     width: 25px;
     height: 25px;
@@ -592,7 +592,7 @@ scroll-behavior : smooth;
 
 .voweltilesmall {
     /* Box */
-    border: 2px solid darkred;
+    border: 2px solid red;
 	border-radius: 3px;
     width: 20px;
     height: 20px;
@@ -665,7 +665,7 @@ scroll-behavior : smooth;
 
 .disabled {
     pointer-events: none;
-    opacity: 0.5;
+    opacity: 0.4;
 }
 
 
@@ -749,7 +749,7 @@ scroll-behavior : smooth;
 }
 
 .key-tile-enabled {
-  border: 1px solid  darkred;
+  border: 1px solid  rgb(250, 0, 0);
 }
 
 .enter-key-tile {
