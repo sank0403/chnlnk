@@ -6,7 +6,7 @@ if (!localStorage.clshowrules){
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.23.05";
+const BUILD_VERSION = "2025.01.23.06";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -130,7 +130,7 @@ function postStatsToWhatsApp() {
 }
 
 function buildStats(puzzleNumber, movesUsed, dots, streak, stars, tier, tiericon) {
-    const tierLine = tier ? `\n ${tiericon} Tier: ${tier}` : "";
+    const tierLine = tier ? `${tiericon} Tier: ${tier}` : "";
     return `🔗 CHN LNK # ${puzzleNumber} 🧩
 
 ${movesUsed} - ${dots}
