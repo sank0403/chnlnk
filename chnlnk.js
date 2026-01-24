@@ -1054,19 +1054,33 @@ var wordsix = masterwordlist[index][5].toUpperCase();
 var wordlast = masterwordlist[index][6].toUpperCase();
 if (wordone.length > 8 || wordtwo.length > 8 || wordthree.length > 8 || wordfour.length > 8 || wordfive.length > 8 || wordsix.length > 8 || wordlast.length > 8) {
     const box1 = document.getElementById("boardfirst");
-    box1.style.setProperty("padding-left", "0px");
+    box1.style.setProperty("padding-left", "10px");
+	box1.style.setProperty("padding-top", "15px");	
+	box1.style.setProperty("padding-bottom", "4px");	
     const box2 = document.getElementById("boardsecond");
-    box2.style.setProperty("padding-left", "0px");
+    box2.style.setProperty("padding-left", "10px");
+	box2.style.setProperty("padding-top", "4px");	
+	box2.style.setProperty("padding-bottom", "4px");	
     const box3 = document.getElementById("boardthird");
-    box3.style.setProperty("padding-left", "0px");
+    box3.style.setProperty("padding-left", "10px");
+	box3.style.setProperty("padding-top", "4px");	
+	box3.style.setProperty("padding-bottom", "4px");	
     const box4 = document.getElementById("boardforth");
-    box4.style.setProperty("padding-left", "0px");
+    box4.style.setProperty("padding-left", "10px");
+	box4.style.setProperty("padding-top", "4px");	
+	box4.style.setProperty("padding-bottom", "4px");	
     const box5 = document.getElementById("boardfifth");
-    box5.style.setProperty("padding-left", "0px");
+    box5.style.setProperty("padding-left", "10px");
+	box5.style.setProperty("padding-top", "4px");	
+	box5.style.setProperty("padding-bottom", "4px");	
     const box6 = document.getElementById("boardsixth");
-    box6.style.setProperty("padding-left", "0px");
+    box6.style.setProperty("padding-left", "10px");
+	box6.style.setProperty("padding-top", "4px");	
+	box6.style.setProperty("padding-bottom", "4px");	
     const box7 = document.getElementById("boardlast");
-    box7.style.setProperty("padding-left", "0px");
+    box7.style.setProperty("padding-left", "10px");
+	box7.style.setProperty("padding-top", "4px");
+	const boxes = document.querySelectorAll(".vertical-glow"); boxes.forEach(box => { box.style.setProperty("margin-left", "18px"); });	
 }
 
 var word = (wordone + wordtwo + wordthree + wordfour + wordfive + wordsix + wordlast).toUpperCase();
@@ -1366,9 +1380,9 @@ function playArchive() {
         archivetile.innerText = "Day " + q;
         if ((localStorage.getItem('archovercl' + q) == "1")) {
             if ((localStorage.getItem('archstatcl' + q) == "1")) {
-                archivetile.classList.add("correct");
+                archivetile.classList.add("correctarch");
             } else {
-                archivetile.classList.add("failed");
+                archivetile.classList.add("failedarch");
             }
         }
         const link = document.createElement("a");
@@ -1394,6 +1408,10 @@ function modalhide() {
     for (let row of rows) {
         row.style.visibility = "hidden";
     }
+    const connector = document.getElementsByClassName("vertical-glow");
+    for (let row of connector) {
+        row.style.visibility = "hidden";
+    }	
     document.getElementById("toggle-row").style.visibility = "hidden";
 }
 
@@ -1416,6 +1434,10 @@ function modalshow() {
     for (let row of rows) {
         row.style.visibility = "visible";
     }
+    const connector = document.getElementsByClassName("vertical-glow");
+    for (let row of connector) {
+        row.style.visibility = "visible";
+    }	
     document.getElementById("toggle-row").style.visibility = "visible";
 }
 
@@ -1584,31 +1606,31 @@ function updateLivesDisplay() {
         for (let i = 0; i < wordtwowidth; i++) {
             let currTile = document.getElementById("2" + '-' + i);
             currTile.innerText = wordtwo[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2","popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordthreewidth; i++) {
             let currTile = document.getElementById("3" + '-' + i);
             currTile.innerText = wordthree[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2","popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordfourwidth; i++) {
             let currTile = document.getElementById("4" + '-' + i);
             currTile.innerText = wordfour[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2","popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordfivewidth; i++) {
             let currTile = document.getElementById("5" + '-' + i);
             currTile.innerText = wordfive[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2","popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordsixwidth; i++) {
             let currTile = document.getElementById("6" + '-' + i);
             currTile.innerText = wordsix[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2","popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordlastwidth; i++) {
@@ -1736,7 +1758,7 @@ function refreshArchiveModal() {
         const q = tile.id.replace("archtile-", ""); // extract day number
 
         // Clear old classes
-        tile.classList.remove("correct", "failed");
+        tile.classList.remove("correctarch", "failedarch");
 
         // Read saved state
         const over = localStorage.getItem("archovercl" + q);
@@ -1745,9 +1767,9 @@ function refreshArchiveModal() {
         // Apply new state
         if (over === "1") {
             if (stat === "1") {
-                tile.classList.add("correct");
+                tile.classList.add("correctarch");
             } else {
-                tile.classList.add("failed");
+                tile.classList.add("failedarch");
             }
         }
     });
@@ -2089,31 +2111,31 @@ function intialize() {
             for (let i = 0; i < wordtwowidth; i++) {
                 let currTile = document.getElementById("2" + '-' + i);
                 currTile.innerText = wordtwo[i];
-                currTile.classList.remove("poptile");
+                currTile.classList.remove("poptile","popanswer");
                 currTile.classList.add("animated", "correct");
             }
             for (let i = 0; i < wordthreewidth; i++) {
                 let currTile = document.getElementById("3" + '-' + i);
                 currTile.innerText = wordthree[i];
-                currTile.classList.remove("poptile");
+                currTile.classList.remove("poptile","popanswer");
                 currTile.classList.add("animated", "correct");
             }
             for (let i = 0; i < wordfourwidth; i++) {
                 let currTile = document.getElementById("4" + '-' + i);
                 currTile.innerText = wordfour[i];
-                currTile.classList.remove("poptile");
+                currTile.classList.remove("poptile","popanswer");
                 currTile.classList.add("animated", "correct");
             }
             for (let i = 0; i < wordfivewidth; i++) {
                 let currTile = document.getElementById("5" + '-' + i);
                 currTile.innerText = wordfive[i];
-                currTile.classList.remove("poptile");
+                currTile.classList.remove("poptile","popanswer");
                 currTile.classList.add("animated", "correct");
             }
             for (let i = 0; i < wordsixwidth; i++) {
                 let currTile = document.getElementById("6" + '-' + i);
                 currTile.innerText = wordsix[i];
-                currTile.classList.remove("poptile");
+                currTile.classList.remove("poptile","popanswer");
                 currTile.classList.add("animated", "correct");
             }
             for (let i = 0; i < wordlastwidth; i++) {
@@ -2170,31 +2192,31 @@ function intialize() {
             for (let i = 0; i < wordtwowidth; i++) {
                 let currTile = document.getElementById("2" + '-' + i);
                 currTile.innerText = wordtwo[i];
-                currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+                currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
                 currTile.classList.add("failed", "animated");
             }
             for (let i = 0; i < wordthreewidth; i++) {
                 let currTile = document.getElementById("3" + '-' + i);
                 currTile.innerText = wordthree[i];
-                currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+                currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
                 currTile.classList.add("failed", "animated");
             }
             for (let i = 0; i < wordfourwidth; i++) {
                 let currTile = document.getElementById("4" + '-' + i);
                 currTile.innerText = wordfour[i];
-                currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+                currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
                 currTile.classList.add("failed", "animated");
             }
             for (let i = 0; i < wordfivewidth; i++) {
                 let currTile = document.getElementById("5" + '-' + i);
                 currTile.innerText = wordfive[i];
-                currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+                currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
                 currTile.classList.add("failed", "animated");
             }
             for (let i = 0; i < wordsixwidth; i++) {
                 let currTile = document.getElementById("6" + '-' + i);
                 currTile.innerText = wordsix[i];
-                currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+                currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
                 currTile.classList.add("failed", "animated");
             }
             for (let i = 0; i < wordlastwidth; i++) {
@@ -2270,7 +2292,7 @@ function intialize() {
                 let currTile = document.getElementById(`2-${i}`);
                 let ch = chars[i];
 
-                if (ch === "?") {
+                if (ch === "?" || ch === "🔓") {
                     currTile.innerText = "";
                 } else if (ch) {
                     currTile.innerText = ch;
@@ -2291,7 +2313,7 @@ function intialize() {
                 let currTile = document.getElementById(`3-${i}`);
                 let ch = chars[i];
 
-                if (ch === "?") {
+                if (ch === "?" || ch === "🔓") {
                     currTile.innerText = "";
                 } else if (ch) {
                     currTile.innerText = ch;
@@ -2312,7 +2334,7 @@ function intialize() {
                 let currTile = document.getElementById(`4-${i}`);
                 let ch = chars[i];
 
-                if (ch === "?") {
+                if (ch === "?" || ch === "🔓") {
                     currTile.innerText = "";
                 } else if (ch) {
                     currTile.innerText = ch;
@@ -2333,7 +2355,7 @@ function intialize() {
                 let currTile = document.getElementById(`5-${i}`);
                 let ch = chars[i];
 
-                if (ch === "?") {
+                if (ch === "?" || ch === "🔓") {
                     currTile.innerText = "";
                 } else if (ch) {
                     currTile.innerText = ch;
@@ -2354,7 +2376,7 @@ function intialize() {
                 let currTile = document.getElementById(`6-${i}`);
                 let ch = chars[i];
 
-                if (ch === "?") {
+                if (ch === "?" || ch === "🔓") {
                     currTile.innerText = "";
                 } else if (ch) {
                     currTile.innerText = ch;
@@ -2455,6 +2477,8 @@ function processInput(e) {
                 }
                 if (currTile.innerText == "") {
                     currTile.innerText = e.code[3];
+					currTile.classList.remove("popanswer");					
+					currTile.offsetWidth;
                     currTile.classList.add("correct", "poptile");
                     if (localStorage.cldisabledkey.includes(e.code[3])) {
                         // do nothing
@@ -2477,6 +2501,8 @@ function processInput(e) {
                 }
                 if (currTile.innerText == "") {
                     currTile.innerText = e.code[3];
+					currTile.classList.remove("popanswer");					
+					currTile.offsetWidth;					
                     currTile.classList.add("correct", "poptile");
                     if (localStorage.cldisabledkey.includes(e.code[3])) {
                         // do nothing
@@ -2499,6 +2525,8 @@ function processInput(e) {
                 }
                 if (currTile.innerText == "") {
                     currTile.innerText = e.code[3];
+					currTile.classList.remove("popanswer");					
+					currTile.offsetWidth;					
                     currTile.classList.add("correct", "poptile");
                     if (localStorage.cldisabledkey.includes(e.code[3])) {
                         // do nothing
@@ -2521,6 +2549,8 @@ function processInput(e) {
                 }
                 if (currTile.innerText == "") {
                     currTile.innerText = e.code[3];
+					currTile.classList.remove("popanswer");					
+					currTile.offsetWidth;					
                     currTile.classList.add("correct", "poptile");
                     if (localStorage.cldisabledkey.includes(e.code[3])) {
                         // do nothing
@@ -2543,6 +2573,8 @@ function processInput(e) {
                 }
                 if (currTile.innerText == "") {
                     currTile.innerText = e.code[3];
+					currTile.classList.remove("popanswer");					
+					currTile.offsetWidth;					
                     currTile.classList.add("correct", "poptile");
                     if (localStorage.cldisabledkey.includes(e.code[3])) {
                         // do nothing
@@ -2576,25 +2608,32 @@ function processInput(e) {
             localStorage.clshowalert = 5;
         }
         if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.vowelcount)) && localStorage.vowelactive == 0) {
-            document.getElementById("KeyA").classList.remove("disabled", "key-tile-disabled");
-            document.getElementById("KeyE").classList.remove("disabled", "key-tile-disabled");
-            document.getElementById("KeyI").classList.remove("disabled", "key-tile-disabled");
-            document.getElementById("KeyO").classList.remove("disabled", "key-tile-disabled");
-            document.getElementById("KeyU").classList.remove("disabled", "key-tile-disabled");
-            document.getElementById("KeyA").classList.add("key-tile-enabled", "poptile");
-            document.getElementById("KeyE").classList.add("key-tile-enabled", "poptile");
-            document.getElementById("KeyI").classList.add("key-tile-enabled", "poptile");
-            document.getElementById("KeyO").classList.add("key-tile-enabled", "poptile");
-            document.getElementById("KeyU").classList.add("key-tile-enabled", "poptile");
             disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
             document.querySelectorAll('span[id*="-"].disabled').forEach(tile => {
-                tile.classList.remove('disabled');
-                tile.innerText = "";
+				tile.classList.remove('disabled');		
+				if (tile.innerText === "🔒"){
+					tile.innerText = "🔓";
+				}
+                setTimeout(function() {
+                    tile.innerText = "";
+                    tile.classList.add("popanswer");
+                    document.getElementById("KeyA").classList.remove("disabled", "key-tile-disabled");
+                    document.getElementById("KeyE").classList.remove("disabled", "key-tile-disabled");
+                    document.getElementById("KeyI").classList.remove("disabled", "key-tile-disabled");
+                    document.getElementById("KeyO").classList.remove("disabled", "key-tile-disabled");
+                    document.getElementById("KeyU").classList.remove("disabled", "key-tile-disabled");
+                    document.getElementById("KeyA").classList.add("key-tile-enabled", "poptile");
+                    document.getElementById("KeyE").classList.add("key-tile-enabled", "poptile");
+                    document.getElementById("KeyI").classList.add("key-tile-enabled", "poptile");
+                    document.getElementById("KeyO").classList.add("key-tile-enabled", "poptile");
+                    document.getElementById("KeyU").classList.add("key-tile-enabled", "poptile");
+                    document.getElementById("answer").style.color = "lightgray";
+                    document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
+					 setTimeout(FinalClue, 0);
+                }, 1000);
             });
-            document.getElementById("answer").style.color = "lightgray";
-            document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
             localStorage.vowelactive = 1;
-            setTimeout(FinalClue, 0);
+           
         }
         document.getElementById(e.code).classList.add("disabled");
         var disabledkey = e.code[3];
@@ -2681,31 +2720,31 @@ function processInput(e) {
         for (let i = 0; i < wordtwowidth; i++) {
             let currTile = document.getElementById("2" + '-' + i);
             currTile.innerText = wordtwo[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordthreewidth; i++) {
             let currTile = document.getElementById("3" + '-' + i);
             currTile.innerText = wordthree[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordfourwidth; i++) {
             let currTile = document.getElementById("4" + '-' + i);
             currTile.innerText = wordfour[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordfivewidth; i++) {
             let currTile = document.getElementById("5" + '-' + i);
             currTile.innerText = wordfive[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordsixwidth; i++) {
             let currTile = document.getElementById("6" + '-' + i);
             currTile.innerText = wordsix[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordlastwidth; i++) {
@@ -2769,31 +2808,31 @@ function processInput(e) {
         for (let i = 0; i < wordtwowidth; i++) {
             let currTile = document.getElementById("2" + '-' + i);
             currTile.innerText = wordtwo[i];
-            currTile.classList.remove("poptile");
+            currTile.classList.remove("poptile","popanswer");
             currTile.classList.add("animated");
         }
         for (let i = 0; i < wordthreewidth; i++) {
             let currTile = document.getElementById("3" + '-' + i);
             currTile.innerText = wordthree[i];
-            currTile.classList.remove("poptile");
+            currTile.classList.remove("poptile","popanswer");
             currTile.classList.add("animated");
         }
         for (let i = 0; i < wordfourwidth; i++) {
             let currTile = document.getElementById("4" + '-' + i);
             currTile.innerText = wordfour[i];
-            currTile.classList.remove("poptile");
+            currTile.classList.remove("poptile","popanswer");
             currTile.classList.add("animated");
         }
         for (let i = 0; i < wordfivewidth; i++) {
             let currTile = document.getElementById("5" + '-' + i);
             currTile.innerText = wordfive[i];
-            currTile.classList.remove("poptile");
+            currTile.classList.remove("poptile","popanswer");
             currTile.classList.add("animated");
         }
         for (let i = 0; i < wordsixwidth; i++) {
             let currTile = document.getElementById("6" + '-' + i);
             currTile.innerText = wordsix[i];
-            currTile.classList.remove("poptile");
+            currTile.classList.remove("poptile","popanswer");
             currTile.classList.add("animated");
         }
         for (let i = 0; i < wordlastwidth; i++) {

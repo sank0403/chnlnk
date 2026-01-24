@@ -451,8 +451,8 @@ input:checked+.slider:before {
 #boardsixth {
     display: flex;
     flex-wrap: wrap;
-    padding-left: 20;
-    padding-bottom: 10;
+    padding-left: 35;
+    padding-bottom: 00;
     justify-content: left;
 }
 
@@ -559,7 +559,7 @@ input:checked+.slider:before {
 .headerimage {
     padding: 0;
     margin-top: 0;
-    width: 325px;
+    width: 300px;
 }
 
 .email {
@@ -595,6 +595,26 @@ div.scroll {
     display: flex;
     justify-content: center;
     align-items: center;
+	position: relative;
+	/* background: rgba(20, 20, 20, 0.6); */
+  /* backdrop-filter: blur(16px); */
+  /* overflow: hidden; */
+
+}
+/* Bottom fill */
+.tile::after , .tilesmall::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 8%; /* small fill */
+  background: linear-gradient(
+    to top,
+    rgba(211, 211, 211, 2.18),
+    rgba(211, 211, 211, 1.05)
+  );
+  /* pointer-events: none; */
 }
 
 .tilesmall {
@@ -610,6 +630,7 @@ div.scroll {
     font-weight: bold;
     display: flex;
     justify-content: center;
+	position: relative;
 }
 
 
@@ -628,7 +649,24 @@ div.scroll {
     display: flex;
     justify-content: center;
     align-items: center;
+	position: relative;
 }
+
+.voweltile::after, .voweltilesmall::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 8%; /* small fill */
+  background: linear-gradient(
+    to top,
+    rgba(255, 0, 0, 2.18),
+    rgba(255, 0, 0, 1.05)
+  );
+  /* pointer-events: none; */
+}
+
 
 .voweltilesmall {
     /* Box */
@@ -644,6 +682,7 @@ div.scroll {
     display: flex;
     justify-content: center;
     align-items: center;
+	position: relative;
 }
 
 
@@ -745,12 +784,53 @@ div.scroll {
     background-color: #6AAA64;
     color: white;
     border-color: white;
+	position: relative;
+	
+}
+
+/* Bottom fill */
+.correct::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 8%; /* small fill */
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 2.18),
+    rgba(255, 255, 255, 1.05)
+  );
+  /* pointer-events: none; */
+}
+
+.correctarch {
+    background-color: #6AAA64;
+    color: white;
+    border-color: white;
 }
 
 .starting {
     background-color: orange;
     color: white;
     border-color: white;
+	position:relative;
+}
+
+/* Bottom fill */
+.starting::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 8%; /* small fill */
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 2.18),
+    rgba(255, 255, 255, 1.05)
+  );
+  /* pointer-events: none; */
 }
 
 .present {
@@ -769,6 +849,28 @@ div.scroll {
     background-color: #FF0000;
     color: white;
     border-color: white;
+	position:relative;
+}
+
+.failed::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 8%; /* small fill */
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 2.18),
+    rgba(255, 255, 255, 1.05)
+  );
+  /* pointer-events: none; */
+}
+
+.failedarch {
+    background-color: #FF0000;
+    color: white;
+    border-color: white;
 }
 
 .easyguess {
@@ -776,6 +878,36 @@ div.scroll {
     color: black;
     border-color: black;
 }
+
+.connector.vertical-glow {
+  position: relative;
+  width: 3px;
+  height: 12px;
+  margin-left: 46px;
+  background: #ffffff;
+  box-shadow:
+    0 0 6px #ffffff,
+    0 0 12px #ffffff;
+  transform: translateX(4px);
+}
+
+/* solid glowing oval */
+.connector.vertical-glow::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;      /* full oval width */
+  height: 6px;      /* full oval height */
+  background: #ffffff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow:
+    0 0 6px #ffffff,
+    0 0 12px #ffffff;
+}
+
+
 
 .keyboard-row {
     width: 400px;
@@ -1619,7 +1751,7 @@ div.scroll {
     align-items: center;
     gap: 12px;
     padding: 0 12px;
-    margin-bottom: 6px;
+    margin-bottom: 0px;
 }
 
 
@@ -1632,6 +1764,7 @@ div.scroll {
     cursor: pointer;
     user-select: none;
     border: 0.1px solid gold;
+	margin-Bottom: 5px;
 
 }
 
@@ -1769,7 +1902,7 @@ div.scroll {
     height: 20px;
     font-size: 20px;
     letter-spacing: 10px;
-    margin-top: 10;
+    margin-top: 0;
     margin-bottom: 20;
     color: red;
 }
