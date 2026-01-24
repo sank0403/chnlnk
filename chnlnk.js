@@ -6,7 +6,7 @@ if (!localStorage.clshowrules){
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.23.04";
+const BUILD_VERSION = "2025.01.23.05";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -90,17 +90,101 @@ document.addEventListener("click", function (e) {
 });
 
 function postStatsToWhatsApp() {
-    const stats =
-`🔗 CHN LNK # 14 🧩
-
-2/5 - 🔴 🔴 🔴 ⭐ ⭐
-🔥 Streak: 1 | ⭐ Stars: 2
-
-https://sank0403.github.io/chnlnk/`;
+	
+	if (localStorage.clgamecnt == 6){
+		var cluehdr = "X/5";
+	}
+	else {
+		cluehdr = localStorage.clgamecnt + "/5";
+	}
+	
+	switch (Number(localStorage.clgamecnt)) {
+				case 0: var clueicon = "🔴 🔴 🔴 🔴 🔴"
+					break;
+				case 1: var clueicon = "🔴 🔴 🔴 🔴 ⭐"
+					break;	
+				case 2: var clueicon = "🔴 🔴 🔴 ⭐ ⭐"
+					break;				
+				case 3: var clueicon = "🔴 🔴 ⭐ ⭐ ⭐"
+					break;	
+				case 4: var clueicon = "🔴 ⭐ ⭐ ⭐ ⭐"
+					break;	
+				case 5: var clueicon = "⭐ ⭐ ⭐ ⭐ ⭐"
+					break;
+				case 6: var clueicon = "❌❌❌❌❌"
+					break;					
+			}
+			
+    const stats = buildStats(
+        days,
+        cluehdr,
+        clueicon,
+        localStorage.totalclstreak,
+        localStorage.totalclstars,
+		tierlevel,
+		tiericon
+    );
 
     const url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(stats);
     window.open(url, "_blank");
 }
+
+function buildStats(puzzleNumber, movesUsed, dots, streak, stars, tier, tiericon) {
+    const tierLine = tier ? `\n ${tiericon} Tier: ${tier}` : "";
+    return `🔗 CHN LNK # ${puzzleNumber} 🧩
+
+${movesUsed} - ${dots}
+🔥 Streak: ${streak} | ⭐ Stars: ${stars}
+${tierLine}
+
+https://sank0403.github.io/chnlnk/`;
+}
+
+
+// function postStatsToWhatsApp() {
+	
+	// if (localStorage.clgamecnt == 6){
+		// var cluehdr = "X/5";
+	// }
+	// else {
+		// cluehdr = localStorage.clgamecnt + "/5";
+	// }
+	// switch (Number(localStorage.clgamecnt)) {
+				// case 0: var clueicon = "🔴 🔴 🔴 🔴 🔴"
+					// break;
+				// case 1: var clueicon = "🔴 🔴 🔴 🔴 ⭐"
+					// break;	
+				// case 2: var clueicon = "🔴 🔴 🔴 ⭐ ⭐"
+					// break;				
+				// case 3: var clueicon = "🔴 🔴 ⭐ ⭐ ⭐"
+					// break;	
+				// case 4: var clueicon = "🔴 ⭐ ⭐ ⭐ ⭐"
+					// break;	
+				// case 5: var clueicon = "⭐ ⭐ ⭐ ⭐ ⭐"
+					// break;
+				// case 6: var clueicon = "❌❌❌❌❌"
+					// break;					
+			// }
+		
+	// if (tierlevel == ""){
+		// var copyText = "🔗 CHN LNK # " + days + " 🧩 \n\n" + cluehdr + " - " + clueicon + "\n🔥 Streak: " + localStorage.totalclstreak + " | ⭐ Stars: " + localStorage.totalclstars + "\n\nhttps://sank0403.github.io/chnlnk/";
+	// }
+	// else {
+		// var copyText = "🔗 CHN LNK # " + days + " 🧩 \n\n" + cluehdr + " - " + clueicon + "\n🔥 Streak: " + localStorage.totalclstreak + " | ⭐ Stars: " + localStorage.totalclstars + "\n" + tiericon +  " Tier: " + tierlevel + "\n\nhttps://sank0403.github.io/chnlnk/";
+	// }	
+	
+	
+    // const stats =
+// `🔗 CHN LNK # 14 🧩
+
+// 2/5 - 🔴 🔴 🔴 ⭐ ⭐
+// 🔥 Streak: 1 | ⭐ Stars: 2
+
+// https://sank0403.github.io/chnlnk/`;
+
+    // const url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(stats);
+    // window.open(url, "_blank");
+// }
 
 
 //Open Stats at end of game
