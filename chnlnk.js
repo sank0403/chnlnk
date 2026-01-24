@@ -6,7 +6,7 @@ if (!localStorage.clshowrules){
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.23.02";
+const BUILD_VERSION = "2025.01.23.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -95,11 +95,7 @@ function postStatsToWhatsApp() {
 }
 
 function myFunctionOpenWA() {
-	/* window.open("https://wa.me/?text=urlencodedtext", "_blank"); */
-	/* var linktext = "Paste Stats and Share!"; */
-	/* var walink = "https://wa.me/?text=" + linktext; */
-	/* window.open(walink); */
-	window.open("https://api.whatsapp.com/", "_blank");
+	window.open("https://api.whatsapp.com/send", "_blank");
 }
 
 //Open Stats at end of game
