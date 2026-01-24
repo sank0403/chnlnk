@@ -6,7 +6,7 @@ if (!localStorage.clshowrules){
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.23.03";
+const BUILD_VERSION = "2025.01.23.04";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -90,13 +90,12 @@ document.addEventListener("click", function (e) {
 });
 
 function postStatsToWhatsApp() {
-	myFunction();
-	setTimeout(myFunctionOpenWA, 100);
+    myFunction(); // copies stats to clipboard
+    setTimeout(() => {
+        window.open("https://api.whatsapp.com/send", "_blank");
+    }, 100);
 }
 
-function myFunctionOpenWA() {
-	window.open("https://api.whatsapp.com/send", "_blank");
-}
 
 //Open Stats at end of game
 function OpenStats() {
