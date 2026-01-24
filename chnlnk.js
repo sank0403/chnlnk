@@ -92,7 +92,7 @@ document.addEventListener("click", function (e) {
 function postStatsToWhatsApp() {
     myFunction(); // copies stats to clipboard
     setTimeout(() => {
-        window.open("https://api.whatsapp.com/send", "_blank");
+        window.open("https://wa.me?text=", "_blank");
     }, 100);
 }
 
