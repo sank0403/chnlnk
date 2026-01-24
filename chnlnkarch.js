@@ -589,7 +589,7 @@ function intialize() {
             } else {
                 tile.classList.add("voweltile", "disabled");
             }
-            tile.innerText = "🔒";
+            // tile.innerText = "🔒";
         } else {
             if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9) {
                 tile.classList.add("tilesmall");
@@ -598,7 +598,7 @@ function intialize() {
             }
         }
 
-        // tile.innerText = "";
+        tile.innerText = "";
         document.getElementById("boardsecond").appendChild(tile);
     }
 
@@ -615,7 +615,7 @@ function intialize() {
             } else {
                 tile.classList.add("voweltile", "disabled");
             }
-            tile.innerText = "🔒";
+            // tile.innerText = "🔒";
         } else {
             if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9) {
                 tile.classList.add("tilesmall");
@@ -623,7 +623,7 @@ function intialize() {
                 tile.classList.add("tile");
             }
         }
-        // tile.innerText = "";
+        tile.innerText = "";
         document.getElementById("boardthird").appendChild(tile);
     }
 
@@ -640,7 +640,7 @@ function intialize() {
             } else {
                 tile.classList.add("voweltile", "disabled");
             }
-            tile.innerText = "🔒";
+            // tile.innerText = "🔒";
         } else {
             if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9) {
                 tile.classList.add("tilesmall");
@@ -648,7 +648,7 @@ function intialize() {
                 tile.classList.add("tile");
             }
         }
-        // tile.innerText = "";
+        tile.innerText = "";
         document.getElementById("boardforth").appendChild(tile);
     }
 
@@ -665,7 +665,7 @@ function intialize() {
             } else {
                 tile.classList.add("voweltile", "disabled");
             }
-            tile.innerText = "🔒";
+            // tile.innerText = "🔒";
         } else {
             if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9) {
                 tile.classList.add("tilesmall");
@@ -673,7 +673,7 @@ function intialize() {
                 tile.classList.add("tile");
             }
         }
-        // tile.innerText = "";
+        tile.innerText = "";
         document.getElementById("boardfifth").appendChild(tile);
     }
 
@@ -690,7 +690,7 @@ function intialize() {
             } else {
                 tile.classList.add("voweltile", "disabled");
             }
-            tile.innerText = "🔒";
+            // tile.innerText = "🔒";
         } else {
             if (wordone.length > 9 || wordtwo.length > 9 || wordthree.length > 9 || wordfour.length > 9 || wordfive.length > 9 || wordsix.length > 9 || wordlast.length > 9) {
                 tile.classList.add("tilesmall");
@@ -698,7 +698,7 @@ function intialize() {
                 tile.classList.add("tile");
             }
         }
-        // tile.innerText = "";
+        tile.innerText = "";
         document.getElementById("boardsixth").appendChild(tile);
     }
 
@@ -1267,7 +1267,7 @@ function processInput(e) {
 				if (tile.innerText === "🔒"){
 					tile.innerText = "🔓";
 				}
-                setTimeout(function() {
+                // setTimeout(function() {
                     tile.innerText = "";
                     tile.classList.add('popanswer');
                     document.getElementById("KeyA").classList.remove("disabled", "key-tile-disabled");
@@ -1283,7 +1283,7 @@ function processInput(e) {
                     document.getElementById("answer").style.color = "lightgray";
                     document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
 					 setTimeout(FinalClue, 0);
-                }, 1000);
+                // }, 1000);
             });
         }
         document.getElementById(e.code).classList.add("disabled");

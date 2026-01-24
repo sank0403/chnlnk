@@ -1480,12 +1480,11 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
 
 #life-restored {
     position: fixed;
-    top: 40%;
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(0.6);
+    transform: translate(-50%, -50%) scale(1);
     background: rgba(0, 0, 0, 0.85);
     color: #ff4d4d;
-    padding: 16px 26px;
     border-radius: 12px;
     font-size: 28px;
     font-weight: bold;
@@ -1497,25 +1496,26 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
 @keyframes lifePop {
     0% {
         opacity: 0;
-        transform: scale(0.6);
+        transform: translate(-50%, -50%) scale(0.6);
     }
 
     20% {
         opacity: 1;
-        transform: scale(1.2);
+        transform: translate(-50%, -50%) scale(1.2);
     }
 
     40% {
-        transform: scale(1.0);
+        transform: translate(-50%, -50%) scale(1.0);
     }
 
     80% {
         opacity: 1;
+        transform: translate(-50%, -50%) scale(1.0);
     }
 
     100% {
         opacity: 0;
-        transform: scale(0.9);
+        transform: translate(-50%, -50%) scale(0.9);
     }
 }
 
