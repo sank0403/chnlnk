@@ -1536,7 +1536,7 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
 }
 
 .rules-image {
-    width: 130px;   /* adjust size as needed */
+    width: 140px;   /* adjust size as needed */
     height: auto;
 	border-radius: 8px;
 	transform: translateY(10px); /* move image down */
