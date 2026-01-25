@@ -559,7 +559,7 @@ input:checked+.slider:before {
 .headerimage {
     padding: 0;
     margin-top: 0;
-    width: 300px;
+    width: 250px;
 }
 
 .email {
@@ -772,6 +772,12 @@ div.scroll {
     justify-content: space-between;
     text-align: center;
     color: white;
+}
+
+.stats-item {
+    display: flex;
+    align-items: center; /* fixes vertical alignment */
+    gap: 16px;           /* spacing between icons 1–2 and 3–4 */
 }
 
 .disabled {
@@ -1030,8 +1036,8 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
     font-size: 12px;
     scroll-behavior: smooth;
     text-align: justify;
-    max-height: 70vh;
-    /* limits height to 70% of the viewport */
+    max-height: 80vh;
+    /* limits height to 80% of the viewport */
     overflow-y: auto;
     /* enables vertical scrolling */
 
