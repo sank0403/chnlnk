@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.25.03";
+const BUILD_VERSION = "2025.01.25.04";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -260,11 +260,12 @@ if (!localStorage.clhardmode) {
 
 //Baseline Date
 var a = new Date(); // Current date now.
-var b = new Date(2025, 12, 9, 0, 0, 0, 0); // Start of CHN LNK.
+var b = new Date(2025, 12, 09, 0, 0, 0, 0); // Start of CHN LNK.
 var d = (a - b); // Difference in milliseconds.
 var days = parseInt((d / 1000) / 86400);
 if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('gameovercl' + days) != 1) {
     localStorage['gameovercl' + days] = 0;
+	localStorage['gamestatcl' + days] = 0;
     localStorage.setItem("cllives", "🔴🔴🔴🔴🔴");
     localStorage.setItem("clcorrect", " ");
     localStorage.setItem("vowelcount", 0);
@@ -1397,12 +1398,21 @@ function playArchive() {
         archivetile.id = "archtile-" + q.toString();
         archivetile.classList.add("archivetile");
         archivetile.innerText = "Day " + q;
-        if ((localStorage.getItem('archovercl' + q) == "1")) {
-            if ((localStorage.getItem('archstatcl' + q) == "1")) {
+		if ((localStorage.getItem('gameovercl' + q) == "1")) {
+            if ((localStorage.getItem('gamestatcl' + q) == "1")) {
                 archivetile.classList.add("correctarch");
-            } else {
+            } else if ((localStorage.getItem('gamestatcl' + q) == "0")){
                 archivetile.classList.add("failedarch");
-            }
+            } else if ((localStorage.getItem('gamestatcl' + q) === null)){
+                archivetile.classList.add("correctarch");
+			}
+		} 
+		else if ((localStorage.getItem('archovercl' + q) == "1")) {
+				if ((localStorage.getItem('archstatcl' + q) == "1")) {
+					archivetile.classList.add("correctarch");
+				} else {
+					archivetile.classList.add("failedarch");
+				}
         }
         const link = document.createElement("a");
         link.href = `archive.html?q=${q}`;
@@ -1432,6 +1442,7 @@ function modalhide() {
         row.style.visibility = "hidden";
     }	
     document.getElementById("toggle-row").style.visibility = "hidden";
+	document.getElementById("answer").style.visibility = "hidden";
 }
 
 
@@ -1458,6 +1469,7 @@ function modalshow() {
         row.style.visibility = "visible";
     }	
     document.getElementById("toggle-row").style.visibility = "visible";
+	document.getElementById("answer").style.visibility = "visible";
 }
 
 function restoreMomentumTimer() {
@@ -1684,6 +1696,7 @@ function updateLivesDisplay() {
         document.getElementById("answer").style.color = "lightgray";
 		updateAnswer("GAME OVER! OUT OF LIVES.");
         localStorage.setItem(('gameovercl' + days), 1);
+		localStorage.setItem(('gamestatcl' + days), 0);
         if (localStorage.getItem('gameovercl' + days) == "1") {
             document.querySelectorAll('span[id*="-"].disabled').forEach(tile => {
                 tile.classList.remove('disabled');
@@ -3001,6 +3014,7 @@ function processInput(e) {
             document.getElementById("lives").classList.add("animated");
         }
         localStorage.setItem(('gameovercl' + days), 1);
+		localStorage.setItem(('gamestatcl' + days), 1);
         localStorage.totalclplayed = Number(localStorage.totalclplayed) + 1;
         localStorage.totalclwins = Number(localStorage.totalclwins) + 1;
         localStorage.totalclstreak = Number(localStorage.totalclstreak) + 1;

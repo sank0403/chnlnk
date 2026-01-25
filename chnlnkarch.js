@@ -558,6 +558,16 @@ function intialize() {
         localStorage['archovercl' + days] = 0;
         localStorage['archstatcl' + days] = 0;
     }
+	if (localStorage.getItem('gameovercl' + days) == 1) {
+		localStorage['archovercl' + days] = 1;
+		if ((localStorage.getItem('gamestatcl' + days) == "1")) {
+			localStorage['archstatcl' + days] = 1;
+		} else if ((localStorage.getItem('gamestatcl' + days) == "0")){
+			localStorage['archstatcl' + days] = 0;
+		} else if ((localStorage.getItem('gamestatcl' + days) === null)){
+			localStorage['archstatcl' + days] = 1;
+		}
+	} 
     /* 	document.getElementById("pzlhdr").style.display = "none";
     	document.getElementById("pzl").style.display = "none"; */
     // document.getElementById("bbhdr").style.display = "none";
