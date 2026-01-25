@@ -263,12 +263,26 @@ ul {
     margin-top: 10px;
 }
 
-.momentum-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    /* centers the bar */
-    margin-bottom: 10px;
+
+/* Shared container that defines the space */
+.top-stack { 
+	position: relative; 
+	width: 100%; 
+	height: auto; /* grows to fit whichever child is visible */ 
+	margin-Bottom : 25px;
+}
+
+
+
+/* Momentum bar sits in the same spot as .top-row */ 
+.momentum-wrapper { 
+	position: absolute; 
+	top: 0; 
+	left: 0; 
+	width: 100%; 
+	display: flex; 
+	justify-content: center; 
+	margin: 0; /* remove spacing so it aligns perfectly */ 
 }
 
 #momentum-bar-container {
@@ -304,19 +318,23 @@ ul {
 }
 
 
+/* Toggle row sits in the exact same spot */
 .top-row {
-    display: flex;
-    justify-content: space-evenly;
-    /* spreads them evenly */
-    align-items: center;
-    /* vertical centering */
+    position: absolute;
+    top: 0;
+	left: 50%; 
+	transform: translateX(-50%);
     width: 100%;
     max-width: 300px;
-    /* optional: keeps row tidy */
-    margin: 5 auto 5px auto;
-    /* centers the whole row */
+	margin: 5 auto 5px auto;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+
+    margin: 0; /* remove invalid margin shorthand */
     padding: 0 5px;
 }
+
 
 .toggle-wrapper {
     display: flex;
@@ -443,7 +461,6 @@ input:checked+.slider:before {
 }
 
 #boardfirst,
-#boardlast,
 #boardsecond,
 #boardthird,
 #boardforth,
@@ -453,6 +470,16 @@ input:checked+.slider:before {
     flex-wrap: wrap;
     padding-left: 0;
     padding-bottom: 0;
+    justify-content: center;
+}
+
+
+#boardlast {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+	padding-bottom: 0;
+    margin-bottom: 10;
     justify-content: center;
 }
 
@@ -496,6 +523,7 @@ input:checked+.slider:before {
     width: 330px;
     min-height: 35px;      /* ← keeps keyboard stable */
     margin: 0 auto 0px auto;
+	margin
     padding: 4px 6px;
     position: relative;
     display: flex;

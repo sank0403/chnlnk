@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.25.02";
+const BUILD_VERSION = "2025.01.25.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -601,7 +601,7 @@ function useDynamite() {
         // ⭐ First-time tutorial message
         if (!localStorage.getItem("cldynamiteTutorialShown")) {
             showStreakPopup("💣 DYNAMITE ELIMINATES 3 INVALID LETTERS FROM THE KEYBOARD ⌨️. \n HIT AGAIN TO USE!");
-            showMessage("");
+            document.getElementById("answer").innerText = "";
             localStorage.setItem("cldynamiteTutorialShown", "true");
             return;
         }
@@ -3005,6 +3005,8 @@ function processInput(e) {
         localStorage.totalclwins = Number(localStorage.totalclwins) + 1;
         localStorage.totalclstreak = Number(localStorage.totalclstreak) + 1;
         let streak = Number(localStorage.totalclstreak || 0);
+		const el = document.getElementById("streakPopupText"); // Clear dynamite tutorial message if available;
+		el.innerText = "";
         if (streak > 0 && streak % 10 === 0) {
             let dyn = Number(localStorage.cldynamite || 0);
             localStorage.cldynamite = dyn + 3;
