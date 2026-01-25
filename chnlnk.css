@@ -1530,12 +1530,11 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
 }
 
 .rules-image {
-    width: 150px;   /* adjust size as needed */
+    width: 130px;   /* adjust size as needed */
     height: auto;
-    border-radius: 8px;
+	border-radius: 8px;
+	transform: translateY(10px); /* move image down */
 }
-
-
 #perfect-solve {
     position: fixed;
     top: 38%;
