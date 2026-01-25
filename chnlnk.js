@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.24.06";
+const BUILD_VERSION = "2025.01.25.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -582,8 +582,7 @@ function useDynamite() {
 
         // ⭐ First-time tutorial message
         if (!localStorage.getItem("cldynamiteTutorialShown")) {
-            // showMessage("DYNAMITE ELIMINATES 2 INVALID LETTERS FROM THE KEYBOARD. HIT AGAIN TO USE!");
-            showStreakPopup("💣 DYNAMITE ELIMINATES 2 INVALID LETTERS FROM THE KEYBOARD ⌨️. \n HIT AGAIN TO USE!");
+            showStreakPopup("💣 DYNAMITE ELIMINATES 3 INVALID LETTERS FROM THE KEYBOARD ⌨️. \n HIT AGAIN TO USE!");
             showMessage("");
             localStorage.setItem("cldynamiteTutorialShown", "true");
             return;
@@ -602,11 +601,11 @@ function useDynamite() {
 
             const letter = k.id.replace("Key", "");
             if (forbiddenLetters.has(letter)) return false;
-
+			
             return true;
         });
 
-        if (eligibleKeys.length < 2) {
+        if (eligibleKeys.length < 3) {
             showMessage("NOT ENOUGH KEYS TO BE ELIMINATED!");
             shakeDynamiteButton();
             return;
@@ -619,7 +618,7 @@ function useDynamite() {
         // Shuffle to make selection random
         shuffle(eligibleKeys);
 
-        const toRemove = eligibleKeys.slice(0, 2);
+        const toRemove = eligibleKeys.slice(0, 3);
 
         let disabledkeyarr = [];
         let temp = JSON.parse(localStorage.getItem("cldisabledkey"));
@@ -1573,11 +1572,12 @@ function updateLivesDisplay() {
             document.getElementById("answer").innerText = "TIME UP - LAST LIFE ALERT!"
             setTimeout(FinalClue, 500);
             // Offer star-for-life trade when only 1 life remains
+			const today = new Date().toDateString();
             if (Number(localStorage.cllivescnt) == 4 &&
                 Number(localStorage.totalclstars) >= 2 &&
-                localStorage.cltradeoffered != 1) {
+                localStorage.cltradeoffered !== today) {
 
-                localStorage.cltradeoffered = 1; // prevent repeat offers
+                localStorage.cltradeoffered = today; // prevent repeat offers
                 openLifeTradeModal();
             }
             break;
@@ -2673,11 +2673,12 @@ function processInput(e) {
                 setTimeout(FinalClue, 500);
 
                 // Offer star-for-life trade when only 1 life remains
+				const today = new Date().toDateString();
                 if (Number(localStorage.cllivescnt) == 4 &&
                     Number(localStorage.totalclstars) >= 2 &&
-                    localStorage.cltradeoffered != 1) {
+                    localStorage.cltradeoffered !== today) {
 
-                    localStorage.cltradeoffered = 1; // prevent repeat offers
+                    localStorage.cltradeoffered = today; // prevent repeat offers
                     openLifeTradeModal();
                 }
                 break;
