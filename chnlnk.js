@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.25.04";
+const BUILD_VERSION = "2025.01.25.05";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -260,7 +260,7 @@ if (!localStorage.clhardmode) {
 
 //Baseline Date
 var a = new Date(); // Current date now.
-var b = new Date(2025, 12, 09, 0, 0, 0, 0); // Start of CHN LNK.
+var b = new Date(2025, 12, 9, 0, 0, 0, 0); // Start of CHN LNK.
 var d = (a - b); // Difference in milliseconds.
 var days = parseInt((d / 1000) / 86400);
 if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('gameovercl' + days) != 1) {
@@ -1797,12 +1797,19 @@ function refreshArchiveModal() {
         tile.classList.remove("correctarch", "failedarch");
 
         // Read saved state
-        const over = localStorage.getItem("archovercl" + q);
-        const stat = localStorage.getItem("archstatcl" + q);
-
+        const over1 = localStorage.getItem("archovercl" + q);
+        const stat1 = localStorage.getItem("archstatcl" + q);
+        const over2 = localStorage.getItem("gameovercl" + q);
+        const stat2 = localStorage.getItem("gamestatcl" + q);
         // Apply new state
-        if (over === "1") {
-            if (stat === "1") {
+        if (over2 === "1") {
+            if (stat2 === "0") {
+                tile.classList.add("failedarch");
+            } else {
+                tile.classList.add("correctarch");
+            }
+        }else if (over1 === "1") {
+            if (stat1 === "1") {
                 tile.classList.add("correctarch");
             } else {
                 tile.classList.add("failedarch");

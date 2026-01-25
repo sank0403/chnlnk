@@ -558,6 +558,7 @@ function intialize() {
         localStorage['archovercl' + days] = 0;
         localStorage['archstatcl' + days] = 0;
     }
+	
 	if (localStorage.getItem('gameovercl' + days) == 1) {
 		localStorage['archovercl' + days] = 1;
 		if ((localStorage.getItem('gamestatcl' + days) == "1")) {
