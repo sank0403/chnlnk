@@ -12,7 +12,23 @@ function FinalClue() {
     document.getElementById("answer").classList.add("popanswer");
 }
 
+function updateAnswer(text) {
+    const el = document.getElementById("answer");
 
+    el.innerHTML = `
+        ${text}
+		<div class="border-seg border-top"></div>
+		<div class="border-seg border-right"></div>
+		<div class="border-seg border-bottom"></div>
+		<div class="border-seg border-left"></div>
+    `;
+
+    el.hidden = false;
+
+    el.classList.remove("run-border");
+    void el.offsetWidth;
+    el.classList.add("run-border");
+}
 /* window.localStorage;
 if (!localStorage.totalclplayed){
 localStorage.setItem("totalclplayed",0);
@@ -519,7 +535,8 @@ var disabledkeyarr = [];
 var vowelactive = 0;
 if (vowelactive != 1) {
     document.getElementById("answer").style.color = "lightgray";
-    document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND";
+    // document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND";
+	updateAnswer("VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND");
 }
 window.onload = function() {
     intialize();
@@ -1281,8 +1298,9 @@ function processInput(e) {
                     document.getElementById("KeyO").classList.add("key-tile-enabled", "poptile");
                     document.getElementById("KeyU").classList.add("key-tile-enabled", "poptile");
                     document.getElementById("answer").style.color = "lightgray";
-                    document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
-					 setTimeout(FinalClue, 0);
+                    // document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
+					updateAnswer("ONLY VOWELS LEFT!");
+					setTimeout(FinalClue, 1500);
                 // }, 1000);
             });
         }
@@ -1308,20 +1326,24 @@ function processInput(e) {
                 break;
             case 1:
                 lives = "🔴🔴🔴🔴";
-                document.getElementById("answer").innerText = "FIRST LIFE LOST!"
+                // document.getElementById("answer").innerText = "FIRST LIFE LOST!"
+				updateAnswer("FIRST LIFE LOST!");
                 break;
             case 2:
                 lives = "🔴🔴🔴";
-                document.getElementById("answer").innerText = "SECOND LIFE LOST!"
+                // document.getElementById("answer").innerText = "SECOND LIFE LOST!"
+				updateAnswer("SECOND LIFE LOST!");
                 break;
             case 3:
                 lives = "🔴🔴";
-                document.getElementById("answer").innerText = "THIRD LIFE LOST!"
+                // document.getElementById("answer").innerText = "THIRD LIFE LOST!"
+				updateAnswer("THIRD LIFE LOST!");
                 break;
             case 4:
                 lives = "🔴";
-                document.getElementById("answer").innerText = "FOURTH LIFE LOST - LAST LIFE ALERT!"
-                setTimeout(FinalClue, 500);
+                // document.getElementById("answer").innerText = "FOURTH LIFE LOST - LAST LIFE ALERT!"
+				updateAnswer("FOURTH LIFE LOST - LAST LIFE ALERT!");
+                setTimeout(FinalClue, 1500);
                 break;
                 // case 5: localStorage.cllives = "⚠️";
                 // 	document.getElementById("answer").innerText = "LAST LIFE ALERT!"
@@ -1389,9 +1411,9 @@ function processInput(e) {
                 tile.classList.remove('disabled');
             });
         }
-        document.getElementById("answer").style.color = "red";
-        document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
-
+        document.getElementById("answer").style.color = "lightgray";
+        // document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
+		updateAnswer("GAME OVER! OUT OF LIVES.");
     }
 
     if (correct == word.length) {
@@ -1442,7 +1464,8 @@ function processInput(e) {
         localStorage['archstatcl' + days] = 1;
         disablevowels();
         document.getElementById("answer").style.color = "lightgray";
-        document.getElementById("answer").innerText = "CHAIN COMPLETED SUCCESSFULLY!";
+        // document.getElementById("answer").innerText = "CHAIN COMPLETED SUCCESSFULLY!";
+		updateAnswer("CHAIN COMPLETED SUCCESSFULLY!");
         /* 			for (let s = 0; s < localStorage.clstarscnt; s++){
         				document.getElementById("answerstar").innerText += "⭐";
         			} */

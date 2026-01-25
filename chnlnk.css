@@ -490,23 +490,104 @@ input:checked+.slider:before {
   justify-content: center;
 } */
 
+/* Main answer container */
+/* ANSWER CONTAINER */
 #answer {
     width: 330px;
-    height: 0px;
-    margin: 0 auto;
-    margin-top: 0px;
-    margin-bottom: 0px;
+    min-height: 35px;      /* ← keeps keyboard stable */
+    margin: 0 auto 0px auto;
+    padding: 4px 6px;
+    position: relative;
     display: flex;
-    flex-wrap: wrap;
-    color: red;
-    font-size: 15px;
-    /* font-family: Georgia, serif; */
-    font-weight: bolder;
     justify-content: center;
     align-items: center;
+    overflow: visible;
     font-family: 'Courier New', monospace;
-    /* display: none; */
+    font-weight: bolder;
+    font-size: 15px;
 }
+
+
+/* BASE FOR ALL BORDER SEGMENTS */
+#answer .border-seg {
+    position: absolute;
+    background: gold;
+    opacity: 0;
+
+    animation-duration: 0.8s;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+    animation-play-state: paused;
+}
+
+/* TOP BORDER */
+#answer .border-top {
+    height: 3px;
+    top: -3px;
+    left: 0;
+    width: 0;
+    animation-name: borderTop;
+    animation-delay: 0s;
+}
+
+/* RIGHT BORDER */
+#answer .border-right {
+    width: 3px;
+    right: -3px;
+    top: 0;
+    height: 0;
+    animation-name: borderRight;
+    animation-delay: 0.2s;
+}
+
+/* BOTTOM BORDER */
+#answer .border-bottom {
+    height: 3px;
+    bottom: -3px;
+    right: 0;
+    width: 0;
+    animation-name: borderBottom;
+    animation-delay: 0.4s;
+}
+
+/* LEFT BORDER */
+#answer .border-left {
+    width: 3px;
+    left: -3px;
+    bottom: 0;
+    height: 0;
+    animation-name: borderLeft;
+    animation-delay: 0.6s;
+}
+
+/* WHEN ANIMATION SHOULD RUN */
+#answer.run-border .border-seg {
+    animation-play-state: running;
+}
+
+/* KEYFRAMES */
+@keyframes borderTop {
+    0%   { width: 0;   opacity: 1; }
+    100% { width: 100%; opacity: 1; }
+}
+
+@keyframes borderRight {
+    0%   { height: 0;   opacity: 1; }
+    100% { height: 100%; opacity: 1; }
+}
+
+@keyframes borderBottom {
+    0%   { width: 0;   opacity: 1; }
+    100% { width: 100%; opacity: 1; }
+}
+
+@keyframes borderLeft {
+    0%   { height: 0;   opacity: 1; }
+    100% { height: 100%; opacity: 1; }
+}
+
+
+
 
 .animated {
     animation: flip 0.5s ease;

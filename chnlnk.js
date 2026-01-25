@@ -1,12 +1,12 @@
 // FIRST VISIT CHECK (must run before any reload logic)
 if (!localStorage.clshowrules) {
     localStorage.setItem("clshowrules", 1);
-    setTimeout(OpenRules, 1100);
+    setTimeout(OpenRules, 1500);
     // Prevent deployment reload from firing on first visit
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.25.01";
+const BUILD_VERSION = "2025.01.25.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -149,6 +149,24 @@ ${tierLine}
 https://sank0403.github.io/chnlnk/`;
 }
 
+
+function updateAnswer(text) {
+    const el = document.getElementById("answer");
+
+    el.innerHTML = `
+        ${text}
+		<div class="border-seg border-top"></div>
+		<div class="border-seg border-right"></div>
+		<div class="border-seg border-bottom"></div>
+		<div class="border-seg border-left"></div>
+    `;
+
+    el.hidden = false;
+
+    el.classList.remove("run-border");
+    void el.offsetWidth;
+    el.classList.add("run-border");
+}
 
 //Open Stats at end of game
 function OpenStats() {
@@ -646,7 +664,8 @@ function useDynamite() {
 
 
 function showMessage(msg) {
-    document.getElementById("answer").innerText = msg;
+    // document.getElementById("answer").innerText = msg;
+	updateAnswer(msg);
 }
 
 function showDynamiteBlast() {
@@ -1101,7 +1120,8 @@ var wordlastwidth = wordlast.length;
 var disabledkeyarr = [];
 if (localStorage.vowelactive != 1) {
     document.getElementById("answer").style.color = "lightgray";
-    document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND.";
+    // document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND.";
+	updateAnswer("VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND.");
 }
 const openModalButtons = document.querySelectorAll('[data-modal-target]')
 const closeModalButtons = document.querySelectorAll('[data-close-button]')
@@ -1557,26 +1577,29 @@ function updateLivesDisplay() {
             break;
         case 1:
             localStorage.cllives = "🔴🔴🔴🔴";
-            document.getElementById("answer").innerText = "TIME UP - FIRST LIFE LOST!"
+            // document.getElementById("answer").innerText = "TIME UP - FIRST LIFE LOST!"
+			updateAnswer("TIME UP - FIRST LIFE LOST!");
             break;
         case 2:
             localStorage.cllives = "🔴🔴🔴";
-            document.getElementById("answer").innerText = "TIME UP - SECOND LIFE LOST!"
+            // document.getElementById("answer").innerText = "TIME UP - SECOND LIFE LOST!"
+			updateAnswer("TIME UP - SECOND LIFE LOST!");
             break;
         case 3:
             localStorage.cllives = "🔴🔴";
-            document.getElementById("answer").innerText = "TIME UP - THIRD LIFE LOST!"
+            // document.getElementById("answer").innerText = "TIME UP - THIRD LIFE LOST!"
+			updateAnswer("TIME UP - THIRD LIFE LOST!");
             break;
         case 4:
             localStorage.cllives = "🔴";
-            document.getElementById("answer").innerText = "TIME UP - LAST LIFE ALERT!"
-            setTimeout(FinalClue, 500);
+            // document.getElementById("answer").innerText = "TIME UP - LAST LIFE ALERT!"
+			updateAnswer("TIME UP - LAST LIFE ALERT!");
+            setTimeout(FinalClue, 1500);
             // Offer star-for-life trade when only 1 life remains
 			const today = new Date().toDateString();
             if (Number(localStorage.cllivescnt) == 4 &&
                 Number(localStorage.totalclstars) >= 2 &&
                 localStorage.cltradeoffered !== today) {
-
                 localStorage.cltradeoffered = today; // prevent repeat offers
                 openLifeTradeModal();
             }
@@ -1658,8 +1681,8 @@ function updateLivesDisplay() {
         localStorage.starclxcount = Number(localStorage.starclxcount) + 1;
         colorx = "green";
         localStorage.clgamecnt = 6;
-        document.getElementById("answer").style.color = "red";
-        document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
+        document.getElementById("answer").style.color = "lightgray";
+		updateAnswer("GAME OVER! OUT OF LIVES.");
         localStorage.setItem(('gameovercl' + days), 1);
         if (localStorage.getItem('gameovercl' + days) == "1") {
             document.querySelectorAll('span[id*="-"].disabled').forEach(tile => {
@@ -1821,6 +1844,7 @@ function intialize() {
     document.getElementById("HTMLButton").style.display = "none";
     document.getElementById("wabutton").style.display = "none";
     document.getElementById("Rafflebutton").style.display = "none";
+	// document.getElementById("top-resources").style.display = "block";
     // document.getElementById("Archivebutton").style.display = "none";
     // document.getElementById("submission").style.display = "none";
     // document.getElementById("toggle-row").style.visibility = "hidden";
@@ -2226,7 +2250,7 @@ function intialize() {
                 // currTile.classList.add("failed", "animated");
             }
 
-            document.getElementById("answer").style.color = "red";
+            document.getElementById("answer").style.color = "lightgray";
             document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
         }
         gameOver = true;
@@ -2438,10 +2462,12 @@ function processInput(e) {
                     let dyn = Number(localStorage.cldynamite || 0);
                     if (localStorage.clhardmode == 1) {
                         localStorage.cldynamite = dyn + 2;
-                        document.getElementById("answer").innerText = "PERFECT GUESS! \n YOU GAINED +2 DYNAMITES!";
+                        // document.getElementById("answer").innerText = "PERFECT GUESS! \n YOU GAINED +2 DYNAMITES!";
+						updateAnswer("PERFECT GUESS! \n YOU GAINED +2 DYNAMITES!");
                     } else {
                         localStorage.cldynamite = dyn + 1;
-                        document.getElementById("answer").innerText = "PERFECT GUESS! \n YOU GAINED +1 DYNAMITE!";
+                        // document.getElementById("answer").innerText = "PERFECT GUESS! \n YOU GAINED +1 DYNAMITE!";
+						updateAnswer("PERFECT GUESS! \n YOU GAINED +1 DYNAMITE!");
                     }
                     updateDynamiteUI();
                     showDynamiteAdded();
@@ -2628,8 +2654,9 @@ function processInput(e) {
                     document.getElementById("KeyO").classList.add("key-tile-enabled", "poptile");
                     document.getElementById("KeyU").classList.add("key-tile-enabled", "poptile");
                     document.getElementById("answer").style.color = "lightgray";
-                    document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
-					 setTimeout(FinalClue, 0);
+                    // document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
+					updateAnswer("ONLY VOWELS LEFT!");
+					 setTimeout(FinalClue, 1500);
                 // }, 1000);
             });
             localStorage.vowelactive = 1;
@@ -2657,20 +2684,24 @@ function processInput(e) {
                 break;
             case 1:
                 localStorage.cllives = "🔴🔴🔴🔴";
-                document.getElementById("answer").innerText = "FIRST LIFE LOST!"
+                // document.getElementById("answer").innerText = "FIRST LIFE LOST!"
+				updateAnswer("FIRST LIFE LOST!");
                 break;
             case 2:
                 localStorage.cllives = "🔴🔴🔴";
-                document.getElementById("answer").innerText = "SECOND LIFE LOST!"
+                // document.getElementById("answer").innerText = "SECOND LIFE LOST!"
+				updateAnswer("SECOND LIFE LOST!");
                 break;
             case 3:
                 localStorage.cllives = "🔴🔴";
-                document.getElementById("answer").innerText = "THIRD LIFE LOST!"
+                // document.getElementById("answer").innerText = "THIRD LIFE LOST!"
+				updateAnswer("THIRD LIFE LOST!");
                 break;
             case 4:
                 localStorage.cllives = "🔴";
-                document.getElementById("answer").innerText = "FOURTH LIFE LOST - LAST LIFE ALERT!"
-                setTimeout(FinalClue, 500);
+                // document.getElementById("answer").innerText = "FOURTH LIFE LOST - LAST LIFE ALERT!"
+				updateAnswer("FOURTH LIFE LOST - LAST LIFE ALERT!");
+                setTimeout(FinalClue, 1500);
 
                 // Offer star-for-life trade when only 1 life remains
 				const today = new Date().toDateString();
@@ -2707,7 +2738,8 @@ function processInput(e) {
             localStorage.clMysteryActive = "true";
             markTileWithQuestion(localStorage.clMysteryLetter); // visually add ❓
             showMysteryAdded();
-            document.getElementById("answer").innerText = "IDENTIFY THE MYSTERY LETTER IN THE NEXT TRY FOR A BONUS!"
+            // document.getElementById("answer").innerText = "IDENTIFY THE MYSTERY LETTER IN THE NEXT TRY FOR A BONUS!"	
+			updateAnswer("IDENTIFY THE MYSTERY LETTER IN THE NEXT TRY FOR A BONUS!");
         }
     }
 
@@ -2774,8 +2806,9 @@ function processInput(e) {
         localStorage.starclxcount = Number(localStorage.starclxcount) + 1;
         colorx = "green";
         localStorage.clgamecnt = 6;
-        document.getElementById("answer").style.color = "red";
-        document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
+        document.getElementById("answer").style.color = "lightgray";
+        // document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
+		updateAnswer("GAME OVER! OUT OF LIVES.");
         localStorage.setItem(('gameovercl' + days), 1);
         if (localStorage.getItem('gameovercl' + days) == "1") {
             document.querySelectorAll('span[id*="-"].disabled').forEach(tile => {
@@ -2952,7 +2985,8 @@ function processInput(e) {
 
         }
 
-        document.getElementById("answer").innerText = msg;
+        // document.getElementById("answer").innerText = msg;
+		updateAnswer(msg);
 
         /* 			for (let s = 0; s < localStorage.clstarscnt; s++){
         				document.getElementById("answerstar").innerText += "⭐";
