@@ -200,6 +200,7 @@ function disableconsos() {
 // var sixthwordlist = [	"cook",		"change",	"link",		"spirit",	"operation","spray",	"language",	"step",		"toe",		"chart",	"bag",		"pilot",		"pattern",	"crunch",	"limit",	"system",		"frame","rail","board","route","keeper","life","dance","carrier","square","box","record","call","lift","time","match","pad","tray","hat","trick","shop","reaction","stone","chain","fan","tone","cutter","ball","pass","show","shot","size","office","alone","limit","card","master","worker","game","model","house","sergeant","release","role","lift","top","cook","zone","card","service","house","guard","shot","train","card","clock","plan","number","match","shift","code","leader","tool","lamp","shift","guard","metal","leader","step","ticket","search","chain","table","rate","name","bag","level","count","shot","sign","through","board","officer","count","line","guard","cook","perfect","schedule","worker","step","balance","tower","wrench","keeper","code","box","measure","plate","key","line","room","card","shelf","edge","rail","chair","bell","favor","book","hill","alone","stamp","carrier","plane","music","work","limit","lock","master","trick","match","net","group","bottle","sheet","worker","hole","reader","shot","zone","wash","break","committee","bag","letter","booth","game","space","chart","split","guard","bench","net","party","form","train","space","swing","board","grid","stand","wash","floor","mixer","frame","rack","id","plane","shop","master","guard","stand","shift","leader","time","charge","duty","bark","ladder","worker","driver","finder","count","weight","badge","bell","cook","code","chain","dance","booklet","limit","officer","plate","up","card","point","letter","code","stone","work","room","weight","dance","worker","committee","space","tower","net","blade","meeting","shift","press","space","service","station","letter","party","number","line","officer","point","lock","master","line","keeper","mixer","size","cover","master","test","path","chain","through","zone","lift","leader","keeper","pipe","number","shade","tape","party","swing","ticket","stove","badge","watch"];
 // var lastwordlist = [	"book",		"order",	"cable",	"level",	"manual",	"bottle",	"barrier",	"ladder",	"ring",		"patterns",	"drop",		"episode",		"maker",	"time",		"line",		"check",		"shop","car","game","map","net","jacket","floor","bag","root","office","holder","center","ticket","keeper","point","lock","table","trick","shot","keeper","time","path","link","club","shift","blade","room","code","case","clock","chart","chair","complex","line","holder","key","shift","plan","citizen","party","major","valve","player","shaft","score","stove","marker","reader","counter","rules","duty","caller","station","trick","tower","layout","crunch","point","key","word","board","kit","light","worker","rail","shop","role","ladder","booth","party","store","runner","limit","tag","holder","ground","down","caller","maker","lane","game","badge","down","cutter","duty","booklet","score","board","shift","count","board","guard","set","role","word","cutter","step","rack","chain","dance","service","reader","life","case","car","lift","rope","box","stand","climb","complex","duty","bag","crash","stand","flow","line","step","key","shot","point","weight","leader","rack","metal","badge","punch","dock","caller","marker","station","room","chair","holder","carrier","worker","piece","bar","top","level","rail","press","weight","trick","letter","station","bar","dance","meeting","line","alone","station","plan","bowl","shop","mount","number","crash","keeper","key","duty","light","worker","role","keeper","rate","station","chip","rail","shift","seat","tool","down","scale","number","rope","stove","word","store","floor","cover","line","badge","rack","hill","reader","guard","head","word","path","flow","service","scale","floor","badge","chair","bar","bell","weight","edge","room","worker","release","bar","counter","master","head","favor","plate","cook","badge","guard","step","code","cook","net","bowl","chart","charge","key","score","finder","store","lane","marker","ticket","role","role","cleaner","plate","tree","measure","favor","dance","booth","pipe","number","tower"];
 // var submitterlist = [	"","","","","","","","","Divya","Vidya","Kanishk","Div","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",];
+
 var masterwordlist = [
     ["river", "stone", "cold", "front", "line", "cook", "book", ""],
     ["garden", "path", "finder", "fee", "schedule", "change", "order", ""],
@@ -220,6 +221,7 @@ var masterwordlist = [
     ["coffee", "table", "tennis", "match", "point", "break", "room", "h_ll"],
     ["desert", "wind", "mill", "stone", "age", "limit", "line", ""],
     ["morning", "dew", "drop", "zone", "defense", "system", "check", ""],
+	["fire", "dance", "party", "popper", "bottle", "neck", "collar", "gouri"],
     ["traffic", "light", "speed", "trap", "door", "frame", "shop", ""],
     ["crystal", "clear", "view", "point", "guard", "rail", "car", ""],
     ["thunder", "clap", "back", "pack", "leader", "board", "game", ""],
@@ -459,6 +461,7 @@ var masterwordlist = [
     ["timber", "outbuilding", "frame", "shop", "keeper", "badge", "number", ""],
     ["coral", "tidepool", "life", "jacket", "pocket", "watch", "tower", ""]
 ];
+
 // if (days%firstwordlist.length > 0){
 // var offset = Math.floor(days/firstwordlist.length);
 // }
@@ -554,6 +557,13 @@ function intialize() {
         ele1.innerHTML += "Submitted By " + masterwordlist[index][7];
         // ele1.classList.add("flash2");
     }
+	
+	// if(days == 17){
+        // let ele1 = document.getElementById("submitter");
+        // ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:red; font-size:24px;"><u>CANUCKLE</strong></u><strong style="color:white; font-size:24px;"> EDITION</strong></a>';		
+		// ele1.classList.add("flash2");
+	// }	
+	
     if (localStorage.getItem('archovercl' + days) != 0 && localStorage.getItem('archovercl' + days) != 1) {
         localStorage['archovercl' + days] = 0;
         localStorage['archstatcl' + days] = 0;

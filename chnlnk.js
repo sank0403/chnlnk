@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.25.05";
+const BUILD_VERSION = "2025.01.26.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -812,6 +812,7 @@ var masterwordlist = [
     ["coffee", "table", "tennis", "match", "point", "break", "room", "h_ll"],
     ["desert", "wind", "mill", "stone", "age", "limit", "line", ""],
     ["morning", "dew", "drop", "zone", "defense", "system", "check", ""],
+	["fire", "dance", "party", "popper", "bottle", "neck", "collar", "gouri"],
     ["traffic", "light", "speed", "trap", "door", "frame", "shop", ""],
     ["crystal", "clear", "view", "point", "guard", "rail", "car", ""],
     ["thunder", "clap", "back", "pack", "leader", "board", "game", ""],
@@ -1856,6 +1857,12 @@ function intialize() {
         ele1.innerHTML += "Submitted By " + masterwordlist[index][7];
         // ele1.classList.add("flash2");
     }
+	// if(days == 17){
+        // let ele1 = document.getElementById("submitter");
+        // ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:red; font-size:24px;"><u>CANUCKLE</strong></u><strong style="color:white; font-size:24px;"> EDITION</strong></a>';		
+		// ele1.classList.add("flash2");
+	// }
+	
 
     /* 	document.getElementById("pzlhdr").style.display = "none";
     	document.getElementById("pzl").style.display = "none"; */
