@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.26.02";
+const BUILD_VERSION = "2025.01.27.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -101,32 +101,29 @@ function containsEmoji(str) {
 function validateName(name) {
     if (!name) return false;
 
-    // Trim whitespace
-    name = name.trim();
+    const trimmed = name.trim();
+    const lower = trimmed.toLowerCase();
 
-    // Length check
-    if (name.length < 2 || name.length > 20) return false;
+    // Length
+    if (trimmed.length < 2 || trimmed.length > 20) return false;
 
-    // Reject emojis
-    if (containsEmoji(name)) return false;
+    // Emoji check
+    if (containsEmoji(trimmed)) return false;
 
-    // Allow: letters, numbers, spaces, underscores, hyphens
-    const allowedPattern = /^[A-Za-z0-9 _-]+$/;
-    if (!allowedPattern.test(name)) return false;
+    // Allowed characters
+    if (!/^[A-Za-z0-9 _-]+$/.test(trimmed)) return false;
 
-    // Banned words (case-insensitive)
+    // Banned words
     const bannedWords = [
         "fuck", "shit", "bitch", "asshole", "bastard",
-        "cunt", "dick", "pussy", "slut", "whore"
+        "cunt", "dick", "pussy", "slut", "whore", "ass", "hell"
     ];
 
-    const lower = name.toLowerCase();
-    for (const bad of bannedWords) {
-        if (lower.includes(bad)) return false;
-    }
+    if (bannedWords.some(w => lower.includes(w))) return false;
 
     return true;
 }
+
 
 
 
@@ -156,16 +153,24 @@ function getDefaultPlayerName() {
 
 
 async function initPlayerName() {
-    return new Promise(resolve => {
+    return new Promise(async resolve => {
 
-        // If name already exists, resolve immediately
-        if (localStorage.playerName) {
-            submitLeaderboardEntry(localStorage.playerName);
-            resolve(localStorage.playerName);
+        let stored = localStorage.playerName;
+
+        // --- 1. If stored name exists but is now invalid ---
+        if (stored && !validateName(stored)) {
+            localStorage.removeItem("playerName");
+            stored = null;
+        }
+
+        // --- 2. If valid stored name exists, use it ---
+        if (stored) {
+            submitLeaderboardEntry(stored);
+            resolve(stored);
             return;
         }
 
-        // Otherwise show popup and wait for user input
+        // --- 3. No valid name → show popup ---
         showNamePopup();
 
         document.getElementById("nameSubmitBtn").onclick = async () => {
@@ -176,14 +181,15 @@ async function initPlayerName() {
                 name = getDefaultPlayerName();
             }
 
+            // Validate using ONE function
             if (!validateName(name)) {
-                errorEl.textContent = "Invalid name. Try again.";
+                errorEl.textContent = "Invalid or banned name. Try again.";
                 errorEl.classList.remove("hidden");
                 return;
             }
 
             try {
-                // 🔍 Duplicate name check using query (UID-based docs)
+                // Duplicate name check
                 const q = query(
                     collection(db, "leaderboard"),
                     where("name", "==", name)
@@ -195,9 +201,6 @@ async function initPlayerName() {
                     errorEl.classList.remove("hidden");
                     return;
                 }
-
-                // ✅ Name is valid and unique
-                errorEl.classList.add("hidden");
 
                 // keep localStorage consistent with edit flow
                 localStorage.playerName = name;
@@ -218,6 +221,8 @@ async function initPlayerName() {
 }
 
 
+
+
 document.addEventListener("DOMContentLoaded", () => {
 
     const changeNameBtn = document.getElementById("changeNameBtn");
@@ -229,49 +234,68 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const overlay = document.getElementById("globalOverlay");
 
-        const container = document.createElement("div");
-        container.id = "nameEditContainer";
-        container.style.position = "fixed";
-        container.style.top = "120px";
-        container.style.left = "50%";
-        container.style.transform = "translateX(-50%)";
-        container.style.zIndex = "9999999";
-        container.style.background = "black";
-        container.style.padding = "10px";
-        container.style.border = "2px solid yellow";
+		const container = document.createElement("div");
+		container.id = "nameEditContainer";
+		container.style.position = "fixed";
+		container.style.top = "120px";
+		container.style.left = "50%";
+		container.style.transform = "translateX(-50%)";
+		container.style.zIndex = "9999999";
+		container.style.background = "black";
+		container.style.padding = "10px";
+		container.style.border = "2px solid yellow";
+		container.style.position = "fixed";
+		//  Close button
+		const closeBtn = document.createElement("button");
+		closeBtn.textContent = "x";
+		closeBtn.style.position = "absolute";
+		closeBtn.style.top = "-10px";           // move it slightly above the container
+		closeBtn.style.right = "-10px";         // shift it outside the right edge
+		closeBtn.style.background = "black";    // match container background
+		closeBtn.style.color = "yellow";
+		closeBtn.style.border = "2px solid yellow";
+		closeBtn.style.borderRadius = "50%";
+		closeBtn.style.width = "24px";
+		closeBtn.style.height = "24px";
+		closeBtn.style.fontSize = "16px";
+		closeBtn.style.lineHeight = "20px";
+		closeBtn.style.cursor = "pointer";
+		closeBtn.style.zIndex = "10000000";     // ensure it's above everything
+		const input = document.createElement("input");
+		input.type = "text";
+		input.maxLength = 20;
+		input.placeholder = "Enter New Name";
 
-        const input = document.createElement("input");
-        input.type = "text";
-        input.maxLength = 20;
-        input.placeholder = "Enter new name";
+		const saveBtn = document.createElement("button");
+		saveBtn.textContent = "SAVE";
+		saveBtn.className = "buttonmode1";
 
-        const saveBtn = document.createElement("button");
-        saveBtn.textContent = "SAVE";
-        saveBtn.className = "buttonmode1";
+		const error = document.createElement("p");
+		error.style.color = "red";
+		error.style.display = "none";
 
-        const error = document.createElement("p");
-        error.style.color = "red";
-        error.style.display = "none";
+		container.appendChild(closeBtn);
+		container.appendChild(input);
+		container.appendChild(saveBtn);
+		container.appendChild(error);
 
-        container.appendChild(input);
-        container.appendChild(saveBtn);
-        container.appendChild(error);
+		overlay.appendChild(container);
 
-        overlay.appendChild(container);
+		// ⭐ Autofocus
+		input.focus();
 
-        // ⭐ SAVE HANDLER — everything must be inside here
+		// ⭐ Close handler
+		closeBtn.addEventListener("click", () => {
+			container.remove();
+		});
+
+        // ⭐ SAVE HANDLER
         saveBtn.addEventListener("click", async () => {
-            const newName = input.value.trim();
+            let newName = input.value.trim();
 
-            if (newName.length < 2) {
-                error.textContent = "Name must be at least 2 characters.";
-                error.style.display = "block";
-                return;
-            }
-
-            const emojiRegex = /\p{Extended_Pictographic}/u;
-            if (emojiRegex.test(newName)) {
-                error.textContent = "Emojis are not allowed.";
+            // Use your central validator
+            if (!validateName(newName)) {
+                error.textContent = "Invalid or banned name. Try again.";
                 error.style.display = "block";
                 return;
             }
