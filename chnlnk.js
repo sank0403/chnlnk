@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.27.05";
+const BUILD_VERSION = "2025.01.27.06";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -374,6 +374,15 @@ function initMonthlyStats() {
     // Same month → do nothing
 }
 
+function showError(message) {
+  const popup = document.getElementById("errorPopup");
+  popup.textContent = message;
+  popup.classList.add("show");
+
+  setTimeout(() => {
+    popup.classList.remove("show");
+  }, 5000); // fades out after 2 seconds
+}
 
 async function submitLeaderboardEntry(playerName) {
 
@@ -390,6 +399,18 @@ async function submitLeaderboardEntry(playerName) {
 	// const existing = await getDoc(playerRef); 
 	// if (existing.exists()) { alert("That name is already taken. Please choose another."); return; }
 	const playerId = auth.currentUser.uid; // ← use UID as doc ID
+	// NEW: enforce played <= today's date 
+	const today = new Date().getDate(); 
+	if (played > today) { showError("Invalid Stats: Total Played cannot exceed today's date."); return; }
+	if (wins > played) {
+	  showError("Invalid Stats: Wins cannot exceed Total Played.");
+	  return;
+	}
+
+	if (stars > (5 * wins)) {
+	  showError("Invalid Stats: Stars cannot exceed max possible value.");
+	  return;
+	}
     try {
         await setDoc(
             doc(db, "leaderboard", playerId),   // ← one doc per player

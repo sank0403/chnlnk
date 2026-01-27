@@ -1581,6 +1581,26 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
     padding-left: 10px;
 }
 
+.error-popup {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(220, 0, 0, 0.9);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 9999;
+}
+.error-popup.show {
+  opacity: 1;
+}
+
 
 /* Container */
 #timed-bonus {
