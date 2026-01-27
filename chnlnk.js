@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.27.04";
+const BUILD_VERSION = "2025.01.27.05";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -383,6 +383,9 @@ async function submitLeaderboardEntry(playerName) {
     const wins   = Number(localStorage.monthwins)   || 0;
 
     const winpct = played > 0 ? Math.round((wins / played) * 100) : 0;
+	// Build the month key: YYYY-MM 
+	const now = new Date(); 
+	const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;	
 	// const playerRef = doc(db, "leaderboard", playerName); 
 	// const existing = await getDoc(playerRef); 
 	// if (existing.exists()) { alert("That name is already taken. Please choose another."); return; }
@@ -397,9 +400,10 @@ async function submitLeaderboardEntry(playerName) {
                 // streak: streak,
                 wins: wins,
                 winpct: winpct,
-                updated: serverTimestamp()
+                updated: serverTimestamp(),
+				month: monthKey // ← optional for now, required later
             },
-            { merge: false } // ← keeps old fields if you add new ones later
+            { merge: true }
         );
 
     } catch (err) {
@@ -426,11 +430,14 @@ async function loadLeaderboard() {
 
     const currentPlayerName = localStorage.playerName;
     const currentUID = auth.currentUser.uid;
-
+	// Build the month key: YYYY-MM 
+	const now = new Date(); 
+	const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
     try {
         // 1. Get top 5
         const topQ = query(
             collection(db, "leaderboard"),
+			where("month", "==", monthKey),
             orderBy("stars", "desc"),
 			orderBy("wins", "desc"),
 			orderBy("winpct", "desc"),
@@ -485,6 +492,7 @@ async function loadLeaderboard() {
                 // 3. Compute actual rank
                 const rankQ = query(
                     collection(db, "leaderboard"),
+					where("month", "==", monthKey), // ← only compare against this month
                     where("stars", ">", d.stars)
                 );
 
