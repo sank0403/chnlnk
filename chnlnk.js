@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.27.02";
+const BUILD_VERSION = "2025.01.27.04";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -432,8 +432,8 @@ async function loadLeaderboard() {
         const topQ = query(
             collection(db, "leaderboard"),
             orderBy("stars", "desc"),
-			orderBy("winpct", "desc"),
 			orderBy("wins", "desc"),
+			orderBy("winpct", "desc"),
             limit(5)
         );
 
