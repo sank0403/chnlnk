@@ -374,7 +374,8 @@ async function loadLeaderboard() {
     const leaderboardBody = document.getElementById("leaderboardBody");
     leaderboardBody.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
 
-    const currentPlayer = localStorage.playerName;
+    const currentPlayerName = localStorage.playerName;
+    const currentUID = auth.currentUser.uid;
 
     try {
         // 1. Get top 5
@@ -393,33 +394,37 @@ async function loadLeaderboard() {
         topSnap.forEach(docSnap => {
             const d = docSnap.data();
 
-            if (d.name === currentPlayer) {
+            if (d.name === currentPlayerName) {
                 currentPlayerInTop5 = true;
             }
-					
 
-			const row = document.createElement("tr");
-			// if (d.name === currentPlayer) { row.classList.add("current-player-row"); }	
-			row.innerHTML = `
-				<td>${
-					rank === 1 ? "🥇" :
-					rank === 2 ? "🥈" :
-					rank === 3 ? "🥉" :
-					rank
-				}</td>
-				<td>${d.name}</td>
-				<td>${d.stars}</td>
-				<td>${d.wins}</td>
-				<td>${d.winpct}%</td>
-			`;
-			if (d.name === currentPlayer) { row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell")); }			
-			leaderboardBody.appendChild(row);
-			rank++;
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${
+                    rank === 1 ? "🥇" :
+                    rank === 2 ? "🥈" :
+                    rank === 3 ? "🥉" :
+                    rank
+                }</td>
+                <td>${d.name}</td>
+                <td>${d.stars}</td>
+                <td>${d.wins}</td>
+                <td>${d.winpct}%</td>
+            `;
+
+            // highlight current user
+            if (d.name === currentPlayerName) {
+                row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+            }
+
+            leaderboardBody.appendChild(row);
+            rank++;
         });
 
         // 2. If current player is NOT in top 5 → show their real rank
         if (!currentPlayerInTop5) {
-            const playerRef = doc(db, "leaderboard", currentPlayer);
+            const playerRef = doc(db, "leaderboard", currentUID);
             const playerSnap = await getDoc(playerRef);
 
             if (playerSnap.exists()) {
@@ -434,21 +439,21 @@ async function loadLeaderboard() {
                 const rankSnap = await getDocs(rankQ);
                 const actualRank = rankSnap.size + 1;
 
-                // 4. Add the current player row with actual rank
+                // 4. Add the current player row as the 6th entry
                 const row = document.createElement("tr");
-				// row.classList.add("current-player-row");
                 row.innerHTML = `
                     <td>${actualRank}</td>
                     <td>${d.name}</td>
                     <td>${d.stars}</td>
                     <td>${d.wins}</td>
-                    <td>${d.winpct}%</td>             
+                    <td>${d.winpct}%</td>
                 `;
 
                 // highlight the current player
                 row.style.background = "rgba(255,255,255,0.1)";
                 row.style.fontWeight = "bold";
-				row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+                row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+
                 leaderboardBody.appendChild(row);
             }
         }
@@ -458,9 +463,6 @@ async function loadLeaderboard() {
         leaderboardBody.innerHTML = "<tr><td colspan='6'>Error loading leaderboard.</td></tr>";
     }
 }
-
-
-
 
 
 function postStatsToWhatsApp() {
