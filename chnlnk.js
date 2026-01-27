@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.26.01";
+const BUILD_VERSION = "2025.01.26.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -92,6 +92,377 @@ document.addEventListener("click", function(e) {
     }
 });
 
+function containsEmoji(str) {
+    // Matches actual emoji ranges only
+    const emojiRegex = /[\u{1F300}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{1F100}-\u{1F1FF}]/u;
+    return emojiRegex.test(str);
+}
+
+function validateName(name) {
+    if (!name) return false;
+
+    // Trim whitespace
+    name = name.trim();
+
+    // Length check
+    if (name.length < 2 || name.length > 20) return false;
+
+    // Reject emojis
+    if (containsEmoji(name)) return false;
+
+    // Allow: letters, numbers, spaces, underscores, hyphens
+    const allowedPattern = /^[A-Za-z0-9 _-]+$/;
+    if (!allowedPattern.test(name)) return false;
+
+    // Banned words (case-insensitive)
+    const bannedWords = [
+        "fuck", "shit", "bitch", "asshole", "bastard",
+        "cunt", "dick", "pussy", "slut", "whore"
+    ];
+
+    const lower = name.toLowerCase();
+    for (const bad of bannedWords) {
+        if (lower.includes(bad)) return false;
+    }
+
+    return true;
+}
+
+
+
+function showNamePopup() {
+    const popup = document.getElementById("namePopup");
+    const input = document.getElementById("nameInput");
+
+    if (!input.value.trim()) {
+        input.value = getDefaultPlayerName();
+    }
+
+    popup.classList.remove("hidden");
+
+    setTimeout(() => {
+        input.focus();
+        input.select();
+    }, 50);
+}
+
+function hideNamePopup() {
+    document.getElementById("namePopup").classList.add("hidden");
+}
+
+function getDefaultPlayerName() {
+    return "CLUser" + Date.now();
+}
+
+
+async function initPlayerName() {
+    return new Promise(resolve => {
+
+        // If name already exists, resolve immediately
+        if (localStorage.playerName) {
+            submitLeaderboardEntry(localStorage.playerName);
+            resolve(localStorage.playerName);
+            return;
+        }
+
+        // Otherwise show popup and wait for user input
+        showNamePopup();
+
+        document.getElementById("nameSubmitBtn").onclick = async () => {
+            let name = document.getElementById("nameInput").value.trim();
+            const errorEl = document.getElementById("nameError");
+
+            if (name === "") {
+                name = getDefaultPlayerName();
+            }
+
+            if (!validateName(name)) {
+                errorEl.textContent = "Invalid name. Try again.";
+                errorEl.classList.remove("hidden");
+                return;
+            }
+
+            try {
+                // 🔍 Duplicate name check using query (UID-based docs)
+                const q = query(
+                    collection(db, "leaderboard"),
+                    where("name", "==", name)
+                );
+                const snap = await getDocs(q);
+
+                if (!snap.empty) {
+                    errorEl.textContent = "That name is already taken.";
+                    errorEl.classList.remove("hidden");
+                    return;
+                }
+
+                // ✅ Name is valid and unique
+                errorEl.classList.add("hidden");
+
+                // keep localStorage consistent with edit flow
+                localStorage.playerName = name;
+
+                hideNamePopup();
+
+                await submitLeaderboardEntry(name);
+
+                resolve(name);
+
+            } catch (err) {
+                console.error("Error checking name:", err);
+                errorEl.textContent = "Error checking name. Try again.";
+                errorEl.classList.remove("hidden");
+            }
+        };
+    });
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const changeNameBtn = document.getElementById("changeNameBtn");
+
+    changeNameBtn.addEventListener("click", () => {
+
+        // Prevent duplicates
+        if (document.getElementById("nameEditContainer")) return;
+
+        const overlay = document.getElementById("globalOverlay");
+
+        const container = document.createElement("div");
+        container.id = "nameEditContainer";
+        container.style.position = "fixed";
+        container.style.top = "120px";
+        container.style.left = "50%";
+        container.style.transform = "translateX(-50%)";
+        container.style.zIndex = "9999999";
+        container.style.background = "black";
+        container.style.padding = "10px";
+        container.style.border = "2px solid yellow";
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.maxLength = 20;
+        input.placeholder = "Enter new name";
+
+        const saveBtn = document.createElement("button");
+        saveBtn.textContent = "SAVE";
+        saveBtn.className = "buttonmode1";
+
+        const error = document.createElement("p");
+        error.style.color = "red";
+        error.style.display = "none";
+
+        container.appendChild(input);
+        container.appendChild(saveBtn);
+        container.appendChild(error);
+
+        overlay.appendChild(container);
+
+        // ⭐ SAVE HANDLER — everything must be inside here
+        saveBtn.addEventListener("click", async () => {
+            const newName = input.value.trim();
+
+            if (newName.length < 2) {
+                error.textContent = "Name must be at least 2 characters.";
+                error.style.display = "block";
+                return;
+            }
+
+            const emojiRegex = /\p{Extended_Pictographic}/u;
+            if (emojiRegex.test(newName)) {
+                error.textContent = "Emojis are not allowed.";
+                error.style.display = "block";
+                return;
+            }
+
+            try {
+                const playerId = auth.currentUser.uid;
+
+                // ⭐ Duplicate name check
+                const q = query(
+                    collection(db, "leaderboard"),
+                    where("name", "==", newName)
+                );
+                const snap = await getDocs(q);
+
+                const someoneElse = snap.docs.some(doc => doc.id !== playerId);
+
+                if (someoneElse) {
+                    error.textContent = "That name is already taken.";
+                    error.style.display = "block";
+                    return;
+                }
+
+                // ⭐ Update Firestore
+                await setDoc(
+                    doc(db, "leaderboard", playerId),
+                    { name: newName, updated: serverTimestamp() },
+                    { merge: true }
+                );
+
+                // ⭐ Sync localStorage
+                localStorage.playerName = newName;
+
+                // ⭐ Refresh leaderboard
+                await loadLeaderboard();
+
+                container.remove();
+
+            } catch (err) {
+                error.textContent = "Error updating name.";
+                error.style.display = "block";
+                console.error(err);
+            }
+        });
+    });
+
+});
+
+
+
+
+
+
+
+async function submitLeaderboardEntry(playerName) {
+
+    const played = Number(localStorage.totalclplayed) || 0;
+    const stars  = Number(localStorage.totalclstars)  || 0;
+    const streak = Number(localStorage.totalclstreak) || 0;
+    const wins   = Number(localStorage.totalclwins)   || 0;
+
+    const winpct = played > 0 ? Math.round((wins / played) * 100) : 0;
+	// const playerRef = doc(db, "leaderboard", playerName); 
+	// const existing = await getDoc(playerRef); 
+	// if (existing.exists()) { alert("That name is already taken. Please choose another."); return; }
+	const playerId = auth.currentUser.uid; // ← use UID as doc ID
+    try {
+        await setDoc(
+            doc(db, "leaderboard", playerId),   // ← one doc per player
+            {
+                name: playerName,
+                played: played,
+                stars: stars,
+                // streak: streak,
+                wins: wins,
+                winpct: winpct,
+                updated: serverTimestamp()
+            },
+            { merge: false } // ← keeps old fields if you add new ones later
+        );
+
+    } catch (err) {
+        console.error("Error saving leaderboard entry:", err);
+    }
+}
+
+document.getElementById("leaderboardHeader").addEventListener("click", function () {
+    const content = document.getElementById("leaderboardContent");
+    const toggle = document.getElementById("leaderboardToggle");
+
+    if (content.style.maxHeight && content.style.maxHeight !== "0px") {
+        content.style.maxHeight = "0px";
+        toggle.textContent = "▼";
+    } else {
+        content.style.maxHeight = content.scrollHeight + "px";
+        toggle.textContent = "▲";
+    }
+});
+
+async function loadLeaderboard() {
+    const leaderboardBody = document.getElementById("leaderboardBody");
+    leaderboardBody.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
+
+    const currentPlayer = localStorage.playerName;
+
+    try {
+        // 1. Get top 5
+        const topQ = query(
+            collection(db, "leaderboard"),
+            orderBy("stars", "desc"),
+            limit(5)
+        );
+
+        const topSnap = await getDocs(topQ);
+        leaderboardBody.innerHTML = "";
+
+        let rank = 1;
+        let currentPlayerInTop5 = false;
+
+        topSnap.forEach(docSnap => {
+            const d = docSnap.data();
+
+            if (d.name === currentPlayer) {
+                currentPlayerInTop5 = true;
+            }
+					
+
+			const row = document.createElement("tr");
+			// if (d.name === currentPlayer) { row.classList.add("current-player-row"); }	
+			row.innerHTML = `
+				<td>${
+					rank === 1 ? "🥇" :
+					rank === 2 ? "🥈" :
+					rank === 3 ? "🥉" :
+					rank
+				}</td>
+				<td>${d.name}</td>
+				<td>${d.stars}</td>
+				<td>${d.wins}</td>
+				<td>${d.winpct}%</td>
+			`;
+			if (d.name === currentPlayer) { row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell")); }			
+			leaderboardBody.appendChild(row);
+			rank++;
+        });
+
+        // 2. If current player is NOT in top 5 → show their real rank
+        if (!currentPlayerInTop5) {
+            const playerRef = doc(db, "leaderboard", currentPlayer);
+            const playerSnap = await getDoc(playerRef);
+
+            if (playerSnap.exists()) {
+                const d = playerSnap.data();
+
+                // 3. Compute actual rank
+                const rankQ = query(
+                    collection(db, "leaderboard"),
+                    where("stars", ">", d.stars)
+                );
+
+                const rankSnap = await getDocs(rankQ);
+                const actualRank = rankSnap.size + 1;
+
+                // 4. Add the current player row with actual rank
+                const row = document.createElement("tr");
+				// row.classList.add("current-player-row");
+                row.innerHTML = `
+                    <td>${actualRank}</td>
+                    <td>${d.name}</td>
+                    <td>${d.stars}</td>
+                    <td>${d.wins}</td>
+                    <td>${d.winpct}%</td>             
+                `;
+
+                // highlight the current player
+                row.style.background = "rgba(255,255,255,0.1)";
+                row.style.fontWeight = "bold";
+				row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+                leaderboardBody.appendChild(row);
+            }
+        }
+
+    } catch (err) {
+        console.error("Leaderboard error:", err);
+        leaderboardBody.innerHTML = "<tr><td colspan='6'>Error loading leaderboard.</td></tr>";
+    }
+}
+
+
+
+
+
 function postStatsToWhatsApp() {
 
     if (localStorage.clgamecnt == 6) {
@@ -169,9 +540,19 @@ function updateAnswer(text) {
 }
 
 //Open Stats at end of game
-function OpenStats() {
+async function OpenStats() {
     document.getElementById("statsbutton").click();
+
+    // Ensure player name exists BEFORE loading leaderboard
+    await initPlayerName();
+
+    // Now safe to load leaderboard
+    await loadLeaderboard();
+	
+	// Now show the leaderboard 
+	document.getElementById("leaderboardCollapsible").style.display = "block";	
 }
+
 
 function OpenADDModal() {
     document.getElementById("addpop").click();
@@ -316,6 +697,23 @@ function SetTier() {
         tiericon = "";
     }
 }
+
+// const leaderboardHeader = document.getElementById("leaderboardHeader");
+// const leaderboardContent = document.getElementById("leaderboardContent");
+// const leaderboardToggle = document.getElementById("leaderboardToggle");
+
+// leaderboardHeader.addEventListener("click", async () => {
+    // const isClosed = leaderboardContent.style.display === "" || leaderboardContent.style.display === "none";
+
+    // if (isClosed) {
+        // await loadLeaderboard();
+        // leaderboardContent.style.display = "block";
+        // leaderboardToggle.textContent = "▲";
+    // } else {
+        // leaderboardContent.style.display = "none";
+        // leaderboardToggle.textContent = "▼";
+    // }
+// });
 
 function getUnrevealedConsonants() {
     const tiles = document.querySelectorAll(".tile, .tilesmall, .voweltile, .voweltilesmall");
@@ -1818,9 +2216,6 @@ function refreshArchiveModal() {
         }
     });
 }
-
-
-
 
 window.addEventListener("DOMContentLoaded", () => {
     const toggle = document.getElementById("hardmodetoggle");

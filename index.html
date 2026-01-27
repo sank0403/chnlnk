@@ -23,6 +23,60 @@
     <script defer src="chnlnk.js"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
     <!-- add icon link for all standard browsers -->
+	<script type="module">
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+		import {
+			getFirestore,
+			collection,
+			doc,
+			setDoc,
+			getDoc,
+			getDocs,
+			query,
+			orderBy,
+			deleteDoc, 
+			limit,
+			where,
+			serverTimestamp
+		} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+		import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+		// 1. Initialize Firebase FIRST
+		const firebaseConfig = {
+			apiKey: "AIzaSyD329eNDd2KR1rhYVitTmBx2jgSNTa7UOY",
+			authDomain: "chn-lnk.firebaseapp.com",
+			projectId: "chn-lnk",
+			storageBucket: "chn-lnk.firebasestorage.app",
+			messagingSenderId: "417710575115",
+			appId: "1:417710575115:web:337f0eb082fe6a1a7e810e"
+		};
+
+		const app = initializeApp(firebaseConfig);
+
+		// 2. THEN Auth
+		const auth = getAuth(app);
+		signInAnonymously(auth).catch(console.error);
+		window.auth = auth;
+		// 3. THEN Firestore
+		const db = getFirestore(app);
+
+		// 4. Expose globally
+		window.db = db;
+		window.doc = doc;
+		window.setDoc = setDoc;
+		window.getDoc = getDoc;
+		window.serverTimestamp = serverTimestamp;
+
+		window.collection = collection;
+		window.getDocs = getDocs;
+		window.query = query;
+		window.orderBy = orderBy;
+		window.limit = limit;
+		window.where = where;
+		window.deleteDoc = deleteDoc;
+	
+	</script>
 
     <!-- FB Meta Tags -->
     <meta property="og:url" content="https://sank0403.github.io/chnlnk/">
@@ -291,6 +345,32 @@
             <!--<center><img src="1000.gif"style="width:35%;height:35%;"></center>-->
             <!--<p style="color:darkgray" align="justify" >If you enjoyed playing this game, you can show your support by <strong style='color: var(--green);' ><a href="https://www.buymeacoffee.com/sank0403" target="_"><u>Buying Us A Coffee</u></a></strong> ☕️, to help future development and upkeep of this game. <b>THANK YOU for playing GEORDLE! 🌎 </b><br><br></p>-->
             <br>
+				<div id="leaderboardCollapsible">
+				<div id="leaderboardHeader">
+					<span>🏆 LEADERBOARD </span>
+					<span id="leaderboardToggle">▼</span>
+				</div>
+
+				<div id="leaderboardContent">
+					<table id="leaderboardTable">
+						<thead>
+							<tr>
+								<th>Rank</th>
+								<th>Name</th>
+								<th>Stars</th>
+								<th>Wins</th>
+								<th>Win%</th>
+								<!-- <th>Streak</th> -->
+							</tr>
+						</thead>
+						<tbody id="leaderboardBody">
+							<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>
+						</tbody>
+					</table>
+					<button id="changeNameBtn"class="buttonmode1">EDIT NAME</button>
+				</div>
+			</div>			
+			<br>
             <div id="sdhdr"><b>⭐ STAR DISTRIBUTION ⭐</b></div>
             <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
             <br>
@@ -329,6 +409,7 @@
                     <span class="flash1">SUBMIT YOUR OWN CHN LNK</span>
                 </a>
             </div>
+
         <!-- </div> -->
         <hr>
         <div id="footer">
@@ -341,6 +422,8 @@
 				<div id="pzl"><b><a href="https://sank0403.github.io/geordle/" target="_">Play <u>GEORDLE</u>🌎</a></b>
 				</div>
 			</div> -->
+
+			
         </div>
         <center>
             <class data-pastmodal-target="#pastmodal" id="pastbutton"><button id="Archivebutton" class="buttonmodetext" onclick="playArchive()"><u>PLAY PAST CHAINS</u></button></class>
@@ -560,5 +643,14 @@
             <button onclick="closeStreakPopup()" class="popup-btn">OK</button>
         </div>
     </div>
+	<div id="namePopup" class="popup-overlay hidden">
+		<div class="popup-box">
+			<h2>Enter Your Name</h2>
+			<input id="nameInput" type="text" placeholder="Your Name for Leaderboard">
+			<div id="nameError" class="name-error hidden">Invalid Name. Please try again.</div>
+			<button id="nameSubmitBtn">Save</button>
+		</div>
+	</div>
+	<div id="globalOverlay"></div>
 </body>
 </html>
