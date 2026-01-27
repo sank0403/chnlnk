@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.27.01";
+const BUILD_VERSION = "2025.01.27.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -343,18 +343,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+function initMonthlyStats() {
+    const now = new Date();
+    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
+    const lastMonth = localStorage.monthcl_lastMonth;
 
+    // First time ever → initialize monthly stats from totals
+    if (!lastMonth) {
+        localStorage.monthcl_lastMonth = currentMonth;
 
+        localStorage.monthclplayed = localStorage.totalclplayed || 0;
+        localStorage.monthclstars  = localStorage.totalclstars  || 0;
+        localStorage.monthwins     = localStorage.totalclwins   || 0;
 
+        return;
+    }
+
+    // New month → reset monthly stats
+    if (lastMonth !== currentMonth) {
+        localStorage.monthcl_lastMonth = currentMonth;
+
+        localStorage.monthclplayed = 0;
+        localStorage.monthclstars  = 0;
+        localStorage.monthwins     = 0;
+
+        return;
+    }
+
+    // Same month → do nothing
+}
 
 
 async function submitLeaderboardEntry(playerName) {
 
-    const played = Number(localStorage.totalclplayed) || 0;
-    const stars  = Number(localStorage.totalclstars)  || 0;
-    const streak = Number(localStorage.totalclstreak) || 0;
-    const wins   = Number(localStorage.totalclwins)   || 0;
+    const played = Number(localStorage.monthclplayed) || 0;
+    const stars  = Number(localStorage.monthclstars)  || 0;
+    // const streak = Number(localStorage.totalclstreak) || 0;
+    const wins   = Number(localStorage.monthwins)   || 0;
 
     const winpct = played > 0 ? Math.round((wins / played) * 100) : 0;
 	// const playerRef = doc(db, "leaderboard", playerName); 
@@ -406,6 +432,8 @@ async function loadLeaderboard() {
         const topQ = query(
             collection(db, "leaderboard"),
             orderBy("stars", "desc"),
+			orderBy("winpct", "desc"),
+			orderBy("wins", "desc"),
             limit(5)
         );
 
@@ -2128,6 +2156,7 @@ function updateLivesDisplay() {
             });
         }
         localStorage.totalclplayed = Number(localStorage.totalclplayed) + 1;
+		localStorage.monthclplayed = Number(localStorage.monthclplayed) + 1;
         localStorage.totalclstreak = 0;
         SetTier();
         var winpct = localStorage.totalclplayed > 0 ?
@@ -2194,6 +2223,7 @@ function UpdateChart() {
 }
 
 window.onload = function() {
+	initMonthlyStats();
     intialize();
     UpdateChart();
 }
@@ -3264,6 +3294,7 @@ function processInput(e) {
             });
         }
         localStorage.totalclplayed = Number(localStorage.totalclplayed) + 1;
+		localStorage.monthclplayed = Number(localStorage.monthclplayed) + 1;
         localStorage.totalclstreak = 0;
         SetTier();
         var winpct = localStorage.totalclplayed > 0 ?
@@ -3451,7 +3482,9 @@ function processInput(e) {
         localStorage.setItem(('gameovercl' + days), 1);
 		localStorage.setItem(('gamestatcl' + days), 1);
         localStorage.totalclplayed = Number(localStorage.totalclplayed) + 1;
+		localStorage.monthclplayed = Number(localStorage.monthclplayed) + 1;
         localStorage.totalclwins = Number(localStorage.totalclwins) + 1;
+		localStorage.monthwins = Number(localStorage.monthwins) + 1;
         localStorage.totalclstreak = Number(localStorage.totalclstreak) + 1;
         let streak = Number(localStorage.totalclstreak || 0);
 		const el = document.getElementById("streakPopupText"); // Clear dynamite tutorial message if available;
@@ -3485,6 +3518,7 @@ function processInput(e) {
         }
         updateDynamiteUI();
         localStorage.totalclstars = Number(localStorage.totalclstars) + Number(localStorage.clstarscnt);
+		localStorage.monthclstars = Number(localStorage.monthclstars) + Number(localStorage.clstarscnt);
         SetTier();
         var winpct = localStorage.totalclplayed > 0 ?
             Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100) :
