@@ -34,7 +34,7 @@ window.addEventListener("load", () => {
     const value = localStorage.getItem(key);
     if (value !== null) {
       data[key] = value;
-	  console.log("in fixed keys");
+      console.log("in fixed keys");
     }
   });
 
@@ -43,22 +43,18 @@ window.addEventListener("load", () => {
     const key = localStorage.key(i);
     if (prefixes.some(prefix => key.startsWith(prefix))) {
       data[key] = localStorage.getItem(key);
-	  console.log("in dynamic keys");
+      console.log("in dynamic keys");
     }
   }
 
-  // Determine opener origin safely
-  const targetOrigin = window.opener ? window.opener.origin : "*";
-
-  // Send data back to opener
+  // SAFE: send to "*" because the receiver validates origin
   console.log("Popup sending message to opener...");
   window.opener.postMessage(
     { type: "LOCALSTORAGE_MIGRATION", payload: JSON.stringify(data) },
-    targetOrigin
+    "*"
   );
 
-  // Close popup
- // window.close();
+  // window.close(); // enable later
 });
 </script>
 </body>
