@@ -28,6 +28,12 @@ function saveStats() {
         	// 	document.getElementById("0star").value = "";
 			localStorage.starclxcount = document.getElementById("chnxstar").value;
         		document.getElementById("chnxstar").value = "";
+				localStorage.monthclplayed = 0;
+				localStorage.monthclstars = 0;
+				localStorage.monthwins = 0;
+				const now = new Date();
+				const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+				localStorage.monthcl_lastMonth = currentMonth;
         		document.getElementById("answer").style.color = "white";
         		document.getElementById("answer").innerText = "STATS TRANSFERRED SUCCESSFULLY!\n REDIRECTING TO CHN LNK NOW...";
 			waitFiveSec();
@@ -149,4 +155,3 @@ function submitMe() {
 		}
 	}
 }
-
