@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const fixedKeys = [
+  'clMysteryLetter', 'clwordtwo', 'monthcl_lastMonth', 'clcorrect',
+  'cldisabledkey', 'cldynamiteUsedThisRound', 'consocount', 'clguesscnt',
+  'clwordone', 'clstarscnt', 'clBuildVersion', 'clwordfour', 'monthwins',
+  'clwordfive', 'starcl1count', 'starcl5count', 'monthclstars', 'vowelcount',
+  'clshowrules', 'totalclwins', 'clgamecnt', 'playerName', 'clshowalert',
+  'clhardmode', 'clwordlast', 'gameclwon', 'starclxcount', 'vowelactive',
+  'clwordsix', 'cllivescnt', 'totalclplayed', 'cllives', 'starcl4count',
+  'monthclplayed', 'totalclstars', 'starcl3count', 'clMysteryActive',
+  'clgamestarted', 'cldynamite', 'starcl0count', 'totalclstreak',
+  'starcl2count', 'clwordthree'
+];
+
+const prefixes = [
+  'gameovercl',
+  'gamestatcl',
+  'archstatcl',
+  'archovercl'
+];
+
+window.addEventListener("load", () => {
+  const data = {};
+
+  // Add fixed keys
+  fixedKeys.forEach(key => {
+    if (localStorage.getItem(key) !== null) {
+      data[key] = localStorage.getItem(key);
+    }
+  });
+
+  // Add dynamic prefix keys
+  Object.keys(localStorage).forEach(key => {
+    if (prefixes.some(prefix => key.startsWith(prefix))) {
+      data[key] = localStorage.getItem(key);
+    }
+  });
+
+  // Send to new domain
+	window.opener.postMessage(
+	  { type: "LOCALSTORAGE_MIGRATION", payload: JSON.stringify(data) },
+	  window.opener.origin
+	);
+  }
+
+  window.close();
+});
+
+</script>
+</body>
+</html>
