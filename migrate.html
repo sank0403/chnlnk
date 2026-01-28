@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <meta charset="UTF-8" />
+  <title>CHN LNK Migration</title>
+</head>
 <body>
 <script>
 const fixedKeys = [
@@ -25,30 +29,37 @@ const prefixes = [
 window.addEventListener("load", () => {
   const data = {};
 
-  // Add fixed keys
+  // Copy fixed keys
   fixedKeys.forEach(key => {
-    if (localStorage.getItem(key) !== null) {
-      data[key] = localStorage.getItem(key);
+    const value = localStorage.getItem(key);
+    if (value !== null) {
+      data[key] = value;
+	  console.log("in fixed keys");
     }
   });
 
-  // Add dynamic prefix keys
-  Object.keys(localStorage).forEach(key => {
+  // Copy dynamic prefix keys
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
     if (prefixes.some(prefix => key.startsWith(prefix))) {
       data[key] = localStorage.getItem(key);
+	  console.log("in dynamic keys");
     }
-  });
-
-  // Send to new domain
-	window.opener.postMessage(
-	  { type: "LOCALSTORAGE_MIGRATION", payload: JSON.stringify(data) },
-	  window.opener.origin
-	);
   }
 
-  window.close();
-});
+  // Determine opener origin safely
+  const targetOrigin = window.opener ? window.opener.origin : "*";
 
+  // Send data back to opener
+  console.log("Popup sending message to opener...");
+  window.opener.postMessage(
+    { type: "LOCALSTORAGE_MIGRATION", payload: JSON.stringify(data) },
+    targetOrigin
+  );
+
+  // Close popup
+ // window.close();
+});
 </script>
 </body>
 </html>
