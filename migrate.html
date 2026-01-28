@@ -7,16 +7,17 @@
 <body>
 <script>
 const fixedKeys = [
-  'clMysteryLetter', 'clwordtwo', 'monthcl_lastMonth', 'clcorrect',
-  'cldisabledkey', 'cldynamiteUsedThisRound', 'consocount', 'clguesscnt',
-  'clwordone', 'clstarscnt', 'clBuildVersion', 'clwordfour', 'monthwins',
-  'clwordfive', 'starcl1count', 'starcl5count', 'monthclstars', 'vowelcount',
-  'clshowrules', 'totalclwins', 'clgamecnt', 'playerName', 'clshowalert',
-  'clhardmode', 'clwordlast', 'gameclwon', 'starclxcount', 'vowelactive',
-  'clwordsix', 'cllivescnt', 'totalclplayed', 'cllives', 'starcl4count',
-  'monthclplayed', 'totalclstars', 'starcl3count', 'clMysteryActive',
-  'clgamestarted', 'cldynamite', 'starcl0count', 'totalclstreak',
-  'starcl2count', 'clwordthree'
+  'clMysteryLetter','clwordtwo','monthcl_lastMonth','clcorrect',
+  'cldisabledkey','cldynamiteUsedThisRound','consocount','clguesscnt',
+  'clwordone','clstarscnt','clBuildVersion','clwordfour','monthwins',
+  'clwordfive','starcl1count','starcl5count','monthclstars','vowelcount',
+  'clshowrules','totalclwins','clgamecnt','playerName','clshowalert',
+  'clhardmode','clwordlast','gameclwon','starclxcount','vowelactive',
+  'clwordsix','cllivescnt','totalclplayed','cllives','starcl4count',
+  'monthclplayed','totalclstars','starcl3count','clMysteryActive',
+  'clgamestarted','cldynamite','starcl0count','totalclstreak',
+  'starcl2count','clwordthree','skipReloadOnce',
+  'cldynamiteTutorialShown','cltradeoffered'
 ];
 
 const prefixes = [
@@ -32,10 +33,7 @@ window.addEventListener("load", () => {
   // Copy fixed keys
   fixedKeys.forEach(key => {
     const value = localStorage.getItem(key);
-    if (value !== null) {
-      data[key] = value;
-      console.log("in fixed keys");
-    }
+    if (value !== null) data[key] = value;
   });
 
   // Copy dynamic prefix keys
@@ -43,18 +41,16 @@ window.addEventListener("load", () => {
     const key = localStorage.key(i);
     if (prefixes.some(prefix => key.startsWith(prefix))) {
       data[key] = localStorage.getItem(key);
-      console.log("in dynamic keys");
     }
   }
 
-  // SAFE: send to "*" because the receiver validates origin
-  console.log("Popup sending message to opener...");
+  // Send to opener; receiver validates origin
   window.opener.postMessage(
     { type: "LOCALSTORAGE_MIGRATION", payload: JSON.stringify(data) },
     "*"
   );
 
-  // window.close(); // enable later
+  window.close();
 });
 </script>
 </body>
