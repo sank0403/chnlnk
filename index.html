@@ -18,9 +18,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>CHN LNK - Chain Link with a Twist!</title>
     <link href="chnlnk.css" rel="stylesheet">
     <script defer src="chnlnk.js"></script>
+	<script src="chnlnk.js"></script>
+	<script>
+	  if (location.hostname === "thechnlnk.com") {
+		const script = document.createElement("script");
+		script.src = "migration-listener.js";
+		document.head.appendChild(script);
+	  }
+	</script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
     <!-- add icon link for all standard browsers -->
 	<script type="module">
@@ -78,13 +85,24 @@
 	
 	</script>
 
-    <!-- FB Meta Tags -->
-    <meta property="og:url" content="https://sank0403.github.io/chnlnk/">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="CHN LNK">
-    <meta property="og:description" content="Chain Link with a Twist!">
-    <meta property="og:image" content="https://sank0403.github.io/chnlnk/icon.jpg">
+    <!-- Primary Meta Tags -->
+	<title>CHN LNK — The Daily Linking Game</title>
+	<meta name="title" content="CHN LNK - The Daily Word Chain Game">
+	<meta name="description" content="Fast, clean, competitive. Link words in a chain and climb the leaderboard.">
 
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://thechnlnk.com/">
+	<meta property="og:title" content="CHN LNK - The Daily Word Chain Game">
+	<meta property="og:description" content="Fast, clean, competitive. Link words in a chain and climb the leaderboard.">
+	<meta property="og:image" content="https://sank0403.github.io/chnlnk/icon.jpg">
+
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image">
+	<meta property="twitter:url" content="https://thechnlnk.com/">
+	<meta property="twitter:title" content="CHN LNK — The Daily Linking Game">
+	<meta property="twitter:description" content="A fast, addictive word-linking challenge. Build chains, climb the leaderboard, and play instantly with no signup.">
+	<meta property="twitter:image" content="https://sank0403.github.io/chnlnk/icon.jpg">
 
     <link rel="icon" href="https://sank0403.github.io/chnlnk/icon.jpg" type="image/x-icon">
     <link rel="manifest" href="https://sank0403.github.io/chnlnk/chnlnk_manifest.json" /> <!--for shortcut icons and transitions-->
@@ -464,7 +482,7 @@
 
                 var randomstng = randomStr(10, '12345abcde');
                 // Set the link dynamically
-                document.getElementById("emailLink").href = "mailto:?cc=geowordle@gmail.com&subject=CHN LNK - Unique Invitation Code : " + randomstng + "&body=Try%20this%20new%20word%20game%20-%20https://sank0403.github.io/chnlnk/?" + randomstng;
+                document.getElementById("emailLink").href = "mailto:?cc=geowordle@gmail.com&subject=CHN LNK - Unique Invitation Code : " + randomstng + "&body=Try%20this%20new%20word%20game%20-%20https://thechnlnk.com/?" + randomstng;
             </script>
 
 

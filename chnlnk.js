@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.28.01";
+const BUILD_VERSION = "2025.01.28.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -600,7 +600,7 @@ ${movesUsed} - ${dots}
 🔥 Streak: ${streak} | ⭐ Stars: ${stars}
 ${tierLine}
 
-https://sank0403.github.io/chnlnk/`;
+https://thechnlnk.com`;
 }
 
 
@@ -982,6 +982,7 @@ function openLifeTradeModal() {
 function applyLifeTrade() {
     // Deduct stars
     localStorage.totalclstars = Number(localStorage.totalclstars) - 2;
+	localStorage.monthclstars = Number(localStorage.monthclstars) - 2;
 
     // Restore 1 life
     localStorage.cllivescnt = Number(localStorage.cllivescnt) - 1;
@@ -1248,9 +1249,9 @@ function myFunction() {
     }
 
     if (tierlevel == "") {
-        var copyText = "🔗 CHN LNK # " + days + " 🧩 \n\n" + cluehdr + " - " + clueicon + "\n🔥 Streak: " + localStorage.totalclstreak + " | ⭐ Stars: " + localStorage.totalclstars + "\n\nhttps://sank0403.github.io/chnlnk/";
+        var copyText = "🔗 CHN LNK # " + days + " 🧩 \n\n" + cluehdr + " - " + clueicon + "\n🔥 Streak: " + localStorage.totalclstreak + " | ⭐ Stars: " + localStorage.totalclstars + "\n\nhttps://thechnlnk.com";
     } else {
-        var copyText = "🔗 CHN LNK # " + days + " 🧩 \n\n" + cluehdr + " - " + clueicon + "\n🔥 Streak: " + localStorage.totalclstreak + " | ⭐ Stars: " + localStorage.totalclstars + "\n" + tiericon + " Tier: " + tierlevel + "\n\nhttps://sank0403.github.io/chnlnk/";
+        var copyText = "🔗 CHN LNK # " + days + " 🧩 \n\n" + cluehdr + " - " + clueicon + "\n🔥 Streak: " + localStorage.totalclstreak + " | ⭐ Stars: " + localStorage.totalclstars + "\n" + tiericon + " Tier: " + tierlevel + "\n\nhttps://thechnlnk.com";
     }
 
 
