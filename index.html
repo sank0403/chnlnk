@@ -21,79 +21,83 @@
     <link href="chnlnk.css" rel="stylesheet">
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
     <!-- add icon link for all standard browsers -->
-	<script type="module">
-		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-		import {
-			getFirestore,
-			collection,
-			doc,
-			setDoc,
-			getDoc,
-			getDocs,
-			query,
-			orderBy,
-			deleteDoc, 
-			limit,
-			where,
-			serverTimestamp
-		} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <script type="module">
+        import {
+            initializeApp
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            doc,
+            setDoc,
+            getDoc,
+            getDocs,
+            query,
+            orderBy,
+            deleteDoc,
+            limit,
+            where,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-		import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import {
+            getAuth,
+            signInAnonymously
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-		// 1. Initialize Firebase FIRST
-		const firebaseConfig = {
-			apiKey: "AIzaSyD329eNDd2KR1rhYVitTmBx2jgSNTa7UOY",
-			authDomain: "chn-lnk.firebaseapp.com",
-			projectId: "chn-lnk",
-			storageBucket: "chn-lnk.firebasestorage.app",
-			messagingSenderId: "417710575115",
-			appId: "1:417710575115:web:337f0eb082fe6a1a7e810e"
-		};
+        // 1. Initialize Firebase FIRST
+        const firebaseConfig = {
+            apiKey: "AIzaSyD329eNDd2KR1rhYVitTmBx2jgSNTa7UOY",
+            authDomain: "chn-lnk.firebaseapp.com",
+            projectId: "chn-lnk",
+            storageBucket: "chn-lnk.firebasestorage.app",
+            messagingSenderId: "417710575115",
+            appId: "1:417710575115:web:337f0eb082fe6a1a7e810e"
+        };
 
-		const app = initializeApp(firebaseConfig);
+        const app = initializeApp(firebaseConfig);
 
-		// 2. THEN Auth
-		const auth = getAuth(app);
-		signInAnonymously(auth).catch(console.error);
-		window.auth = auth;
-		// 3. THEN Firestore
-		const db = getFirestore(app);
+        // 2. THEN Auth
+        const auth = getAuth(app);
+        signInAnonymously(auth).catch(console.error);
+        window.auth = auth;
+        // 3. THEN Firestore
+        const db = getFirestore(app);
 
-		// 4. Expose globally
-		window.db = db;
-		window.doc = doc;
-		window.setDoc = setDoc;
-		window.getDoc = getDoc;
-		window.serverTimestamp = serverTimestamp;
+        // 4. Expose globally
+        window.db = db;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.getDoc = getDoc;
+        window.serverTimestamp = serverTimestamp;
 
-		window.collection = collection;
-		window.getDocs = getDocs;
-		window.query = query;
-		window.orderBy = orderBy;
-		window.limit = limit;
-		window.where = where;
-		window.deleteDoc = deleteDoc;
-	
-	</script>
+        window.collection = collection;
+        window.getDocs = getDocs;
+        window.query = query;
+        window.orderBy = orderBy;
+        window.limit = limit;
+        window.where = where;
+        window.deleteDoc = deleteDoc;
+    </script>
 
     <!-- Primary Meta Tags -->
-	<title>CHN LNK — The Daily Word Chain Game</title>
-	<meta name="title" content="CHN LNK">
-	<meta name="description" content="The Daily Word Chain Game.">
+    <title>CHN LNK — The Daily Word Chain Game</title>
+    <meta name="title" content="CHN LNK">
+    <meta name="description" content="The Daily Word Chain Game.">
 
-	<!-- Open Graph / Facebook -->
-	<meta property="og:type" content="website">
-	<meta property="og:url" content="https://thechnlnk.com/">
-	<meta property="og:title" content="CHN LNK">
-	<meta property="og:description" content="The Daily Word Chain Game.">
-	<meta property="og:image" content="https://thechnlnk.com/icon.jpg">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://thechnlnk.com/">
+    <meta property="og:title" content="CHN LNK">
+    <meta property="og:description" content="The Daily Word Chain Game.">
+    <meta property="og:image" content="https://thechnlnk.com/icon.jpg">
 
-	<!-- Twitter -->
-	<meta property="twitter:card" content="summary_large_image">
-	<meta property="twitter:url" content="https://thechnlnk.com/">
-	<meta property="twitter:title" content="CHN LNK">
-	<meta property="twitter:description" content="The Daily Word Chain Game.">
-	<meta property="twitter:image" content="https://thechnlnk.com/icon.jpg">
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://thechnlnk.com/">
+    <meta property="twitter:title" content="CHN LNK">
+    <meta property="twitter:description" content="The Daily Word Chain Game.">
+    <meta property="twitter:image" content="https://thechnlnk.com/icon.jpg">
 
     <link rel="icon" href="https://thechnlnk.com/icon.jpg" type="image/x-icon">
     <link rel="manifest" href="https://thechnlnk.com/chnlnk_manifest.json" /> <!--for shortcut icons and transitions-->
@@ -104,29 +108,29 @@
 <body>
     <button id="btnParty" type="button" hidden></button>
     <div id="tsparticles"></div>
-	<div id="stats">
-		<div id="stats-item">
-			<span class="stats-item">
-				<span data-modal-target="#modal" id="rulesbutton">
-					<img src="rulesicon.png" style="width:22px;height:22px;">
-				</span>
+    <div id="stats">
+        <div id="stats-item">
+            <span class="stats-item">
+                <span data-modal-target="#modal" id="rulesbutton">
+                    <img src="rulesicon.png" style="width:22px;height:22px;">
+                </span>
 
-				<a href="mailto: geowordle@gmail.com" target="_">
-					<img src="mail.png" style="width:22px;height:17px" alt="EMAIL">
-				</a>
-			</span>
+                <a href="mailto: geowordle@gmail.com" target="_">
+                    <img src="mail.png" style="width:22px;height:17px" alt="EMAIL">
+                </a>
+            </span>
 
-			<span class="stats-item">
-				<a href="https://www.buymeacoffee.com/sank0403/" target="_">
-					<img src="hearticon.png" style="width:28px;height:22px" alt="Buy Me A Coffee">
-				</a>
+            <span class="stats-item">
+                <a href="https://www.buymeacoffee.com/sank0403/" target="_">
+                    <img src="hearticon.png" style="width:28px;height:22px" alt="Buy Me A Coffee">
+                </a>
 
-				<span data-summary-target="#summary" id="statsbutton">
-					<img src="statsicon.png" style="width:22px;height:22px;">
-				</span>
-			</span>
-		</div>
-	</div>
+                <span data-summary-target="#summary" id="statsbutton">
+                    <img src="statsicon.png" style="width:22px;height:22px;">
+                </span>
+            </span>
+        </div>
+    </div>
 
 
 
@@ -183,37 +187,37 @@
             <button data-close-button class="close-button">&times;</button>
         </div>
         <div class="modal-body">
-		<br>
-              
+            <br>
+
             The objective of <strong style="color:white;">CHN LNK</strong> is to identify all the words in the <strong style="color:white;">CHAIN</strong>. Every word on the chain <strong style="color:white;">LINKS</strong> logically, with the word below it.
             <br>
 
-			<div class="rules-wrapper">
+            <div class="rules-wrapper">
 
-				<ul class="rules-list">
-					<li>
-						If the letter you selected is in<strong style="color:white;"> ANY WORD </strong>of the chain,
-						the corresponding tiles will be highlighted in
-						<strong style="color:lightgreen;">Green</strong>.
-					</li>
-					<br>
+                <ul class="rules-list">
+                    <li>
+                        If the letter you selected is in<strong style="color:white;"> ANY WORD </strong>of the chain,
+                        the corresponding tiles will be highlighted in
+                        <strong style="color:lightgreen;">Green</strong>.
+                    </li>
+                    <br>
 
-					<li>
-						<strong style="color:white;">VOWELS are DISABLED</strong> till you figure out all the
-						<strong style="color:white;">OTHER LETTERS</strong> in the chain. The tiles on the grid that
-						ultimately hold a vowel are highlighted in
-						<strong style="color:red;">Red</strong>.
-					</li>
-					<br>
+                    <li>
+                        <strong style="color:white;">VOWELS are DISABLED</strong> till you figure out all the
+                        <strong style="color:white;">OTHER LETTERS</strong> in the chain. The tiles on the grid that
+                        ultimately hold a vowel are highlighted in
+                        <strong style="color:red;">Red</strong>.
+                    </li>
+                    <br>
 
-					<li>
-						See the <strong style="color:white;">TUTORIAL</strong> of solving a chain.
-						Notice how vowels are disabled initially, and how each word meaningfully
-						links with the next one : FOREST TRAIL → TRAIL MIX → MIX TAPE → TAPE MEASURE → MEASURE STEP → STEP LADDER.
-					</li>
-				</ul>
-				<img class="rules-image" src="tutorial.gif" alt="Example Chain">
-			</div>
+                    <li>
+                        See the <strong style="color:white;">TUTORIAL</strong> of solving a chain.
+                        Notice how vowels are disabled initially, and how each word meaningfully
+                        links with the next one : FOREST TRAIL → TRAIL MIX → MIX TAPE → TAPE MEASURE → MEASURE STEP → STEP LADDER.
+                    </li>
+                </ul>
+                <img class="rules-image" src="tutorial.gif" alt="Example Chain">
+            </div>
             <!-- COLLAPSIBLE: LIVES -->
             <div class="collapsible-section">
                 <button class="collapsible">🔴️ Lives</button>
@@ -354,32 +358,34 @@
             <!--<center><img src="1000.gif"style="width:35%;height:35%;"></center>-->
             <!--<p style="color:darkgray" align="justify" >If you enjoyed playing this game, you can show your support by <strong style='color: var(--green);' ><a href="https://www.buymeacoffee.com/sank0403" target="_"><u>Buying Us A Coffee</u></a></strong> ☕️, to help future development and upkeep of this game. <b>THANK YOU for playing GEORDLE! 🌎 </b><br><br></p>-->
             <br>
-				<div id="leaderboardCollapsible">
-				<div id="leaderboardHeader">
-					<span>🏆 MONTHLY LEADERBOARD </span>
-					<span id="leaderboardToggle">▼</span>
-				</div>
+            <div id="leaderboardCollapsible">
+                <div id="leaderboardHeader">
+                    <span>🏆 MONTHLY LEADERBOARD </span>
+                    <span id="leaderboardToggle">▼</span>
+                </div>
 
-				<div id="leaderboardContent">
-					<table id="leaderboardTable">
-						<thead>
-							<tr>
-								<th>Rank</th>
-								<th>Name</th>
-								<th>Stars</th>
-								<th>Wins</th>
-								<th>Win%</th>
-								<!-- <th>Streak</th> -->
-							</tr>
-						</thead>
-						<tbody id="leaderboardBody">
-							<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>
-						</tbody>
-					</table>
-					<button id="changeNameBtn"class="buttonmode1">EDIT NAME</button>
-				</div>
-			</div>			
-			<br>
+                <div id="leaderboardContent">
+                    <table id="leaderboardTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Name</th>
+                                <th>Stars</th>
+                                <th>Wins</th>
+                                <th>Win%</th>
+                                <!-- <th>Streak</th> -->
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody">
+                            <tr>
+                                <td colspan="6" style="text-align:center;">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button id="changeNameBtn" class="buttonmode1">EDIT NAME</button>
+                </div>
+            </div>
+            <br>
             <div id="sdhdr"><b>⭐ STAR DISTRIBUTION ⭐</b></div>
             <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
             <br>
@@ -413,11 +419,11 @@
             <p style="color:lightgray" align="justify">If you enjoyed playing 🔗<strong style="color:white;">CHN LNK</strong>🧩, you can show your support by <strong style='color: var(--green);'><a href="https://www.buymeacoffee.com/sank0403" target="_"><u>BUYING US A COFFEE</u></a></strong> ☕️. THANK YOU for all the Love! 💕 </p>
         </div>
         <!-- <div class="top-row"> -->
-            <div id="submission">
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeZinZwGDTCZ_Cfp_CVlSllO7nFb1vLnFW4ZPrbje767FsKgQ/viewform?usp=publish-editor" target="_">
-                    <span class="flash1">SUBMIT YOUR OWN CHN LNK</span>
-                </a>
-            </div>
+        <div id="submission">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSeZinZwGDTCZ_Cfp_CVlSllO7nFb1vLnFW4ZPrbje767FsKgQ/viewform?usp=publish-editor" target="_">
+                <span class="flash1">SUBMIT YOUR OWN CHN LNK</span>
+            </a>
+        </div>
 
         <!-- </div> -->
         <hr>
@@ -432,7 +438,7 @@
 				</div>
 			</div> -->
 
-			
+
         </div>
         <center>
             <class data-pastmodal-target="#pastmodal" id="pastbutton"><button id="Archivebutton" class="buttonmodetext" onclick="playArchive()"><u>PLAY PAST CHAINS</u></button></class>
@@ -473,7 +479,7 @@
 
                 var randomstng = randomStr(10, '12345abcde');
                 // Set the link dynamically
-                document.getElementById("emailLink").href = "mailto:?cc=geowordle@gmail.com&subject=CHN LNK - Unique Invitation Code : " + randomstng + "&body=Try%20this%20new%20word%20game%20-%20https://sank0403.github.io/chnlnk/?" + randomstng;
+                document.getElementById("emailLink").href = "mailto:?cc=geowordle@gmail.com&subject=CHN LNK - Unique Invitation Code : " + randomstng + "&body=Try%20this%20new%20word%20game%20-%20https://thechnlnk.com/?" + randomstng;
             </script>
 
 
@@ -563,109 +569,115 @@
         <div id="dynamite-btn">💣 x0</div>
     </div>
     <!-- Momentum Timer Bar -->
-	<div class="top-stack">	
-		<div class="momentum-wrapper">
-			<div id="momentum-bar-container">
-				<div id="momentum-bar">
-					<span id="momentum-counter"></span>
-				</div>
-			</div>
-		</div>
-		<div class="top-row">
-			<div class="toggle-wrapper" id="toggle-row">
-				<span class="toggle-label">ENABLE TIMED MODE</span>
-				<label class="toggle">
-					<input type="checkbox" id="hardmodetoggle">
-					<span class="slider"></span>
-				</label>
-			</div>
-		</div>		
-	</div>	
-	<!-- <br> -->
+    <div class="top-stack">
+        <div class="momentum-wrapper">
+            <div id="momentum-bar-container">
+                <div id="momentum-bar">
+                    <span id="momentum-counter"></span>
+                </div>
+            </div>
+        </div>
+        <div class="top-row">
+            <div class="toggle-wrapper" id="toggle-row">
+                <span class="toggle-label">ENABLE TIMED MODE</span>
+                <label class="toggle">
+                    <input type="checkbox" id="hardmodetoggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <!-- <br> -->
     <!-- <div id="board"> -->
-        <!-- <div id="boardfirst"> -->
-            <!-- <div id="downarrowhide">⬇️</div> -->
-        <!-- </div> -->
-        
-        <!-- <div id="boardsecond"> -->
-            <!-- <div id="downarrowhide">⬇️</div> -->
-        <!-- </div> -->
-        
-        <!-- <div id="boardthird"> -->
-            <!-- <div id="downarrowhide">⬇️</div> -->
-        <!-- </div> -->
-        
-        <!-- <div id="boardforth"> -->
-            <!-- <div id="downarrowhide">⬇️</div> -->
-        <!-- </div> -->
-        
-        <!-- <div id="boardfifth"> -->
-            <!-- <div id="downarrowhide">⬇️</div> -->
-        <!-- </div> -->
-        
-        <!-- <div id="boardsixth"> -->
-            <!-- <div id="downarrowhide">⬇️</div> -->
-        <!-- </div> -->
-        
-        <!-- <div id="boardlast"> -->
-            <!-- <div id="downarrowhide">⬇️</div> -->
-        <!-- </div> -->
+    <!-- <div id="boardfirst"> -->
+    <!-- <div id="downarrowhide">⬇️</div> -->
     <!-- </div> -->
 
-	<div id="board">
+    <!-- <div id="boardsecond"> -->
+    <!-- <div id="downarrowhide">⬇️</div> -->
+    <!-- </div> -->
 
-		<div id="boardfirst"></div>
+    <!-- <div id="boardthird"> -->
+    <!-- <div id="downarrowhide">⬇️</div> -->
+    <!-- </div> -->
 
-		<div class="connector vertical-glow"></div>
+    <!-- <div id="boardforth"> -->
+    <!-- <div id="downarrowhide">⬇️</div> -->
+    <!-- </div> -->
 
-		<div id="boardsecond"></div>
+    <!-- <div id="boardfifth"> -->
+    <!-- <div id="downarrowhide">⬇️</div> -->
+    <!-- </div> -->
 
-		<div class="connector vertical-glow"></div>
+    <!-- <div id="boardsixth"> -->
+    <!-- <div id="downarrowhide">⬇️</div> -->
+    <!-- </div> -->
 
-		<div id="boardthird"></div>
+    <!-- <div id="boardlast"> -->
+    <!-- <div id="downarrowhide">⬇️</div> -->
+    <!-- </div> -->
+    <!-- </div> -->
 
-		<div class="connector vertical-glow"></div>
+    <div id="board">
 
-		<div id="boardforth"></div>
+        <div id="boardfirst"></div>
 
-		<div class="connector vertical-glow"></div>
+        <div class="connector vertical-glow"></div>
 
-		<div id="boardfifth"></div>
+        <div id="boardsecond"></div>
 
-		<div class="connector vertical-glow"></div>
+        <div class="connector vertical-glow"></div>
 
-		<div id="boardsixth"></div>
+        <div id="boardthird"></div>
 
-		<div class="connector vertical-glow"></div>
+        <div class="connector vertical-glow"></div>
 
-		<div id="boardlast"></div>
+        <div id="boardforth"></div>
 
-	</div>	
+        <div class="connector vertical-glow"></div>
+
+        <div id="boardfifth"></div>
+
+        <div class="connector vertical-glow"></div>
+
+        <div id="boardsixth"></div>
+
+        <div class="connector vertical-glow"></div>
+
+        <div id="boardlast"></div>
+
+    </div>
     <!-- <br> -->
     <hr>
-	<div id="answer" hidden></div>
+    <div id="answer" hidden></div>
     <!-- <br><br> -->
-	<br>
+    <br>
     <div id="streakPopup" class="popup hidden">
         <div class="popup-content">
             <span id="streakPopupText"></span>
             <button onclick="closeStreakPopup()" class="popup-btn">OK</button>
         </div>
     </div>
-	<div id="namePopup" class="popup-overlay hidden">
-		<div class="popup-box">
-			<h2>Enter Your Name</h2>
-			<input id="nameInput" type="text" placeholder="Your Name for Leaderboard">
-			<div id="nameError" class="name-error hidden">Invalid Name. Please try again.</div>
-			<button id="nameSubmitBtn">Save</button>
-		</div>
-	</div>
-	<div id="globalOverlay"></div>
-	<div id="errorPopup" class="error-popup"></div>
-<div id="migrationModal" style=" position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 9999; "> <div style=" background: #111; color: #fff; padding: 24px; width: 90%; max-width: 420px; border-radius: 12px; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.4); border: 2px solid #f7d354; "> <h2 style="margin-top: 0; font-size: 22px; color: #f7d354;"> We’ve moved to a New Domain </h2> <p style="font-size: 16px; line-height: 1.4; margin-bottom: 24px;"> If you are an existing user, your Stats will be carried over. </p> <button id="migrationOkBtn" style=" background: #f7d354; color: #000; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 50%; "> OK </button><br><br><br>Please remember to Bookmark the new URL. <span style="font-size: 14px; color: #f7d354;">https://thechnlnk.com</span> </div> </div>
-	<script src="chnlnk.js"></script>
-	<script src="migration-listener.js"></script>
+    <div id="namePopup" class="popup-overlay hidden">
+        <div class="popup-box">
+            <h2>Enter Your Name</h2>
+            <input id="nameInput" type="text" placeholder="Your Name for Leaderboard">
+            <div id="nameError" class="name-error hidden">Invalid Name. Please try again.</div>
+            <button id="nameSubmitBtn">Save</button>
+        </div>
+    </div>
+    <div id="globalOverlay"></div>
+    <div id="errorPopup" class="error-popup"></div>
+    <div id="migrationModal" style=" position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 9999; ">
+        <div style=" background: #111; color: #fff; padding: 24px; width: 90%; max-width: 420px; border-radius: 12px; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.4); border: 2px solid #f7d354; ">
+            <h2 style="margin-top: 0; font-size: 22px; color: #f7d354;"> We’ve moved to a New Domain </h2>
+            <p style="font-size: 16px; line-height: 1.4; margin-bottom: 24px;"> If you are an existing user, your Stats will be carried over. </p> <button id="migrationOkBtn" style=" background: #f7d354; color: #000; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 50%; "> OK </button><br><br><br>Please remember to Bookmark the new URL. <span style="font-size: 14px; color: #f7d354;">https://thechnlnk.com</span>
+        </div>
+    </div>
+    <script src="chnlnk.js"></script>
+    <script src="migration-listener.js"></script>
 
 
 </body>
+
 </html>
