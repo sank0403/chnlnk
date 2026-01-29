@@ -47,11 +47,12 @@ window.addEventListener("message", (event) => {
 if (!localStorage.getItem("migrationDone")) {
   console.log("[LISTENER] Opening migration popup...");
 
-  const popup = window.open(
-    "https://sank0403.github.io/chnlnk/migrate.html",
-    "migrationPopup",
-    "width=400,height=400,noopener=no,noreferrer=no"
-  );
+const popup = window.open(
+  "https://sank0403.github.io/geordle/migrate.html?ts=" + Date.now(),
+  "migrationPopup",
+  "width=400,height=400,noopener=no,noreferrer=no"
+);
+
 
   console.log("[LISTENER] Popup opened:", popup);
 } else {
