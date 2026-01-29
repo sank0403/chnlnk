@@ -23,9 +23,9 @@ if (
 });
 
 if (!localStorage.getItem("migrationDone")) {
-  window.open(
-    "https://sank0403.github.io/chnlnk/migrate.html",
-    "migrationPopup",
-    "width=400,height=400"
-  );
+window.open(
+  "https://sank0403.github.io/chnlnk/migrate.html",
+  "migrationPopup",
+  "width=400,height=400,noopener=no"
+);
 }
