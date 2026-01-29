@@ -6,6 +6,10 @@
 </head>
 <body>
 <script>
+console.log("[POPUP] migrate.html loaded");
+console.log("[POPUP] Initial origin:", location.origin);
+console.log("[POPUP] opener exists:", window.opener !== null);
+
 const fixedKeys = [
   'clMysteryLetter','clwordtwo','monthcl_lastMonth','clcorrect',
   'cldisabledkey','cldynamiteUsedThisRound','consocount','clguesscnt',
@@ -27,7 +31,17 @@ const prefixes = [
   'archovercl'
 ];
 
-window.addEventListener("load", () => {
+// Wait until popup has a real origin (GitHub Pages timing fix)
+function sendWhenReady() {
+  console.log("[POPUP] Checking origin:", location.origin);
+
+  if (location.origin === "null" || location.origin === "about:blank") {
+    console.warn("[POPUP] Origin not ready. Retrying...");
+    return setTimeout(sendWhenReady, 30);
+  }
+
+  console.log("[POPUP] Origin ready:", location.origin);
+
   const data = {};
 
   // Copy fixed keys
@@ -44,14 +58,20 @@ window.addEventListener("load", () => {
     }
   }
 
-  // Send to opener; receiver validates origin
-	window.opener.postMessage(
-	  { type: "LOCALSTORAGE_MIGRATION", payload: JSON.stringify(data) },
-	  "https://thechnlnk.com"
-	);
-	
+  console.log("[POPUP] Sending data to opener:", data);
+  console.log("[POPUP] opener exists:", window.opener !== null);
+
+  // Send to opener (main site validates origin)
+  window.opener.postMessage(
+    { type: "LOCALSTORAGE_MIGRATION", payload: JSON.stringify(data) },
+    "https://thechnlnk.com"
+  );
+
+  console.log("[POPUP] Message sent. Closing popup...");
   window.close();
-});
+}
+
+sendWhenReady();
 </script>
 </body>
 </html>
