@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.28.02";
+const BUILD_VERSION = "2025.01.28.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -982,8 +982,9 @@ function openLifeTradeModal() {
 function applyLifeTrade() {
     // Deduct stars
     localStorage.totalclstars = Number(localStorage.totalclstars) - 2;
+	if (Number(localStorage.monthclstars >= 2)) {
 	localStorage.monthclstars = Number(localStorage.monthclstars) - 2;
-
+	}
     // Restore 1 life
     localStorage.cllivescnt = Number(localStorage.cllivescnt) - 1;
 

@@ -19,15 +19,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="chnlnk.css" rel="stylesheet">
-    <script defer src="chnlnk.js"></script>
-	<script src="chnlnk.js"></script>
-	<script>
-	  if (location.hostname === "thechnlnk.com") {
-		const script = document.createElement("script");
-		script.src = "migration-listener.js";
-		document.head.appendChild(script);
-	  }
-	</script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
     <!-- add icon link for all standard browsers -->
 	<script type="module">
@@ -482,7 +473,7 @@
 
                 var randomstng = randomStr(10, '12345abcde');
                 // Set the link dynamically
-                document.getElementById("emailLink").href = "mailto:?cc=geowordle@gmail.com&subject=CHN LNK - Unique Invitation Code : " + randomstng + "&body=Try%20this%20new%20word%20game%20-%20https://thechnlnk.com/?" + randomstng;
+                document.getElementById("emailLink").href = "mailto:?cc=geowordle@gmail.com&subject=CHN LNK - Unique Invitation Code : " + randomstng + "&body=Try%20this%20new%20word%20game%20-%20https://sank0403.github.io/chnlnk/?" + randomstng;
             </script>
 
 
@@ -671,5 +662,14 @@
 	</div>
 	<div id="globalOverlay"></div>
 	<div id="errorPopup" class="error-popup"></div>
+	<script src="chnlnk.js"></script>
+
+<script>
+  if (location.hostname === "thechnlnk.com") {
+    const script = document.createElement("script");
+    script.src = "migration-listener.js";
+    document.head.appendChild(script);
+  }
+</script>
 </body>
 </html>
