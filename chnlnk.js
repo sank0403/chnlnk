@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.28.03";
+const BUILD_VERSION = "2025.01.30.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -234,60 +234,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const overlay = document.getElementById("globalOverlay");
 
-		const container = document.createElement("div");
-		container.id = "nameEditContainer";
-		container.style.position = "fixed";
-		container.style.top = "120px";
-		container.style.left = "50%";
-		container.style.transform = "translateX(-50%)";
-		container.style.zIndex = "9999999";
-		container.style.background = "black";
-		container.style.padding = "10px";
-		container.style.border = "2px solid yellow";
-		container.style.position = "fixed";
-		//  Close button
-		const closeBtn = document.createElement("button");
-		closeBtn.textContent = "x";
-		closeBtn.style.position = "absolute";
-		closeBtn.style.top = "-10px";           // move it slightly above the container
-		closeBtn.style.right = "-10px";         // shift it outside the right edge
-		closeBtn.style.background = "black";    // match container background
-		closeBtn.style.color = "yellow";
-		closeBtn.style.border = "2px solid yellow";
-		closeBtn.style.borderRadius = "50%";
-		closeBtn.style.width = "24px";
-		closeBtn.style.height = "24px";
-		closeBtn.style.fontSize = "16px";
-		closeBtn.style.lineHeight = "20px";
-		closeBtn.style.cursor = "pointer";
-		closeBtn.style.zIndex = "10000000";     // ensure it's above everything
-		const input = document.createElement("input");
-		input.type = "text";
-		input.maxLength = 20;
-		input.placeholder = "Enter New Name";
+        const container = document.createElement("div");
+        container.id = "nameEditContainer";
+        container.style.position = "fixed";
+        container.style.top = "120px";
+        container.style.left = "50%";
+        container.style.transform = "translateX(-50%)";
+        container.style.zIndex = "9999999";
+        container.style.background = "black";
+        container.style.padding = "10px";
+        container.style.border = "2px solid yellow";
+        container.style.position = "fixed";
+        //  Close button
+        const closeBtn = document.createElement("button");
+        closeBtn.textContent = "x";
+        closeBtn.style.position = "absolute";
+        closeBtn.style.top = "-10px"; // move it slightly above the container
+        closeBtn.style.right = "-10px"; // shift it outside the right edge
+        closeBtn.style.background = "black"; // match container background
+        closeBtn.style.color = "yellow";
+        closeBtn.style.border = "2px solid yellow";
+        closeBtn.style.borderRadius = "50%";
+        closeBtn.style.width = "24px";
+        closeBtn.style.height = "24px";
+        closeBtn.style.fontSize = "16px";
+        closeBtn.style.lineHeight = "20px";
+        closeBtn.style.cursor = "pointer";
+        closeBtn.style.zIndex = "10000000"; // ensure it's above everything
+        const input = document.createElement("input");
+        input.type = "text";
+        input.maxLength = 20;
+        input.placeholder = "Enter New Name";
 
-		const saveBtn = document.createElement("button");
-		saveBtn.textContent = "SAVE";
-		saveBtn.className = "buttonmode1";
+        const saveBtn = document.createElement("button");
+        saveBtn.textContent = "SAVE";
+        saveBtn.className = "buttonmode1";
 
-		const error = document.createElement("p");
-		error.style.color = "red";
-		error.style.display = "none";
+        const error = document.createElement("p");
+        error.style.color = "red";
+        error.style.display = "none";
 
-		container.appendChild(closeBtn);
-		container.appendChild(input);
-		container.appendChild(saveBtn);
-		container.appendChild(error);
+        container.appendChild(closeBtn);
+        container.appendChild(input);
+        container.appendChild(saveBtn);
+        container.appendChild(error);
 
-		overlay.appendChild(container);
+        overlay.appendChild(container);
 
-		// ⭐ Autofocus
-		input.focus();
+        // ⭐ Autofocus
+        input.focus();
 
-		// ⭐ Close handler
-		closeBtn.addEventListener("click", () => {
-			container.remove();
-		});
+        // ⭐ Close handler
+        closeBtn.addEventListener("click", () => {
+            container.remove();
+        });
 
         // ⭐ SAVE HANDLER
         saveBtn.addEventListener("click", async () => {
@@ -320,9 +320,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // ⭐ Update Firestore
                 await setDoc(
-                    doc(db, "leaderboard", playerId),
-                    { name: newName, updated: serverTimestamp() },
-                    { merge: true }
+                    doc(db, "leaderboard", playerId), {
+                        name: newName,
+                        updated: serverTimestamp()
+                    }, {
+                        merge: true
+                    }
                 );
 
                 // ⭐ Sync localStorage
@@ -346,17 +349,20 @@ document.addEventListener("DOMContentLoaded", () => {
 function initMonthlyStats() {
     const now = new Date();
     const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-
     const lastMonth = localStorage.monthcl_lastMonth;
 
     // First time ever → initialize monthly stats from totals
     if (!lastMonth) {
         localStorage.monthcl_lastMonth = currentMonth;
-
-        localStorage.monthclplayed = localStorage.totalclplayed || 0;
-        localStorage.monthclstars  = localStorage.totalclstars  || 0;
-        localStorage.monthwins     = localStorage.totalclwins   || 0;
-
+        if (currentMonth === "2026-01") {
+            localStorage.monthclplayed = localStorage.totalclplayed || 0;
+            localStorage.monthclstars = localStorage.totalclstars || 0;
+            localStorage.monthwins = localStorage.totalclwins || 0;
+        } else {
+            localStorage.monthclplayed = 0;
+            localStorage.monthclstars = 0;
+            localStorage.monthwins = 0;
+        }
         return;
     }
 
@@ -365,8 +371,8 @@ function initMonthlyStats() {
         localStorage.monthcl_lastMonth = currentMonth;
 
         localStorage.monthclplayed = 0;
-        localStorage.monthclstars  = 0;
-        localStorage.monthwins     = 0;
+        localStorage.monthclstars = 0;
+        localStorage.monthwins = 0;
 
         return;
     }
@@ -375,45 +381,48 @@ function initMonthlyStats() {
 }
 
 function showError(message) {
-  const popup = document.getElementById("errorPopup");
-  popup.textContent = message;
-  popup.classList.add("show");
+    const popup = document.getElementById("errorPopup");
+    popup.textContent = message;
+    popup.classList.add("show");
 
-  setTimeout(() => {
-    popup.classList.remove("show");
-  }, 5000); // fades out after 2 seconds
+    setTimeout(() => {
+        popup.classList.remove("show");
+    }, 5000); // fades out after 2 seconds
 }
 
 async function submitLeaderboardEntry(playerName) {
 
     const played = Number(localStorage.monthclplayed) || 0;
-    const stars  = Number(localStorage.monthclstars)  || 0;
+    const stars = Number(localStorage.monthclstars) || 0;
     // const streak = Number(localStorage.totalclstreak) || 0;
-    const wins   = Number(localStorage.monthwins)   || 0;
+    const wins = Number(localStorage.monthwins) || 0;
 
     const winpct = played > 0 ? Math.round((wins / played) * 100) : 0;
-	// Build the month key: YYYY-MM 
-	const now = new Date(); 
-	const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;	
-	// const playerRef = doc(db, "leaderboard", playerName); 
-	// const existing = await getDoc(playerRef); 
-	// if (existing.exists()) { alert("That name is already taken. Please choose another."); return; }
-	const playerId = auth.currentUser.uid; // ← use UID as doc ID
-	// NEW: enforce played <= today's date 
-	const today = new Date().getDate(); 
-	if (played > today) { showError("Invalid Stats: Total Played cannot exceed today's date."); return; }
-	if (wins > played) {
-	  showError("Invalid Stats: Wins cannot exceed Total Played.");
-	  return;
-	}
+    // Build the month key: YYYY-MM 
+    const now = new Date();
+    const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    // const playerRef = doc(db, "leaderboard", playerName); 
+    // const existing = await getDoc(playerRef); 
+    // if (existing.exists()) { alert("That name is already taken. Please choose another."); return; }
+    const playerId = auth.currentUser.uid; // ← use UID as doc ID
+    // NEW: enforce played <= today's date 
+    const today = new Date().getDate();
+    if (played > today) {
+        showError("Invalid Stats: Total Played cannot exceed today's date.");
+        return;
+    }
+    if (wins > played) {
+        showError("Invalid Stats: Wins cannot exceed Total Played.");
+        return;
+    }
 
-	if (stars > (5 * wins)) {
-	  showError("Invalid Stats: Stars cannot exceed max possible value.");
-	  return;
-	}
+    if (stars > (5 * wins)) {
+        showError("Invalid Stats: Stars cannot exceed max possible value.");
+        return;
+    }
     try {
         await setDoc(
-            doc(db, "leaderboard", playerId),   // ← one doc per player
+            doc(db, "leaderboard", playerId), // ← one doc per player
             {
                 name: playerName,
                 played: played,
@@ -422,9 +431,10 @@ async function submitLeaderboardEntry(playerName) {
                 wins: wins,
                 winpct: winpct,
                 updated: serverTimestamp(),
-				month: monthKey // ← optional for now, required later
-            },
-            { merge: true }
+                month: monthKey // ← optional for now, required later
+            }, {
+                merge: true
+            }
         );
 
     } catch (err) {
@@ -432,7 +442,7 @@ async function submitLeaderboardEntry(playerName) {
     }
 }
 
-document.getElementById("leaderboardHeader").addEventListener("click", function () {
+document.getElementById("leaderboardHeader").addEventListener("click", function() {
     const content = document.getElementById("leaderboardContent");
     const toggle = document.getElementById("leaderboardToggle");
 
@@ -451,17 +461,17 @@ async function loadLeaderboard() {
 
     const currentPlayerName = localStorage.playerName;
     const currentUID = auth.currentUser.uid;
-	// Build the month key: YYYY-MM 
-	const now = new Date(); 
-	const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    // Build the month key: YYYY-MM 
+    const now = new Date();
+    const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
     try {
         // 1. Get top 5
         const topQ = query(
             collection(db, "leaderboard"),
-			where("month", "==", monthKey),
+            where("month", "==", monthKey),
             orderBy("stars", "desc"),
-			orderBy("wins", "desc"),
-			orderBy("winpct", "desc"),
+            orderBy("wins", "desc"),
+            orderBy("winpct", "desc"),
             limit(5)
         );
 
@@ -513,7 +523,7 @@ async function loadLeaderboard() {
                 // 3. Compute actual rank
                 const rankQ = query(
                     collection(db, "leaderboard"),
-					where("month", "==", monthKey), // ← only compare against this month
+                    where("month", "==", monthKey), // ← only compare against this month
                     where("stars", ">", d.stars)
                 );
 
@@ -631,9 +641,9 @@ async function OpenStats() {
 
     // Now safe to load leaderboard
     await loadLeaderboard();
-	
-	// Now show the leaderboard 
-	document.getElementById("leaderboardCollapsible").style.display = "block";	
+
+    // Now show the leaderboard 
+    document.getElementById("leaderboardCollapsible").style.display = "block";
 }
 
 
@@ -729,7 +739,7 @@ var d = (a - b); // Difference in milliseconds.
 var days = parseInt((d / 1000) / 86400);
 if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('gameovercl' + days) != 1) {
     localStorage['gameovercl' + days] = 0;
-	localStorage['gamestatcl' + days] = 0;
+    localStorage['gamestatcl' + days] = 0;
     localStorage.setItem("cllives", "🔴🔴🔴🔴🔴");
     localStorage.setItem("clcorrect", " ");
     localStorage.setItem("vowelcount", 0);
@@ -786,16 +796,16 @@ function SetTier() {
 // const leaderboardToggle = document.getElementById("leaderboardToggle");
 
 // leaderboardHeader.addEventListener("click", async () => {
-    // const isClosed = leaderboardContent.style.display === "" || leaderboardContent.style.display === "none";
+// const isClosed = leaderboardContent.style.display === "" || leaderboardContent.style.display === "none";
 
-    // if (isClosed) {
-        // await loadLeaderboard();
-        // leaderboardContent.style.display = "block";
-        // leaderboardToggle.textContent = "▲";
-    // } else {
-        // leaderboardContent.style.display = "none";
-        // leaderboardToggle.textContent = "▼";
-    // }
+// if (isClosed) {
+// await loadLeaderboard();
+// leaderboardContent.style.display = "block";
+// leaderboardToggle.textContent = "▲";
+// } else {
+// leaderboardContent.style.display = "none";
+// leaderboardToggle.textContent = "▼";
+// }
 // });
 
 function getUnrevealedConsonants() {
@@ -982,9 +992,9 @@ function openLifeTradeModal() {
 function applyLifeTrade() {
     // Deduct stars
     localStorage.totalclstars = Number(localStorage.totalclstars) - 2;
-	if (Number(localStorage.monthclstars >= 2)) {
-	localStorage.monthclstars = Number(localStorage.monthclstars) - 2;
-	}
+    if (Number(localStorage.monthclstars >= 2)) {
+        localStorage.monthclstars = Number(localStorage.monthclstars) - 2;
+    }
     // Restore 1 life
     localStorage.cllivescnt = Number(localStorage.cllivescnt) - 1;
 
@@ -1103,7 +1113,7 @@ function useDynamite() {
 
             const letter = k.id.replace("Key", "");
             if (forbiddenLetters.has(letter)) return false;
-			
+
             return true;
         });
 
@@ -1149,7 +1159,7 @@ function useDynamite() {
 
 function showMessage(msg) {
     // document.getElementById("answer").innerText = msg;
-	updateAnswer(msg);
+    updateAnswer(msg);
 }
 
 function showDynamiteBlast() {
@@ -1295,16 +1305,16 @@ var masterwordlist = [
     ["coffee", "table", "tennis", "match", "point", "break", "room", "h_ll"],
     ["desert", "wind", "mill", "stone", "age", "limit", "line", ""],
     ["morning", "dew", "drop", "zone", "defense", "system", "check", ""],
-	["fire", "dance", "party", "popper", "bottle", "neck", "collar", "gouri"],
+    ["fire", "dance", "party", "popper", "bottle", "neck", "collar", "gouri"],
     ["traffic", "light", "speed", "trap", "door", "frame", "shop", ""],
     ["crystal", "clear", "view", "point", "guard", "rail", "car", ""],
     ["thunder", "clap", "back", "pack", "leader", "board", "game", ""],
-    ["shadow", "boxing", "glove", "puppet", "master", "mind", "control", "Kanishk"],	
+    ["shadow", "boxing", "glove", "puppet", "master", "mind", "control", "Kanishk"],
     ["island", "nation", "state", "fair", "trade", "route", "map", ""],
     ["candle", "flame", "thrower", "squad", "goal", "keeper", "net", ""],
     ["rocket", "fuel", "tank", "top", "shelf", "life", "jacket", ""],
     ["family", "bond", "paper", "cut", "line", "dance", "floor", ""],
-    ["gingerbread", "house", "agent", "general", "science", "fiction", "writer", "Kanishk"],	
+    ["gingerbread", "house", "agent", "general", "science", "fiction", "writer", "Kanishk"],
     ["summer", "heat", "wave", "form", "letter", "carrier", "bag", ""],
     ["cotton", "thread", "count", "down", "town", "square", "root", ""],
     ["marble", "statue", "garden", "party", "favor", "box", "office", ""],
@@ -1558,34 +1568,34 @@ var wordfive = masterwordlist[index][4].toUpperCase();
 var wordsix = masterwordlist[index][5].toUpperCase();
 var wordlast = masterwordlist[index][6].toUpperCase();
 // if (wordone.length > 8 || wordtwo.length > 8 || wordthree.length > 8 || wordfour.length > 8 || wordfive.length > 8 || wordsix.length > 8 || wordlast.length > 8) {
-    // const box1 = document.getElementById("boardfirst");
-    // box1.style.setProperty("padding-left", "10px");
-	// box1.style.setProperty("padding-top", "10px");	
-	// box1.style.setProperty("padding-bottom", "4px");	
-    // const box2 = document.getElementById("boardsecond");
-    // box2.style.setProperty("padding-left", "10px");
-	// box2.style.setProperty("padding-top", "4px");	
-	// box2.style.setProperty("padding-bottom", "4px");	
-    // const box3 = document.getElementById("boardthird");
-    // box3.style.setProperty("padding-left", "10px");
-	// box3.style.setProperty("padding-top", "4px");	
-	// box3.style.setProperty("padding-bottom", "4px");	
-    // const box4 = document.getElementById("boardforth");
-    // box4.style.setProperty("padding-left", "10px");
-	// box4.style.setProperty("padding-top", "4px");	
-	// box4.style.setProperty("padding-bottom", "4px");	
-    // const box5 = document.getElementById("boardfifth");
-    // box5.style.setProperty("padding-left", "10px");
-	// box5.style.setProperty("padding-top", "4px");	
-	// box5.style.setProperty("padding-bottom", "4px");	
-    // const box6 = document.getElementById("boardsixth");
-    // box6.style.setProperty("padding-left", "10px");
-	// box6.style.setProperty("padding-top", "4px");	
-	// box6.style.setProperty("padding-bottom", "4px");	
-    // const box7 = document.getElementById("boardlast");
-    // box7.style.setProperty("padding-left", "10px");
-	// box7.style.setProperty("padding-top", "4px");
-	// const boxes = document.querySelectorAll(".vertical-glow"); boxes.forEach(box => { box.style.setProperty("margin-left", "18px"); });	
+// const box1 = document.getElementById("boardfirst");
+// box1.style.setProperty("padding-left", "10px");
+// box1.style.setProperty("padding-top", "10px");	
+// box1.style.setProperty("padding-bottom", "4px");	
+// const box2 = document.getElementById("boardsecond");
+// box2.style.setProperty("padding-left", "10px");
+// box2.style.setProperty("padding-top", "4px");	
+// box2.style.setProperty("padding-bottom", "4px");	
+// const box3 = document.getElementById("boardthird");
+// box3.style.setProperty("padding-left", "10px");
+// box3.style.setProperty("padding-top", "4px");	
+// box3.style.setProperty("padding-bottom", "4px");	
+// const box4 = document.getElementById("boardforth");
+// box4.style.setProperty("padding-left", "10px");
+// box4.style.setProperty("padding-top", "4px");	
+// box4.style.setProperty("padding-bottom", "4px");	
+// const box5 = document.getElementById("boardfifth");
+// box5.style.setProperty("padding-left", "10px");
+// box5.style.setProperty("padding-top", "4px");	
+// box5.style.setProperty("padding-bottom", "4px");	
+// const box6 = document.getElementById("boardsixth");
+// box6.style.setProperty("padding-left", "10px");
+// box6.style.setProperty("padding-top", "4px");	
+// box6.style.setProperty("padding-bottom", "4px");	
+// const box7 = document.getElementById("boardlast");
+// box7.style.setProperty("padding-left", "10px");
+// box7.style.setProperty("padding-top", "4px");
+// const boxes = document.querySelectorAll(".vertical-glow"); boxes.forEach(box => { box.style.setProperty("margin-left", "18px"); });	
 // }
 
 var word = (wordone + wordtwo + wordthree + wordfour + wordfive + wordsix + wordlast).toUpperCase();
@@ -1608,7 +1618,7 @@ var disabledkeyarr = [];
 if (localStorage.vowelactive != 1) {
     document.getElementById("answer").style.color = "lightgray";
     // document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND.";
-	updateAnswer("VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND.");
+    updateAnswer("VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND.");
 }
 const openModalButtons = document.querySelectorAll('[data-modal-target]')
 const closeModalButtons = document.querySelectorAll('[data-close-button]')
@@ -1884,21 +1894,20 @@ function playArchive() {
         archivetile.id = "archtile-" + q.toString();
         archivetile.classList.add("archivetile");
         archivetile.innerText = "Day " + q;
-		if ((localStorage.getItem('gameovercl' + q) == "1")) {
+        if ((localStorage.getItem('gameovercl' + q) == "1")) {
             if ((localStorage.getItem('gamestatcl' + q) == "1")) {
                 archivetile.classList.add("correctarch");
-            } else if ((localStorage.getItem('gamestatcl' + q) == "0")){
+            } else if ((localStorage.getItem('gamestatcl' + q) == "0")) {
                 archivetile.classList.add("failedarch");
-            } else if ((localStorage.getItem('gamestatcl' + q) === null)){
+            } else if ((localStorage.getItem('gamestatcl' + q) === null)) {
                 archivetile.classList.add("correctarch");
-			}
-		} 
-		else if ((localStorage.getItem('archovercl' + q) == "1")) {
-				if ((localStorage.getItem('archstatcl' + q) == "1")) {
-					archivetile.classList.add("correctarch");
-				} else {
-					archivetile.classList.add("failedarch");
-				}
+            }
+        } else if ((localStorage.getItem('archovercl' + q) == "1")) {
+            if ((localStorage.getItem('archstatcl' + q) == "1")) {
+                archivetile.classList.add("correctarch");
+            } else {
+                archivetile.classList.add("failedarch");
+            }
         }
         const link = document.createElement("a");
         link.href = `archive.html?q=${q}`;
@@ -1926,9 +1935,9 @@ function modalhide() {
     const connector = document.getElementsByClassName("vertical-glow");
     for (let row of connector) {
         row.style.visibility = "hidden";
-    }	
+    }
     document.getElementById("toggle-row").style.visibility = "hidden";
-	document.getElementById("answer").style.visibility = "hidden";
+    document.getElementById("answer").style.visibility = "hidden";
 }
 
 
@@ -1953,9 +1962,9 @@ function modalshow() {
     const connector = document.getElementsByClassName("vertical-glow");
     for (let row of connector) {
         row.style.visibility = "visible";
-    }	
+    }
     document.getElementById("toggle-row").style.visibility = "visible";
-	document.getElementById("answer").style.visibility = "visible";
+    document.getElementById("answer").style.visibility = "visible";
 }
 
 function restoreMomentumTimer() {
@@ -2076,25 +2085,25 @@ function updateLivesDisplay() {
         case 1:
             localStorage.cllives = "🔴🔴🔴🔴";
             // document.getElementById("answer").innerText = "TIME UP - FIRST LIFE LOST!"
-			updateAnswer("TIME UP - FIRST LIFE LOST!");
+            updateAnswer("TIME UP - FIRST LIFE LOST!");
             break;
         case 2:
             localStorage.cllives = "🔴🔴🔴";
             // document.getElementById("answer").innerText = "TIME UP - SECOND LIFE LOST!"
-			updateAnswer("TIME UP - SECOND LIFE LOST!");
+            updateAnswer("TIME UP - SECOND LIFE LOST!");
             break;
         case 3:
             localStorage.cllives = "🔴🔴";
             // document.getElementById("answer").innerText = "TIME UP - THIRD LIFE LOST!"
-			updateAnswer("TIME UP - THIRD LIFE LOST!");
+            updateAnswer("TIME UP - THIRD LIFE LOST!");
             break;
         case 4:
             localStorage.cllives = "🔴";
             // document.getElementById("answer").innerText = "TIME UP - LAST LIFE ALERT!"
-			updateAnswer("TIME UP - LAST LIFE ALERT!");
+            updateAnswer("TIME UP - LAST LIFE ALERT!");
             setTimeout(FinalClue, 1500);
             // Offer star-for-life trade when only 1 life remains
-			const today = new Date().toDateString();
+            const today = new Date().toDateString();
             if (Number(localStorage.cllivescnt) == 4 &&
                 Number(localStorage.totalclstars) >= 2 &&
                 localStorage.cltradeoffered !== today) {
@@ -2127,31 +2136,31 @@ function updateLivesDisplay() {
         for (let i = 0; i < wordtwowidth; i++) {
             let currTile = document.getElementById("2" + '-' + i);
             currTile.innerText = wordtwo[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2","popanswer");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordthreewidth; i++) {
             let currTile = document.getElementById("3" + '-' + i);
             currTile.innerText = wordthree[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2","popanswer");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordfourwidth; i++) {
             let currTile = document.getElementById("4" + '-' + i);
             currTile.innerText = wordfour[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2","popanswer");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordfivewidth; i++) {
             let currTile = document.getElementById("5" + '-' + i);
             currTile.innerText = wordfive[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2","popanswer");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordsixwidth; i++) {
             let currTile = document.getElementById("6" + '-' + i);
             currTile.innerText = wordsix[i];
-            currTile.classList.remove("poptile", "correct", "mystery", "flash2","popanswer");
+            currTile.classList.remove("poptile", "correct", "mystery", "flash2", "popanswer");
             currTile.classList.add("failed", "animated");
         }
         for (let i = 0; i < wordlastwidth; i++) {
@@ -2180,16 +2189,16 @@ function updateLivesDisplay() {
         colorx = "green";
         localStorage.clgamecnt = 6;
         document.getElementById("answer").style.color = "lightgray";
-		updateAnswer("GAME OVER! OUT OF LIVES.");
+        updateAnswer("GAME OVER! OUT OF LIVES.");
         localStorage.setItem(('gameovercl' + days), 1);
-		localStorage.setItem(('gamestatcl' + days), 0);
+        localStorage.setItem(('gamestatcl' + days), 0);
         if (localStorage.getItem('gameovercl' + days) == "1") {
             document.querySelectorAll('span[id*="-"].disabled').forEach(tile => {
                 tile.classList.remove('disabled');
             });
         }
         localStorage.totalclplayed = Number(localStorage.totalclplayed) + 1;
-		localStorage.monthclplayed = Number(localStorage.monthclplayed) + 1;
+        localStorage.monthclplayed = Number(localStorage.monthclplayed) + 1;
         localStorage.totalclstreak = 0;
         SetTier();
         var winpct = localStorage.totalclplayed > 0 ?
@@ -2256,7 +2265,7 @@ function UpdateChart() {
 }
 
 window.onload = function() {
-	initMonthlyStats();
+    initMonthlyStats();
     intialize();
     UpdateChart();
 }
@@ -2296,7 +2305,7 @@ function refreshArchiveModal() {
             } else {
                 tile.classList.add("correctarch");
             }
-        }else if (over1 === "1") {
+        } else if (over1 === "1") {
             if (stat1 === "1") {
                 tile.classList.add("correctarch");
             } else {
@@ -2341,12 +2350,12 @@ function intialize() {
         ele1.innerHTML += "Submitted By " + masterwordlist[index][7];
         // ele1.classList.add("flash2");
     }
-	// if(days == 17){
-        // let ele1 = document.getElementById("submitter");
-        // ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:red; font-size:24px;"><u>CANUCKLE</strong></u><strong style="color:white; font-size:24px;"> EDITION</strong></a>';		
-		// ele1.classList.add("flash2");
-	// }
-	
+    // if(days == 17){
+    // let ele1 = document.getElementById("submitter");
+    // ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:red; font-size:24px;"><u>CANUCKLE</strong></u><strong style="color:white; font-size:24px;"> EDITION</strong></a>';		
+    // ele1.classList.add("flash2");
+    // }
+
 
     /* 	document.getElementById("pzlhdr").style.display = "none";
     	document.getElementById("pzl").style.display = "none"; */
@@ -2355,7 +2364,7 @@ function intialize() {
     document.getElementById("HTMLButton").style.display = "none";
     document.getElementById("wabutton").style.display = "none";
     document.getElementById("Rafflebutton").style.display = "none";
-	// document.getElementById("top-resources").style.display = "block";
+    // document.getElementById("top-resources").style.display = "block";
     // document.getElementById("Archivebutton").style.display = "none";
     // document.getElementById("submission").style.display = "none";
     // document.getElementById("toggle-row").style.visibility = "hidden";
@@ -2646,31 +2655,31 @@ function intialize() {
             for (let i = 0; i < wordtwowidth; i++) {
                 let currTile = document.getElementById("2" + '-' + i);
                 currTile.innerText = wordtwo[i];
-                currTile.classList.remove("poptile","popanswer");
+                currTile.classList.remove("poptile", "popanswer");
                 currTile.classList.add("animated", "correct");
             }
             for (let i = 0; i < wordthreewidth; i++) {
                 let currTile = document.getElementById("3" + '-' + i);
                 currTile.innerText = wordthree[i];
-                currTile.classList.remove("poptile","popanswer");
+                currTile.classList.remove("poptile", "popanswer");
                 currTile.classList.add("animated", "correct");
             }
             for (let i = 0; i < wordfourwidth; i++) {
                 let currTile = document.getElementById("4" + '-' + i);
                 currTile.innerText = wordfour[i];
-                currTile.classList.remove("poptile","popanswer");
+                currTile.classList.remove("poptile", "popanswer");
                 currTile.classList.add("animated", "correct");
             }
             for (let i = 0; i < wordfivewidth; i++) {
                 let currTile = document.getElementById("5" + '-' + i);
                 currTile.innerText = wordfive[i];
-                currTile.classList.remove("poptile","popanswer");
+                currTile.classList.remove("poptile", "popanswer");
                 currTile.classList.add("animated", "correct");
             }
             for (let i = 0; i < wordsixwidth; i++) {
                 let currTile = document.getElementById("6" + '-' + i);
                 currTile.innerText = wordsix[i];
-                currTile.classList.remove("poptile","popanswer");
+                currTile.classList.remove("poptile", "popanswer");
                 currTile.classList.add("animated", "correct");
             }
             for (let i = 0; i < wordlastwidth; i++) {
@@ -2974,11 +2983,11 @@ function processInput(e) {
                     if (localStorage.clhardmode == 1) {
                         localStorage.cldynamite = dyn + 2;
                         // document.getElementById("answer").innerText = "PERFECT GUESS! \n YOU GAINED +2 DYNAMITES!";
-						updateAnswer("PERFECT GUESS! \n YOU GAINED +2 DYNAMITES!");
+                        updateAnswer("PERFECT GUESS! \n YOU GAINED +2 DYNAMITES!");
                     } else {
                         localStorage.cldynamite = dyn + 1;
                         // document.getElementById("answer").innerText = "PERFECT GUESS! \n YOU GAINED +1 DYNAMITE!";
-						updateAnswer("PERFECT GUESS! \n YOU GAINED +1 DYNAMITE!");
+                        updateAnswer("PERFECT GUESS! \n YOU GAINED +1 DYNAMITE!");
                     }
                     updateDynamiteUI();
                     showDynamiteAdded();
@@ -3014,8 +3023,8 @@ function processInput(e) {
                 }
                 if (currTile.innerText == "") {
                     currTile.innerText = e.code[3];
-					currTile.classList.remove("popanswer");					
-					currTile.offsetWidth;
+                    currTile.classList.remove("popanswer");
+                    currTile.offsetWidth;
                     currTile.classList.add("correct", "poptile");
                     if (localStorage.cldisabledkey.includes(e.code[3])) {
                         // do nothing
@@ -3038,8 +3047,8 @@ function processInput(e) {
                 }
                 if (currTile.innerText == "") {
                     currTile.innerText = e.code[3];
-					currTile.classList.remove("popanswer");					
-					currTile.offsetWidth;					
+                    currTile.classList.remove("popanswer");
+                    currTile.offsetWidth;
                     currTile.classList.add("correct", "poptile");
                     if (localStorage.cldisabledkey.includes(e.code[3])) {
                         // do nothing
@@ -3062,8 +3071,8 @@ function processInput(e) {
                 }
                 if (currTile.innerText == "") {
                     currTile.innerText = e.code[3];
-					currTile.classList.remove("popanswer");					
-					currTile.offsetWidth;					
+                    currTile.classList.remove("popanswer");
+                    currTile.offsetWidth;
                     currTile.classList.add("correct", "poptile");
                     if (localStorage.cldisabledkey.includes(e.code[3])) {
                         // do nothing
@@ -3086,8 +3095,8 @@ function processInput(e) {
                 }
                 if (currTile.innerText == "") {
                     currTile.innerText = e.code[3];
-					currTile.classList.remove("popanswer");					
-					currTile.offsetWidth;					
+                    currTile.classList.remove("popanswer");
+                    currTile.offsetWidth;
                     currTile.classList.add("correct", "poptile");
                     if (localStorage.cldisabledkey.includes(e.code[3])) {
                         // do nothing
@@ -3110,8 +3119,8 @@ function processInput(e) {
                 }
                 if (currTile.innerText == "") {
                     currTile.innerText = e.code[3];
-					currTile.classList.remove("popanswer");					
-					currTile.offsetWidth;					
+                    currTile.classList.remove("popanswer");
+                    currTile.offsetWidth;
                     currTile.classList.add("correct", "poptile");
                     if (localStorage.cldisabledkey.includes(e.code[3])) {
                         // do nothing
@@ -3147,31 +3156,31 @@ function processInput(e) {
         if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.vowelcount)) && localStorage.vowelactive == 0) {
             disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
             document.querySelectorAll('span[id*="-"].disabled').forEach(tile => {
-				tile.classList.remove('disabled');		
-				if (tile.innerText === "🔒"){
-					tile.innerText = "🔓";
-				}
+                tile.classList.remove('disabled');
+                if (tile.innerText === "🔒") {
+                    tile.innerText = "🔓";
+                }
                 // setTimeout(function() {
-                    tile.innerText = "";
-                    tile.classList.add("popanswer");
-                    document.getElementById("KeyA").classList.remove("disabled", "key-tile-disabled");
-                    document.getElementById("KeyE").classList.remove("disabled", "key-tile-disabled");
-                    document.getElementById("KeyI").classList.remove("disabled", "key-tile-disabled");
-                    document.getElementById("KeyO").classList.remove("disabled", "key-tile-disabled");
-                    document.getElementById("KeyU").classList.remove("disabled", "key-tile-disabled");
-                    document.getElementById("KeyA").classList.add("key-tile-enabled", "poptile");
-                    document.getElementById("KeyE").classList.add("key-tile-enabled", "poptile");
-                    document.getElementById("KeyI").classList.add("key-tile-enabled", "poptile");
-                    document.getElementById("KeyO").classList.add("key-tile-enabled", "poptile");
-                    document.getElementById("KeyU").classList.add("key-tile-enabled", "poptile");
-                    document.getElementById("answer").style.color = "lightgray";
-                    // document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
-					updateAnswer("ONLY VOWELS LEFT!");
-					 setTimeout(FinalClue, 1500);
+                tile.innerText = "";
+                tile.classList.add("popanswer");
+                document.getElementById("KeyA").classList.remove("disabled", "key-tile-disabled");
+                document.getElementById("KeyE").classList.remove("disabled", "key-tile-disabled");
+                document.getElementById("KeyI").classList.remove("disabled", "key-tile-disabled");
+                document.getElementById("KeyO").classList.remove("disabled", "key-tile-disabled");
+                document.getElementById("KeyU").classList.remove("disabled", "key-tile-disabled");
+                document.getElementById("KeyA").classList.add("key-tile-enabled", "poptile");
+                document.getElementById("KeyE").classList.add("key-tile-enabled", "poptile");
+                document.getElementById("KeyI").classList.add("key-tile-enabled", "poptile");
+                document.getElementById("KeyO").classList.add("key-tile-enabled", "poptile");
+                document.getElementById("KeyU").classList.add("key-tile-enabled", "poptile");
+                document.getElementById("answer").style.color = "lightgray";
+                // document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
+                updateAnswer("ONLY VOWELS LEFT!");
+                setTimeout(FinalClue, 1500);
                 // }, 1000);
             });
             localStorage.vowelactive = 1;
-           
+
         }
         document.getElementById(e.code).classList.add("disabled");
         var disabledkey = e.code[3];
@@ -3196,26 +3205,26 @@ function processInput(e) {
             case 1:
                 localStorage.cllives = "🔴🔴🔴🔴";
                 // document.getElementById("answer").innerText = "FIRST LIFE LOST!"
-				updateAnswer("FIRST LIFE LOST!");
+                updateAnswer("FIRST LIFE LOST!");
                 break;
             case 2:
                 localStorage.cllives = "🔴🔴🔴";
                 // document.getElementById("answer").innerText = "SECOND LIFE LOST!"
-				updateAnswer("SECOND LIFE LOST!");
+                updateAnswer("SECOND LIFE LOST!");
                 break;
             case 3:
                 localStorage.cllives = "🔴🔴";
                 // document.getElementById("answer").innerText = "THIRD LIFE LOST!"
-				updateAnswer("THIRD LIFE LOST!");
+                updateAnswer("THIRD LIFE LOST!");
                 break;
             case 4:
                 localStorage.cllives = "🔴";
                 // document.getElementById("answer").innerText = "FOURTH LIFE LOST - LAST LIFE ALERT!"
-				updateAnswer("FOURTH LIFE LOST - LAST LIFE ALERT!");
+                updateAnswer("FOURTH LIFE LOST - LAST LIFE ALERT!");
                 setTimeout(FinalClue, 1500);
 
                 // Offer star-for-life trade when only 1 life remains
-				const today = new Date().toDateString();
+                const today = new Date().toDateString();
                 if (Number(localStorage.cllivescnt) == 4 &&
                     Number(localStorage.totalclstars) >= 2 &&
                     localStorage.cltradeoffered !== today) {
@@ -3250,7 +3259,7 @@ function processInput(e) {
             markTileWithQuestion(localStorage.clMysteryLetter); // visually add ❓
             showMysteryAdded();
             // document.getElementById("answer").innerText = "IDENTIFY THE MYSTERY LETTER IN THE NEXT TRY FOR A BONUS!"	
-			updateAnswer("IDENTIFY THE MYSTERY LETTER IN THE NEXT TRY FOR A BONUS!");
+            updateAnswer("IDENTIFY THE MYSTERY LETTER IN THE NEXT TRY FOR A BONUS!");
         }
     }
 
@@ -3319,7 +3328,7 @@ function processInput(e) {
         localStorage.clgamecnt = 6;
         document.getElementById("answer").style.color = "lightgray";
         // document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
-		updateAnswer("GAME OVER! OUT OF LIVES.");
+        updateAnswer("GAME OVER! OUT OF LIVES.");
         localStorage.setItem(('gameovercl' + days), 1);
         if (localStorage.getItem('gameovercl' + days) == "1") {
             document.querySelectorAll('span[id*="-"].disabled').forEach(tile => {
@@ -3327,7 +3336,7 @@ function processInput(e) {
             });
         }
         localStorage.totalclplayed = Number(localStorage.totalclplayed) + 1;
-		localStorage.monthclplayed = Number(localStorage.monthclplayed) + 1;
+        localStorage.monthclplayed = Number(localStorage.monthclplayed) + 1;
         localStorage.totalclstreak = 0;
         SetTier();
         var winpct = localStorage.totalclplayed > 0 ?
@@ -3354,31 +3363,31 @@ function processInput(e) {
         for (let i = 0; i < wordtwowidth; i++) {
             let currTile = document.getElementById("2" + '-' + i);
             currTile.innerText = wordtwo[i];
-            currTile.classList.remove("poptile","popanswer");
+            currTile.classList.remove("poptile", "popanswer");
             currTile.classList.add("animated");
         }
         for (let i = 0; i < wordthreewidth; i++) {
             let currTile = document.getElementById("3" + '-' + i);
             currTile.innerText = wordthree[i];
-            currTile.classList.remove("poptile","popanswer");
+            currTile.classList.remove("poptile", "popanswer");
             currTile.classList.add("animated");
         }
         for (let i = 0; i < wordfourwidth; i++) {
             let currTile = document.getElementById("4" + '-' + i);
             currTile.innerText = wordfour[i];
-            currTile.classList.remove("poptile","popanswer");
+            currTile.classList.remove("poptile", "popanswer");
             currTile.classList.add("animated");
         }
         for (let i = 0; i < wordfivewidth; i++) {
             let currTile = document.getElementById("5" + '-' + i);
             currTile.innerText = wordfive[i];
-            currTile.classList.remove("poptile","popanswer");
+            currTile.classList.remove("poptile", "popanswer");
             currTile.classList.add("animated");
         }
         for (let i = 0; i < wordsixwidth; i++) {
             let currTile = document.getElementById("6" + '-' + i);
             currTile.innerText = wordsix[i];
-            currTile.classList.remove("poptile","popanswer");
+            currTile.classList.remove("poptile", "popanswer");
             currTile.classList.add("animated");
         }
         for (let i = 0; i < wordlastwidth; i++) {
@@ -3498,7 +3507,7 @@ function processInput(e) {
         }
 
         // document.getElementById("answer").innerText = msg;
-		updateAnswer(msg);
+        updateAnswer(msg);
 
         /* 			for (let s = 0; s < localStorage.clstarscnt; s++){
         				document.getElementById("answerstar").innerText += "⭐";
@@ -3513,15 +3522,15 @@ function processInput(e) {
             document.getElementById("lives").classList.add("animated");
         }
         localStorage.setItem(('gameovercl' + days), 1);
-		localStorage.setItem(('gamestatcl' + days), 1);
+        localStorage.setItem(('gamestatcl' + days), 1);
         localStorage.totalclplayed = Number(localStorage.totalclplayed) + 1;
-		localStorage.monthclplayed = Number(localStorage.monthclplayed) + 1;
+        localStorage.monthclplayed = Number(localStorage.monthclplayed) + 1;
         localStorage.totalclwins = Number(localStorage.totalclwins) + 1;
-		localStorage.monthwins = Number(localStorage.monthwins) + 1;
+        localStorage.monthwins = Number(localStorage.monthwins) + 1;
         localStorage.totalclstreak = Number(localStorage.totalclstreak) + 1;
         let streak = Number(localStorage.totalclstreak || 0);
-		const el = document.getElementById("streakPopupText"); // Clear dynamite tutorial message if available;
-		el.innerText = "";
+        const el = document.getElementById("streakPopupText"); // Clear dynamite tutorial message if available;
+        el.innerText = "";
         if (streak > 0 && streak % 10 === 0) {
             let dyn = Number(localStorage.cldynamite || 0);
             localStorage.cldynamite = dyn + 3;
@@ -3551,7 +3560,7 @@ function processInput(e) {
         }
         updateDynamiteUI();
         localStorage.totalclstars = Number(localStorage.totalclstars) + Number(localStorage.clstarscnt);
-		localStorage.monthclstars = Number(localStorage.monthclstars) + Number(localStorage.clstarscnt);
+        localStorage.monthclstars = Number(localStorage.monthclstars) + Number(localStorage.clstarscnt);
         SetTier();
         var winpct = localStorage.totalclplayed > 0 ?
             Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100) :
