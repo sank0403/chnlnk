@@ -30,6 +30,12 @@ a {
     text-decoration: none;
 }
 
+h1 {
+font-family:"Optima ";
+text-align: center;
+ font-size: 35px; 
+ margin-bottom: 0;
+} 
 
 #title {
     font-size: 20px;
@@ -87,8 +93,8 @@ a {
     font-size: 10px;
     color: darkgray;
     text-transform: uppercase;
-    /* animation: flipmain 2s;
-  animation-delay: calc(.075s * var(--i)) */
+    /* animation: flipmain 2s; */
+	/* animation-delay: calc(.075s * var(--i)) */
 }
 
 @keyframes flipmain {
