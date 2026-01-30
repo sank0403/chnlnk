@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.30.01";
+const BUILD_VERSION = "2025.01.30.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -352,24 +352,23 @@ function initMonthlyStats() {
     const lastMonth = localStorage.monthcl_lastMonth;
 
     // First time ever → initialize monthly stats from totals
-    if (!lastMonth) {
-        localStorage.monthcl_lastMonth = currentMonth;
-        if (currentMonth === "2026-01") {
-            localStorage.monthclplayed = localStorage.totalclplayed || 0;
-            localStorage.monthclstars = localStorage.totalclstars || 0;
-            localStorage.monthwins = localStorage.totalclwins || 0;
-        } else {
-            localStorage.monthclplayed = 0;
-            localStorage.monthclstars = 0;
-            localStorage.monthwins = 0;
-        }
-        return;
-    }
+    // if (!lastMonth) {
+        // localStorage.monthcl_lastMonth = currentMonth;
+        // if (currentMonth === "2026-01") {
+            // localStorage.monthclplayed = localStorage.totalclplayed || 0;
+            // localStorage.monthclstars = localStorage.totalclstars || 0;
+            // localStorage.monthwins = localStorage.totalclwins || 0;
+        // } else {
+            // localStorage.monthclplayed = 0;
+            // localStorage.monthclstars = 0;
+            // localStorage.monthwins = 0;
+        // }
+        // return;
+    // }
 
-    // New month → reset monthly stats
-    if (lastMonth !== currentMonth) {
+    // New month → reset monthly stats or first time ever 
+    if ((lastMonth !== currentMonth) || (!lastMonth)) {
         localStorage.monthcl_lastMonth = currentMonth;
-
         localStorage.monthclplayed = 0;
         localStorage.monthclstars = 0;
         localStorage.monthwins = 0;
@@ -2266,6 +2265,13 @@ function UpdateChart() {
 
 window.onload = function() {
     initMonthlyStats();
+		const now = new Date();
+		const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+	    if (currentMonth === "2026-01") {
+            localStorage.monthclplayed = localStorage.totalclplayed || 0;
+            localStorage.monthclstars = localStorage.totalclstars || 0;
+            localStorage.monthwins = localStorage.totalclwins || 0;
+        }
     intialize();
     UpdateChart();
 }
