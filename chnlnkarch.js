@@ -221,16 +221,17 @@ var masterwordlist = [
     ["coffee", "table", "tennis", "match", "point", "break", "room", "h_ll"],
     ["desert", "wind", "mill", "stone", "age", "limit", "line", ""],
     ["morning", "dew", "drop", "zone", "defense", "system", "check", ""],
-	["fire", "dance", "party", "popper", "bottle", "neck", "collar", "gouri"],
+    ["fire", "dance", "party", "popper", "bottle", "neck", "collar", "gouri"],
     ["traffic", "light", "speed", "trap", "door", "frame", "shop", ""],
     ["crystal", "clear", "view", "point", "guard", "rail", "car", ""],
     ["thunder", "clap", "back", "pack", "leader", "board", "game", ""],
-    ["shadow", "boxing", "glove", "puppet", "master", "mind", "control", "Kanishk"],	
+    ["shadow", "boxing", "glove", "puppet", "master", "mind", "control", "Kanishk"],
     ["island", "nation", "state", "fair", "trade", "route", "map", ""],
+	["hydro", "power", "play", "curling", "rock", "maple", "syrup", ""],
     ["candle", "flame", "thrower", "squad", "goal", "keeper", "net", ""],
     ["rocket", "fuel", "tank", "top", "shelf", "life", "jacket", ""],
     ["family", "bond", "paper", "cut", "line", "dance", "floor", ""],
-    ["gingerbread", "house", "agent", "general", "science", "fiction", "writer", "Kanishk"],	
+    ["gingerbread", "house", "agent", "general", "science", "fiction", "writer", "Kanishk"],
     ["summer", "heat", "wave", "form", "letter", "carrier", "bag", ""],
     ["cotton", "thread", "count", "down", "town", "square", "root", ""],
     ["marble", "statue", "garden", "party", "favor", "box", "office", ""],
@@ -560,11 +561,11 @@ function intialize() {
         // ele1.classList.add("flash2");
     }
 	
-	// if(days == 17){
-        // let ele1 = document.getElementById("submitter");
-        // ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:red; font-size:24px;"><u>CANUCKLE</strong></u><strong style="color:white; font-size:24px;"> EDITION</strong></a>';		
-		// ele1.classList.add("flash2");
-	// }	
+	if(days == 26){
+        let ele1 = document.getElementById("submitter");
+        ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:red; font-size:24px;"><u>CANUCKLE</strong></u><strong style="color:white; font-size:24px;"> EDITION</strong></a>';		
+		ele1.classList.add("flash2");
+	}	
 	
     if (localStorage.getItem('archovercl' + days) != 0 && localStorage.getItem('archovercl' + days) != 1) {
         localStorage['archovercl' + days] = 0;

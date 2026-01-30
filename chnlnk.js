@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.30.02";
+const BUILD_VERSION = "2025.01.30.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -1310,6 +1310,7 @@ var masterwordlist = [
     ["thunder", "clap", "back", "pack", "leader", "board", "game", ""],
     ["shadow", "boxing", "glove", "puppet", "master", "mind", "control", "Kanishk"],
     ["island", "nation", "state", "fair", "trade", "route", "map", ""],
+	["hydro", "power", "play", "curling", "rock", "maple", "syrup", ""],
     ["candle", "flame", "thrower", "squad", "goal", "keeper", "net", ""],
     ["rocket", "fuel", "tank", "top", "shelf", "life", "jacket", ""],
     ["family", "bond", "paper", "cut", "line", "dance", "floor", ""],
@@ -2356,11 +2357,11 @@ function intialize() {
         ele1.innerHTML += "Submitted By " + masterwordlist[index][7];
         // ele1.classList.add("flash2");
     }
-    // if(days == 17){
-    // let ele1 = document.getElementById("submitter");
-    // ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:red; font-size:24px;"><u>CANUCKLE</strong></u><strong style="color:white; font-size:24px;"> EDITION</strong></a>';		
-    // ele1.classList.add("flash2");
-    // }
+    if(days == 26){
+		let ele1 = document.getElementById("submitter");
+		ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:red; font-size:24px;"><u>CANUCKLE</strong></u><strong style="color:white; font-size:24px;"> EDITION</strong></a>';		
+		ele1.classList.add("flash2");
+    }
 
 
     /* 	document.getElementById("pzlhdr").style.display = "none";
