@@ -494,7 +494,7 @@ function showDynamitePopup(amountGained) {
     popup.innerHTML = `
         <div class="dynamite-popup-inner">
             <h2>💣 Dynamites Awarded 🏆 </h2>
-			<p>Congrats on a <strong>Top 3 finish</strong> in the Monthly Leaderboard!</p>
+			<p style="white-space: nowrap;">Congrats on a <strong>Top 3 Finish</strong> in the Monthly Leaderboard!</p>
 			${gained > 0 ? `<p>+${gained} new Dynamites added!</p>` : ""}
             <p>You now have <strong>${localStorage.cldynamite}</strong> Dynamites.</p><br>
             <button id="closeDynamitePopup">OK</button>
