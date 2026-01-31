@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.31.02";
+const BUILD_VERSION = "2025.01.31.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -505,7 +505,8 @@ function showDynamitePopup(amountGained) {
 
     document.getElementById("closeDynamitePopup").onclick = () => {
         popup.remove();
-		location.reload(); // ← refresh after closing popup
+    const dyn = Number(localStorage.cldynamite || 0);
+    document.getElementById("dynamite-btn").innerText = "💣 x" + dyn;		
     };
 }
 
