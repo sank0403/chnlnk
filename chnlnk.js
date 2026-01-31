@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.31.01";
+const BUILD_VERSION = "2025.01.31.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -395,7 +395,7 @@ async function submitLeaderboardEntry(playerName) {
     const stars = Number(localStorage.monthclstars) || 0;
     // const streak = Number(localStorage.totalclstreak) || 0;
     const wins = Number(localStorage.monthwins) || 0;
-
+	const dynamite = Number(localStorage.cldynamite) || 0;
     const winpct = played > 0 ? Math.round((wins / played) * 100) : 0;
     // Build the month key: YYYY-MM 
     const now = new Date();
@@ -430,7 +430,8 @@ async function submitLeaderboardEntry(playerName) {
                 wins: wins,
                 winpct: winpct,
                 updated: serverTimestamp(),
-                month: monthKey // ← optional for now, required later
+                month: monthKey,
+				dynamite
             }, {
                 merge: true
             }
@@ -453,6 +454,61 @@ document.getElementById("leaderboardHeader").addEventListener("click", function(
         toggle.textContent = "▲";
     }
 });
+
+async function loaddynamites() {
+    const user = auth.currentUser;
+    if (!user) return; // safety check
+
+    const currentUID = user.uid;
+    const playerRef = doc(db, "leaderboard", currentUID);
+
+    try {
+        const snap = await getDoc(playerRef);
+
+        if (!snap.exists()) return;
+
+        const d = snap.data();
+
+        // If server has no dynamite field → do nothing
+        if (!("dynamite" in d)) return;
+
+        const serverDynamite = d.dynamite;
+        const localDynamite = Number(localStorage.cldynamite ?? 0);
+
+        if (serverDynamite !== localDynamite) {
+            localStorage.cldynamite = serverDynamite;
+            showDynamitePopup(serverDynamite - localDynamite);
+        }
+
+    } catch (err) {
+        console.error("Error loading dynamites:", err);
+    }
+}
+
+
+function showDynamitePopup(amountGained) {
+    const gained = amountGained > 0 ? amountGained : 0;
+
+    const popup = document.createElement("div");
+    popup.className = "dynamite-popup";
+    popup.innerHTML = `
+        <div class="dynamite-popup-inner">
+            <h2>💣 Dynamites Awarded! 🏆 </h2>
+			<p>Congrats on being a top 3 finisher in the Monthly Leaderboard!</p>
+            <p>You now have <strong>${localStorage.cldynamite}</strong> dynamites.</p>
+            ${gained > 0 ? `<p>+${gained} new dynamites added!</p>` : ""}
+            <button id="closeDynamitePopup">OK</button>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    document.getElementById("closeDynamitePopup").onclick = () => {
+        popup.remove();
+		location.reload(); // ← refresh after closing popup
+    };
+}
+
 
 async function loadLeaderboard() {
     const leaderboardBody = document.getElementById("leaderboardBody");
@@ -2275,6 +2331,10 @@ window.onload = function() {
             localStorage.monthwins = localStorage.totalclwins || 0;
         }
     intialize();
+	auth.onAuthStateChanged(user => {
+		if (user) loaddynamites();
+	});
+
     UpdateChart();
 }
 
