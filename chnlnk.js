@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.30.03";
+const BUILD_VERSION = "2025.01.31.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -1311,6 +1311,7 @@ var masterwordlist = [
     ["shadow", "boxing", "glove", "puppet", "master", "mind", "control", "Kanishk"],
     ["island", "nation", "state", "fair", "trade", "route", "map", ""],
 	["hydro", "power", "play", "curling", "rock", "maple", "syrup", ""],
+	["screen", "shot", "glass", "window", "frame", "work", "station", "Vidya"],	
     ["candle", "flame", "thrower", "squad", "goal", "keeper", "net", ""],
     ["rocket", "fuel", "tank", "top", "shelf", "life", "jacket", ""],
     ["family", "bond", "paper", "cut", "line", "dance", "floor", ""],
