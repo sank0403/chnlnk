@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.01.04";
+const BUILD_VERSION = "2025.02.01.05";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -459,7 +459,7 @@ async function submitLeaderboardEntry(playerName) {
             const statsChanged =
                 old.stars !== stars ||
                 old.wins !== wins ||
-                old.winpct !== winpct;
+                old.played !== played;
 
             if (statsChanged) {
                 updates.updated = serverTimestamp();
