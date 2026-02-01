@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.31.10";
+const BUILD_VERSION = "2025.02.01.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -537,9 +537,11 @@ async function loadLeaderboard() {
 
     const currentPlayerName = localStorage.playerName;
     const currentUID = auth.currentUser.uid;
+
     // Build the month key: YYYY-MM 
     const now = new Date();
     const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+
     try {
         // 1. Get top 5
         const topQ = query(
@@ -554,24 +556,34 @@ async function loadLeaderboard() {
         const topSnap = await getDocs(topQ);
         leaderboardBody.innerHTML = "";
 
-        let rank = 1;
+        let rank = 1;          // raw position
+        let displayRank = 1;   // tie-aware rank
+        let prev = null;
         let currentPlayerInTop5 = false;
 
         topSnap.forEach(docSnap => {
             const d = docSnap.data();
 
-            if (d.name === currentPlayerName) {
-                currentPlayerInTop5 = true;
+            // detect ties
+            if (
+                prev &&
+                prev.stars === d.stars &&
+                prev.wins === d.wins &&
+                prev.winpct === d.winpct
+            ) {
+                // same displayRank
+            } else {
+                displayRank = rank;
             }
 
             const row = document.createElement("tr");
 
             row.innerHTML = `
                 <td>${
-                    rank === 1 ? "🥇" :
-                    rank === 2 ? "🥈" :
-                    rank === 3 ? "🥉" :
-                    rank
+                    displayRank === 1 ? "🥇" :
+                    displayRank === 2 ? "🥈" :
+                    displayRank === 3 ? "🥉" :
+                    displayRank
                 }</td>
                 <td>${d.name}</td>
                 <td>${d.stars}</td>
@@ -579,12 +591,14 @@ async function loadLeaderboard() {
                 <td>${d.winpct}%</td>
             `;
 
-            // highlight current user
             if (d.name === currentPlayerName) {
+                currentPlayerInTop5 = true;
                 row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
             }
 
             leaderboardBody.appendChild(row);
+
+            prev = d;
             rank++;
         });
 
@@ -596,15 +610,37 @@ async function loadLeaderboard() {
             if (playerSnap.exists()) {
                 const d = playerSnap.data();
 
-                // 3. Compute actual rank
-                const rankQ = query(
+                // 3. Compute actual rank (tie-aware)
+                let outrankCount = 0;
+
+                // players with higher stars
+                const q1 = query(
                     collection(db, "leaderboard"),
-                    where("month", "==", monthKey), // ← only compare against this month
+                    where("month", "==", monthKey),
                     where("stars", ">", d.stars)
                 );
+                outrankCount += (await getDocs(q1)).size;
 
-                const rankSnap = await getDocs(rankQ);
-                const actualRank = rankSnap.size + 1;
+                // players with equal stars but higher wins
+                const q2 = query(
+                    collection(db, "leaderboard"),
+                    where("month", "==", monthKey),
+                    where("stars", "==", d.stars),
+                    where("wins", ">", d.wins)
+                );
+                outrankCount += (await getDocs(q2)).size;
+
+                // players with equal stars & wins but higher winpct
+                const q3 = query(
+                    collection(db, "leaderboard"),
+                    where("month", "==", monthKey),
+                    where("stars", "==", d.stars),
+                    where("wins", "==", d.wins),
+                    where("winpct", ">", d.winpct)
+                );
+                outrankCount += (await getDocs(q3)).size;
+
+                const actualRank = outrankCount + 1;
 
                 // 4. Add the current player row as the 6th entry
                 const row = document.createElement("tr");
@@ -616,7 +652,6 @@ async function loadLeaderboard() {
                     <td>${d.winpct}%</td>
                 `;
 
-                // highlight the current player
                 row.style.background = "rgba(255,255,255,0.1)";
                 row.style.fontWeight = "bold";
                 row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
@@ -630,6 +665,7 @@ async function loadLeaderboard() {
         leaderboardBody.innerHTML = "<tr><td colspan='6'>Error loading leaderboard.</td></tr>";
     }
 }
+
 
 
 function postStatsToWhatsApp() {
