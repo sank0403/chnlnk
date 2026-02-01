@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.31.07";
+const BUILD_VERSION = "2025.01.31.09";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -400,6 +400,12 @@ async function submitLeaderboardEntry(playerName) {
 	const ztplayed = Number(localStorage.totalclplayed) || 0;
 	const ztstars = Number(localStorage.totalclstars) || 0;
 	const ztstreak = Number(localStorage.totalclstreak) || 0;	
+	const zzstar1 = Number(localStorage.starcl1count) || 0;
+	const zzstar2 = Number(localStorage.starcl2count) || 0;
+	const zzstar3 = Number(localStorage.starcl3count) || 0;
+	const zzstar4 = Number(localStorage.starcl4count) || 0;
+	const zzstar5 = Number(localStorage.starcl5count) || 0;
+	const zzstarx = Number(localStorage.starclxcount) || 0;	
     const winpct = played > 0 ? Math.round((wins / played) * 100) : 0;
     // Build the month key: YYYY-MM 
     const now = new Date();
@@ -439,7 +445,13 @@ async function submitLeaderboardEntry(playerName) {
 				ztwins:ztwins,
 				ztplayed:ztplayed,
 				ztstars:ztstars,
-				ztstreak:ztstreak				
+				ztstreak:ztstreak,
+				zzstar1:zzstar1,
+				zzstar2:zzstar2,
+				zzstar3:zzstar3,
+				zzstar4:zzstar4,
+				zzstar5:zzstar5,
+				zzstarx:zzstarx				
             }, {
                 merge: true
             }
