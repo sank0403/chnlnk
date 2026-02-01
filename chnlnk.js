@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.01.01";
+const BUILD_VERSION = "2025.02.01.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -644,14 +644,18 @@ async function loadLeaderboard() {
 
                 // 4. Add the current player row as the 6th entry
                 const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${actualRank}</td>
-                    <td>${d.name}</td>
-                    <td>${d.stars}</td>
-                    <td>${d.wins}</td>
-                    <td>${d.winpct}%</td>
-                `;
-
+				row.innerHTML = `
+					<td>${
+						actualRank === 1 ? "🥇" :
+						actualRank === 2 ? "🥈" :
+						actualRank === 3 ? "🥉" :
+						actualRank
+					}</td>
+					<td>${d.name}</td>
+					<td>${d.stars}</td>
+					<td>${d.wins}</td>
+					<td>${d.winpct}%</td>
+				`;
                 row.style.background = "rgba(255,255,255,0.1)";
                 row.style.fontWeight = "bold";
                 row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
