@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.01.31.04";
+const BUILD_VERSION = "2025.01.31.05";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -494,9 +494,9 @@ function showDynamitePopup(amountGained) {
     popup.innerHTML = `
         <div class="dynamite-popup-inner">
             <h2>💣 Dynamites Awarded 🏆 </h2>
-			<p style="white-space: nowrap;">Congrats on a <strong>Top 3 Finish</strong> in the Monthly Leaderboard!</p>
+			<p style="white-space: nowrap;">For a <strong>Top 3 Finish</strong> in the Monthly Leaderboard!</p>
 			${gained > 0 ? `<p>+${gained} new Dynamites added!</p>` : ""}
-            <p>You now have <strong>${localStorage.cldynamite}</strong> Dynamites.</p><br>
+            <p>Congrats! You now have <strong>${localStorage.cldynamite}</strong> Dynamites.</p><br>
             <button id="closeDynamitePopup">OK</button>
         </div>
     `;
