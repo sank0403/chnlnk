@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.01.03";
+const BUILD_VERSION = "2025.02.01.04";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -393,29 +393,29 @@ async function submitLeaderboardEntry(playerName) {
 
     const played = Number(localStorage.monthclplayed) || 0;
     const stars = Number(localStorage.monthclstars) || 0;
-    // const streak = Number(localStorage.totalclstreak) || 0;
     const wins = Number(localStorage.monthwins) || 0;
-	const dynamite = Number(localStorage.cldynamite) || 0;
-	const ztwins = Number(localStorage.totalclwins) || 0;
-	const ztplayed = Number(localStorage.totalclplayed) || 0;
-	const ztstars = Number(localStorage.totalclstars) || 0;
-	const ztstreak = Number(localStorage.totalclstreak) || 0;	
-	const zzstar1 = Number(localStorage.starcl1count) || 0;
-	const zzstar2 = Number(localStorage.starcl2count) || 0;
-	const zzstar3 = Number(localStorage.starcl3count) || 0;
-	const zzstar4 = Number(localStorage.starcl4count) || 0;
-	const zzstar5 = Number(localStorage.starcl5count) || 0;
-	const zzstarx = Number(localStorage.starclxcount) || 0;	
+    const dynamite = Number(localStorage.cldynamite) || 0;
+
+    const ztwins = Number(localStorage.totalclwins) || 0;
+    const ztplayed = Number(localStorage.totalclplayed) || 0;
+    const ztstars = Number(localStorage.totalclstars) || 0;
+    const ztstreak = Number(localStorage.totalclstreak) || 0;
+
+    const zzstar1 = Number(localStorage.starcl1count) || 0;
+    const zzstar2 = Number(localStorage.starcl2count) || 0;
+    const zzstar3 = Number(localStorage.starcl3count) || 0;
+    const zzstar4 = Number(localStorage.starcl4count) || 0;
+    const zzstar5 = Number(localStorage.starcl5count) || 0;
+    const zzstarx = Number(localStorage.starclxcount) || 0;
+
     const winpct = played > 0 ? Math.round((wins / played) * 100) : 0;
-    // Build the month key: YYYY-MM 
+
     const now = new Date();
     const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-    // const playerRef = doc(db, "leaderboard", playerName); 
-    // const existing = await getDoc(playerRef); 
-    // if (existing.exists()) { alert("That name is already taken. Please choose another."); return; }
-    const playerId = auth.currentUser.uid; // ← use UID as doc ID
-    // NEW: enforce played <= today's date 
+
+    const playerId = auth.currentUser.uid;
     const today = new Date().getDate();
+
     if (played > today) {
         showError("Invalid Stats: Total Played cannot exceed today's date.");
         return;
@@ -424,43 +424,59 @@ async function submitLeaderboardEntry(playerName) {
         showError("Invalid Stats: Wins cannot exceed Total Played.");
         return;
     }
-
     if (stars > (5 * wins)) {
         showError("Invalid Stats: Stars cannot exceed max possible value.");
         return;
     }
+
     try {
-        await setDoc(
-            doc(db, "leaderboard", playerId), // ← one doc per player
-            {
-                name: playerName,
-                played: played,
-                stars: stars,
-                // streak: streak,
-                wins: wins,
-                winpct: winpct,
-                updated: serverTimestamp(),
-                month: monthKey,
-				dynamite:dynamite,
-				ztwins:ztwins,
-				ztplayed:ztplayed,
-				ztstars:ztstars,
-				ztstreak:ztstreak,
-				zzstar1:zzstar1,
-				zzstar2:zzstar2,
-				zzstar3:zzstar3,
-				zzstar4:zzstar4,
-				zzstar5:zzstar5,
-				zzstarx:zzstarx				
-            }, {
-                merge: true
+        const ref = doc(db, "leaderboard", playerId);
+        const snap = await getDoc(ref);
+
+        let updates = {
+            name: playerName,
+            played,
+            stars,
+            wins,
+            winpct,
+            month: monthKey,
+            dynamite,
+            ztwins,
+            ztplayed,
+            ztstars,
+            ztstreak,
+            zzstar1,
+            zzstar2,
+            zzstar3,
+            zzstar4,
+            zzstar5,
+            zzstarx
+        };
+
+        if (snap.exists()) {
+            const old = snap.data();
+
+            const statsChanged =
+                old.stars !== stars ||
+                old.wins !== wins ||
+                old.winpct !== winpct;
+
+            if (statsChanged) {
+                updates.updated = serverTimestamp();
             }
-        );
+            // else: do NOT include updated → Firestore keeps old timestamp
+        } else {
+            // First time writing → must set updated
+            updates.updated = serverTimestamp();
+        }
+
+        await setDoc(ref, updates, { merge: true });
 
     } catch (err) {
         console.error("Error saving leaderboard entry:", err);
     }
 }
+
 
 document.getElementById("leaderboardHeader").addEventListener("click", function() {
     const content = document.getElementById("leaderboardContent");
@@ -550,6 +566,7 @@ async function loadLeaderboard() {
             orderBy("stars", "desc"),
             orderBy("wins", "desc"),
             orderBy("winpct", "desc"),
+			orderBy("updated", "asc"), // earlier timestamp = higher rank
             limit(5)
         );
 
