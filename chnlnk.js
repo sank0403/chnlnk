@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.01.02";
+const BUILD_VERSION = "2025.02.01.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -2390,10 +2390,21 @@ window.onload = function() {
             localStorage.monthclstars = localStorage.totalclstars || 0;
             localStorage.monthwins = localStorage.totalclwins || 0;
         }
-    intialize();
-	auth.onAuthStateChanged(user => {
-		if (user) loaddynamites();
-	});
+		auth.onAuthStateChanged(async user => {
+			if (!user) return;
+
+			window.playerUID = user.uid;
+
+			// Ensure Firebase token is fully refreshed
+			await user.getIdToken(true);
+
+			// Initialize game
+			initialize();
+
+			// Load dynamites after Firestore is ready
+			setTimeout(() => loaddynamites(), 50);
+		});
+
 
     UpdateChart();
 }
@@ -2457,7 +2468,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 
-function intialize() {
+function initialize() {
     if (localStorage.clgamestarted == 1) {
         // if (localStorage.clhardmode ==1){	
         document.getElementById("toggle-row").style.display = "none";
