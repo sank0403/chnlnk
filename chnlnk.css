@@ -1974,7 +1974,7 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
     text-transform: uppercase;
     font-family: 'Courier New', cursive;
     text-align: center;
-    color: red;
+    color: lightgrey;
     font-size: 12px;
     font-weight: bold;
 }
