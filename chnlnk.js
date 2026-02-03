@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.02.01";
+const BUILD_VERSION = "2025.02.03.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -699,19 +699,19 @@ function postStatsToWhatsApp() {
 
     switch (Number(localStorage.clgamecnt)) {
         case 0:
-            var clueicon = "🔴 🔴 🔴 🔴 🔴"
+            var clueicon = "⚪ ⚪ ⚪ ⚪ ⚪"
             break;
         case 1:
-            var clueicon = "🔴 🔴 🔴 🔴 ⭐"
+            var clueicon = "⚪ ⚪ ⚪ ⚪ ⭐"
             break;
         case 2:
-            var clueicon = "🔴 🔴 🔴 ⭐ ⭐"
+            var clueicon = "⚪ ⚪ ⚪ ⭐ ⭐"
             break;
         case 3:
-            var clueicon = "🔴 🔴 ⭐ ⭐ ⭐"
+            var clueicon = "⚪ ⚪ ⭐ ⭐ ⭐"
             break;
         case 4:
-            var clueicon = "🔴 ⭐ ⭐ ⭐ ⭐"
+            var clueicon = "⚪ ⭐ ⭐ ⭐ ⭐"
             break;
         case 5:
             var clueicon = "⭐ ⭐ ⭐ ⭐ ⭐"
@@ -873,7 +873,7 @@ var days = parseInt((d / 1000) / 86400);
 if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('gameovercl' + days) != 1) {
     localStorage['gameovercl' + days] = 0;
     localStorage['gamestatcl' + days] = 0;
-    localStorage.setItem("cllives", "🔴🔴🔴🔴🔴");
+    localStorage.setItem("cllives", "⚪⚪⚪⚪⚪");
     localStorage.setItem("clcorrect", " ");
     localStorage.setItem("vowelcount", 0);
     localStorage.setItem("consocount", 0);
@@ -1132,7 +1132,7 @@ function applyLifeTrade() {
 
     // Update life display
     const livesLeft = 5 - Number(localStorage.cllivescnt);
-    localStorage.cllives = "🔴".repeat(livesLeft);
+    localStorage.cllives = "⚪".repeat(livesLeft);
     document.getElementById("lives").innerText = localStorage.cllives;
     document.getElementById("answer").innerText = "";
     // Animation
@@ -1143,7 +1143,7 @@ function applyLifeTrade() {
 function showLifeRestored() {
     const pop = document.createElement("div");
     pop.id = "life-restored";
-    pop.innerText = "+1 LIFE 🔴";
+    pop.innerText = "+1 LIFE ⚪";
     document.body.appendChild(pop);
 
     setTimeout(() => pop.remove(), 2000);
@@ -1305,7 +1305,7 @@ function showDynamiteBlast() {
 function shakeDynamiteButton() {
     const btn = document.getElementById("dynamite-btn");
     if ((!localStorage.cldynamite) || (Number(localStorage.cldynamite) === 0)) {
-        showMessage("NO DYNAMITES AVAILABLE");
+        showMessage("NO DYNAMITES AVAILABLE. <br>CHECK ? TO LEARN MORE.");
     }
     btn.classList.add("shake");
     setTimeout(() => btn.classList.remove("shake"), 400);
@@ -1369,19 +1369,19 @@ function myFunction() {
     }
     switch (Number(localStorage.clgamecnt)) {
         case 0:
-            var clueicon = "🔴 🔴 🔴 🔴 🔴"
+            var clueicon = "⚪ ⚪ ⚪ ⚪ ⚪"
             break;
         case 1:
-            var clueicon = "🔴 🔴 🔴 🔴 ⭐"
+            var clueicon = "⚪ ⚪ ⚪ ⚪ ⭐"
             break;
         case 2:
-            var clueicon = "🔴 🔴 🔴 ⭐ ⭐"
+            var clueicon = "⚪ ⚪ ⚪ ⭐ ⭐"
             break;
         case 3:
-            var clueicon = "🔴 🔴 ⭐ ⭐ ⭐"
+            var clueicon = "⚪ ⚪ ⭐ ⭐ ⭐"
             break;
         case 4:
-            var clueicon = "🔴 ⭐ ⭐ ⭐ ⭐"
+            var clueicon = "⚪ ⭐ ⭐ ⭐ ⭐"
             break;
         case 5:
             var clueicon = "⭐ ⭐ ⭐ ⭐ ⭐"
@@ -2501,25 +2501,25 @@ function updateLivesDisplay() {
     }
     switch (Number(localStorage.cllivescnt)) {
         case 0:
-            localStorage.cllives = "🔴🔴🔴🔴🔴";
+            localStorage.cllives = "⚪⚪⚪⚪⚪";
             break;
         case 1:
-            localStorage.cllives = "🔴🔴🔴🔴";
+            localStorage.cllives = "⚪⚪⚪⚪";
             // document.getElementById("answer").innerText = "TIME UP - FIRST LIFE LOST!"
             updateAnswer("TIME UP - FIRST LIFE LOST!");
             break;
         case 2:
-            localStorage.cllives = "🔴🔴🔴";
+            localStorage.cllives = "⚪⚪⚪";
             // document.getElementById("answer").innerText = "TIME UP - SECOND LIFE LOST!"
             updateAnswer("TIME UP - SECOND LIFE LOST!");
             break;
         case 3:
-            localStorage.cllives = "🔴🔴";
+            localStorage.cllives = "⚪⚪";
             // document.getElementById("answer").innerText = "TIME UP - THIRD LIFE LOST!"
             updateAnswer("TIME UP - THIRD LIFE LOST!");
             break;
         case 4:
-            localStorage.cllives = "🔴";
+            localStorage.cllives = "⚪";
             // document.getElementById("answer").innerText = "TIME UP - LAST LIFE ALERT!"
             updateAnswer("TIME UP - LAST LIFE ALERT!");
             setTimeout(FinalClue, 1500);
@@ -3161,7 +3161,7 @@ function initialize() {
                 var templives = "";
                 templives = document.getElementById("lives").innerText;
                 for (i = 0; i < 5; i++) {
-                    templives = templives.replace("🔴", "⭐");
+                    templives = templives.replace("⚪", "⭐");
                 }
                 document.getElementById("lives").innerText = templives;
                 if (Number(localStorage.clstarscnt) != 0) {
@@ -3643,25 +3643,25 @@ function processInput(e) {
         document.getElementById("answer").style.color = "lightgray";
         switch (Number(localStorage.cllivescnt)) {
             case 0:
-                localStorage.cllives = "🔴🔴🔴🔴🔴";
+                localStorage.cllives = "⚪⚪⚪⚪⚪";
                 break;
             case 1:
-                localStorage.cllives = "🔴🔴🔴🔴";
+                localStorage.cllives = "⚪⚪⚪⚪";
                 // document.getElementById("answer").innerText = "FIRST LIFE LOST!"
                 updateAnswer("FIRST LIFE LOST!");
                 break;
             case 2:
-                localStorage.cllives = "🔴🔴🔴";
+                localStorage.cllives = "⚪⚪⚪";
                 // document.getElementById("answer").innerText = "SECOND LIFE LOST!"
                 updateAnswer("SECOND LIFE LOST!");
                 break;
             case 3:
-                localStorage.cllives = "🔴🔴";
+                localStorage.cllives = "⚪⚪";
                 // document.getElementById("answer").innerText = "THIRD LIFE LOST!"
                 updateAnswer("THIRD LIFE LOST!");
                 break;
             case 4:
-                localStorage.cllives = "🔴";
+                localStorage.cllives = "⚪";
                 // document.getElementById("answer").innerText = "FOURTH LIFE LOST - LAST LIFE ALERT!"
                 updateAnswer("FOURTH LIFE LOST - LAST LIFE ALERT!");
                 setTimeout(FinalClue, 1500);
@@ -3943,7 +3943,7 @@ function processInput(e) {
 
         if (bonusApplied) {
             msg += " (INCLUDING +1 TIMED MODE BONUS!)";
-            localStorage.cllives = "🔴".repeat(localStorage.clstarscnt);
+            localStorage.cllives = "⚪".repeat(localStorage.clstarscnt);
             document.getElementById("lives").innerText = localStorage.cllives;
 
 
@@ -3958,7 +3958,7 @@ function processInput(e) {
         var templives = "";
         templives = document.getElementById("lives").innerText;
         for (i = 0; i < 5; i++) {
-            templives = templives.replace("🔴", "⭐");
+            templives = templives.replace("⚪", "⭐");
         }
         document.getElementById("lives").innerText = templives;
         if (Number(localStorage.clstarscnt) != 0) {

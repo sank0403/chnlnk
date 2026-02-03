@@ -54,7 +54,7 @@ var d = (a - b); // Difference in milliseconds.
 var maxdays = parseInt((d / 1000) / 86400);
 /* if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('gameovercl' + days) != 1) {
 	localStorage['gameovercl' + days] = 0;
-	localStorage.setItem("cllives","🔴🔴🔴🔴🔴");
+	localStorage.setItem("cllives","⚪⚪⚪⚪⚪");
 	localStorage.setItem("clcorrect"," ");
 	localStorage.setItem("vowelcount",0);
     localStorage.setItem("consocount",0);
@@ -159,15 +159,15 @@ function disableconsos() {
 // cluehdr = localStorage.clgamecnt + "/5";
 // }
 // switch (Number(localStorage.clgamecnt)) {
-// case 0: var clueicon = "🔴 🔴 🔴 🔴 🔴"
+// case 0: var clueicon = "⚪ ⚪ ⚪ ⚪ ⚪"
 // break;
-// case 1: var clueicon = "🔴 🔴 🔴 🔴 ⭐"
+// case 1: var clueicon = "⚪ ⚪ ⚪ ⚪ ⭐"
 // break;	
-// case 2: var clueicon = "🔴 🔴 🔴 ⭐ ⭐"
+// case 2: var clueicon = "⚪ ⚪ ⚪ ⭐ ⭐"
 // break;				
-// case 3: var clueicon = "🔴 🔴 ⭐ ⭐ ⭐"
+// case 3: var clueicon = "⚪ ⚪ ⭐ ⭐ ⭐"
 // break;	
-// case 4: var clueicon = "🔴 ⭐ ⭐ ⭐ ⭐"
+// case 4: var clueicon = "⚪ ⭐ ⭐ ⭐ ⭐"
 // break;	
 // case 5: var clueicon = "⭐ ⭐ ⭐ ⭐ ⭐"
 // break;
@@ -810,7 +810,7 @@ var vowelcount = 0;
 var consocount = 0;
 var correct = 0;
 var livescnt = 0;
-var lives = "🔴🔴🔴🔴🔴";
+var lives = "⚪⚪⚪⚪⚪";
 if (vowelcount == 0) {
     for (let i = 0; i < solveword.length; i++) {
         if (solveword[i] == "A" || solveword[i] == "E" || solveword[i] == "I" || solveword[i] == "O" || solveword[i] == "U") {
@@ -1274,7 +1274,7 @@ function intialize() {
     // var templives = "";
     // templives = document.getElementById("lives").innerText;
     // for (i=0; i<5; i++){
-    // templives = templives.replace("🔴", "⭐");
+    // templives = templives.replace("⚪", "⭐");
     // }	
     // document.getElementById("lives").innerText = templives;
     // if (Number (localStorage.clstarscnt) != 0){
@@ -1634,25 +1634,25 @@ function processInput(e) {
         document.getElementById("answer").style.color = "lightgray";
         switch (livescnt) {
             case 0:
-                lives = "🔴🔴🔴🔴🔴";
+                lives = "⚪⚪⚪⚪⚪";
                 break;
             case 1:
-                lives = "🔴🔴🔴🔴";
+                lives = "⚪⚪⚪⚪";
                 // document.getElementById("answer").innerText = "FIRST LIFE LOST!"
 				updateAnswer("FIRST LIFE LOST!");
                 break;
             case 2:
-                lives = "🔴🔴🔴";
+                lives = "⚪⚪⚪";
                 // document.getElementById("answer").innerText = "SECOND LIFE LOST!"
 				updateAnswer("SECOND LIFE LOST!");
                 break;
             case 3:
-                lives = "🔴🔴";
+                lives = "⚪⚪";
                 // document.getElementById("answer").innerText = "THIRD LIFE LOST!"
 				updateAnswer("THIRD LIFE LOST!");
                 break;
             case 4:
-                lives = "🔴";
+                lives = "⚪";
                 // document.getElementById("answer").innerText = "FOURTH LIFE LOST - LAST LIFE ALERT!"
 				updateAnswer("FOURTH LIFE LOST - LAST LIFE ALERT!");
                 setTimeout(FinalClue, 1500);
@@ -1784,7 +1784,7 @@ function processInput(e) {
         // var templives = "";
         // templives = document.getElementById("lives").innerText;
         // for (i=0; i<5; i++){
-        // templives = templives.replace("🔴", "⭐");
+        // templives = templives.replace("⚪", "⭐");
         // }	
         // document.getElementById("lives").innerText = templives;
         // if (Number (localStorage.clstarscnt) != 0){
