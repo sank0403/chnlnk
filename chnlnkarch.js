@@ -210,29 +210,30 @@ var masterwordlist = [
     ["winter", "storm", "drain", "pipe", "cleaner", "spray", "bottle", ""],
     ["silver", "spoon", "rest", "stop", "sign", "language", "barrier", ""],
     ["forest", "trail", "mix", "tape", "measure", "step", "ladder", ""],
-    ["party", "animal", "cracker", "jack", "hammer", "toe", "ring", "Divya"],
-    ["black", "box", "office", "space", "bar", "chart", "patterns", "Vidya"],
-    ["cotton", "candy", "bar", "graph", "paper", "bag", "drop", "Kanishk"],
-    ["yellow", "banana", "split", "personality", "test", "pilot", "episode", "Divya"],
+    ["party", "animal", "cracker", "jack", "hammer", "toe", "ring", "Divya🔔"],
+    ["black", "box", "office", "space", "bar", "chart", "patterns", "Vidya🔔"],
+    ["cotton", "candy", "bar", "graph", "paper", "bag", "drop", "Kanishk🔔"],
+    ["yellow", "banana", "split", "personality", "test", "pilot", "episode", "Divya🔔"],
     ["ocean", "tide", "pool", "table", "cloth", "pattern", "maker", ""],
     ["music", "sheet", "metal", "plate", "number", "crunch", "time", ""],
-    ["lucky", "stone", "cold", "blood", "group", "photo", "finish", "k.achu"],
-    ["light", "weight", "lifting", "gear", "change", "over", "time", "gouri"],
-    ["coffee", "table", "tennis", "match", "point", "break", "room", "h_ll"],
+    ["lucky", "stone", "cold", "blood", "group", "photo", "finish", "k.achu🔔"],
+    ["light", "weight", "lifting", "gear", "change", "over", "time", "gouri🔔"],
+    ["coffee", "table", "tennis", "match", "point", "break", "room", "h_ll🔔"],
     ["desert", "wind", "mill", "stone", "age", "limit", "line", ""],
     ["morning", "dew", "drop", "zone", "defense", "system", "check", ""],
-    ["fire", "dance", "party", "popper", "bottle", "neck", "collar", "gouri"],
+    ["fire", "dance", "party", "popper", "bottle", "neck", "collar", "gouri🔔"],
     ["traffic", "light", "speed", "trap", "door", "frame", "shop", ""],
     ["crystal", "clear", "view", "point", "guard", "rail", "car", ""],
     ["thunder", "clap", "back", "pack", "leader", "board", "game", ""],
-    ["shadow", "boxing", "glove", "puppet", "master", "mind", "control", "Kanishk"],
+    ["shadow", "boxing", "glove", "puppet", "master", "mind", "control", "Kanishk🔔"],
     ["island", "nation", "state", "fair", "trade", "route", "map", ""],
 	["hydro", "power", "play", "curling", "rock", "maple", "syrup", ""],
-	["screen", "shot", "glass", "window", "frame", "work", "station", "Vidya"],	
+	["screen", "shot", "glass", "window", "frame", "work", "station", "Vidya🔔"],	
     ["candle", "flame", "thrower", "squad", "goal", "keeper", "net", ""],
     ["rocket", "fuel", "tank", "top", "shelf", "life", "jacket", ""],
     ["family", "bond", "paper", "cut", "line", "dance", "floor", ""],
-    ["gingerbread", "house", "agent", "general", "science", "fiction", "writer", "Kanishk"],
+    ["gingerbread", "house", "agent", "general", "science", "fiction", "writer", "Kanishk🔔"],
+	["sun", "baked", "good", "evening", "news", "paper", "clip", "adailysliceoforange🔔"],
     ["summer", "heat", "wave", "form", "letter", "carrier", "bag", ""],
     ["cotton", "thread", "count", "down", "town", "square", "root", ""],
     ["marble", "statue", "garden", "party", "favor", "box", "office", ""],
@@ -845,7 +846,7 @@ function intialize() {
     ele.innerHTML += days;
     if (masterwordlist[index][7] != "") {
         let ele1 = document.getElementById("submitter");
-        ele1.innerHTML += "Submitted By " + masterwordlist[index][7];
+        ele1.innerHTML += "🔔By " + masterwordlist[index][7];
         // ele1.classList.add("flash2");
     }
 	
