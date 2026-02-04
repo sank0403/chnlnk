@@ -529,10 +529,10 @@ ul {
 
 /* Label styling */
 .toggle-label {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     color: gray;
-	font-family: 'Courier New', monospace;
+	/* font-family: 'Courier New', monospace; */
 }
 
 /* Toggle switch styling */
@@ -716,9 +716,9 @@ input:checked+.slider:before {
     justify-content: center;
     align-items: center;
     overflow: visible;
-    font-family: 'Courier New', monospace;
+    /* font-family: 'Courier New', monospace; */
     font-weight: bolder;
-    font-size: 15px;
+    font-size: 11px;
 }
 
 
@@ -1112,7 +1112,7 @@ div.scroll {
 }
 
 .starting {
-    background-color: orange;
+    background-color: #555;
     color: white;
     border-color: white;
 	position:relative;
@@ -1181,19 +1181,12 @@ div.scroll {
 }
 
 #board > div[id^="board"] {
-  width: 350px;
-  background: #0a0a0a;
-  border-radius: 8px;
-  /* padding: 2px; */
-  /* margin: 5px 0; */
-  width: 99%;
-  justify-content: center;
-  border: 2px solid rgba(255,255,255,0.4);
-  box-shadow:
-    0 0 10px rgba(255,255,255,0.5),
-    0 0 20px rgba(255,255,255,0.3),
-    inset 0 0 10px rgba(255,255,255,0.2);
+    background: #111;
+    border-radius: 6px;
+    border: 1px solid #222;
+    margin: 6px 0;
 }
+
 
 
 .connector.vertical-glow {
@@ -1208,7 +1201,7 @@ div.scroll {
   content: "";
   position: absolute;
   left: 50%;
-  top: -5px;          /* adjust to sit visually between items */
+  top: -10px;          /* adjust to sit visually between items */
   width: 10px;
   height: 10px;
 
@@ -1217,10 +1210,6 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
   transform: translateX(-50%) rotate(-45deg);
 /* soft directional glow */ box-shadow: 0px 6px 8px rgba(255, 255, 255, 0.45);
 }
-
-
-
-
 
 .keyboard-row {
     width: 400px;
@@ -1235,15 +1224,39 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
     width: 36px;
     height: 55px;
     margin: 1px;
-    border: 1px solid lightgray;
-    border-radius: 0%;
-    /* Text */
+    border: 1px solid #b5b5b5;
+    border-radius: 6px;
+
+    background: linear-gradient(#e2e2e2, #cfcfcf); /* softer gray */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.18);
+
     font-size: 20px;
     font-weight: bold;
+    color: black;
+
     display: flex;
     justify-content: center;
     align-items: center;
+
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        transform 0.1s ease,
+        box-shadow 0.15s ease;
 }
+
+.key-tile:hover {
+    background: linear-gradient(#d6d6d6, #c4c4c4);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+}
+
+.key-tile:active {
+    background: linear-gradient(#c8c8c8, #b8b8b8);
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+
 
 .mystery {
     position: relative;
@@ -1973,9 +1986,9 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
 
 #submitter {
     text-transform: uppercase;
-    font-family: 'Courier New', monospace;
+    /* font-family: 'Courier New', monospace; */
     text-align: center;
-    color: orange;
+    color: #b30000;
 	font-size:10px;
     font-weight: bold;
 }

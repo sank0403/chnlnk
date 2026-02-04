@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.03.01";
+const BUILD_VERSION = "2025.02.03.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -2039,7 +2039,7 @@ var disabledkeyarr = [];
 if (localStorage.vowelactive != 1) {
     document.getElementById("answer").style.color = "lightgray";
     // document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND.";
-    updateAnswer("VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND.");
+    updateAnswer("Vowels are disabled till all other letters are found!");
 }
 const openModalButtons = document.querySelectorAll('[data-modal-target]')
 const closeModalButtons = document.querySelectorAll('[data-close-button]')
@@ -2506,17 +2506,17 @@ function updateLivesDisplay() {
         case 1:
             localStorage.cllives = "⚪⚪⚪⚪";
             // document.getElementById("answer").innerText = "TIME UP - FIRST LIFE LOST!"
-            updateAnswer("TIME UP - FIRST LIFE LOST!");
+            updateAnswer("Time Up - First Life Lost!");
             break;
         case 2:
             localStorage.cllives = "⚪⚪⚪";
             // document.getElementById("answer").innerText = "TIME UP - SECOND LIFE LOST!"
-            updateAnswer("TIME UP - SECOND LIFE LOST!");
+            updateAnswer("Time Up - Second Life Lost!");
             break;
         case 3:
             localStorage.cllives = "⚪⚪";
             // document.getElementById("answer").innerText = "TIME UP - THIRD LIFE LOST!"
-            updateAnswer("TIME UP - THIRD LIFE LOST!");
+            updateAnswer("Time Up - Third Life Lost!");
             break;
         case 4:
             localStorage.cllives = "⚪";
@@ -2610,7 +2610,7 @@ function updateLivesDisplay() {
         colorx = "green";
         localStorage.clgamecnt = 6;
         document.getElementById("answer").style.color = "lightgray";
-        updateAnswer("GAME OVER! OUT OF LIVES.");
+        updateAnswer("Game Over! Out Of Lives.");
         localStorage.setItem(('gameovercl' + days), 1);
         localStorage.setItem(('gamestatcl' + days), 0);
         if (localStorage.getItem('gameovercl' + days) == "1") {
@@ -2796,7 +2796,7 @@ function initialize() {
     if(days == 26){
 		let ele1 = document.getElementById("submitter");
 		ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:red; font-size:24px;"><u>CANUCKLE</strong></u><strong style="color:white; font-size:24px;"> EDITION</strong></a>';		
-		ele1.classList.add("flash2");
+		// ele1.classList.add("flash2");
     }
 
 
@@ -3214,7 +3214,7 @@ function initialize() {
             }
 
             document.getElementById("answer").style.color = "lightgray";
-            document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
+            document.getElementById("answer").innerText = "Game Over! Out Of Lives.";
         }
         gameOver = true;
         document.getElementById("toggle-row").style.display = "none";
@@ -3426,11 +3426,11 @@ function processInput(e) {
                     if (localStorage.clhardmode == 1) {
                         localStorage.cldynamite = dyn + 2;
                         // document.getElementById("answer").innerText = "PERFECT GUESS! \n YOU GAINED +2 DYNAMITES!";
-                        updateAnswer("PERFECT GUESS! \n YOU GAINED +2 DYNAMITES!");
+                        updateAnswer("Perfect Guess! \N You Gained +2 Dynamites!");
                     } else {
                         localStorage.cldynamite = dyn + 1;
                         // document.getElementById("answer").innerText = "PERFECT GUESS! \n YOU GAINED +1 DYNAMITE!";
-                        updateAnswer("PERFECT GUESS! \n YOU GAINED +1 DYNAMITE!");
+                        updateAnswer("Perfect Guess! \N You Gained +1 Dynamite!");
                     }
                     updateDynamiteUI();
                     showDynamiteAdded();
@@ -3648,17 +3648,17 @@ function processInput(e) {
             case 1:
                 localStorage.cllives = "⚪⚪⚪⚪";
                 // document.getElementById("answer").innerText = "FIRST LIFE LOST!"
-                updateAnswer("FIRST LIFE LOST!");
+                updateAnswer("First Life Lost!");
                 break;
             case 2:
                 localStorage.cllives = "⚪⚪⚪";
                 // document.getElementById("answer").innerText = "SECOND LIFE LOST!"
-                updateAnswer("SECOND LIFE LOST!");
+                updateAnswer("Second Life Lost!");
                 break;
             case 3:
                 localStorage.cllives = "⚪⚪";
                 // document.getElementById("answer").innerText = "THIRD LIFE LOST!"
-                updateAnswer("THIRD LIFE LOST!");
+                updateAnswer("Third Life Lost!");
                 break;
             case 4:
                 localStorage.cllives = "⚪";
@@ -3702,7 +3702,7 @@ function processInput(e) {
             markTileWithQuestion(localStorage.clMysteryLetter); // visually add ❓
             showMysteryAdded();
             // document.getElementById("answer").innerText = "IDENTIFY THE MYSTERY LETTER IN THE NEXT TRY FOR A BONUS!"	
-            updateAnswer("IDENTIFY THE MYSTERY LETTER IN THE NEXT TRY FOR A BONUS!");
+            updateAnswer("Identify the mystery letter in the next try for a bonus!");
         }
     }
 
@@ -3771,7 +3771,7 @@ function processInput(e) {
         localStorage.clgamecnt = 6;
         document.getElementById("answer").style.color = "lightgray";
         // document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
-        updateAnswer("GAME OVER! OUT OF LIVES.");
+        updateAnswer("Game Over! Out Of Lives.");
         localStorage.setItem(('gameovercl' + days), 1);
         if (localStorage.getItem('gameovercl' + days) == "1") {
             document.querySelectorAll('span[id*="-"].disabled').forEach(tile => {

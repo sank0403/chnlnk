@@ -830,7 +830,7 @@ var vowelactive = 0;
 if (vowelactive != 1) {
     document.getElementById("answer").style.color = "lightgray";
     // document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND";
-	updateAnswer("VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND");
+	updateAnswer("Vowels are disabled till all other letters are found!");
 }
 window.onload = function() {
     intialize();
@@ -852,7 +852,7 @@ function intialize() {
 	if(days == 26){
         let ele1 = document.getElementById("submitter");
         ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:red; font-size:24px;"><u>CANUCKLE</strong></u><strong style="color:white; font-size:24px;"> EDITION</strong></a>';		
-		ele1.classList.add("flash2");
+		// ele1.classList.add("flash2");
 	}	
 	
     if (localStorage.getItem('archovercl' + days) != 0 && localStorage.getItem('archovercl' + days) != 1) {
@@ -1179,7 +1179,7 @@ function intialize() {
             currTile.classList.add("starting");
         }
         document.getElementById("answer").style.color = "lightgray";
-        document.getElementById("answer").innerText = "YOU HAVE ALREADY PLAYED THIS CHAIN!"
+        document.getElementById("answer").innerText = "You have already played this chain!"
         disableconsos();
         disablevowels();
     } else {
@@ -1639,17 +1639,17 @@ function processInput(e) {
             case 1:
                 lives = "⚪⚪⚪⚪";
                 // document.getElementById("answer").innerText = "FIRST LIFE LOST!"
-				updateAnswer("FIRST LIFE LOST!");
+				updateAnswer("First Life Lost!");
                 break;
             case 2:
                 lives = "⚪⚪⚪";
                 // document.getElementById("answer").innerText = "SECOND LIFE LOST!"
-				updateAnswer("SECOND LIFE LOST!");
+				updateAnswer("Second Life Lost!");
                 break;
             case 3:
                 lives = "⚪⚪";
                 // document.getElementById("answer").innerText = "THIRD LIFE LOST!"
-				updateAnswer("THIRD LIFE LOST!");
+				updateAnswer("Third Life Lost!");
                 break;
             case 4:
                 lives = "⚪";
@@ -1725,7 +1725,7 @@ function processInput(e) {
         }
         document.getElementById("answer").style.color = "lightgray";
         // document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
-		updateAnswer("GAME OVER! OUT OF LIVES.");
+		updateAnswer("Game Over! Out Of Lives.");
     }
 
     if (correct == word.length) {
