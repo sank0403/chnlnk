@@ -2,11 +2,12 @@
 if (!localStorage.clshowrules) {
     localStorage.setItem("clshowrules", 1);
     setTimeout(OpenRules, 1500);
+	setTimeout(modalhide, 1500);
     // Prevent deployment reload from firing on first visit
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.04.03";
+const BUILD_VERSION = "2025.02.04.05";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -332,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.playerName = newName;
 
                 // ⭐ Refresh leaderboard
-                await loadLeaderboard();
+                // await loadLeaderboard();
 
                 container.remove();
 
@@ -777,7 +778,7 @@ async function OpenStats() {
     await initPlayerName();
 
     // Now safe to load leaderboard
-    await loadLeaderboard();
+    // await loadLeaderboard();
 
     // Now show the leaderboard 
     document.getElementById("leaderboardCollapsible").style.display = "block";
@@ -928,22 +929,6 @@ function SetTier() {
     }
 }
 
-// const leaderboardHeader = document.getElementById("leaderboardHeader");
-// const leaderboardContent = document.getElementById("leaderboardContent");
-// const leaderboardToggle = document.getElementById("leaderboardToggle");
-
-// leaderboardHeader.addEventListener("click", async () => {
-// const isClosed = leaderboardContent.style.display === "" || leaderboardContent.style.display === "none";
-
-// if (isClosed) {
-// await loadLeaderboard();
-// leaderboardContent.style.display = "block";
-// leaderboardToggle.textContent = "▲";
-// } else {
-// leaderboardContent.style.display = "none";
-// leaderboardToggle.textContent = "▼";
-// }
-// });
 
 function getUnrevealedConsonants() {
     const tiles = document.querySelectorAll(".tile, .tilesmall, .voweltile, .voweltilesmall");
@@ -3054,7 +3039,7 @@ function initialize() {
         document.getElementById("KeyO").classList.add("disabled", "key-tile-disabled");
         document.getElementById("KeyU").classList.add("disabled", "key-tile-disabled");
     }
-	// showGame();
+	showGame();
     // Listen for Key Press
     document.addEventListener("keyup", (e) => {
         if ("KeyA" <= e.code && e.code <= "KeyZ") {
