@@ -7,7 +7,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.04.05";
+const BUILD_VERSION = "2025.02.04.07";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -2696,7 +2696,7 @@ window.onload = function() {
 			initialize();
 
 			// Load dynamites after Firestore is ready
-			setTimeout(() => loaddynamites(), 50);
+			// setTimeout(() => loaddynamites(), 50);
 		});
 
 
