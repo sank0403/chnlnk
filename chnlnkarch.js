@@ -851,7 +851,7 @@ function intialize() {
 	
     if(days == 26){
 		let ele1 = document.getElementById("submitter");
-		ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:white; font-size:14px;">🍁CANUCKLE</strong><strong style="color:white; font-size:14px;"> EDITION🍁</strong></a>';		
+		ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:white; font-size:18px;">🍁CANUCKLE</strong><strong style="color:white; font-size:18px;"> EDITION🍁</strong></a>';		
 		// ele1.classList.add("flash2");
     }	
 	

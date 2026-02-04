@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.04.01";
+const BUILD_VERSION = "2025.02.04.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -2795,7 +2795,7 @@ function initialize() {
     }
     if(days == 26){
 		let ele1 = document.getElementById("submitter");
-		ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:white; font-size:14px;">🍁CANUCKLE</strong><strong style="color:white; font-size:14px;"> EDITION🍁</strong></a>';		
+		ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:white; font-size:18px;">🍁CANUCKLE</strong><strong style="color:white; font-size:18px;"> EDITION🍁</strong></a>';		
 		// ele1.classList.add("flash2");
     }
 
