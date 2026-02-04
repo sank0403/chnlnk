@@ -849,11 +849,11 @@ function intialize() {
         // ele1.classList.add("flash2");
     }
 	
-	if(days == 26){
-        let ele1 = document.getElementById("submitter");
-        ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:red; font-size:24px;"><u>CANUCKLE</strong></u><strong style="color:white; font-size:24px;"> EDITION</strong></a>';		
+    if(days == 26){
+		let ele1 = document.getElementById("submitter");
+		ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:white; font-size:14px;">🍁CANUCKLE</strong><strong style="color:white; font-size:14px;"> EDITION🍁</strong></a>';		
 		// ele1.classList.add("flash2");
-	}	
+    }	
 	
     if (localStorage.getItem('archovercl' + days) != 0 && localStorage.getItem('archovercl' + days) != 1) {
         localStorage['archovercl' + days] = 0;
