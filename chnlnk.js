@@ -781,7 +781,7 @@ async function OpenStats() {
     // await loadLeaderboard();
 
     // Now show the leaderboard 
-    document.getElementById("leaderboardCollapsible").style.display = "block";
+    //document.getElementById("leaderboardCollapsible").style.display = "block";
 }
 
 
@@ -4094,4 +4094,5 @@ function processInput(e) {
         }
         localStorage.clwordlast = clwordlast;
     }
+
 }
