@@ -3054,7 +3054,7 @@ function initialize() {
         document.getElementById("KeyO").classList.add("disabled", "key-tile-disabled");
         document.getElementById("KeyU").classList.add("disabled", "key-tile-disabled");
     }
-	showGame();
+	// showGame();
     // Listen for Key Press
     document.addEventListener("keyup", (e) => {
         if ("KeyA" <= e.code && e.code <= "KeyZ") {
