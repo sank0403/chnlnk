@@ -219,6 +219,7 @@ p {
     border-top: 1px solid #444;
     padding-top: 10px;
 		display: none;
+		
 }
 
 #leaderboardHeader {
@@ -251,6 +252,7 @@ p {
     border-collapse: collapse;
     color: white;
     font-size: 14px;
+	margin-bottom: 10px;
 }
 
 #leaderboardTable th,
@@ -322,18 +324,42 @@ p {
 }
 
 .buttonmode {
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 14px;
+    background: #b30000;
     color: white;
-    border-style: solid;
-    background-color: orange;
-    border-color: #fff;
-    width: 80px;
-    margin-bottom: 10px;
-    margin-top: 0px;
-    height: 28px;
+    border: 1px solid #8a0000;
+
+    padding: 6px 12px;
+    border-radius: 5px;
+
+    width: 70px;        /* ← make both buttons identical */
+    text-align: center;
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
 }
+
+.buttonmode:hover {
+    background: #c00000;
+    border-color: #990000;
+}
+
+.buttonmode:active {
+    background: #990000;
+    border-color: #7a0000;
+}
+
+.button-row button {
+    height: 28px;          /* identical height */
+    padding: 0 12px;       /* no vertical padding */
+    line-height: 28px;     /* centers text perfectly */
+    box-sizing: border-box;
+}
+
 .buttonmode1 {
     border-radius: 6px;
     font-weight: bold;
@@ -375,6 +401,7 @@ p {
   flex-wrap: wrap;
   justify-content: center; 
 } */
+
 
 
 .popup {
@@ -620,7 +647,7 @@ input:checked+.slider:before {
 
 #bb {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 12px;
     color: #6AAA64;
 }
 
@@ -1638,11 +1665,25 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
 }
 
 
+/* MASTER CONTENT SCROLLS */
+.master-content {
+    max-height: 300px;        /* adjust to fit your modal */
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+/* CHILD COLLAPSIBLES — NO SCROLLBAR */
 .content {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.25s ease-out;
     padding-left: 10px;
+}
+
+.content.open {
+    overflow-y: auto;
+    max-height: 200px;   /* adjust to fit your modal */
+    padding-right: 6px;  /* prevents text touching scrollbar */
 }
 
 .error-popup {
@@ -2189,10 +2230,45 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
 }
 
 
-.flash1 {
-    color: orange;
-	font-size:10px;
+#submission .flash1 {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 11px;
+
+    background: rgba(179, 0, 0, 0.10);        /* glass red tint */
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+
+    color: #ffdddd;                           /* soft neon white‑red */
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-decoration: none;
+
+    border: 1px solid rgba(138, 0, 0, 0.55);  /* buttonmode border tone */
+    border-radius: 6px;
+
+    box-shadow:
+        0 0 4px rgba(179, 0, 0, 0.55),        /* outer neon */
+        0 0 8px rgba(179, 0, 0, 0.35),
+        inset 0 0 4px rgba(179, 0, 0, 0.30);  /* inner neon */
+
+    transition: 0.2s ease;
+    cursor: pointer;
 }
+
+#submission .flash1:hover {
+    background: rgba(192, 0, 0, 0.15);        /* hover red tint */
+    color: #ffe5e5;
+
+    border-color: rgba(153, 0, 0, 0.7);
+
+    box-shadow:
+        0 0 6px rgba(192, 0, 0, 0.75),
+        0 0 12px rgba(192, 0, 0, 0.45),
+        inset 0 0 6px rgba(192, 0, 0, 0.40);
+}
+
 
 .flash2 {
     animation: flash 3s ease-in-out 5;
@@ -2209,6 +2285,7 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
         opacity: 0.2;
     }
 }
+
 
 /* #submission { */
 /* position: relative; */

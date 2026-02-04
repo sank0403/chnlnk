@@ -132,7 +132,7 @@
         </div>
     </div>
     <!-- <img class="headerimage" src="bg.png"> -->
-	<h1> CH<strong style="color:red">AI</strong>N L<strong style="color:red">I</strong>NK</h1>
+    <h1> CH<strong style="color:red">AI</strong>N L<strong style="color:red">I</strong>NK</h1>
     <!-- <div id="title">
 		<div class="waviy">
 			<span style="--i:1">G</span>
@@ -201,9 +201,9 @@
                     <br>
 
                     <li>
-                        <strong style="color:white;">VOWELS</strong> (<strong style="color:red;">Red</strong> on grid)</strong><strong style="color:white;"> are disabled</strong> till you figure out all the
+                        <strong style="color:white;">VOWELS</strong> (<strong style="color:red;">Red</strong> on grid)</strong><strong style="color:white;"> are Disabled</strong> till you figure out all the
                         <strong style="color:white;">OTHER LETTERS</strong> in the chain.
-                        
+
                     </li>
                     <br>
 
@@ -215,113 +215,132 @@
                 </ul>
                 <img class="rules-image" src="tutorial.gif" alt="Example Chain">
             </div>
-            <!-- COLLAPSIBLE: LIVES -->
+            <!-- MASTER COLLAPSIBLE -->
             <div class="collapsible-section">
-                <button class="collapsible">⚪ Lives</button>
-                <div class="content">
-                    <ul class="rules-list">
-                        <li>Each incorrect letter costs you <strong style="color:white;">1 Life</strong>. You begin with 5 lives, shown as ⚪ on the game board. </li>
-                        <li>If you complete the entire chain, your remaining lives convert into ⭐'s. You can earn up to 5 ⭐'s each day.</li>
-                    </ul>
-                </div>
-            </div>
-            <!-- COLLAPSIBLE: TIMED MODE -->
-            <div class="collapsible-section">
-                <button class="collapsible">⏱️ Timed Mode</button>
-                <div class="content">
-                    <ul class="rules-list">
-                        <li>Timed mode can be enabled only at the start of the game. A <strong style="color:white;">1 Minute Timer</strong> is added to the game in this mode.</li>
-                        <li>You lose a life if you don’t make a correct guess within the minute.</li>
-                        <li>A Perfect Solve in Timed Mode awards <strong style="color:white;">2 Dynamites</strong>.</li>
-                        <li>Finishing the entire game in Timed Mode without using dynamites grants <strong style="color:white;">1 Extra Star</strong>.</li>
-                    </ul>
-                </div>
-            </div>
-            <!-- COLLAPSIBLE: MYSTERY -->
-            <div class="collapsible-section">
-                <button class="collapsible">❓ Mystery Letter</button>
-                <div class="content">
-                    <ul class="rules-list">
-                        <li>Everyday, during the game one<strong style="color:white;"> Mystery Letter</strong> is chosen at random. </li>
-                        <li>Identify the mystery letter in the very <strong style="color:white;">Next Try </strong> for earning bonus Dynamites.</li>
-                    </ul>
-                </div>
-            </div>
-            <!-- COLLAPSIBLE: DYNAMITE -->
-            <div class="collapsible-section">
-                <button class="collapsible">💣 Dynamite</button>
-                <div class="content">
-                    <ul class="rules-list">
-                        <li>Dynamite eliminates <strong style="color:white;">Three Random</strong> invalid keys from the keyboard.</li>
-                        <li>This increases your odds of guessing the right letter. Invalid keys are letters that:</li>
-                        <ul>
-                            <li>Do not appear in any future words.</li>
-                            <li>Are still active on the keyboard.</li>
-                        </ul>
-						<li>See <strong style="color:white;">Mystery Letter</strong> and <strong style="color:white;">Perfect Solve</strong> to learn how to earn Dynamites.</li>
-                    </ul>
-                </div>
-            </div>
-            <!-- COLLAPSIBLE: PERFECT SOLVE -->
-            <div class="collapsible-section">
-                <button class="collapsible">❤️ Perfect Solve</button>
-                <div class="content">
-                    <ul class="rules-list">
-                        <li>No mistakes — you must not enter any wrong letters.</li>
-                        <li>No dynamite — using a dynamite disqualifies a Perfect Solve.</li>
-                        <li>
-                            Rewards:
-                            <ul>
-                                <li>Normal Mode → <strong style="color:white;">+1 Dynamite</strong>.</li>
-                                <li>Timed Mode → <strong style="color:white;">+2 Dynamites</strong>.</li>
+                <button class="collapsible master">📘 Special Rules</button>
+
+                <div class="content master-content">
+
+                    <!-- COLLAPSIBLE: LIVES -->
+                    <div class="collapsible-section">
+                        <button class="collapsible">⚪ Lives</button>
+                        <div class="content">
+                            <ul class="rules-list">
+                                <li>Each incorrect letter costs you <strong style="color:white;">1 Life</strong>. You begin with 5 lives, shown as ⚪ on the game board.</li>
+                                <li>If you complete the entire chain, your remaining lives convert into ⭐'s. You can earn up to 5 ⭐'s each day.</li>
                             </ul>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
+
+                    <!-- COLLAPSIBLE: TIMED MODE -->
+                    <div class="collapsible-section">
+                        <button class="collapsible">⏱️ Timed Mode</button>
+                        <div class="content">
+                            <ul class="rules-list">
+                                <li>Timed mode can be enabled only at the start of the game. A <strong style="color:white;">1 Minute Timer</strong> is added.</li>
+                                <li>You lose a life if you don’t make a correct guess within the minute.</li>
+                                <li>A Perfect Solve in Timed Mode awards <strong style="color:white;">2 Dynamites</strong>.</li>
+                                <li>Finishing the game in Timed Mode without using dynamites grants <strong style="color:white;">1 Extra Star</strong>.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- COLLAPSIBLE: MYSTERY -->
+                    <div class="collapsible-section">
+                        <button class="collapsible">❓ Mystery Letter</button>
+                        <div class="content">
+                            <ul class="rules-list">
+                                <li>Every day, one <strong style="color:white;">Mystery Letter</strong> is chosen at random.</li>
+                                <li>Identify it in the <strong style="color:white;">Next Try</strong> to earn bonus Dynamites.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- COLLAPSIBLE: DYNAMITE -->
+                    <div class="collapsible-section">
+                        <button class="collapsible">💣 Dynamite</button>
+                        <div class="content">
+                            <ul class="rules-list">
+                                <li>Dynamite eliminates <strong style="color:white;">Three Random</strong> invalid keys.</li>
+                                <li>Invalid keys are letters that:</li>
+                                <ul>
+                                    <li>Do not appear in any future words.</li>
+                                    <li>Are still active on the keyboard.</li>
+                                </ul>
+                                <li>See <strong style="color:white;">Mystery Letter</strong> and <strong style="color:white;">Perfect Solve</strong> to learn how to earn Dynamites.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- COLLAPSIBLE: PERFECT SOLVE -->
+                    <div class="collapsible-section">
+                        <button class="collapsible">❤️ Perfect Solve</button>
+                        <div class="content">
+                            <ul class="rules-list">
+                                <li>No mistakes — no wrong letters.</li>
+                                <li>No dynamite — using one disqualifies a Perfect Solve.</li>
+                                <li>Rewards:</li>
+                                <ul>
+                                    <li>Normal Mode → <strong style="color:white;">+1 Dynamite</strong>.</li>
+                                    <li>Timed Mode → <strong style="color:white;">+2 Dynamites</strong>.</li>
+                                </ul>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- COLLAPSIBLE: LAST LIFE -->
+                    <div class="collapsible-section">
+                        <button class="collapsible">⭐ Last Life Trade‑Off</button>
+                        <div class="content">
+                            <ul class="rules-list">
+                                <li>When you reach your final life, you get a one‑time offer:</li>
+                                <ul>
+                                    <li>Trade <strong style="color:white;">2 Saved Stars</strong></li>
+                                    <li>For <strong style="color:white;">1 Extra Life</strong></li>
+                                </ul>
+                                <li>This offer applies only <strong style="color:white;">Once</strong> per day.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- COLLAPSIBLE: STREAK -->
+                    <div class="collapsible-section">
+                        <button class="collapsible">🎉 Rewards</button>
+                        <div class="content">
+                            <ul class="rules-list">
+                                <li>Play every day to build your streak.</li>
+                                <li>Every <strong style="color:white;">10‑Day Streak</strong> earns <strong style="color:white;">3 Dynamites</strong>.</li>
+                                <li>Earn <strong style="color:white;">Badges</strong> at streaks of 10, 25, 50, and 100.</li>
+                                <li>Finish in the <strong style="color:white;">Top 3</strong> of the Monthly Leaderboard to win bonus Dynamites.</li>
+                            </ul>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-            <!-- COLLAPSIBLE: LAST LIFE -->
-            <div class="collapsible-section">
-                <button class="collapsible">⭐ Last Life Trade‑Off</button>
-                <div class="content">
-                    <ul class="rules-list">
-                        <li>When you reach your final life, you get a one‑time offer:</li>
-                        <ul>
-                            <li>Trade <strong style="color:white;">2 Saved Stars.</strong></li>
-                            <li>For <strong style="color:white;">1 Extra Life.</strong></li>
-                        </ul>
-                        <li>This offer applies only <strong style="color:white;">Once</strong> per day.</li>
-                    </ul>
-                </div>
-            </div>
-            <!-- COLLAPSIBLE: STREAK -->
-            <div class="collapsible-section">
-                <button class="collapsible">🎉 Rewards</button>
-                <div class="content">
-                    <ul class="rules-list">
-                        <li>Play every day to build your streak.</strong></li>
-                        <li>Every <strong style="color:white;">10 Day Streak</strong> gets you <strong style="color:white;">3 bonus dynamites</strong>.</li>
-                        <li>Win <strong style="color:white;">Badges </strong>when you hit streaks of 10(🥉), 25(🥈), 50(🥇) and 100(🏆).
-						<li>Finish in the  <strong style="color:white;">Top 3 of the Monthly Leaderboard </strong>to win bonus Dynamites 💣.
-                    </ul>
-                    </ul>
-                </div>
-            </div>
+
             <script>
                 const collapsibles = document.querySelectorAll(".collapsible");
 
                 collapsibles.forEach(btn => {
                     btn.addEventListener("click", function() {
+
                         this.classList.toggle("active");
                         const content = this.nextElementSibling;
 
+                        // toggle height animation
                         if (content.style.maxHeight) {
                             content.style.maxHeight = null;
                         } else {
                             content.style.maxHeight = content.scrollHeight + "px";
                         }
+
+                        // toggle scrollable state
+                        content.classList.toggle("open");
                     });
                 });
             </script>
+
             <br>
             <center>
                 A new <strong style="color:white;">CHN LNK</strong> will be available <strong style="color:white;">Everyday</strong>!
@@ -380,9 +399,10 @@
                             </tr>
                         </tbody>
                     </table>
-                    <button id="changeNameBtn" class="buttonmode1">EDIT NAME</button>
+                    <button id="changeNameBtn" class="buttonmode">EDIT</button>
                 </div>
             </div>
+            <br>
             <br>
             <div id="sdhdr"><b>⭐ STAR DISTRIBUTION ⭐</b></div>
             <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
@@ -412,14 +432,20 @@
                 </div>
                 <div style="display:none;" <class data-timemodal-target="#timemodal" id="timebutton"><button id="timepop" class="buttonmode"></button></class>
                 </div>
-                <class data-hintmodal-target="#hintmodal" id="hintbutton"><button id="Rafflebutton" class="buttonmode" title="Join Monthly Raffle">RAFFLE</button></class>
+                <!-- <class data-hintmodal-target="#hintmodal" id="hintbutton"><button id="Rafflebutton" class="buttonmode" title="Join Monthly Raffle">RAFFLE</button></class> -->
+                <div data-hintmodal-target="#hintmodal" id="hintbutton">
+                    <button id="Rafflebutton" class="buttonmode" title="Join Monthly Raffle">
+                        RAFFLE
+                    </button>
+                </div>
+
             </div>
-            <p style="color:lightgray" align="justify">If you enjoyed playing 🔗<strong style="color:white;">CHN LNK</strong>🧩, you can show your support by <strong style='color: var(--green);'><a href="https://www.buymeacoffee.com/sank0403" target="_"><u>BUYING US A COFFEE</u></a></strong> ☕️. THANK YOU for all the Love! 💕 </p>
+            <p style="color:lightgray" align="justify">If you enjoyed playing 🔗<strong style="color:white;">CHN LNK</strong>🧩, you can show your support by <strong style='color: var(--green);'><a href="https://www.buymeacoffee.com/sank0403" target="_">BUYING US A COFFEE</a></strong> ☕️. THANK YOU for all the Love! 💕 </p>
         </div>
         <!-- <div class="top-row"> -->
         <div id="submission">
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSeZinZwGDTCZ_Cfp_CVlSllO7nFb1vLnFW4ZPrbje767FsKgQ/viewform?usp=publish-editor" target="_">
-                <span class="flash1">SUBMIT YOUR OWN <u>CHN LNK</u> AND GET FEATURED</span>
+                <span class="flash1">GET FEATURED - SUBMIT YOUR OWN CHN LNK</span>
             </a>
         </div>
 
@@ -439,8 +465,14 @@
 
         </div>
         <center>
-            <class data-pastmodal-target="#pastmodal" id="pastbutton"><button id="Archivebutton" class="buttonmodetext" onclick="playArchive()"><u>PLAY PAST CHAINS</u></button></class>
+            <div data-pastmodal-target="#pastmodal" id="pastbutton">
+                <button id="Archivebutton" class="buttonmodetext glasslink" onclick="playArchive()">
+                    PLAY <u>PAST</u> CHAINS
+                </button>
+            </div>
         </center>
+
+
         <!-- <br> -->
     </div>
     <div class="hintmodal" id="hintmodal">
@@ -674,4 +706,5 @@
     <script src="chnlnk.js"></script>
     <!-- <script src="migration-listener.js"></script> -->
 </body>
+
 </html>
