@@ -391,7 +391,7 @@ function showError(message) {
 }
 
 async function submitLeaderboardEntry(playerName) {
-
+	
     const played = Number(localStorage.monthclplayed) || 0;
     const stars = Number(localStorage.monthclstars) || 0;
     const wins = Number(localStorage.monthwins) || 0;
@@ -432,7 +432,9 @@ async function submitLeaderboardEntry(playerName) {
 
     try {
         const ref = doc(db, "leaderboard", playerId);
-        const snap = await getDoc(ref);
+
+        // ❌ COMMENTED OUT — NO READ
+        // const snap = await getDoc(ref);
 
         let updates = {
             name: playerName,
@@ -451,9 +453,12 @@ async function submitLeaderboardEntry(playerName) {
             zzstar3,
             zzstar4,
             zzstar5,
-            zzstarx
+            zzstarx,
+            updated: serverTimestamp()   // always write timestamp
         };
 
+        // ❌ COMMENTED OUT — NO COMPARISON
+        /*
         if (snap.exists()) {
             const old = snap.data();
 
@@ -465,11 +470,10 @@ async function submitLeaderboardEntry(playerName) {
             if (statsChanged) {
                 updates.updated = serverTimestamp();
             }
-            // else: do NOT include updated → Firestore keeps old timestamp
         } else {
-            // First time writing → must set updated
             updates.updated = serverTimestamp();
         }
+        */
 
         await setDoc(ref, updates, { merge: true });
 
@@ -477,6 +481,7 @@ async function submitLeaderboardEntry(playerName) {
         console.error("Error saving leaderboard entry:", err);
     }
 }
+
 
 
 document.getElementById("leaderboardHeader").addEventListener("click", function() {
