@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.03.02";
+const BUILD_VERSION = "2025.02.03.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -2136,7 +2136,7 @@ const overlay1 = document.getElementById('overlay1')
 openSummaryButtons.forEach(button => {
     button.addEventListener('click', () => {
         const summary = document.querySelector(button.dataset.summaryTarget)
-        document.getElementById("submission").classList.add("flash2");
+        // document.getElementById("submission").classList.add("flash2");
         // const elems = document.getElementsByClassName("toggle-label");
         // for (let el of elems) {
         // el.classList.add("flash2");
