@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.05.01";
+const BUILD_VERSION = "2025.02.05.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -529,35 +529,35 @@ async function loaddynamites() {
     }
 }
 
-let dynamiteUnsub = null;
+// let dynamiteUnsub = null;
 
-function startDynamiteListener() {
-    const user = auth.currentUser;
-    if (!user) return;
+// function startDynamiteListener() {
+    // const user = auth.currentUser;
+    // if (!user) return;
 
-    const ref = doc(db, "leaderboard", user.uid);
+    // const ref = doc(db, "leaderboard", user.uid);
 
     // Prevent double listeners
-    if (dynamiteUnsub) {
-        dynamiteUnsub();
-        dynamiteUnsub = null;
-    }
+    // if (dynamiteUnsub) {
+        // dynamiteUnsub();
+        // dynamiteUnsub = null;
+    // }
 
-    dynamiteUnsub = onSnapshot(ref, snap => {
-        if (!snap.exists()) return;
+    // dynamiteUnsub = onSnapshot(ref, snap => {
+        // if (!snap.exists()) return;
 
-        const d = snap.data();
-        if (!("dynamite" in d)) return;
+        // const d = snap.data();
+        // if (!("dynamite" in d)) return;
 
-        const serverDynamite = d.dynamite;
-        const localDynamite = Number(localStorage.cldynamite || 0);
+        // const serverDynamite = d.dynamite;
+        // const localDynamite = Number(localStorage.cldynamite || 0);
 
-        if (serverDynamite !== localDynamite) {
-            localStorage.cldynamite = serverDynamite;
-            showDynamitePopup(serverDynamite - localDynamite);
-        }
-    });
-}
+        // if (serverDynamite !== localDynamite) {
+            // localStorage.cldynamite = serverDynamite;
+            // showDynamitePopup(serverDynamite - localDynamite);
+        // }
+    // });
+// }
 
 
 function showDynamitePopup(amountGained) {
@@ -2736,7 +2736,7 @@ window.onload = function() {
 
 			// Load dynamites after Firestore is ready
 			// setTimeout(() => loaddynamites(), 50);
-			startDynamiteListener();
+			// startDynamiteListener();
 		});
 
 
