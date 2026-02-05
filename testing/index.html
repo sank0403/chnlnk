@@ -37,8 +37,7 @@
             deleteDoc,
             limit,
             where,
-            serverTimestamp,
-			onSnapshot 
+            serverTimestamp
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         import {
@@ -71,7 +70,6 @@
         window.setDoc = setDoc;
         window.getDoc = getDoc;
         window.serverTimestamp = serverTimestamp;
-		window.onSnapshot = onSnapshot;
         window.collection = collection;
         window.getDocs = getDocs;
         window.query = query;
