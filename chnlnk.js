@@ -3284,7 +3284,7 @@ function initialize() {
         // NEW: stop the timer forever
         clearInterval(momentumInterval);
         // }
-        setTimeout(OpenStats, 1100);
+        // setTimeout(OpenStats, 1100);
         displayFooter();
         localStorage.clgamestarted = 0;
         localStorage.clhardmode = 0;
