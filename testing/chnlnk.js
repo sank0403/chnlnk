@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.05.03";
+const BUILD_VERSION = "2025.02.05.04";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -355,13 +355,6 @@ function initMonthlyStats() {
         localStorage.monthclplayed = 0;
         localStorage.monthclstars = 0;
         localStorage.monthwins = 0;
-
-        // Reset last submitted stats so submitLeaderboardEntry writes fresh
-        localStorage.lastSubmitStars = 0;
-        localStorage.lastSubmitWins = 0;
-        localStorage.lastSubmitPlayed = 0;
-
-        return;
     }
 
     // Same month → do nothing
@@ -405,7 +398,6 @@ async function submitLeaderboardEntry(playerName) {
     const playerId = auth.currentUser.uid;
     const today = new Date().getDate();
 
-    // Validation
     if (played > today) {
         showError("Invalid Stats: Total Played cannot exceed today's date.");
         return;
@@ -419,28 +411,11 @@ async function submitLeaderboardEntry(playerName) {
         return;
     }
 
-    // Compare with last submitted stats (local only)
-    const lastStars = Number(localStorage.lastSubmitStars) || 0;
-    const lastWins = Number(localStorage.lastSubmitWins) || 0;
-    const lastPlayed = Number(localStorage.lastSubmitPlayed) || 0;
-
-	const monthChanged = (localStorage.monthcl_lastMonth !== monthKey);
-
-	const statsChanged =
-		monthChanged ||
-		stars !== lastStars ||
-		wins !== lastWins ||
-		played !== lastPlayed;
-
-
-    if (!statsChanged) {
-        return; // nothing changed → skip write
-    }
-
     try {
         const ref = doc(db, "leaderboard", playerId);
+        const snap = await getDoc(ref);
 
-        const updates = {
+        let updates = {
             name: playerName,
             played,
             stars,
@@ -457,16 +432,27 @@ async function submitLeaderboardEntry(playerName) {
             zzstar3,
             zzstar4,
             zzstar5,
-            zzstarx,
-            updated: serverTimestamp()
+            zzstarx
         };
 
-        await setDoc(ref, updates, { merge: true });
+        if (snap.exists()) {
+            const old = snap.data();
 
-        // Save last submitted stats locally
-        localStorage.lastSubmitStars = stars;
-        localStorage.lastSubmitWins = wins;
-        localStorage.lastSubmitPlayed = played;
+            const statsChanged =
+                old.stars !== stars ||
+                old.wins !== wins ||
+                old.played !== played;
+
+            if (statsChanged) {
+                updates.updated = serverTimestamp();
+            }
+            // else: do NOT include updated → Firestore keeps old timestamp
+        } else {
+            // First time writing → must set updated
+            updates.updated = serverTimestamp();
+        }
+
+        await setDoc(ref, updates, { merge: true });
 
     } catch (err) {
         console.error("Error saving leaderboard entry:", err);
@@ -678,7 +664,7 @@ async function loadLeaderboard() {
             orderBy("wins", "desc"),
             orderBy("winpct", "desc"),
             orderBy("updated", "asc"),
-            limit(50)
+            limit(25)
         );
 
         const top100Snap = await getDocs(top100Q);
@@ -702,8 +688,11 @@ async function loadLeaderboard() {
             row.style.fontWeight = "bold";
             row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
             leaderboardBody.appendChild(row);
+			document.getElementById("nrNote").style.display = "inline";
             return;
-        }
+		}	else { 
+			document.getElementById("nrNote").style.display = "none"; 
+			}
 
         // --- 6. User IS in top 50 → compute tie-aware rank ---
         let rank = 1;

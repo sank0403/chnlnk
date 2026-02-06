@@ -2325,7 +2325,7 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
     letter-spacing: 0.4px;
 
     /* background: linear-gradient(#e2e2e2, #cfcfcf); */
-    border: 2px solid #b30000;
+    /* border: 2px solid #b30000; */
     border-radius: 6px;
 
     color: #ffffff;
@@ -2375,6 +2375,18 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
     }
 }
 
+.edit-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.nr-note {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    white-space: nowrap;
+}
 
 /* #submission { */
 /* position: relative; */
