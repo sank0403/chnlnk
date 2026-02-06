@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.06.01";
+const BUILD_VERSION = "2025.02.06.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -623,6 +623,7 @@ async function loadLeaderboard() {
 
         // --- 3. If player is in top 5, stop here ---
         const inTop5 = top5.some(p => p.id === currentUID);
+		document.getElementById("nrNote").style.display = "none"; 
         if (inTop5) return;
 
         // --- 4. Read TOP 50 ---
