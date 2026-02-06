@@ -643,32 +643,100 @@ input:checked+.slider:before {
     margin-left: 5px;
 }
 
-
-
+/* Footer layout */
 #footer {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    /* margin-right:40px;
-  margin-left:50px;   */
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: -5px;   /* your adjustment */
+    padding: 2px 0;     /* pulls items closer to the HR */
 }
 
-#pzlhdr,
-#pzl {
-    font-weight: bold;
-    font-size: 11px;
+/* Left + right items: ensure internal alignment */
+#submission,
+#pastbutton {
+    flex: 1;
+    display: flex;
+    justify-content: center;
 }
+
+
+
+/* Shared button/text style for both footer items */
+#Archivebutton,
+#submission .flash1 {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    line-height: 1;
+
+    border-radius: 6px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+/* Pulsing dot as a real element */
+/* .flash1-dot { */
+    /* width: 10px; */
+    /* height: 10px; */
+    /* border-radius: 00%; */
+    /* background: #e63946; */
+    /* box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.6); */
+    /* animation: pingDot 1.4s ease-out infinite; */
+}
+
+/* Ping animation */
+@keyframes pingDot {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.6);
+    }
+    70% {
+        transform: scale(1.6);
+        box-shadow: 0 0 0 6px rgba(230, 57, 70, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(230, 57, 70, 0);
+    }
+}
+
+#centerblock {
+    display: flex;
+    flex-direction: column;   /* stack the two lines */
+    align-items: center;      /* center horizontally */
+    justify-content: center;  /* center vertically within the footer */
+    line-height: 1.05;
+    padding: 0;
+    height: auto;             /* prevents stretching */
+    flex-shrink: 0;           /* prevents it from growing taller */
+}
+
 
 #bbhdr {
     font-weight: bold;
     font-size: 11px;
+    margin: 0;                /* prevents extra line */
+	padding: 0;
 }
 
 #bb {
     font-weight: bold;
     font-size: 12px;
     color: #6AAA64;
+    margin: 0;                /* prevents extra line */
+	padding: 0;
 }
+
+
 
 #downarrow {
     font-size: 175%;
@@ -1929,7 +1997,7 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
     width: 140px;   /* adjust size as needed */
     height: auto;
 	border-radius: 8px;
-	transform: translateY(10px); /* move image down */
+	transform: translateY(3px); /* move image down */
 }
 #perfect-solve {
     position: fixed;
@@ -2312,51 +2380,8 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
     }
 }
 
-#submission .flash1 {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
 
-    padding: 6px 12px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
 
-    /* background: linear-gradient(#e2e2e2, #cfcfcf); */
-    /* border: 2px solid #b30000; */
-    border-radius: 6px;
-
-    color: #ffffff;
-    cursor: pointer;
-}
-
-/* Signal ping dot */
-#submission .flash1::before {
-    content: "";
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #e63946;
-    box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.6);
-    animation: pingDot 1.4s ease-out infinite;
-}
-
-@keyframes pingDot {
-    0% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.6);
-    }
-    70% {
-        transform: scale(1.6);
-        box-shadow: 0 0 0 6px rgba(230, 57, 70, 0);
-    }
-    100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(230, 57, 70, 0);
-    }
-}
 
 
 .flash2 {
