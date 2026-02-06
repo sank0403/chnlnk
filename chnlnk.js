@@ -1,13 +1,12 @@
 // FIRST VISIT CHECK (must run before any reload logic)
 if (!localStorage.clshowrules) {
     localStorage.setItem("clshowrules", 1);
-    setTimeout(OpenRules, 1500);
-	setTimeout(modalhide, 1500);
+    setTimeout(OpenRules, 3000);
     // Prevent deployment reload from firing on first visit
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.04.07";
+const BUILD_VERSION = "2025.02.05.05";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -221,9 +220,6 @@ async function initPlayerName() {
     });
 }
 
-
-
-
 document.addEventListener("DOMContentLoaded", () => {
 
     const changeNameBtn = document.getElementById("changeNameBtn");
@@ -333,7 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.playerName = newName;
 
                 // ⭐ Refresh leaderboard
-                // await loadLeaderboard();
+                await loadLeaderboard();
 
                 container.remove();
 
@@ -344,7 +340,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
-
 });
 
 function initMonthlyStats() {
@@ -352,33 +347,19 @@ function initMonthlyStats() {
     const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
     const lastMonth = localStorage.monthcl_lastMonth;
 
-    // First time ever → initialize monthly stats from totals
-    // if (!lastMonth) {
-        // localStorage.monthcl_lastMonth = currentMonth;
-        // if (currentMonth === "2026-01") {
-            // localStorage.monthclplayed = localStorage.totalclplayed || 0;
-            // localStorage.monthclstars = localStorage.totalclstars || 0;
-            // localStorage.monthwins = localStorage.totalclwins || 0;
-        // } else {
-            // localStorage.monthclplayed = 0;
-            // localStorage.monthclstars = 0;
-            // localStorage.monthwins = 0;
-        // }
-        // return;
-    // }
-
-    // New month → reset monthly stats or first time ever 
+    // New month OR first time ever → reset monthly stats
     if ((lastMonth !== currentMonth) || (!lastMonth)) {
         localStorage.monthcl_lastMonth = currentMonth;
+
+        // Reset monthly stats
         localStorage.monthclplayed = 0;
         localStorage.monthclstars = 0;
         localStorage.monthwins = 0;
-
-        return;
     }
 
     // Same month → do nothing
 }
+
 
 function showError(message) {
     const popup = document.getElementById("errorPopup");
@@ -391,7 +372,7 @@ function showError(message) {
 }
 
 async function submitLeaderboardEntry(playerName) {
-	
+
     const played = Number(localStorage.monthclplayed) || 0;
     const stars = Number(localStorage.monthclstars) || 0;
     const wins = Number(localStorage.monthwins) || 0;
@@ -432,9 +413,7 @@ async function submitLeaderboardEntry(playerName) {
 
     try {
         const ref = doc(db, "leaderboard", playerId);
-
-        // ❌ COMMENTED OUT — NO READ
-        // const snap = await getDoc(ref);
+        const snap = await getDoc(ref);
 
         let updates = {
             name: playerName,
@@ -453,12 +432,9 @@ async function submitLeaderboardEntry(playerName) {
             zzstar3,
             zzstar4,
             zzstar5,
-            zzstarx,
-            updated: serverTimestamp()   // always write timestamp
+            zzstarx
         };
 
-        // ❌ COMMENTED OUT — NO COMPARISON
-        /*
         if (snap.exists()) {
             const old = snap.data();
 
@@ -470,10 +446,11 @@ async function submitLeaderboardEntry(playerName) {
             if (statsChanged) {
                 updates.updated = serverTimestamp();
             }
+            // else: do NOT include updated → Firestore keeps old timestamp
         } else {
+            // First time writing → must set updated
             updates.updated = serverTimestamp();
         }
-        */
 
         await setDoc(ref, updates, { merge: true });
 
@@ -482,20 +459,34 @@ async function submitLeaderboardEntry(playerName) {
     }
 }
 
+let leaderboardLoadedThisSession = false;
 
-
-document.getElementById("leaderboardHeader").addEventListener("click", function() {
+document.getElementById("leaderboardHeader").addEventListener("click", async function() {
     const content = document.getElementById("leaderboardContent");
     const toggle = document.getElementById("leaderboardToggle");
 
-    if (content.style.maxHeight && content.style.maxHeight !== "0px") {
+    const isOpen = content.style.maxHeight && content.style.maxHeight !== "0px";
+
+    if (isOpen) {
+        // CLOSE
         content.style.maxHeight = "0px";
         toggle.textContent = "▼";
     } else {
+        // OPEN
+
+        // Load leaderboard BEFORE expanding
+        if (!leaderboardLoadedThisSession) {
+            await loadLeaderboard();   // now valid because function is async
+            leaderboardLoadedThisSession = true;
+        }
+
+        // Now expand AFTER content is fully rendered
         content.style.maxHeight = content.scrollHeight + "px";
         toggle.textContent = "▲";
     }
 });
+
+
 
 async function loaddynamites() {
     const user = auth.currentUser;
@@ -527,6 +518,36 @@ async function loaddynamites() {
     }
 }
 
+// let dynamiteUnsub = null;
+
+// function startDynamiteListener() {
+    // const user = auth.currentUser;
+    // if (!user) return;
+
+    // const ref = doc(db, "leaderboard", user.uid);
+
+    // Prevent double listeners
+    // if (dynamiteUnsub) {
+        // dynamiteUnsub();
+        // dynamiteUnsub = null;
+    // }
+
+    // dynamiteUnsub = onSnapshot(ref, snap => {
+        // if (!snap.exists()) return;
+
+        // const d = snap.data();
+        // if (!("dynamite" in d)) return;
+
+        // const serverDynamite = d.dynamite;
+        // const localDynamite = Number(localStorage.cldynamite || 0);
+
+        // if (serverDynamite !== localDynamite) {
+            // localStorage.cldynamite = serverDynamite;
+            // showDynamitePopup(serverDynamite - localDynamite);
+        // }
+    // });
+// }
+
 
 function showDynamitePopup(amountGained) {
     const gained = amountGained > 0 ? amountGained : 0;
@@ -557,48 +578,58 @@ async function loadLeaderboard() {
     const leaderboardBody = document.getElementById("leaderboardBody");
     leaderboardBody.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
 
-    const currentPlayerName = localStorage.playerName;
     const currentUID = auth.currentUser.uid;
+    const currentPlayerName = localStorage.playerName;
 
-    // Build the month key: YYYY-MM 
     const now = new Date();
     const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
     try {
-        // 1. Get top 5
+        // --- A. Read current player's doc (1 read) ---
+        let playerData = null;
+        try {
+            const playerRef = doc(db, "leaderboard", currentUID);
+            const playerSnap = await getDoc(playerRef);
+            if (playerSnap.exists()) {
+                playerData = playerSnap.data();
+            }
+        } catch (e) {
+            console.warn("Could not load current player doc:", e);
+        }
+
+        // --- 1. Read TOP 5 ---
         const topQ = query(
             collection(db, "leaderboard"),
             where("month", "==", monthKey),
             orderBy("stars", "desc"),
             orderBy("wins", "desc"),
             orderBy("winpct", "desc"),
-			orderBy("updated", "asc"), // earlier timestamp = higher rank
+            orderBy("updated", "asc"),
             limit(5)
         );
 
         const topSnap = await getDocs(topQ);
         leaderboardBody.innerHTML = "";
 
-        let rank = 1;          // raw position
-        let displayRank = 1;   // tie-aware rank
-        let prev = null;
-        let currentPlayerInTop5 = false;
+        const top5 = [];
+        topSnap.forEach(docSnap => top5.push({ id: docSnap.id, ...docSnap.data() }));
 
-        topSnap.forEach(docSnap => {
-            const d = docSnap.data();
+        // --- 2. Render top 5 with tie-aware ranks ---
+        let displayRank = 1;
+        for (let i = 0; i < top5.length; i++) {
+            if (i > 0) {
+                const prev = top5[i - 1];
+                const curr = top5[i];
 
-            // detect ties
-            if (
-                prev &&
-                prev.stars === d.stars &&
-                prev.wins === d.wins &&
-                prev.winpct === d.winpct
-            ) {
-                // same displayRank
-            } else {
-                displayRank = rank;
+                const tied =
+                    prev.stars === curr.stars &&
+                    prev.wins === curr.wins &&
+                    prev.winpct === curr.winpct;
+
+                if (!tied) displayRank = i + 1;
             }
 
+            const p = top5[i];
             const row = document.createElement("tr");
 
             row.innerHTML = `
@@ -608,90 +639,109 @@ async function loadLeaderboard() {
                     displayRank === 3 ? "🥉" :
                     displayRank
                 }</td>
-                <td>${d.name}</td>
-                <td>${d.stars}</td>
-                <td>${d.wins}</td>
-                <td>${d.winpct}%</td>
+                <td>${p.name}</td>
+                <td>${p.stars}</td>
+                <td>${p.wins}</td>
+                <td>${p.winpct}%</td>
             `;
 
-            if (d.name === currentPlayerName) {
-                currentPlayerInTop5 = true;
+            if (p.id === currentUID) {
                 row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
             }
 
             leaderboardBody.appendChild(row);
-
-            prev = d;
-            rank++;
-        });
-
-        // 2. If current player is NOT in top 5 → show their real rank
-        if (!currentPlayerInTop5) {
-            const playerRef = doc(db, "leaderboard", currentUID);
-            const playerSnap = await getDoc(playerRef);
-
-            if (playerSnap.exists()) {
-                const d = playerSnap.data();
-
-                // 3. Compute actual rank (tie-aware)
-                let outrankCount = 0;
-
-                // players with higher stars
-                const q1 = query(
-                    collection(db, "leaderboard"),
-                    where("month", "==", monthKey),
-                    where("stars", ">", d.stars)
-                );
-                outrankCount += (await getDocs(q1)).size;
-
-                // players with equal stars but higher wins
-                const q2 = query(
-                    collection(db, "leaderboard"),
-                    where("month", "==", monthKey),
-                    where("stars", "==", d.stars),
-                    where("wins", ">", d.wins)
-                );
-                outrankCount += (await getDocs(q2)).size;
-
-                // players with equal stars & wins but higher winpct
-                const q3 = query(
-                    collection(db, "leaderboard"),
-                    where("month", "==", monthKey),
-                    where("stars", "==", d.stars),
-                    where("wins", "==", d.wins),
-                    where("winpct", ">", d.winpct)
-                );
-                outrankCount += (await getDocs(q3)).size;
-
-                const actualRank = outrankCount + 1;
-
-                // 4. Add the current player row as the 6th entry
-                const row = document.createElement("tr");
-				row.innerHTML = `
-					<td>${
-						actualRank === 1 ? "🥇" :
-						actualRank === 2 ? "🥈" :
-						actualRank === 3 ? "🥉" :
-						actualRank
-					}</td>
-					<td>${d.name}</td>
-					<td>${d.stars}</td>
-					<td>${d.wins}</td>
-					<td>${d.winpct}%</td>
-				`;
-                row.style.background = "rgba(255,255,255,0.1)";
-                row.style.fontWeight = "bold";
-                row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
-
-                leaderboardBody.appendChild(row);
-            }
         }
+
+        // --- 3. If player is in top 5, stop here ---
+        const inTop5 = top5.some(p => p.id === currentUID);
+        if (inTop5) return;
+
+        // --- 4. Read TOP 50 ---
+        const top100Q = query(
+            collection(db, "leaderboard"),
+            where("month", "==", monthKey),
+            orderBy("stars", "desc"),
+            orderBy("wins", "desc"),
+            orderBy("winpct", "desc"),
+            orderBy("updated", "asc"),
+            limit(25)
+        );
+
+        const top100Snap = await getDocs(top100Q);
+        const top100 = [];
+        top100Snap.forEach(docSnap => top100.push({ id: docSnap.id, ...docSnap.data() }));
+
+        // --- 5. Check if user is in top 50 ---
+        const idx = top100.findIndex(p => p.id === currentUID);
+
+        if (idx === -1) {
+            // User NOT in top 50 → show NR but still show stats if we have them
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>NR*</td>
+                <td>${currentPlayerName}</td>
+                <td>${playerData?.stars ?? "-"}</td>
+                <td>${playerData?.wins ?? "-"}</td>
+                <td>${playerData?.winpct ?? "-"}%</td>
+            `;
+            row.style.background = "rgba(255,255,255,0.1)";
+            row.style.fontWeight = "bold";
+            row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+            leaderboardBody.appendChild(row);
+			document.getElementById("nrNote").style.display = "inline";
+            return;
+		}	else { 
+			document.getElementById("nrNote").style.display = "none"; 
+			}
+
+        // --- 6. User IS in top 50 → compute tie-aware rank ---
+        let rank = 1;
+        for (let i = 0; i < top100.length; i++) {
+            if (i > 0) {
+                const prev = top100[i - 1];
+                const curr = top100[i];
+
+                const tied =
+                    prev.stars === curr.stars &&
+                    prev.wins === curr.wins &&
+                    prev.winpct === curr.winpct;
+
+                if (!tied) rank = i + 1;
+            }
+
+            if (top100[i].id === currentUID) break;
+        }
+
+        const d = top100[idx];
+
+        // --- 7. Render user row as the extra entry ---
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${
+                rank === 1 ? "🥇" :
+                rank === 2 ? "🥈" :
+                rank === 3 ? "🥉" :
+                rank
+            }</td>
+            <td>${d.name}</td>
+            <td>${d.stars}</td>
+            <td>${d.wins}</td>
+            <td>${d.winpct}%</td>
+        `;
+        row.style.background = "rgba(255,255,255,0.1)";
+        row.style.fontWeight = "bold";
+        row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+
+        leaderboardBody.appendChild(row);
 
     } catch (err) {
         console.error("Leaderboard error:", err);
         leaderboardBody.innerHTML = "<tr><td colspan='6'>Error loading leaderboard.</td></tr>";
     }
 }
+
+
+
 
 function showGame() {
   document.getElementById("loader").style.display = "none";
@@ -786,7 +836,7 @@ async function OpenStats() {
     // await loadLeaderboard();
 
     // Now show the leaderboard 
-    //document.getElementById("leaderboardCollapsible").style.display = "block";
+    document.getElementById("leaderboardCollapsible").style.display = "block";
 }
 
 
@@ -1420,30 +1470,32 @@ var masterwordlist = [
     ["winter", "storm", "drain", "pipe", "cleaner", "spray", "bottle", ""],
     ["silver", "spoon", "rest", "stop", "sign", "language", "barrier", ""],
     ["forest", "trail", "mix", "tape", "measure", "step", "ladder", ""],
-    ["party", "animal", "cracker", "jack", "hammer", "toe", "ring", "Divya🔔"],
-    ["black", "box", "office", "space", "bar", "chart", "patterns", "Vidya🔔"],
-    ["cotton", "candy", "bar", "graph", "paper", "bag", "drop", "Kanishk🔔"],
-    ["yellow", "banana", "split", "personality", "test", "pilot", "episode", "Divya🔔"],
+    ["party", "animal", "cracker", "jack", "hammer", "toe", "ring", "Divya"],
+    ["black", "box", "office", "space", "bar", "chart", "patterns", "Vidya"],
+    ["cotton", "candy", "bar", "graph", "paper", "bag", "drop", "Kanishk"],
+    ["yellow", "banana", "split", "personality", "test", "pilot", "episode", "Divya"],
     ["ocean", "tide", "pool", "table", "cloth", "pattern", "maker", ""],
     ["music", "sheet", "metal", "plate", "number", "crunch", "time", ""],
-    ["lucky", "stone", "cold", "blood", "group", "photo", "finish", "k.achu🔔"],
-    ["light", "weight", "lifting", "gear", "change", "over", "time", "gouri🔔"],
-    ["coffee", "table", "tennis", "match", "point", "break", "room", "h_ll🔔"],
+    ["lucky", "stone", "cold", "blood", "group", "photo", "finish", "k.achu"],
+    ["light", "weight", "lifting", "gear", "change", "over", "time", "gouri"],
+    ["coffee", "table", "tennis", "match", "point", "break", "room", "h_ll"],
     ["desert", "wind", "mill", "stone", "age", "limit", "line", ""],
     ["morning", "dew", "drop", "zone", "defense", "system", "check", ""],
-    ["fire", "dance", "party", "popper", "bottle", "neck", "collar", "gouri🔔"],
+    ["fire", "dance", "party", "popper", "bottle", "neck", "collar", "gouri"],
     ["traffic", "light", "speed", "trap", "door", "frame", "shop", ""],
     ["crystal", "clear", "view", "point", "guard", "rail", "car", ""],
     ["thunder", "clap", "back", "pack", "leader", "board", "game", ""],
-    ["shadow", "boxing", "glove", "puppet", "master", "mind", "control", "Kanishk🔔"],
+    ["shadow", "boxing", "glove", "puppet", "master", "mind", "control", "Kanishk"],
     ["island", "nation", "state", "fair", "trade", "route", "map", ""],
 	["hydro", "power", "play", "curling", "rock", "maple", "syrup", ""],
-	["screen", "shot", "glass", "window", "frame", "work", "station", "Vidya🔔"],	
+	["screen", "shot", "glass", "window", "frame", "work", "station", "Vidya"],	
     ["candle", "flame", "thrower", "squad", "goal", "keeper", "net", ""],
     ["rocket", "fuel", "tank", "top", "shelf", "life", "jacket", ""],
     ["family", "bond", "paper", "cut", "line", "dance", "floor", ""],
-    ["gingerbread", "house", "agent", "general", "science", "fiction", "writer", "Kanishk🔔"],
-	["sun", "baked", "good", "evening", "news", "paper", "clip", "adailysliceoforange🔔"],
+    ["gingerbread", "house", "agent", "general", "science", "fiction", "writer", "Kanishk"],
+	["sun", "baked", "good", "evening", "news", "paper", "clip", "adailysliceoforange"],
+	["soda", "pop", "quiz", "master", "switch", "board", "walk", "kevin"],
+	["train", "station", "wagon", "wheel", "well", "deserved", "fate", "ilost"],
     ["summer", "heat", "wave", "form", "letter", "carrier", "bag", ""],
     ["cotton", "thread", "count", "down", "town", "square", "root", ""],
     ["marble", "statue", "garden", "party", "favor", "box", "office", ""],
@@ -2701,10 +2753,9 @@ window.onload = function() {
 			initialize();
 
 			// Load dynamites after Firestore is ready
-			// setTimeout(() => loaddynamites(), 50);
+			setTimeout(() => loaddynamites(), 50);
+			// startDynamiteListener();
 		});
-
-
     UpdateChart();
 }
 
@@ -2785,7 +2836,7 @@ function initialize() {
     ele.innerHTML += (days);
     if (masterwordlist[index][7] != "") {
         let ele1 = document.getElementById("submitter");
-        ele1.innerHTML += "🔔By " + masterwordlist[index][7];
+        ele1.innerHTML += "By " + masterwordlist[index][7];
         // ele1.classList.add("flash2");
     }
     if(days == 26){
@@ -3698,7 +3749,7 @@ function processInput(e) {
             markTileWithQuestion(localStorage.clMysteryLetter); // visually add ❓
             showMysteryAdded();
             // document.getElementById("answer").innerText = "IDENTIFY THE MYSTERY LETTER IN THE NEXT TRY FOR A BONUS!"	
-            updateAnswer("Identify the mystery letter in the next try for a bonus!");
+            updateAnswer("Identify the mystery letter in the next try for a Bonus!");
         }
     }
 
@@ -4099,5 +4150,4 @@ function processInput(e) {
         }
         localStorage.clwordlast = clwordlast;
     }
-
 }

@@ -114,6 +114,88 @@ function disableconsos() {
     document.getElementById("KeyY").classList.add("disabled");
     document.getElementById("KeyZ").classList.add("disabled");
 }
+
+
+function modalhide() {
+    document.getElementById("boardfirst").style.visibility = "hidden";
+    document.getElementById("boardsecond").style.visibility = "hidden";
+    document.getElementById("boardthird").style.visibility = "hidden";
+    document.getElementById("boardforth").style.visibility = "hidden";
+    document.getElementById("boardfifth").style.visibility = "hidden";
+    document.getElementById("boardsixth").style.visibility = "hidden";
+    document.getElementById("boardlast").style.visibility = "hidden";
+    const rows = document.getElementsByClassName("keyboard-row");
+    for (let row of rows) {
+        row.style.visibility = "hidden";
+    }
+    const connector = document.getElementsByClassName("vertical-glow");
+    for (let row of connector) {
+        row.style.visibility = "hidden";
+    }
+    document.getElementById("answer").style.visibility = "hidden";
+}
+
+
+function modalshow() {
+    document.getElementById("boardfirst").style.visibility = "visible";
+    document.getElementById("boardsecond").style.visibility = "visible";
+    document.getElementById("boardthird").style.visibility = "visible";
+    document.getElementById("boardforth").style.visibility = "visible";
+    document.getElementById("boardfifth").style.visibility = "visible";
+    document.getElementById("boardsixth").style.visibility = "visible";
+    document.getElementById("boardlast").style.visibility = "visible";
+    const rows = document.getElementsByClassName("keyboard-row");
+    for (let row of rows) {
+        row.style.visibility = "visible";
+    }
+    const connector = document.getElementsByClassName("vertical-glow");
+    for (let row of connector) {
+        row.style.visibility = "visible";
+    }
+    document.getElementById("answer").style.visibility = "visible";
+}
+const openModalButtons = document.querySelectorAll('[data-modal-target]')
+const closeModalButtons = document.querySelectorAll('[data-close-button]')
+const overlay = document.getElementById('overlay')
+openModalButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const modal = document.querySelector(button.dataset.modalTarget)
+        openModal(modal)
+        modalhide();
+    })
+})
+
+
+
+overlay.addEventListener('click', () => {
+    const modals = document.querySelectorAll('.modal.active')
+    modals.forEach(modal => {
+        closeModal(modal)
+        modalshow();
+    })
+})
+
+closeModalButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const modal = button.closest('.modal')
+        closeModal(modal)
+        modalshow();
+    })
+})
+
+function openModal(modal) {
+    if (modal == null) return
+    modal.classList.add('active')
+    overlay.classList.add('active')
+}
+
+function closeModal(modal) {
+    if (modal == null) return
+    modal.classList.remove('active')
+    overlay.classList.remove('active')
+}
+
+
 // function FBFunction() {
 // 	myFunction();
 // 	setTimeout(myFunctionOpenFB, 100);
@@ -210,30 +292,32 @@ var masterwordlist = [
     ["winter", "storm", "drain", "pipe", "cleaner", "spray", "bottle", ""],
     ["silver", "spoon", "rest", "stop", "sign", "language", "barrier", ""],
     ["forest", "trail", "mix", "tape", "measure", "step", "ladder", ""],
-    ["party", "animal", "cracker", "jack", "hammer", "toe", "ring", "Divya🔔"],
-    ["black", "box", "office", "space", "bar", "chart", "patterns", "Vidya🔔"],
-    ["cotton", "candy", "bar", "graph", "paper", "bag", "drop", "Kanishk🔔"],
-    ["yellow", "banana", "split", "personality", "test", "pilot", "episode", "Divya🔔"],
+    ["party", "animal", "cracker", "jack", "hammer", "toe", "ring", "Divya"],
+    ["black", "box", "office", "space", "bar", "chart", "patterns", "Vidya"],
+    ["cotton", "candy", "bar", "graph", "paper", "bag", "drop", "Kanishk"],
+    ["yellow", "banana", "split", "personality", "test", "pilot", "episode", "Divya"],
     ["ocean", "tide", "pool", "table", "cloth", "pattern", "maker", ""],
     ["music", "sheet", "metal", "plate", "number", "crunch", "time", ""],
-    ["lucky", "stone", "cold", "blood", "group", "photo", "finish", "k.achu🔔"],
-    ["light", "weight", "lifting", "gear", "change", "over", "time", "gouri🔔"],
-    ["coffee", "table", "tennis", "match", "point", "break", "room", "h_ll🔔"],
+    ["lucky", "stone", "cold", "blood", "group", "photo", "finish", "k.achu"],
+    ["light", "weight", "lifting", "gear", "change", "over", "time", "gouri"],
+    ["coffee", "table", "tennis", "match", "point", "break", "room", "h_ll"],
     ["desert", "wind", "mill", "stone", "age", "limit", "line", ""],
     ["morning", "dew", "drop", "zone", "defense", "system", "check", ""],
-    ["fire", "dance", "party", "popper", "bottle", "neck", "collar", "gouri🔔"],
+    ["fire", "dance", "party", "popper", "bottle", "neck", "collar", "gouri"],
     ["traffic", "light", "speed", "trap", "door", "frame", "shop", ""],
     ["crystal", "clear", "view", "point", "guard", "rail", "car", ""],
     ["thunder", "clap", "back", "pack", "leader", "board", "game", ""],
-    ["shadow", "boxing", "glove", "puppet", "master", "mind", "control", "Kanishk🔔"],
+    ["shadow", "boxing", "glove", "puppet", "master", "mind", "control", "Kanishk"],
     ["island", "nation", "state", "fair", "trade", "route", "map", ""],
 	["hydro", "power", "play", "curling", "rock", "maple", "syrup", ""],
-	["screen", "shot", "glass", "window", "frame", "work", "station", "Vidya🔔"],	
+	["screen", "shot", "glass", "window", "frame", "work", "station", "Vidya"],	
     ["candle", "flame", "thrower", "squad", "goal", "keeper", "net", ""],
     ["rocket", "fuel", "tank", "top", "shelf", "life", "jacket", ""],
     ["family", "bond", "paper", "cut", "line", "dance", "floor", ""],
-    ["gingerbread", "house", "agent", "general", "science", "fiction", "writer", "Kanishk🔔"],
-	["sun", "baked", "good", "evening", "news", "paper", "clip", "adailysliceoforange🔔"],
+    ["gingerbread", "house", "agent", "general", "science", "fiction", "writer", "Kanishk"],
+	["sun", "baked", "good", "evening", "news", "paper", "clip", "adailysliceoforange"],
+	["soda", "pop", "quiz", "master", "switch", "board", "walk", "kevin"],
+	["train", "station", "wagon", "wheel", "well", "deserved", "fate", "ilost"],
     ["summer", "heat", "wave", "form", "letter", "carrier", "bag", ""],
     ["cotton", "thread", "count", "down", "town", "square", "root", ""],
     ["marble", "statue", "garden", "party", "favor", "box", "office", ""],
@@ -846,7 +930,7 @@ function intialize() {
     ele.innerHTML += days;
     if (masterwordlist[index][7] != "") {
         let ele1 = document.getElementById("submitter");
-        ele1.innerHTML += "🔔By " + masterwordlist[index][7];
+        ele1.innerHTML += "By " + masterwordlist[index][7];
         // ele1.classList.add("flash2");
     }
 	
@@ -1180,7 +1264,7 @@ function intialize() {
             currTile.classList.add("starting");
         }
         document.getElementById("answer").style.color = "lightgray";
-        document.getElementById("answer").innerText = "You have already played this chain!"
+        document.getElementById("answer").innerHTML = "You have already played this chain!<br>Go Back for more Archives."
         disableconsos();
         disablevowels();
     } else {
@@ -1726,7 +1810,7 @@ function processInput(e) {
         }
         document.getElementById("answer").style.color = "lightgray";
         // document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
-		updateAnswer("Game Over! Out Of Lives.");
+		updateAnswer("Game Over! Out Of Lives.<br>Go Back for more Archives.");
     }
 
     if (correct == word.length) {
@@ -1778,7 +1862,7 @@ function processInput(e) {
         disablevowels();
         document.getElementById("answer").style.color = "lightgray";
         // document.getElementById("answer").innerText = "CHAIN COMPLETED SUCCESSFULLY!";
-		updateAnswer("CHAIN COMPLETED SUCCESSFULLY!");
+		updateAnswer("CHAIN COMPLETED SUCCESSFULLY!<br>Go Back for more Archives.");
         /* 			for (let s = 0; s < localStorage.clstarscnt; s++){
         				document.getElementById("answerstar").innerText += "⭐";
         			} */

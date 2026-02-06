@@ -18,8 +18,23 @@
             type = "image/x-icon">  	
  </head>
 <body>
+    <div id="stats">
+        <div id="stats-item">
+            <span class="stats-item">
+                <span data-modal-target="#modal" id="rulesbutton">
+                    GAME<br>RULES
+                </span>
+            </span>
+
+            <span class="stats-item">
+                <a href="https://thechnlnk.com">
+                    DAILY<br> CHAIN
+                </a>
+            </span>
+        </div>
+    </div>
 		<!-- <img class="headerimage" src="bg.png"> -->
-		<h1> 🔗CH<strong style="color:red">AI</strong>N L<strong style="color:red">I</strong>NK🧩</h1>
+		<h1> CH<strong style="color:red">AI</strong>N L<strong style="color:red">I</strong>NK</h1>
 	<!-- <div id="title">
 		<div class="waviy">
 			<span style="--i:1">G</span>
@@ -52,6 +67,67 @@
 	</div>
 	<span style="--i:18" id="submitter"></span>
 	<hr>	
+    <div class="modal" id="modal">
+        <div class="modal-header">
+            <div class="title"><strong>
+                    <!-- How To Play -->
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <h3>HOW TO PLAY?</h3>
+                            </div>
+                        </div>
+                    </div>
+                </strong></div>
+            <button data-close-button class="close-button">&times;</button>
+        </div>
+        <div class="modal-body">
+            <br>
+
+            The objective of <strong style="color:white;">CHN LNK</strong> is to identify all the words in the <strong style="color:white;">CHAIN - One letter at a time</strong>. Every word on the chain <strong style="color:white;">LINKS</strong> logically, with the word below it.
+            <br>
+
+            <div class="rules-wrapper">
+
+                <ul class="rules-list">
+                    <li>
+                        <strong style="color:white;">CLICK to guess a letter. </strong>If the letter you selected is in<strong style="color:white;"> ANY WORD </strong>of the chain,
+                        the corresponding tiles will be highlighted in
+                        <strong style="color:lightgreen;">Green</strong>.
+                    </li>
+                    <br>
+
+                    <li>
+                        <strong style="color:white;">VOWELS</strong> (<strong style="color:red;">Red</strong> on grid)</strong><strong style="color:white;"> are Disabled</strong> till you figure out all the
+                        <strong style="color:white;">OTHER LETTERS</strong> in the chain.
+
+                    </li>
+                    <br>
+
+                    <li>
+                        See the <strong style="color:white;">TUTORIAL</strong> of solving a chain.
+                        Notice how vowels are disabled initially, and how each word meaningfully
+                        links with the next one : FOREST TRAIL → TRAIL MIX → MIX TAPE → TAPE MEASURE → MEASURE STEP → STEP LADDER.
+                    </li>
+                </ul>
+                <img class="rules-image" src="tutorial.gif" alt="Example Chain">
+            </div>
+
+
+            <br>
+			<br>
+            <center>
+                This is the  <strong style="color:white;">ARCHIVES SECTION.</strong> Play the <strong style="color:white;"><a href="https://thechnlnk.com">DAILY CHAIN</strong> here!</a>
+            </center>			
+            <center>
+                A new <strong style="color:white;">CHN LNK</strong> will be available <strong style="color:white;">Everyday</strong>!
+            </center>
+
+        </div>
+
+    </div>
+    <div id="overlay"></div>
+    </div>	
     <div id="lives">
 	</div>	
     <!-- <div id="board"> -->
@@ -71,6 +147,7 @@
 		 <!-- <br> -->
 		<!-- <div id="boardlast"><div id="downarrowhide">⬇️</div></div>	 -->
 	<!-- </div> -->
+	<br>
 	<div id="board">
 
 		<div id="boardfirst"></div>
@@ -100,7 +177,7 @@
 		<div id="boardlast"></div>
 
 	</div>	
-	<!-- <br> -->
+	<br>
 	<!-- <hr>	 -->
 	<br>
     <div id="answer" hidden></div>
