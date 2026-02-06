@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.05.05";
+const BUILD_VERSION = "2025.02.05.06";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -3285,6 +3285,7 @@ function initialize() {
         clearInterval(momentumInterval);
         // }
         // setTimeout(OpenStats, 1100);
+		document.getElementById("leaderboardCollapsible").style.display = "block";
         displayFooter();
         localStorage.clgamestarted = 0;
         localStorage.clhardmode = 0;
