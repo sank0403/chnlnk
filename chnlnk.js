@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.05.06";
+const BUILD_VERSION = "2025.02.06.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -517,37 +517,6 @@ async function loaddynamites() {
         console.error("Error loading dynamites:", err);
     }
 }
-
-// let dynamiteUnsub = null;
-
-// function startDynamiteListener() {
-    // const user = auth.currentUser;
-    // if (!user) return;
-
-    // const ref = doc(db, "leaderboard", user.uid);
-
-    // Prevent double listeners
-    // if (dynamiteUnsub) {
-        // dynamiteUnsub();
-        // dynamiteUnsub = null;
-    // }
-
-    // dynamiteUnsub = onSnapshot(ref, snap => {
-        // if (!snap.exists()) return;
-
-        // const d = snap.data();
-        // if (!("dynamite" in d)) return;
-
-        // const serverDynamite = d.dynamite;
-        // const localDynamite = Number(localStorage.cldynamite || 0);
-
-        // if (serverDynamite !== localDynamite) {
-            // localStorage.cldynamite = serverDynamite;
-            // showDynamitePopup(serverDynamite - localDynamite);
-        // }
-    // });
-// }
-
 
 function showDynamitePopup(amountGained) {
     const gained = amountGained > 0 ? amountGained : 0;
@@ -2753,8 +2722,7 @@ window.onload = function() {
 			initialize();
 
 			// Load dynamites after Firestore is ready
-			setTimeout(() => loaddynamites(), 50);
-			// startDynamiteListener();
+			// setTimeout(() => loaddynamites(), 50);
 		});
     UpdateChart();
 }
