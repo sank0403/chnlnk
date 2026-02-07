@@ -2723,7 +2723,7 @@ window.onload = function() {
 			initialize();
 
 			// Load dynamites after Firestore is ready
-			// setTimeout(() => loaddynamites(), 50);
+			setTimeout(() => loaddynamites(), 50);
 		});
     UpdateChart();
 }
@@ -2787,7 +2787,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 
-function initialize() {
+async function initialize() {
     if (localStorage.clgamestarted == 1) {
         // if (localStorage.clhardmode ==1){	
         document.getElementById("toggle-row").style.display = "none";
@@ -3254,6 +3254,7 @@ function initialize() {
         clearInterval(momentumInterval);
         // }
         // setTimeout(OpenStats, 1100);
+		await initPlayerName();
 		document.getElementById("leaderboardCollapsible").style.display = "block";
         displayFooter();
         localStorage.clgamestarted = 0;
