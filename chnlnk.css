@@ -371,7 +371,7 @@ p {
     max-width: 260px;   /* ← MUST match .button-row max-width */
     margin: 10px auto;
 
-    background-color: #b30000;
+    background-color: green;
     color: white;
     text-align: center;
 
@@ -387,11 +387,11 @@ p {
 }
 
 #coffeeFullWidthButton:hover {
-    background: #c00000;
+    background: #228B22;
 }
 
 #coffeeFullWidthButton:active {
-    background: #990000;
+    background: green;
 }
 
 
