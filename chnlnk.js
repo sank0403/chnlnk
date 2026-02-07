@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.06.02";
+const BUILD_VERSION = "2025.02.07.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -79,18 +79,18 @@ var bbInterval = setInterval(function() {
     }
 }, 1000);
 
-document.getElementById("wabutton").addEventListener("click", function() {
-    const menu = document.getElementById("waMenu");
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
-});
+// document.getElementById("wabutton").addEventListener("click", function() {
+    // const menu = document.getElementById("waMenu");
+    // menu.style.display = menu.style.display === "block" ? "none" : "block";
+// });
 
 // Optional: close menu when clicking outside
-document.addEventListener("click", function(e) {
-    const wrapper = document.querySelector(".wa-wrapper");
-    if (!wrapper.contains(e.target)) {
-        document.getElementById("waMenu").style.display = "none";
-    }
-});
+// document.addEventListener("click", function(e) {
+    // const wrapper = document.querySelector(".wa-wrapper");
+    // if (!wrapper.contains(e.target)) {
+        // document.getElementById("waMenu").style.display = "none";
+    // }
+// });
 
 function containsEmoji(str) {
     // Matches actual emoji ranges only
@@ -2718,11 +2718,6 @@ window.onload = function() {
     initMonthlyStats();
 		const now = new Date();
 		const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-	    if (currentMonth === "2026-01") {
-            localStorage.monthclplayed = localStorage.totalclplayed || 0;
-            localStorage.monthclstars = localStorage.totalclstars || 0;
-            localStorage.monthwins = localStorage.totalclwins || 0;
-        }
 		auth.onAuthStateChanged(async user => {
 			if (!user) return;
 

@@ -18,7 +18,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="chnlnk.css?v=9" rel="stylesheet">
+    <link href="chnlnk.css?v=10" rel="stylesheet">
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
     <!-- add icon link for all standard browsers -->
     <script type="module">
@@ -425,30 +425,31 @@
             <br>
             <!-- The button used to copy the text -->
             <div class="button-container">
+				<div class="button-row">
+					<button id="HTMLButton" class="buttonmode" onclick="myFunction(); this.blur();">
+						SHARE
+					</button>
 
-                <div class="button-row">
-                    <button id="HTMLButton" class="buttonmode" onclick="myFunction(); this.blur();">
-                        SHARE
-                    </button>
+				<div class="wa-wrapper">
+					<img src="whatsapp.png"
+						 id="wabutton"
+						 class="wa-icon"
+						 title="WhatsApp Options"
+						 style="height:35px;"
+						 onclick="postStatsToWhatsApp()">
+				</div>
 
-                    <div class="wa-wrapper">
-                        <img src="whatsapp.png" id="wabutton" class="wa-icon" title="WhatsApp Options" style="height:35px;">
-                        <div class="wa-menu" id="waMenu">
-                            <a href="https://whatsapp.com/channel/0029VbC8UHRKbYMKkXJJag0w" target="_blank">1. CHN LNK CHANNEL</a>
-                            <a href="#" onclick="postStatsToWhatsApp()">2. POST STATS</a>
-                        </div>
-                    </div>
 
-                    <button id="Rafflebutton" class="buttonmode">
-                        RAFFLE
-                    </button>
-                </div>
-
+					<div data-hintmodal-target="#hintmodal" id="hintbutton">
+						<button id="Rafflebutton" class="buttonmode" title="Join Monthly Raffle">
+							RAFFLE
+						</button>
+					</div>
+				</div>
                 <!-- Coffee button INSIDE the same container -->
                 <a href="https://buymeacoffee.com/sank0403" target="_blank" id="coffeeFullWidthButton">
                     <strong style="font-size: 150%;">☕</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BUY CHN LNK A COFFEE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong style="font-size: 150%;">👍</strong>
                 </a>
-
             </div>
             <!-- <p style="color:lightgray" align="justify">If you enjoyed playing 🔗<strong style="color:white;">CHN LNK</strong>🧩, you can show your support by <strong style='color: var(--green);'><a href="https://www.buymeacoffee.com/sank0403" target="_">BUYING US A COFFEE</a></strong> ☕️. THANK YOU for all the Love! 💕 </p> -->
             <!-- <a href="https://buymeacoffee.com/sank0403" target="_blank" id="coffeeButton"> ☕ BUY CHN LNK A COFFEE 👍 </a> -->
@@ -708,7 +709,7 @@
             <p style="font-size: 16px; line-height: 1.4; margin-bottom: 24px;"> If you are an existing user, your stats will be carried over. </p> <button id="migrationOkBtn" style=" background: #f7d354; color: #000; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 50%; "> OK </button><br><br><br>Please remember to bookmark the new URL.<br> <span style="font-size: 14px; color: #f7d354;">https://thechnlnk.com</span>
         </div>
     </div>
-    <script src="chnlnk.js?v=9"></script>
+    <script src="chnlnk.js?v=10"></script>
 </div>
 </body>
 </html>

@@ -349,20 +349,30 @@ p {
 
 
 
-/* TOP ROW — fixed visual width, centered */
 .button-row {
     display: flex;
     justify-content: center;
     align-items: center;
-
-    gap: 20px;          /* adjust this to bring SHARE/RAFFLE closer to WA */
     width: 100%;
-    max-width: 260px;   /* ← controls the total width of the row */
-    margin: 0 auto;     /* ← centers the row */
-
-    height: 28px;
-    line-height: 28px;
+    max-width: 260px;
+    margin: 0 auto;
+    gap: 10px;
 }
+
+/* Make SHARE, WA, and RAFFLE all equal-width flex items */
+.button-row > * {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#HTMLButton,
+#Rafflebutton {
+    width: 90px;      /* adjust until it looks perfect */
+    text-align: center;
+}
+
+
 
 /* COFFEE BUTTON — matches the row width exactly */
 #coffeeFullWidthButton {
