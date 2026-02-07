@@ -2787,7 +2787,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 
-async function initialize() {
+function initialize() {
     if (localStorage.clgamestarted == 1) {
         // if (localStorage.clhardmode ==1){	
         document.getElementById("toggle-row").style.display = "none";
@@ -3254,7 +3254,6 @@ async function initialize() {
         clearInterval(momentumInterval);
         // }
         // setTimeout(OpenStats, 1100);
-		await initPlayerName();
 		document.getElementById("leaderboardCollapsible").style.display = "block";
         displayFooter();
         localStorage.clgamestarted = 0;
