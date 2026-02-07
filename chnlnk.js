@@ -809,6 +809,18 @@ async function OpenStats() {
     document.getElementById("leaderboardCollapsible").style.display = "block";
 }
 
+async function OpenStatsGO() {
+
+    // Ensure player name exists BEFORE loading leaderboard
+    await initPlayerName();
+
+    // Now safe to load leaderboard
+    // await loadLeaderboard();
+
+    // Now show the leaderboard 
+    document.getElementById("leaderboardCollapsible").style.display = "block";
+}
+
 
 function OpenADDModal() {
     document.getElementById("addpop").click();
@@ -3253,9 +3265,8 @@ function initialize() {
         // NEW: stop the timer forever
         clearInterval(momentumInterval);
         // }
-        // setTimeout(OpenStats, 1100);
-		document.getElementById("leaderboardCollapsible").style.display = "block";
-        displayFooter();
+        setTimeout(OpenStatsGO, 1100);
+		displayFooter();
         localStorage.clgamestarted = 0;
         localStorage.clhardmode = 0;
     }
