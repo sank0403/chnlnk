@@ -214,6 +214,9 @@ p {
     font-size: 16px;
 }
 
+
+
+
 .hidden {
     display: none;
 }
@@ -229,9 +232,10 @@ p {
 }
 
 .wa-wrapper {
-    position: relative;
-    display: inline-block;
+    display: flex;
+    align-items: center;
 }
+
 
 #leaderboardCollapsible {
     margin-top: 10px;
@@ -342,6 +346,61 @@ p {
     width: 90px;
 }
 
+
+
+
+/* TOP ROW — fixed visual width, centered */
+.button-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 20px;          /* adjust this to bring SHARE/RAFFLE closer to WA */
+    width: 100%;
+    max-width: 260px;   /* ← controls the total width of the row */
+    margin: 0 auto;     /* ← centers the row */
+
+    height: 28px;
+    line-height: 28px;
+}
+
+/* COFFEE BUTTON — matches the row width exactly */
+#coffeeFullWidthButton {
+    display: block;
+    width: 100%;
+    max-width: 260px;   /* ← MUST match .button-row max-width */
+    margin: 10px auto;
+
+    background-color: #b30000;
+    color: white;
+    text-align: center;
+
+    height: 28px;
+    line-height: 28px;
+    padding: 0 12px;
+    box-sizing: border-box;
+
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+#coffeeFullWidthButton:hover {
+    background: #c00000;
+}
+
+#coffeeFullWidthButton:active {
+    background: #990000;
+}
+
+
+/* WIDEN SHARE + RAFFLE ONLY */
+.button-row .buttonmode {
+    width: 140px;   /* adjust to taste: 90, 100, 110, 120 */
+}
+
+/* Remove width from the global .buttonmode so it doesn't override */
 .buttonmode {
     background: #b30000;
     color: white;
@@ -350,7 +409,7 @@ p {
     padding: 6px 12px;
     border-radius: 5px;
 
-    width: 70px;        /* ← make both buttons identical */
+    /* REMOVE width: 70px; */
     text-align: center;
 
     font-size: 11px;
@@ -362,6 +421,7 @@ p {
     transition: background 0.15s ease, border-color 0.15s ease;
 }
 
+
 .buttonmode:hover {
     background: #c00000;
     border-color: #990000;
@@ -372,12 +432,7 @@ p {
     border-color: #7a0000;
 }
 
-.button-row button {
-    height: 28px;          /* identical height */
-    padding: 0 12px;       /* no vertical padding */
-    line-height: 28px;     /* centers text perfectly */
-    box-sizing: border-box;
-}
+
 
 .buttonmode1 {
     border-radius: 6px;
@@ -465,13 +520,6 @@ p {
     background: #555;
 }
 
-
-
-.button-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-}
 
 ul {
     margin-left: 0;

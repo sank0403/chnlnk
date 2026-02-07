@@ -412,10 +412,10 @@
                             </tr>
                         </tbody>
                     </table>
-					<div class="edit-row">
-						<button id="changeNameBtn" class="buttonmode">EDIT</button>
-						<span id="nrNote" class="nr-note">NR – Not Ranked in Top 25</span>
-					</div>
+                    <div class="edit-row">
+                        <button id="changeNameBtn" class="buttonmode">EDIT</button>
+                        <span id="nrNote" class="nr-note">NR – Not Ranked in Top 50</span>
+                    </div>
                 </div>
             </div>
             <br>
@@ -424,39 +424,34 @@
             <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
             <br>
             <!-- The button used to copy the text -->
-            <div class="button-row">
-                <!-- &nbsp; -->
-                <button id="HTMLButton" class="buttonmode" title="Copy To Clipboard" onclick="myFunction(); this.blur();">SHARE</button>
-                <!-- <a href="https://whatsapp.com/channel/0029VbC8UHRKbYMKkXJJag0w" target="_blank"> -->
-                <!-- <img src="whatsapp.png" id="wabutton" title="Join Whatsapp Channel" style="height:35px;"> -->
-                <!-- </a> -->
+            <div class="button-container">
 
-                <div class="wa-wrapper">
-                    <img src="whatsapp.png" id="wabutton" class="wa-icon" title="WhatsApp Options" style="height:35px;">
+                <div class="button-row">
+                    <button id="HTMLButton" class="buttonmode" onclick="myFunction(); this.blur();">
+                        SHARE
+                    </button>
 
-                    <div class="wa-menu" id="waMenu">
-                        <a href="https://whatsapp.com/channel/0029VbC8UHRKbYMKkXJJag0w" target="_blank">
-                            1. CHN LNK CHANNEL
-                        </a>
-                        <a href="#" onclick="postStatsToWhatsApp()">
-                            2. POST STATS
-                        </a>
+                    <div class="wa-wrapper">
+                        <img src="whatsapp.png" id="wabutton" class="wa-icon" title="WhatsApp Options" style="height:35px;">
+                        <div class="wa-menu" id="waMenu">
+                            <a href="https://whatsapp.com/channel/0029VbC8UHRKbYMKkXJJag0w" target="_blank">1. CHN LNK CHANNEL</a>
+                            <a href="#" onclick="postStatsToWhatsApp()">2. POST STATS</a>
+                        </div>
                     </div>
-                </div>
 
-                <div style="display:none;" <class data-addmodal-target="#addmodal" id="addbutton"><button id="addpop" class="buttonmode"></button></class>
-                </div>
-                <div style="display:none;" <class data-timemodal-target="#timemodal" id="timebutton"><button id="timepop" class="buttonmode"></button></class>
-                </div>
-                <!-- <class data-hintmodal-target="#hintmodal" id="hintbutton"><button id="Rafflebutton" class="buttonmode" title="Join Monthly Raffle">RAFFLE</button></class> -->
-                <div data-hintmodal-target="#hintmodal" id="hintbutton">
-                    <button id="Rafflebutton" class="buttonmode" title="Join Monthly Raffle">
+                    <button id="Rafflebutton" class="buttonmode">
                         RAFFLE
                     </button>
                 </div>
 
+                <!-- Coffee button INSIDE the same container -->
+                <a href="https://buymeacoffee.com/sank0403" target="_blank" id="coffeeFullWidthButton">
+                    ☕ BUY CHN LNK A COFFEE 👍
+                </a>
+
             </div>
-            <p style="color:lightgray" align="justify">If you enjoyed playing 🔗<strong style="color:white;">CHN LNK</strong>🧩, you can show your support by <strong style='color: var(--green);'><a href="https://www.buymeacoffee.com/sank0403" target="_">BUYING US A COFFEE</a></strong> ☕️. THANK YOU for all the Love! 💕 </p>
+            <!-- <p style="color:lightgray" align="justify">If you enjoyed playing 🔗<strong style="color:white;">CHN LNK</strong>🧩, you can show your support by <strong style='color: var(--green);'><a href="https://www.buymeacoffee.com/sank0403" target="_">BUYING US A COFFEE</a></strong> ☕️. THANK YOU for all the Love! 💕 </p> -->
+            <!-- <a href="https://buymeacoffee.com/sank0403" target="_blank" id="coffeeButton"> ☕ BUY CHN LNK A COFFEE 👍 </a> -->
         </div>
         <!-- <div class="top-row"> -->
 

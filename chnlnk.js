@@ -634,7 +634,7 @@ async function loadLeaderboard() {
             orderBy("wins", "desc"),
             orderBy("winpct", "desc"),
             orderBy("updated", "asc"),
-            limit(25)
+            limit(50)
         );
 
         const top100Snap = await getDocs(top100Q);
