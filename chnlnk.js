@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.08.04";
+const BUILD_VERSION = "2025.02.08.05";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -614,9 +614,11 @@ async function loadLeaderboard() {
                 <td>${p.winpct}%</td>
             `;
 
-            if (p.id === currentUID) {
-                row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
-            }
+		if (p.id === currentUID) {
+			row.style.background = "rgba(255,255,255,0.1)";
+			row.style.fontWeight = "bold";
+			row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+		}
 
             leaderboardBody.appendChild(row);
         }
