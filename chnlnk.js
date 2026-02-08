@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.08.01";
+const BUILD_VERSION = "2025.02.08.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -906,6 +906,12 @@ if (!localStorage.clshowalert) {
 if (!localStorage.clhardmode) {
     localStorage.setItem("clhardmode", 0);
 }
+
+if (localStorage.getItem('gameovercl30') == 0 && (!localStorage.cl30reset)) {
+	localStorage.removeItem('gameovercl30');
+	localStorage.cl30reset = 1;
+}
+	
 
 //Baseline Date
 var a = new Date(); // Current date now.
