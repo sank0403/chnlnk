@@ -3179,10 +3179,10 @@ function initialize() {
                 }
 
                 if (bonusApplied) {
-                    msg += " (INCLUDING +1 TIMED MODE BONUS!)";
+                    msg += "<br> (INCLUDING +1 TIMED MODE BONUS!)";
                 }
 
-                document.getElementById("answer").innerText = msg;
+                document.getElementById("answer").innerHTML = msg;
 
                 /* 					for (let s = 0; s < localStorage.clstarscnt; s++){
                 						document.getElementById("answerstar").innerText += "⭐";
@@ -3971,7 +3971,7 @@ function processInput(e) {
         }
 
         if (bonusApplied) {
-            msg += " (INCLUDING +1 TIMED MODE BONUS!)";
+            msg += "<br> (INCLUDING +1 TIMED MODE BONUS!)";
             localStorage.cllives = "⚪".repeat(localStorage.clstarscnt);
             document.getElementById("lives").innerText = localStorage.cllives;
 
