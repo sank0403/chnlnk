@@ -644,49 +644,37 @@ async function loadLeaderboard() {
         // --- 5. Check if user is in top 50 ---
         const idx = top100.findIndex(p => p.id === currentUID);
 
-if (idx === -1) {
-    // --- A. Spacer row with three dots ---
-    const spacer = document.createElement("tr");
-    spacer.innerHTML = `
-        <td style="text-align:center;">⋮</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    `;
-    leaderboardBody.appendChild(spacer);
+	if (idx === -1) {
+		// --- A. Show the 100th ranked player as row 6 ---
+		const last = top100[top100.length - 1]; // the 100th player
 
-    // --- B. Show the 100th ranked player ---
-    const last = top100[top100.length - 1]; // the 100th player
+		const lastRow = document.createElement("tr");
+		lastRow.innerHTML = `
+			<td>100</td>
+			<td>${last.name}</td>
+			<td>${last.stars}</td>
+			<td>${last.wins}</td>
+			<td>${last.winpct}%</td>
+		`;
+		leaderboardBody.appendChild(lastRow);
 
-    const lastRow = document.createElement("tr");
-    lastRow.innerHTML = `
-        <td>100</td>
-        <td>${last.name}</td>
-        <td>${last.stars}</td>
-        <td>${last.wins}</td>
-        <td>${last.winpct}%</td>
-    `;
-    leaderboardBody.appendChild(lastRow);
+		// --- B. Show the current user as NR (row 7) ---
+		const userRow = document.createElement("tr");
+		userRow.innerHTML = `
+			<td>NR*</td>
+			<td>${currentPlayerName}</td>
+			<td>${playerData?.stars ?? "-"}</td>
+			<td>${playerData?.wins ?? "-"}</td>
+			<td>${playerData?.winpct ?? "-"}%</td>
+		`;
+		userRow.style.background = "rgba(255,255,255,0.1)";
+		userRow.style.fontWeight = "bold";
+		userRow.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+		leaderboardBody.appendChild(userRow);
 
-    // --- C. Show the current user as NR ---
-    const userRow = document.createElement("tr");
-    userRow.innerHTML = `
-        <td>NR*</td>
-        <td>${currentPlayerName}</td>
-        <td>${playerData?.stars ?? "-"}</td>
-        <td>${playerData?.wins ?? "-"}</td>
-        <td>${playerData?.winpct ?? "-"}%</td>
-    `;
-    userRow.style.background = "rgba(255,255,255,0.1)";
-    userRow.style.fontWeight = "bold";
-    userRow.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
-    leaderboardBody.appendChild(userRow);
-
-    document.getElementById("nrNote").style.display = "inline";
-    return;
-}
-
+		document.getElementById("nrNote").style.display = "inline";
+		return;
+	}
 	else { 
 			document.getElementById("nrNote").style.display = "none"; 
 			}
