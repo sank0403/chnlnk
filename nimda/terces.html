@@ -55,11 +55,6 @@
             font-size: 14px;
         }
 
-        #logoutMessage {
-            margin-top: 10px;
-            color: #6f6;
-        }
-
         .player-table, .oldest-table {
             width: 100%;
             border-collapse: collapse;
@@ -89,19 +84,11 @@
             font-size: 18px;
         }
 
-        .delete-icon:hover {
-            color: #ff7777;
-        }
-
         .update-icon {
             cursor: pointer;
             color: #4da6ff;
             font-size: 18px;
             padding-left: 15px;
-        }
-
-        .update-icon:hover {
-            color: #80c1ff;
         }
 
         #oldestContainer {
@@ -125,21 +112,12 @@
             flex: 1;
         }
 
-        /* Mobile responsiveness */
         @media (max-width: 600px) {
-            body {
-                padding: 12px;
-                font-size: 15px;
+            input {
+                width: 100% !important;
+                box-sizing: border-box;
             }
 
-            input {
-                width: 100%;
-                font-size: 16px;
-            }
-			#playerName { 
-				width: 100% ; 
-				box-sizing: border-box; 
-			}
             button {
                 width: 100%;
                 font-size: 16px;
@@ -153,25 +131,11 @@
                 gap: 8px;
             }
 
-            #oldestContainer {
-                max-height: none;
-                overflow-y: visible;
-                padding: 10px;
-            }
-
             .player-table,
             .oldest-table {
                 display: block;
                 overflow-x: auto;
                 white-space: nowrap;
-            }
-
-            .player-table th,
-            .player-table td,
-            .oldest-table th,
-            .oldest-table td {
-                padding: 8px;
-                font-size: 14px;
             }
         }
     </style>
@@ -179,21 +143,21 @@
 
 <body>
 
-<h2>Welcome CHN LNK Admin</h2>
+<h2>CHN LNK Admin</h2>
 
-<div id="loginBox">
+<div id="loadingMessage">Checking authentication…</div>
+
+<div id="loginBox" style="display:none;">
     <p>Login with your Google account.</p>
     <button onclick="googleLogin()">Sign in with Google</button>
     <p id="loginError" style="color:red;"></p>
 </div>
 
 <div id="adminTools">
-
     <div id="userInfo"></div>
 
     <h3>Player Lookup</h3>
     <input id="playerName" placeholder="Player name" autocomplete="on">
-    <br>
     <button onclick="findPlayer()">Find Player</button>
     <button onclick="clearPlayerSearch()">Clear</button>
 
@@ -201,11 +165,10 @@
     <div id="result">No action yet.</div>
 
     <div id="oldestContainer">
-
         <div class="button-row">
-            <button onclick="loadOldest()">Show 25 Oldest Records</button>
-            <button onclick="loadNewest()">Show 25 Newest Records</button>
-            <button onclick="loadPreviousMonth()">Show Previous Month or Older (50)</button>
+            <button onclick="loadOldest()">Show 25 Oldest</button>
+            <button onclick="loadNewest()">Show 25 Newest</button>
+            <button onclick="loadPreviousMonth()">Show Previous Month</button>
         </div>
 
         <div class="right-buttons">
@@ -216,338 +179,352 @@
         <div id="oldestTable"></div>
     </div>
 
-    <br>
     <button onclick="logout()">Logout</button>
     <div id="logoutMessage"></div>
 </div>
-
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { 
-        getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut 
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { 
-        getFirestore, collection, query, doc, where, limit, getDocs, deleteDoc, orderBy, updateDoc 
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+/* ---------------------------------------------------------
+   Firebase Imports
+--------------------------------------------------------- */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+    getAuth,
+    signInWithPopup,
+    GoogleAuthProvider,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyCyAxFfNR7h77tG7qOYjZEXiPVepe4pqPg",
-        authDomain: "chn-lnk.firebaseapp.com",
-        projectId: "chn-lnk",
-        storageBucket: "chn-lnk.firebasestorage.app",
-        messagingSenderId: "417710575115",
-        appId: "1:417710575115:web:337f0eb082fe6a1a7e810e"
-    };
+import {
+    getFirestore,
+    collection,
+    query,
+    doc,
+    where,
+    limit,
+    getDocs,
+    deleteDoc,
+    orderBy,
+    updateDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+/* ---------------------------------------------------------
+   Firebase Config
+--------------------------------------------------------- */
+const firebaseConfig = {
+    apiKey: "AIzaSyCyAxFfNR7h77tG7qOYjZEXiPVepe4pqPg",
+    authDomain: "chn-lnk.firebaseapp.com",
+    projectId: "chn-lnk",
+    storageBucket: "chn-lnk.firebasestorage.app",
+    messagingSenderId: "417710575115",
+    appId: "1:417710575115:web:337f0eb082fe6a1a7e810e"
+};
 
-    const loginBox = document.getElementById("loginBox");
-    const adminTools = document.getElementById("adminTools");
-    const result = document.getElementById("result");
-    const loginError = document.getElementById("loginError");
-    const oldestTable = document.getElementById("oldestTable");
-    const userInfo = document.getElementById("userInfo");
-    const logoutMessage = document.getElementById("logoutMessage");
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-    let lastFoundDoc = null;
-    let lastShownDocs = [];
+/* ---------------------------------------------------------
+   Admin UID (hard gate)
+--------------------------------------------------------- */
+const ADMIN_UID = "6RHgg6dr8NcI5m4BjMI1rg0LidE2";
 
-    async function googleLogin() {
-        const provider = new GoogleAuthProvider();
-        try {
-            await signInWithPopup(auth, provider);
-        } catch (err) {
-            loginError.textContent = err.message;
-        }
+/* ---------------------------------------------------------
+   UI Elements
+--------------------------------------------------------- */
+const loginBox = document.getElementById("loginBox");
+const adminTools = document.getElementById("adminTools");
+const loadingMessage = document.getElementById("loadingMessage");
+const loginError = document.getElementById("loginError");
+const userInfo = document.getElementById("userInfo");
+const logoutMessage = document.getElementById("logoutMessage");
+
+/* ---------------------------------------------------------
+   Login / Logout
+--------------------------------------------------------- */
+async function googleLogin() {
+    const provider = new GoogleAuthProvider();
+    try {
+        await signInWithPopup(auth, provider);
+    } catch (err) {
+        loginError.textContent = err.message;
+    }
+}
+
+async function logout() {
+    try {
+        await signOut(auth);
+        logoutMessage.textContent = "Successfully logged out.";
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+/* ---------------------------------------------------------
+   Auth State Handling (fixed timing)
+--------------------------------------------------------- */
+onAuthStateChanged(auth, user => {
+    loadingMessage.style.display = "none";
+
+    // Not logged in
+    if (!user) {
+        loginBox.style.display = "block";
+        adminTools.style.display = "none";
+        return;
     }
 
-    async function logout() {
-        try {
-            await signOut(auth);
-            logoutMessage.textContent = "Successfully logged out.";
-        } catch (err) {
-            if (err.code !== "auth/cancelled-popup-request") {
-                console.error(err);
-            }
-        }
+    // Logged in but NOT admin
+    if (user.uid !== ADMIN_UID) {
+        document.body.innerHTML =
+            "<h2 style='color:red;text-align:center;margin-top:40px;'>Access Denied</h2>";
+        return;
     }
 
-    onAuthStateChanged(auth, user => {
-        if (!user) {
-            loginBox.style.display = "block";
-            adminTools.style.display = "none";
+    // Logged in as admin
+    loginBox.style.display = "none";
+    adminTools.style.display = "block";
+    userInfo.textContent = "Logged in as: " + user.email;
+});
 
-            userInfo.textContent = "";
-            result.innerHTML = "No action yet.";
-            document.getElementById("playerName").value = "";
-            oldestTable.innerHTML = "";
-            lastShownDocs = [];
+/* ---------------------------------------------------------
+   Expose login/logout to HTML
+--------------------------------------------------------- */
+window.googleLogin = googleLogin;
+window.logout = logout;
+/* ---------------------------------------------------------
+   Admin State
+--------------------------------------------------------- */
+let lastFoundDoc = null;
+let lastShownDocs = [];
 
-            return;
-        }
+/* ---------------------------------------------------------
+   Utility: Format Timestamp
+--------------------------------------------------------- */
+function formatTS(ts) {
+    if (!ts) return "-";
+    const d = ts.toDate();
+    return d.toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+    }).replace(",", " at");
+}
 
-        loginBox.style.display = "none";
-        adminTools.style.display = "block";
+/* ---------------------------------------------------------
+   Render Player Table
+--------------------------------------------------------- */
+function renderTable(data) {
+    return `
+    <table class="player-table">
+        <tr><th>Name</th><td>${data.name}</td></tr>
+        <tr><th>Played</th><td>${data.played}</td></tr>
+        <tr><th>Wins</th><td>${data.wins}</td></tr>
+        <tr><th>Win %</th><td>${data.winpct}%</td></tr>
+        <tr><th>Stars</th><td>${data.stars}</td></tr>
+        <tr><th>Dynamite</th><td>${data.dynamite}</td></tr>
+        <tr><th>Updated</th><td>${formatTS(data.updated)}</td></tr>
 
-        logoutMessage.textContent = "";
-        userInfo.textContent = "Logged in as: " + user.email;
+        <tr><th>Total Played</th><td>${data.ztplayed}</td></tr>
+        <tr><th>Total Wins</th><td>${data.ztwins}</td></tr>
+        <tr><th>Total Stars</th><td>${data.ztstars}</td></tr>
+        <tr><th>Total Streak</th><td>${data.ztstreak}</td></tr>
 
-        result.innerHTML = "No action yet.";
-        document.getElementById("playerName").value = "";
-        oldestTable.innerHTML = "";
-        lastShownDocs = [];
+        <tr><th>⭐ Breakdown</th>
+            <td>
+                ⭐1×${data.zzstar1} &nbsp;
+                ⭐2×${data.zzstar2} &nbsp;
+                ⭐3×${data.zzstar3} &nbsp;
+                ⭐4×${data.zzstar4} &nbsp;
+                ⭐5×${data.zzstar5} &nbsp;
+                ❌×${data.zzstarx}
+            </td>
+        </tr>
+
+        <tr>
+            <th>Actions</th>
+            <td>
+                <span class="delete-icon" onclick="deletePlayer()">🗑️</span>
+                <span class="update-icon" onclick="updateDynamite()">💣</span>
+            </td>
+        </tr>
+    </table>`;
+}
+
+/* ---------------------------------------------------------
+   Player Lookup
+--------------------------------------------------------- */
+async function findPlayer() {
+    const name = document.getElementById("playerName").value.trim();
+    if (!name) return;
+
+    const q = query(
+        collection(db, "leaderboard"),
+        where("name", "==", name),
+        limit(1)
+    );
+
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+        result.innerHTML = "Player not found.";
+        lastFoundDoc = null;
+        return;
+    }
+
+    lastFoundDoc = snap.docs[0];
+    result.innerHTML = renderTable(lastFoundDoc.data());
+}
+
+function clearPlayerSearch() {
+    result.innerHTML = "No action yet.";
+    lastFoundDoc = null;
+    document.getElementById("playerName").value = "";
+}
+
+/* ---------------------------------------------------------
+   Delete Player
+--------------------------------------------------------- */
+async function deletePlayerById(id) {
+    const ok = confirm(`Delete player "${id}" permanently?`);
+    if (!ok) return;
+
+    await deleteDoc(doc(db, "leaderboard", id));
+
+    const row = document.getElementById("row-" + id);
+    if (row) row.remove();
+}
+
+async function deletePlayer() {
+    if (!lastFoundDoc) return alert("Find a player first.");
+    await deletePlayerById(lastFoundDoc.id);
+    result.innerHTML = "Player deleted.";
+    lastFoundDoc = null;
+}
+
+/* ---------------------------------------------------------
+   Update Dynamite
+--------------------------------------------------------- */
+async function updateDynamite() {
+    if (!lastFoundDoc) return alert("Find a player first.");
+
+    const newValue = prompt("New dynamite count:");
+    if (newValue === null) return;
+
+    await updateDoc(lastFoundDoc.ref, { dynamite: Number(newValue) });
+    result.innerHTML = "Dynamite updated.";
+}
+
+/* ---------------------------------------------------------
+   Oldest/Newest/Previous Month Queries
+--------------------------------------------------------- */
+function clearOldest() {
+    oldestTable.innerHTML = "";
+    lastShownDocs = [];
+}
+
+async function deleteAllShown() {
+    if (lastShownDocs.length === 0) return alert("No records to delete.");
+    if (!confirm(`Delete all ${lastShownDocs.length} shown records permanently?`)) return;
+
+    for (const id of lastShownDocs) {
+        await deleteDoc(doc(db, "leaderboard", id));
+    }
+
+    oldestTable.innerHTML = "";
+    lastShownDocs = [];
+}
+
+async function loadOldest() {
+    const q = query(
+        collection(db, "leaderboard"),
+        orderBy("updated", "asc"),
+        limit(25)
+    );
+
+    const snap = await getDocs(q);
+    renderListResults(snap);
+}
+
+async function loadNewest() {
+    const q = query(
+        collection(db, "leaderboard"),
+        orderBy("updated", "desc"),
+        limit(25)
+    );
+
+    const snap = await getDocs(q);
+    renderListResults(snap);
+}
+
+async function loadPreviousMonth() {
+    const now = new Date();
+    const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+    const q = query(
+        collection(db, "leaderboard"),
+        where("updated", "<", prevMonth),
+        orderBy("updated", "asc"),
+        limit(50)
+    );
+
+    const snap = await getDocs(q);
+    renderListResults(snap);
+}
+
+/* ---------------------------------------------------------
+   Render List Results (shared)
+--------------------------------------------------------- */
+function renderListResults(snap) {
+    lastShownDocs = [];
+
+    let html = `
+    <table class="oldest-table">
+        <tr>
+            <th>Name</th>
+            <th>Stars</th>
+            <th>Wins</th>
+            <th>Played</th>
+            <th>Updated</th>
+            <th></th>
+        </tr>
+    `;
+
+    snap.forEach(docSnap => {
+        const d = docSnap.data();
+        lastShownDocs.push(docSnap.id);
+
+        html += `
+        <tr id="row-${docSnap.id}">
+            <td>${d.name}</td>
+            <td>${d.stars}</td>
+            <td>${d.wins}</td>
+            <td>${d.played}</td>
+            <td>${formatTS(d.updated)}</td>
+            <td><span class="delete-icon" onclick="deletePlayerById('${docSnap.id}')">🗑️</span></td>
+        </tr>`;
     });
 
-    function formatTS(ts) {
-        if (!ts) return "-";
-        const d = ts.toDate();
-        return d.toLocaleString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: true
-        }).replace(",", " at");
-    }
+    html += "</table>";
+    oldestTable.innerHTML = html;
+}
 
-    function renderTable(data) {
-        return `
-        <table class="player-table">
-            <tr><th>Name</th><td>${data.name}</td></tr>
-            <tr><th>Played</th><td>${data.played}</td></tr>
-            <tr><th>Wins</th><td>${data.wins}</td></tr>
-            <tr><th>Win %</th><td>${data.winpct}%</td></tr>
-            <tr><th>Stars</th><td>${data.stars}</td></tr>
-            <tr><th>Dynamite</th><td>${data.dynamite}</td></tr>
-            <tr><th>Updated</th><td>${formatTS(data.updated)}</td></tr>
+/* ---------------------------------------------------------
+   Expose functions to HTML
+--------------------------------------------------------- */
+window.findPlayer = findPlayer;
+window.clearPlayerSearch = clearPlayerSearch;
+window.deletePlayer = deletePlayer;
+window.updateDynamite = updateDynamite;
+window.loadOldest = loadOldest;
+window.loadNewest = loadNewest;
+window.loadPreviousMonth = loadPreviousMonth;
+window.clearOldest = clearOldest;
+window.deleteAllShown = deleteAllShown;
+window.deletePlayerById = deletePlayerById;
 
-            <tr><th>Total Played</th><td>${data.ztplayed}</td></tr>
-            <tr><th>Total Wins</th><td>${data.ztwins}</td></tr>
-            <tr><th>Total Stars</th><td>${data.ztstars}</td></tr>
-            <tr><th>Total Streak</th><td>${data.ztstreak}</td></tr>
-
-            <tr><th>⭐ Breakdown</th>
-                <td>
-                    ⭐1×${data.zzstar1} &nbsp;
-                    ⭐2×${data.zzstar2} &nbsp;
-                    ⭐3×${data.zzstar3} &nbsp;
-                    ⭐4×${data.zzstar4} &nbsp;
-                    ⭐5×${data.zzstar5} &nbsp;
-                    ❌×${data.zzstarx}
-                </td>
-            </tr>
-
-            <tr>
-                <th>Actions</th>
-                <td>
-                    <span class="delete-icon" onclick="deletePlayer()">🗑️</span>
-                    <span class="update-icon" onclick="updateDynamite()">💣</span>
-                </td>
-            </tr>
-        </table>`;
-    }
-
-    async function findPlayer() {
-        const name = document.getElementById("playerName").value.trim();
-        if (!name) return;
-
-        const q = query(collection(db, "leaderboard"), where("name", "==", name), limit(1));
-        const snap = await getDocs(q);
-
-        if (snap.empty) {
-            result.innerHTML = "Player not found.";
-            lastFoundDoc = null;
-            return;
-        }
-
-        lastFoundDoc = snap.docs[0];
-        result.innerHTML = renderTable(lastFoundDoc.data());
-    }
-
-    function clearPlayerSearch() {
-        result.innerHTML = "No action yet.";
-        lastFoundDoc = null;
-        document.getElementById("playerName").value = "";
-    }
-
-    async function deletePlayerById(id) {
-        const ok = confirm(`Delete player "${id}" permanently`);
-        if (!ok) return;
-
-        await deleteDoc(doc(db, "leaderboard", id));
-
-        const row = document.getElementById("row-" + id);
-        if (row) row.remove();
-    }
-
-    async function deletePlayer() {
-        if (!lastFoundDoc) return alert("Find a player first.");
-        await deletePlayerById(lastFoundDoc.id);
-        result.innerHTML = "Player deleted.";
-        lastFoundDoc = null;
-    }
-
-    async function updateDynamite() {
-        if (!lastFoundDoc) return alert("Find a player first.");
-        const newValue = prompt("New dynamite count:");
-        if (newValue === null) return;
-        await updateDoc(lastFoundDoc.ref, { dynamite: Number(newValue) });
-        result.innerHTML = "Dynamite updated.";
-    }
-
-    function clearOldest() {
-        oldestTable.innerHTML = "";
-        lastShownDocs = [];
-    }
-
-    async function deleteAllShown() {
-        if (lastShownDocs.length === 0) return alert("No records to delete.");
-        if (!confirm(`Delete all ${lastShownDocs.length} shown records permanently`)) return;
-
-        for (const id of lastShownDocs) {
-            await deleteDoc(doc(db, "leaderboard", id));
-        }
-
-        oldestTable.innerHTML = "";
-        lastShownDocs = [];
-    }
-
-    async function loadOldest() {
-        const q = query(collection(db, "leaderboard"), orderBy("updated", "asc"), limit(25));
-        const snap = await getDocs(q);
-
-        lastShownDocs = [];
-
-        let html = `
-        <table class="oldest-table">
-            <tr>
-                <th>Name</th>
-                <th>Stars</th>
-                <th>Wins</th>
-                <th>Played</th>
-                <th>Updated</th>
-                <th></th>
-            </tr>
-        `;
-
-        snap.forEach(docSnap => {
-            const d = docSnap.data();
-            lastShownDocs.push(docSnap.id);
-
-            html += `
-            <tr id="row-${docSnap.id}">
-                <td>${d.name}</td>
-                <td>${d.stars}</td>
-                <td>${d.wins}</td>
-                <td>${d.played}</td>
-                <td>${formatTS(d.updated)}</td>
-                <td><span class="delete-icon" onclick="deletePlayerById('${docSnap.id}')">🗑️</span></td>
-            </tr>`;
-        });
-
-        html += "</table>";
-        oldestTable.innerHTML = html;
-    }
-
-    async function loadNewest() {
-        const q = query(collection(db, "leaderboard"), orderBy("updated", "desc"), limit(25));
-        const snap = await getDocs(q);
-
-        lastShownDocs = [];
-
-        let html = `
-        <table class="oldest-table">
-            <tr>
-                <th>Name</th>
-                <th>Stars</th>
-                <th>Wins</th>
-                <th>Played</th>
-                <th>Updated</th>
-                <th></th>
-            </tr>
-        `;
-
-        snap.forEach(docSnap => {
-            const d = docSnap.data();
-            lastShownDocs.push(docSnap.id);
-
-            html += `
-            <tr id="row-${docSnap.id}">
-                <td>${d.name}</td>
-                <td>${d.stars}</td>
-                <td>${d.wins}</td>
-                <td>${d.played}</td>
-                <td>${formatTS(d.updated)}</td>
-                <td><span class="delete-icon" onclick="deletePlayerById('${docSnap.id}')">🗑️</span></td>
-            </tr>`;
-        });
-
-        html += "</table>";
-        oldestTable.innerHTML = html;
-    }
-
-    async function loadPreviousMonth() {
-        const now = new Date();
-        const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-
-        const q = query(
-            collection(db, "leaderboard"),
-            where("updated", "<", prevMonth),
-            orderBy("updated", "asc"),
-            limit(50)
-        );
-
-        const snap = await getDocs(q);
-
-        lastShownDocs = [];
-
-        let html = `
-        <table class="oldest-table">
-            <tr>
-                <th>Name</th>
-                <th>Stars</th>
-                <th>Wins</th>
-                <th>Played</th>
-                <th>Updated</th>
-                <th></th>
-            </tr>
-        `;
-
-        snap.forEach(docSnap => {
-            const d = docSnap.data();
-            lastShownDocs.push(docSnap.id);
-
-            html += `
-            <tr id="row-${docSnap.id}">
-                <td>${d.name}</td>
-                <td>${d.stars}</td>
-                <td>${d.wins}</td>
-                <td>${d.played}</td>
-                <td>${formatTS(d.updated)}</td>
-                <td><span class="delete-icon" onclick="deletePlayerById('${docSnap.id}')">🗑️</span></td>
-            </tr>`;
-        });
-
-        html += "</table>";
-        oldestTable.innerHTML = html;
-    }
-
-    window.googleLogin = googleLogin;
-    window.logout = logout;
-    window.findPlayer = findPlayer;
-    window.clearPlayerSearch = clearPlayerSearch;
-    window.deletePlayer = deletePlayer;
-    window.updateDynamite = updateDynamite;
-    window.loadOldest = loadOldest;
-    window.loadNewest = loadNewest;
-    window.loadPreviousMonth = loadPreviousMonth;
-    window.clearOldest = clearOldest;
-    window.deleteAllShown = deleteAllShown;
-    window.deletePlayerById = deletePlayerById;
 </script>
-
 </body>
 </html>
