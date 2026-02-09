@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.08.05";
+const BUILD_VERSION = "2025.02.09.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -28,8 +28,6 @@ function pauseMomentumTimer() {
 function resumeMomentumTimer() {
     isPaused = false;
 }
-
-localStorage.setItem("cldynamiteUsedThisRound", "false");
 
 //Confetti Begin
 btnParty.addEventListener("click", () => {
@@ -628,7 +626,7 @@ async function loadLeaderboard() {
 		document.getElementById("nrNote").style.display = "none"; 
         if (inTop5) return;
 
-        // --- 4. Read TOP 50 ---
+        // --- 4. Read TOP 100 ---
         const top100Q = query(
             collection(db, "leaderboard"),
             where("month", "==", monthKey),
@@ -643,10 +641,20 @@ async function loadLeaderboard() {
         const top100 = [];
         top100Snap.forEach(docSnap => top100.push({ id: docSnap.id, ...docSnap.data() }));
 
-        // --- 5. Check if user is in top 50 ---
+        // --- 5. Check if user is in top 100 ---
         const idx = top100.findIndex(p => p.id === currentUID);
 
 	if (idx === -1) {
+		// --- A. Spacer row with three vertical dots ---
+		const spacer = document.createElement("tr");
+		spacer.innerHTML = `
+			<td style="text-align:center;">⋮</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		`;
+		leaderboardBody.appendChild(spacer);		
 		// --- A. Show the 100th ranked player as row 6 ---
 		const last = top100[top100.length - 1]; // the 100th player
 
@@ -681,7 +689,7 @@ async function loadLeaderboard() {
 			document.getElementById("nrNote").style.display = "none"; 
 			}
 
-        // --- 6. User IS in top 50 → compute tie-aware rank ---
+        // --- 6. User IS in top 100 → compute tie-aware rank ---
         let rank = 1;
         for (let i = 0; i < top100.length; i++) {
             if (i > 0) {
@@ -702,6 +710,18 @@ async function loadLeaderboard() {
         const d = top100[idx];
 
         // --- 7. Render user row as the extra entry ---
+				// --- A. Spacer row with three vertical dots ---
+		if (rank >= 7) {		
+			const spacer = document.createElement("tr");
+			spacer.innerHTML = `
+				<td style="text-align:center;">⋮</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			`;
+			leaderboardBody.appendChild(spacer);
+		}
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${
@@ -960,6 +980,7 @@ if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('game
         localStorage.setItem("momentumStart", Date.now());
         localStorage.setItem("momentumRemaining", 60);
     }
+	localStorage.setItem("cldynamiteUsedThisRound", "false");
     // location.reload();
 }
 
@@ -2697,6 +2718,20 @@ function onConsonantSolved() {
 
 }
 
+function shouldRunDynamitesToday() {
+    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    const lastRun = localStorage.getItem("dynamitesLastRun");
+
+    if (lastRun === today) {
+        return false; // already ran today
+    }
+
+    // mark today as run
+    localStorage.setItem("dynamitesLastRun", today);
+    return true;
+}
+
+
 //Chart Code
 color0 = "brown"
 color1 = "brown"
@@ -2753,7 +2788,9 @@ window.onload = function() {
 			initialize();
 
 			// Load dynamites after Firestore is ready
-			setTimeout(() => loaddynamites(), 50);
+			if (shouldRunDynamitesToday()) {
+				setTimeout(() => loaddynamites(), 50);
+			}
 		});
     UpdateChart();
 }
