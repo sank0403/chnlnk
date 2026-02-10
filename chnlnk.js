@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.09.01";
+const BUILD_VERSION = "2025.02.10.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -413,7 +413,24 @@ async function submitLeaderboardEntry(playerName) {
         const ref = doc(db, "leaderboard", playerId);
         const snap = await getDoc(ref);
 
-        let updates = {
+        if (snap.exists()) {
+            const old = snap.data();
+
+            const statsChanged =
+                old.stars !== stars ||
+                old.wins !== wins ||
+                old.played !== played;
+
+            const monthChanged = old.month !== monthKey;
+
+            // 🚫 Skip write if nothing changed
+            if (!statsChanged && !monthChanged) {
+                return;
+            }
+        }
+
+        // If here → first write OR stats changed OR month changed
+        const updates = {
             name: playerName,
             played,
             stars,
@@ -430,25 +447,9 @@ async function submitLeaderboardEntry(playerName) {
             zzstar3,
             zzstar4,
             zzstar5,
-            zzstarx
+            zzstarx,
+            updated: serverTimestamp()
         };
-
-        if (snap.exists()) {
-            const old = snap.data();
-
-            const statsChanged =
-                old.stars !== stars ||
-                old.wins !== wins ||
-                old.played !== played;
-
-            if (statsChanged) {
-                updates.updated = serverTimestamp();
-            }
-            // else: do NOT include updated → Firestore keeps old timestamp
-        } else {
-            // First time writing → must set updated
-            updates.updated = serverTimestamp();
-        }
 
         await setDoc(ref, updates, { merge: true });
 
@@ -456,6 +457,7 @@ async function submitLeaderboardEntry(playerName) {
         console.error("Error saving leaderboard entry:", err);
     }
 }
+
 
 let leaderboardLoadedThisSession = false;
 
