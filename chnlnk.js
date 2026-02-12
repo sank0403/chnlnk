@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.10.01";
+const BUILD_VERSION = "2025.02.11.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -2721,17 +2721,25 @@ function onConsonantSolved() {
 }
 
 function shouldRunDynamitesToday() {
-    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    const d = new Date();
+
+    // Local YYYY-MM-DD
+    const today =
+        d.getFullYear() + "-" +
+        String(d.getMonth() + 1).padStart(2, "0") + "-" +
+        String(d.getDate()).padStart(2, "0");
+
     const lastRun = localStorage.getItem("dynamitesLastRun");
 
     if (lastRun === today) {
-        return false; // already ran today
+        return false; // already ran today (local)
     }
 
     // mark today as run
     localStorage.setItem("dynamitesLastRun", today);
     return true;
 }
+
 
 
 //Chart Code
