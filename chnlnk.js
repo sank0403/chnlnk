@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.12.01";
+const BUILD_VERSION = "2025.02.12.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -2381,37 +2381,191 @@ function closepastmodal(pastmodal) {
     overlay4.classList.remove('active')
 }
 
+
+function normalize(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
 function playArchive() {
-    const div = document.getElementById("archiveboard");
-    div.innerHTML = ""; // Clears all child elements	
-    for (let q = days - 1; q >= 1; q--) {
-        // <span id="0-0" class="tile">P</span>
-        let archivetile = document.createElement("span");
-        archivetile.id = "archtile-" + q.toString();
-        archivetile.classList.add("archivetile");
-        archivetile.innerText = "Day " + q;
-        if ((localStorage.getItem('gameovercl' + q) == "1")) {
-            if ((localStorage.getItem('gamestatcl' + q) == "1")) {
-                archivetile.classList.add("correctarch");
-            } else if ((localStorage.getItem('gamestatcl' + q) == "0")) {
-                archivetile.classList.add("failedarch");
-            } else if ((localStorage.getItem('gamestatcl' + q) === null)) {
-                archivetile.classList.add("correctarch");
-            }
-        } else if ((localStorage.getItem('archovercl' + q) == "1")) {
-            if ((localStorage.getItem('archstatcl' + q) == "1")) {
-                archivetile.classList.add("correctarch");
-            } else {
-                archivetile.classList.add("failedarch");
+    const board = document.getElementById("archiveboard");
+    board.innerHTML = "";
+
+    const today = new Date();
+    const todayNorm = normalize(today);
+
+    const archiveEnd = days - 1; // yesterday's day number
+    let currentDayNumber = archiveEnd;
+
+    // Start at yesterday
+    let cursor = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+
+    // ⭐ Collect months first
+    const monthNodes = [];
+
+    while (currentDayNumber >= 1) {
+        const year = cursor.getFullYear();
+        const month = cursor.getMonth();
+
+        const monthDiv = document.createElement("div");
+        monthDiv.classList.add("month");
+
+        const title = document.createElement("div");
+        title.classList.add("month-title");
+        title.innerText = cursor.toLocaleString("default", { month: "long" }) + " " + year;
+        monthDiv.appendChild(title);
+
+        const grid = document.createElement("div");
+        grid.classList.add("calendar-grid");
+
+        const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        dayNames.forEach(d => {
+            const dn = document.createElement("div");
+            dn.classList.add("day-name");
+            dn.innerText = d;
+            grid.appendChild(dn);
+        });
+
+        const firstOfMonth = new Date(year, month, 1);
+        const startOffset = firstOfMonth.getDay();
+
+        for (let i = 0; i < startOffset; i++) {
+            const empty = document.createElement("div");
+            empty.classList.add("day", "disabled");
+            grid.appendChild(empty);
+        }
+
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        // ⭐ FIRST PASS: collect all valid dates (dates before today)
+        const validDates = [];
+        for (let d = 1; d <= daysInMonth; d++) {
+            const cellDate = new Date(year, month, d);
+            const cellNorm = normalize(cellDate);
+
+            if (cellNorm < todayNorm) {
+                validDates.push(d);
             }
         }
-        const link = document.createElement("a");
-        link.href = `archive.html?q=${q}`;
-        link.target = "_blank"; // ← opens in a new tab/window
-        link.appendChild(archivetile);
-        document.getElementById("archiveboard").appendChild(link);
+
+        // ⭐ SECOND PASS: assign archive day numbers BACKWARD
+        const mapping = {};
+        for (let i = validDates.length - 1; i >= 0; i--) {
+            if (currentDayNumber < 1) break;
+            mapping[validDates[i]] = currentDayNumber--;
+        }
+
+        // ⭐ THIRD PASS: render calendar normally (1 → 31)
+        for (let d = 1; d <= daysInMonth; d++) {
+            const cellDate = new Date(year, month, d);
+            const cellNorm = normalize(cellDate);
+
+            if (cellNorm >= todayNorm) {
+                const empty = document.createElement("div");
+                empty.classList.add("day", "disabled");
+                grid.appendChild(empty);
+                continue;
+            }
+
+            if (!(d in mapping)) {
+                const empty = document.createElement("div");
+                empty.classList.add("day", "disabled");
+                empty.style.visibility = "hidden";
+                empty.style.pointerEvents = "none";
+                grid.appendChild(empty);
+                continue;
+            }
+
+            const q = mapping[d];
+
+            const link = document.createElement("a");
+            link.classList.add("day", "clickable");
+            link.dataset.day = q;
+            link.href = `archive.html?q=${q}`;
+            link.target = "_blank";
+            link.innerText = d;
+
+            const over1 = localStorage.getItem("archovercl" + q);
+            const stat1 = localStorage.getItem("archstatcl" + q);
+            const over2 = localStorage.getItem("gameovercl" + q);
+            const stat2 = localStorage.getItem("gamestatcl" + q);
+
+            if (over2 === "1") {
+                link.classList.add(stat2 === "0" ? "failedarch" : "correctarch");
+            } else if (over1 === "1") {
+                link.classList.add(stat1 === "1" ? "correctarch" : "failedarch");
+            }
+
+            grid.appendChild(link);
+        }
+
+        monthDiv.appendChild(grid);
+        monthNodes.push(monthDiv);
+
+        cursor.setMonth(cursor.getMonth() - 1);
+        cursor.setDate(1);
     }
+
+    // ⭐ DOM order: oldest → newest (Jan → Feb)
+    monthNodes.reverse().forEach(m => board.appendChild(m));
+
+    // ⭐ Initialize slider AFTER months exist
+    setupMonthNavigation();
 }
+
+
+
+let currentMonthIndex = 0;
+
+function setupMonthNavigation() {
+    const board = document.getElementById("archiveboard");
+    const months = board.querySelectorAll(".month");
+    if (!months.length) return;
+
+    // ⭐ Start at newest month (rightmost)
+    currentMonthIndex = months.length - 1;
+    updateMonthPosition();
+
+    const prevBtn = document.getElementById("prev-month");
+    const nextBtn = document.getElementById("next-month");
+
+    function updateButtons() {
+        prevBtn.disabled = currentMonthIndex === 0;                     // Jan
+        nextBtn.disabled = currentMonthIndex === months.length - 1;    // Feb
+    }
+
+    updateButtons();
+
+    // ⭐ < goes to OLDER (left)
+    prevBtn.onclick = () => {
+        if (currentMonthIndex > 0) {
+            currentMonthIndex--;
+            updateMonthPosition();
+            updateButtons();
+        }
+    };
+
+    // ⭐ > goes to NEWER (right)
+    nextBtn.onclick = () => {
+        if (currentMonthIndex < months.length - 1) {
+            currentMonthIndex++;
+            updateMonthPosition();
+            updateButtons();
+        }
+    };
+}
+
+function updateMonthPosition() {
+    const board = document.getElementById("archiveboard");
+    const months = board.querySelectorAll(".month");
+    if (!months.length) return;
+
+    const monthWidth = months[0].offsetWidth; // ⭐ actual width
+    const offset = currentMonthIndex * monthWidth;
+
+    board.style.transform = `translateX(-${offset}px)`;
+}
+
+
 
 function modalhide() {
     document.getElementById("boardfirst").style.visibility = "hidden";
@@ -2819,11 +2973,11 @@ function refreshArchiveModal() {
     const board = document.getElementById("archiveboard");
     if (!board) return;
 
-    // Select all archive tiles by their class
-    const tiles = board.querySelectorAll("span.archivetile");
+    // Select all clickable archive tiles
+    const tiles = board.querySelectorAll(".day.clickable");
 
     tiles.forEach(tile => {
-        const q = tile.id.replace("archtile-", ""); // extract day number
+        const q = tile.dataset.day; // ⭐ correct day number
 
         // Clear old classes
         tile.classList.remove("correctarch", "failedarch");
@@ -2833,22 +2987,17 @@ function refreshArchiveModal() {
         const stat1 = localStorage.getItem("archstatcl" + q);
         const over2 = localStorage.getItem("gameovercl" + q);
         const stat2 = localStorage.getItem("gamestatcl" + q);
+
         // Apply new state
         if (over2 === "1") {
-            if (stat2 === "0") {
-                tile.classList.add("failedarch");
-            } else {
-                tile.classList.add("correctarch");
-            }
+            tile.classList.add(stat2 === "0" ? "failedarch" : "correctarch");
         } else if (over1 === "1") {
-            if (stat1 === "1") {
-                tile.classList.add("correctarch");
-            } else {
-                tile.classList.add("failedarch");
-            }
+            tile.classList.add(stat1 === "1" ? "correctarch" : "failedarch");
         }
     });
 }
+
+
 
 window.addEventListener("DOMContentLoaded", () => {
     const toggle = document.getElementById("hardmodetoggle");

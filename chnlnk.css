@@ -841,32 +841,119 @@ input:checked+.slider:before {
     justify-content: center;
 }
 
-
-#archiveboard {
+/* === ARCHIVE LAYOUT WRAPPER === */
+#archive-wrapper {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    /* rows start from the left */
-    width: 345px;
-    /* pick a width that fits N tiles per row */
-    margin: 0 auto;
-    /* center the board as a block */
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
 }
 
+/* === SCROLLER: responsive width, no scrollbars === */
+#archive-scroller {
+    width: 100%;
+    max-width: 320px;     /* calendar scales down on small screens */
+    overflow: hidden;
+}
 
-.archivetile {
-    border: 2px solid lightgray;
-    border-radius: 5px;
-    width: 45px;
-    height: 45px;
-    margin: 7px;
+/* === BOARD: horizontal slider === */
+#archiveboard {
+    display: flex;
+    flex-direction: row;
+    transition: transform 0.25s ease;
+    min-height: 210px;    /* prevents collapse */
+}
+
+/* === MONTH CONTAINER === */
+.month {
+    width: 100%;
+    min-width: 100%;      /* ensures perfect slider alignment */
+    flex-shrink: 0;
+    background: #111;
+    border-radius: 6px;
+    padding: 4px;
+    border: 1px solid #222;
+}
+
+/* === MONTH TITLE === */
+.month-title {
+    text-align: center;
+    font-size: clamp(10px, 3vw, 14px);
     color: white;
-    font-size: 12px;
-    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+/* === GRID === */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+/* === DAY NAME LABELS === */
+.day-name {
+    text-align: center;
+    color: #888;
+    font-size: clamp(7px, 2vw, 10px);
+}
+
+/* === DAY BASE STYLE === */
+.day,
+.day.clickable,
+.day.disabled {
+    aspect-ratio: 1 / 1;
+    border-radius: 3px;
+    font-size: clamp(8px, 2.5vw, 12px);
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
+/* === CLICKABLE DAY === */
+.day.clickable {
+    border: 1px solid lightgray;
+    background: #1a1a1a;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    transition: transform 0.15s ease;
+}
+
+.day.clickable:hover {
+    transform: scale(1.05);
+    background: #222;
+}
+
+/* === DISABLED DAY === */
+.day.disabled {
+    background: #1a1a1a33;
+}
+
+/* === CORRECT / FAILED === */
+.correctarch {
+    background-color: #6AAA64 !important;
+    color: white !important;
+    border-color: white !important;
+}
+
+.failedarch {
+    background-color: #FF0000 !important;
+    color: white !important;
+    border-color: white !important;
+}
+
+/* === NAV BUTTONS === */
+.nav-btn {
+    background: #222;
+    color: white;
+    border: none;
+    font-size: 20px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
 
 /* #boardlast1 {
 
@@ -1277,12 +1364,6 @@ div.scroll {
   /* pointer-events: none; */
 }
 
-.correctarch {
-    background-color: #6AAA64;
-    color: white;
-    border-color: white;
-}
-
 .starting {
     background-color: #555;
     color: white;
@@ -1340,11 +1421,7 @@ div.scroll {
   /* pointer-events: none; */
 }
 
-.failedarch {
-    background-color: #FF0000;
-    color: white;
-    border-color: white;
-}
+
 
 .easyguess {
     background-color: black;
