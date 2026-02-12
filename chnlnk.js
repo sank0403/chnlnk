@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.11.01";
+const BUILD_VERSION = "2025.02.12.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -1248,12 +1248,12 @@ function showPerfectSolve() {
     if (localStorage.clhardmode == 1) {
         box.innerHTML = `
 			<div class="perfect-burst"></div>
-			<div class="perfect-text">👌 PERFECT SOLVE +2 💣</div>
+			<div class="perfect-text">👌 PERFECT SOLVE +3 💣</div>
 		`;
     } else {
         box.innerHTML = `
 			<div class="perfect-burst"></div>
-			<div class="perfect-text">👌 PERFECT SOLVE +1 💣</div>
+			<div class="perfect-text">👌 PERFECT SOLVE +2 💣</div>
 		`;
     }
 
@@ -3519,11 +3519,11 @@ function processInput(e) {
                     if (localStorage.clhardmode == 1) {
                         localStorage.cldynamite = dyn + 2;
                         // document.getElementById("answer").innerText = "PERFECT GUESS! \n YOU GAINED +2 DYNAMITES!";
-                        updateAnswer("Perfect Guess! \N You Gained +2 Dynamites!");
+                        updateAnswer("Perfect Guess! <br> You Gained +2 Dynamites!");
                     } else {
                         localStorage.cldynamite = dyn + 1;
                         // document.getElementById("answer").innerText = "PERFECT GUESS! \n YOU GAINED +1 DYNAMITE!";
-                        updateAnswer("Perfect Guess! \N You Gained +1 Dynamite!");
+                        updateAnswer("Perfect Guess! <br> You Gained +1 Dynamite!");
                     }
                     updateDynamiteUI();
                     showDynamiteAdded();
@@ -3953,9 +3953,9 @@ function processInput(e) {
             // Award dynamite
             let dyn = Number(localStorage.cldynamite || 0);
             if (localStorage.clhardmode == 1) {
-                localStorage.cldynamite = dyn + 2;
+                localStorage.cldynamite = dyn + 3;
             } else {
-                localStorage.cldynamite = dyn + 1;
+                localStorage.cldynamite = dyn + 2;
             }
             updateDynamiteUI();
 
