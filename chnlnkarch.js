@@ -80,7 +80,9 @@ var days = params.get("q");
 if (days >= maxdays) {
     days = maxdays - 1;
 }
-
+if (days <= 0) {
+    days = 1;
+}
 
 function disablevowels() {
     document.getElementById("KeyA").classList.add("disabled");
@@ -321,6 +323,7 @@ var masterwordlist = [
     ["summer", "heat", "wave", "form", "letter", "carrier", "bag", ""],
     ["cotton", "thread", "count", "down", "town", "square", "root", ""],
     ["marble", "statue", "garden", "party", "favor", "box", "office", ""],
+	["code", "red", "cross", "country", "club", "sandwich ", "bag", "Div"],
     ["dragon", "scale", "model", "train", "track", "record", "holder", ""],
     ["pepper", "mill", "worker", "strike", "zone", "call", "center", ""],
     ["harbor", "seal", "team", "captain", "chair", "lift", "ticket", ""],

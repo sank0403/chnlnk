@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.12.02";
+const BUILD_VERSION = "2025.02.12.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -1527,6 +1527,7 @@ var masterwordlist = [
     ["summer", "heat", "wave", "form", "letter", "carrier", "bag", ""],
     ["cotton", "thread", "count", "down", "town", "square", "root", ""],
     ["marble", "statue", "garden", "party", "favor", "box", "office", ""],
+	["code", "red", "cross", "country", "club", "sandwich ", "bag", "Div"],
     ["dragon", "scale", "model", "train", "track", "record", "holder", ""],
     ["pepper", "mill", "worker", "strike", "zone", "call", "center", ""],
     ["harbor", "seal", "team", "captain", "chair", "lift", "ticket", ""],
@@ -2482,8 +2483,10 @@ function playArchive() {
             link.dataset.day = q;
             link.href = `archive.html?q=${q}`;
             link.target = "_blank";
-            link.innerText = d;
-
+			link.innerHTML = `
+				<div class="puzzle-num">#${q}</div>
+				<div class="day-num">${d}</div>
+			`;
             const over1 = localStorage.getItem("archovercl" + q);
             const stat1 = localStorage.getItem("archstatcl" + q);
             const over2 = localStorage.getItem("gameovercl" + q);

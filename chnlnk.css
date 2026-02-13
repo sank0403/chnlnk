@@ -862,18 +862,21 @@ input:checked+.slider:before {
     display: flex;
     flex-direction: row;
     transition: transform 0.25s ease;
-    min-height: 210px;    /* prevents collapse */
 }
 
-/* === MONTH CONTAINER === */
+/* === MONTH CONTAINER (FINAL, RESPONSIVE, NO CLIPPING) === */
+/* === MONTH CONTAINER (FINAL, NO CLIPPING, NO PEEKING) === */
 .month {
-    width: 100%;
-    min-width: 100%;      /* ensures perfect slider alignment */
-    flex-shrink: 0;
-    background: #111;
-    border-radius: 6px;
-    padding: 4px;
+    padding: 4px 0;                 /* vertical padding only */
     border: 1px solid #222;
+    border-radius: 6px;
+    background: #111;
+
+    /* Perfect width: no clipping, no next-month peek */
+    width: calc(100% - 3px);
+    min-width: calc(100% - 3px);
+
+    flex-shrink: 0;                 /* required for slider */
 }
 
 /* === MONTH TITLE === */
@@ -883,6 +886,8 @@ input:checked+.slider:before {
     color: white;
     margin-bottom: 4px;
 }
+
+
 
 /* === GRID === */
 .calendar-grid {
@@ -952,6 +957,39 @@ input:checked+.slider:before {
     padding: 6px 10px;
     border-radius: 6px;
     cursor: pointer;
+}
+
+.nav-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+    filter: grayscale(100%);
+    pointer-events: none;   /* ensures no hover effects */
+}
+
+.nav-btn:disabled:hover {
+    transform: none;        /* prevents hover animations */
+}
+
+
+.puzzle-num {
+    font-size: clamp(7px, 2vw, 11px);
+    opacity: 0.75;
+    margin-bottom: 2px;
+}
+
+
+.day-num {
+    font-size: clamp(10px, 2.8vw, 14px);
+    font-weight: bold;
+}
+
+.day,
+.day.clickable,
+.day.disabled {
+    display: flex;
+    flex-direction: column;   /* forces puzzle-num above day-num */
+    justify-content: center;
+    align-items: center;
 }
 
 
