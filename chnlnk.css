@@ -994,6 +994,15 @@ input:checked+.slider:before {
     align-items: center;
 }
 
+.day.disabled {
+    background-color: #eee;
+    color: #aaa;
+    border: 1px solid #ddd;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+
 
 /* #boardlast1 {
 

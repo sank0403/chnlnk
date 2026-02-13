@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.12.03";
+const BUILD_VERSION = "2025.02.12.04";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -2418,6 +2418,7 @@ function playArchive() {
         const grid = document.createElement("div");
         grid.classList.add("calendar-grid");
 
+        // Weekday labels
         const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         dayNames.forEach(d => {
             const dn = document.createElement("div");
@@ -2426,17 +2427,18 @@ function playArchive() {
             grid.appendChild(dn);
         });
 
+        // Offset for first day of month
         const firstOfMonth = new Date(year, month, 1);
         const startOffset = firstOfMonth.getDay();
 
-        for (let i = 0; i < startOffset; i++) {
-            const empty = document.createElement("div");
-            empty.classList.add("day", "disabled");
-            grid.appendChild(empty);
-        }
-
+		// ⭐ FILLER TILES BEFORE THE 1ST — EMPTY, DISABLED, NO DATE NUMBER
+		for (let i = 0; i < startOffset; i++) {
+			const filler = document.createElement("div");
+			filler.classList.add("day");
+			filler.innerHTML = ""; // no date number
+			grid.appendChild(filler);
+		}
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-
         // ⭐ FIRST PASS: collect all valid dates (dates before today)
         const validDates = [];
         for (let d = 1; d <= daysInMonth; d++) {
@@ -2460,22 +2462,25 @@ function playArchive() {
             const cellDate = new Date(year, month, d);
             const cellNorm = normalize(cellDate);
 
+            // Future dates → disabled
             if (cellNorm >= todayNorm) {
                 const empty = document.createElement("div");
                 empty.classList.add("day", "disabled");
+                empty.innerHTML = `<div class="day-num">${d}</div>`;
                 grid.appendChild(empty);
                 continue;
             }
 
+            // Dates before the archive started → disabled but visible
             if (!(d in mapping)) {
                 const empty = document.createElement("div");
                 empty.classList.add("day", "disabled");
-                empty.style.visibility = "hidden";
-                empty.style.pointerEvents = "none";
+                empty.innerHTML = `<div class="day-num">${d}</div>`;
                 grid.appendChild(empty);
                 continue;
             }
 
+            // Valid archive day
             const q = mapping[d];
 
             const link = document.createElement("a");
@@ -2483,10 +2488,13 @@ function playArchive() {
             link.dataset.day = q;
             link.href = `archive.html?q=${q}`;
             link.target = "_blank";
-			link.innerHTML = `
-				<div class="puzzle-num">#${q}</div>
-				<div class="day-num">${d}</div>
-			`;
+
+            link.innerHTML = `
+                <div class="puzzle-num">#${q}</div>
+                <div class="day-num">${d}</div>
+            `;
+
+            // Apply correct/failed colors
             const over1 = localStorage.getItem("archovercl" + q);
             const stat1 = localStorage.getItem("archstatcl" + q);
             const over2 = localStorage.getItem("gameovercl" + q);
@@ -2514,6 +2522,7 @@ function playArchive() {
     // ⭐ Initialize slider AFTER months exist
     setupMonthNavigation();
 }
+
 
 
 
