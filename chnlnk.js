@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.14.01";
+const BUILD_VERSION = "2025.02.14.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -2117,9 +2117,7 @@ if (localStorage.vowelactive != 1) {
     // document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND.";
 	if (localStorage.getItem("slotmachine") !=1){
 		updateAnswer("Vowels are disabled till all other letters are found!");
-	} else {
-		updateAnswer("Game Resumed.");
-	}
+	} 
 }
 const openModalButtons = document.querySelectorAll('[data-modal-target]')
 const closeModalButtons = document.querySelectorAll('[data-close-button]')
@@ -2999,7 +2997,8 @@ window.onload = function() {
     if (lastAnimate !== today) {
         // Play animation today
         document.getElementById("submitter").classList.add("submitter-fade");
-
+		document.getElementById("top-resources").classList.add("top-slide");
+		document.querySelector(".top-stack").classList.add("top-slide");
         // Store today's date so it won't play again until tomorrow
         localStorage.setItem("AnimationDate", today);
     }

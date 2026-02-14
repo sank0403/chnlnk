@@ -1301,7 +1301,7 @@ div.scroll {
 }
 
 .poptile {
-    animation: dropIn 0.35s ease-out forwards;
+    animation: dropIn 0.5s ease-out forwards;
     border: 2px solid #4b4b4e;
 }
 
@@ -2799,31 +2799,47 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
 
 /* Submitter credit fades in after delay */
 .submitter-fade {
-    display: inline-block; /* REQUIRED for transform animations */
+    display: inline-block;
     opacity: 0;
-    transform: translateX(-40px);
-    animation: submitterBounceIn 1.7s cubic-bezier(.34,1.56,.64,1) forwards;
+    transform: translateX(-50px) scale(0.95);
+    animation: glowImpactColor 0.75s cubic-bezier(.22,1.4,.36,1) forwards;
     animation-delay: 3s;
 }
 
-@keyframes submitterBounceIn {
+@keyframes glowImpactColor {
     0% {
         opacity: 0;
-        transform: translateX(-80px);
+        transform: translateX(-50px) scale(0.95);
+        box-shadow: 0 0 0px rgba(0, 150, 255, 0);
     }
+
+    /* Impact moment */
     55% {
         opacity: 1;
-        transform: translateX(16px);
+        transform: translateX(10px) scale(1.05);
+        box-shadow: 0 0 18px rgba(0, 150, 255, 0.9);
     }
-    75% {
-        transform: translateX(-4px);
+
+    /* HOLD the glow longer */
+    70% {
+        opacity: 1;
+        transform: translateX(6px) scale(1.03);
+        box-shadow: 0 0 18px rgba(0, 150, 255, 0.9);
     }
+
+    /* Recoil */
+    85% {
+        transform: translateX(-3px) scale(1);
+        box-shadow: 0 0 8px rgba(0, 150, 255, 0.5);
+    }
+
+    /* Settle */
     100% {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateX(0) scale(1);
+        box-shadow: 0 0 0px rgba(0, 150, 255, 0);
     }
 }
-
 
 
 /* Connector pop animation */
@@ -2884,14 +2900,14 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
 
 
 /* Slide down from top */
-/* .top-slide { */
-    /* opacity: 0; */
-    /* transform: translateY(-40px); */
-    /* animation: topDown 0.6s ease-out forwards; */
-    /* animation-delay: 0.3s; /* adjust timing if needed */ */
-/* } */
+.top-slide {
+    opacity: 0;
+    transform: translateY(-40px);
+    animation: topDown 0.6s ease-out forwards;
+    animation-delay: 0.3s; /* adjust timing if needed */
+}
 
-/* @keyframes topDown { */
-    /* 0%   { opacity: 0; transform: translateY(-40px); } */
-    /* 100% { opacity: 1; transform: translateY(0); } */
-/* } */
+@keyframes topDown {
+    0%   { opacity: 0; transform: translateY(-40px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
