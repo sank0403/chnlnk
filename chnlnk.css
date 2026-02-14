@@ -1458,6 +1458,20 @@ div.scroll {
   /* pointer-events: none; */
 }
 
+
+/* Wordgy‑style grayscale shimmer */
+.rainbow-spin {
+    animation: grayscaleBG 0.9s linear infinite;
+}
+
+@keyframes grayscaleBG {
+    0%   { background-color: #1a1a1a; } /* deep gray (Wordgy base) */
+    25%  { background-color: #2a2a2a; } /* slightly lighter */
+    50%  { background-color: #3a3a3a; } /* mid gray */
+    75%  { background-color: #2a2a2a; } /* back down */
+    100% { background-color: #1a1a1a; } /* return to base */
+}
+
 .present {
     background-color: #C9B458;
     color: white;
@@ -2816,24 +2830,18 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
     /* Impact moment */
     55% {
         opacity: 1;
-        transform: translateX(10px) scale(1.05);
+        transform: translateX(0px) scale(1.05);
         box-shadow: 0 0 18px rgba(0, 150, 255, 0.9);
     }
 
-    /* HOLD the glow longer */
-    70% {
+    /* Hold glow briefly */
+    75% {
         opacity: 1;
-        transform: translateX(6px) scale(1.03);
-        box-shadow: 0 0 18px rgba(0, 150, 255, 0.9);
+        transform: translateX(0px) scale(1.03);
+        box-shadow: 0 0 14px rgba(0, 150, 255, 0.7);
     }
 
-    /* Recoil */
-    85% {
-        transform: translateX(-3px) scale(1);
-        box-shadow: 0 0 8px rgba(0, 150, 255, 0.5);
-    }
-
-    /* Settle */
+    /* Settle cleanly */
     100% {
         opacity: 1;
         transform: translateX(0) scale(1);
@@ -2869,18 +2877,18 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
 }
 
 /* Slot machine spin effect */
-.slot-spin {
+/* Letter spins in place — no movement */
+.letter.slot-spin {
     animation: slotSpin 0.4s linear infinite;
     opacity: 0.9;
 }
 
 @keyframes slotSpin {
-    0%   { transform: translateY(0); }
-    25%  { transform: translateY(-3px); }
-    50%  { transform: translateY(0); }
-    75%  { transform: translateY(3px); }
-    100% { transform: translateY(0); }
+    0%   { transform: rotateX(0deg);   opacity: 0.6; }
+    50%  { transform: rotateX(90deg);  opacity: 0.3; }
+    100% { transform: rotateX(180deg); opacity: 0.6; }
 }
+
 
 /* Final pop when letter locks in */
 .slot-lock {

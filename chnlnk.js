@@ -1,12 +1,12 @@
 // FIRST VISIT CHECK (must run before any reload logic)
 if (!localStorage.clshowrules) {
     localStorage.setItem("clshowrules", 1);
-    setTimeout(OpenRules, 3500);
+    setTimeout(OpenRules, 5000);
     // Prevent deployment reload from firing on first visit
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.14.03";
+const BUILD_VERSION = "2025.02.14.04";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -2955,25 +2955,53 @@ function UpdateChart() {
 // =========================
 // SLOT MACHINE REVEAL FX
 // =========================
+// ⭐ SLOT MACHINE FUNCTION — LETTER SPIN + TILE RAINBOW
 function revealSlotMachineRow(rowId, finalWord, delayStart = 0) {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const tiles = document.querySelectorAll(`#${rowId} .tile, #${rowId} .voweltile, #${rowId} .tilesmall, #${rowId} .voweltilesmall`);
+
+    const tiles = document.querySelectorAll(
+        `#${rowId} .tile, #${rowId} .voweltile, #${rowId} .tilesmall, #${rowId} .voweltilesmall`
+    );
 
     tiles.forEach((tile, index) => {
+
+        // Ensure tile has a .letter span
+        let letterSpan = tile.querySelector(".letter");
+        if (!letterSpan) {
+            const span = document.createElement("span");
+            span.classList.add("letter");
+            span.textContent = tile.textContent.trim();
+            tile.textContent = "";
+            tile.appendChild(span);
+            letterSpan = span;
+        }
+
         setTimeout(() => {
 
-            tile.classList.remove("tile-hidden");   // ← SHOW TEXT DURING SPIN
-            tile.classList.add("slot-spin");
+            // Show tile + start rainbow
+            tile.classList.remove("tile-hidden");
+            tile.classList.add("rainbow-spin");
 
+            // Start letter spin
+            letterSpan.classList.add("slot-spin");
+
+            // Randomize letters during spin
             let spinInterval = setInterval(() => {
-                tile.innerText = letters[Math.floor(Math.random() * letters.length)];
+                letterSpan.textContent = letters[Math.floor(Math.random() * letters.length)];
             }, 40);
 
+            // Stop spinning and lock final letter
             setTimeout(() => {
                 clearInterval(spinInterval);
-                tile.classList.remove("slot-spin");
-                tile.innerText = finalWord[index];
-                tile.classList.add("slot-lock");
+
+                letterSpan.classList.remove("slot-spin");
+                letterSpan.textContent = finalWord[index];
+                letterSpan.classList.add("slot-lock");
+
+                // Stop rainbow + return to gray
+                tile.classList.remove("rainbow-spin");
+                tile.style.backgroundColor = "#555"; // your normal gray
+
             }, 350 + index * 120);
 
         }, delayStart + index * 80);
@@ -3013,17 +3041,23 @@ window.onload = function() {
 
         // Initialize game
         initialize();
-		if (localStorage.getItem('gameovercl' + days) == 0 && localStorage.getItem("slotmachine") !=1){ 
+		// Run slot machine only once per day
+		if (localStorage.getItem('gameovercl' + days) == 0 && localStorage.getItem("slotmachine") != 1) {
+
 			// Hide letters for slot-machine rows
-			document.querySelectorAll("#boardfirst .tile, #boardfirst .voweltile , #boardfirst .tilesmall , #boardfirst .voweltilesmall" ).forEach(t => t.classList.add("tile-hidden"));
-			document.querySelectorAll("#boardlast .tile, #boardlast .voweltile , #boardlast .tilesmall , #boardlast .voweltilesmall").forEach(t => t.classList.add("tile-hidden"));
-			// 🔥 ADD THIS — run slot machine after intro animations
+			document.querySelectorAll("#boardfirst .tile, #boardfirst .voweltile, #boardfirst .tilesmall, #boardfirst .voweltilesmall")
+				.forEach(t => t.classList.add("tile-hidden"));
+
+			document.querySelectorAll("#boardlast .tile, #boardlast .voweltile, #boardlast .tilesmall, #boardlast .voweltilesmall")
+				.forEach(t => t.classList.add("tile-hidden"));
+
+			// Run slot machine after intro animations
 			setTimeout(() => {
 				revealSlotMachineRow("boardfirst", wordone);
 				revealSlotMachineRow("boardlast", wordlast, 200);
-			}, 1000); 
+			}, 1000);
+
 			localStorage.setItem("slotmachine", 1);
-			// 1000ms = after fade‑in + connector pop sequence
 		}
         // Load dynamites after Firestore is ready
         if (shouldRunDynamitesToday()) {
@@ -3927,17 +3961,22 @@ function processInput(e) {
                 }
                 // setTimeout(function() {
                 tile.innerText = "";
-                tile.classList.add("popanswer");
+                // tile.classList.add("popanswer");
                 document.getElementById("KeyA").classList.remove("disabled", "key-tile-disabled");
                 document.getElementById("KeyE").classList.remove("disabled", "key-tile-disabled");
                 document.getElementById("KeyI").classList.remove("disabled", "key-tile-disabled");
                 document.getElementById("KeyO").classList.remove("disabled", "key-tile-disabled");
                 document.getElementById("KeyU").classList.remove("disabled", "key-tile-disabled");
-                document.getElementById("KeyA").classList.add("key-tile-enabled", "droptile");
-                document.getElementById("KeyE").classList.add("key-tile-enabled", "droptile");
-                document.getElementById("KeyI").classList.add("key-tile-enabled", "droptile");
-                document.getElementById("KeyO").classList.add("key-tile-enabled", "droptile");
-                document.getElementById("KeyU").classList.add("key-tile-enabled", "droptile");
+                // document.getElementById("KeyA").classList.add("key-tile-enabled", "droptile");
+                // document.getElementById("KeyE").classList.add("key-tile-enabled", "droptile");
+                // document.getElementById("KeyI").classList.add("key-tile-enabled", "droptile");
+                // document.getElementById("KeyO").classList.add("key-tile-enabled", "droptile");
+                // document.getElementById("KeyU").classList.add("key-tile-enabled", "droptile");
+                document.getElementById("KeyA").classList.add("key-tile-enabled");
+                document.getElementById("KeyE").classList.add("key-tile-enabled");
+                document.getElementById("KeyI").classList.add("key-tile-enabled");
+                document.getElementById("KeyO").classList.add("key-tile-enabled");
+                document.getElementById("KeyU").classList.add("key-tile-enabled");				
                 document.getElementById("answer").style.color = "lightgray";
                 // document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
                 updateAnswer("ONLY VOWELS LEFT!");

@@ -1687,17 +1687,22 @@ function processInput(e) {
 				}
                 // setTimeout(function() {
                     tile.innerText = "";
-                    tile.classList.add('popanswer');
+                    // tile.classList.add('popanswer');
                     document.getElementById("KeyA").classList.remove("disabled", "key-tile-disabled");
                     document.getElementById("KeyE").classList.remove("disabled", "key-tile-disabled");
                     document.getElementById("KeyI").classList.remove("disabled", "key-tile-disabled");
                     document.getElementById("KeyO").classList.remove("disabled", "key-tile-disabled");
                     document.getElementById("KeyU").classList.remove("disabled", "key-tile-disabled");
-                    document.getElementById("KeyA").classList.add("key-tile-enabled", "droptile");
-                    document.getElementById("KeyE").classList.add("key-tile-enabled", "droptile");
-                    document.getElementById("KeyI").classList.add("key-tile-enabled", "droptile");
-                    document.getElementById("KeyO").classList.add("key-tile-enabled", "droptile");
-                    document.getElementById("KeyU").classList.add("key-tile-enabled", "droptile");
+                    // document.getElementById("KeyA").classList.add("key-tile-enabled", "droptile");
+                    // document.getElementById("KeyE").classList.add("key-tile-enabled", "droptile");
+                    // document.getElementById("KeyI").classList.add("key-tile-enabled", "droptile");
+                    // document.getElementById("KeyO").classList.add("key-tile-enabled", "droptile");
+                    // document.getElementById("KeyU").classList.add("key-tile-enabled", "droptile");
+                    document.getElementById("KeyA").classList.add("key-tile-enabled");
+                    document.getElementById("KeyE").classList.add("key-tile-enabled");
+                    document.getElementById("KeyI").classList.add("key-tile-enabled");
+                    document.getElementById("KeyO").classList.add("key-tile-enabled");
+                    document.getElementById("KeyU").classList.add("key-tile-enabled");					
                     document.getElementById("answer").style.color = "lightgray";
                     // document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
 					updateAnswer("ONLY VOWELS LEFT!");
