@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.14.02";
+const BUILD_VERSION = "2025.02.14.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -1528,6 +1528,7 @@ var masterwordlist = [
     ["cotton", "thread", "count", "down", "town", "square", "root", ""],
     ["marble", "statue", "garden", "party", "favor", "box", "office", ""],
 	["code", "red", "cross", "country", "club", "sandwich ", "bag", "Div"],
+	["merry", "christmas", "tree", "house", "break", "fast ", "back", "Anirudh"],	
     ["dragon", "scale", "model", "train", "track", "record", "holder", ""],
     ["pepper", "mill", "worker", "strike", "zone", "call", "center", ""],
     ["harbor", "seal", "team", "captain", "chair", "lift", "ticket", ""],

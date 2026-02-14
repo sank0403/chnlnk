@@ -324,6 +324,7 @@ var masterwordlist = [
     ["cotton", "thread", "count", "down", "town", "square", "root", ""],
     ["marble", "statue", "garden", "party", "favor", "box", "office", ""],
 	["code", "red", "cross", "country", "club", "sandwich ", "bag", "Div"],
+	["merry", "christmas", "tree", "house", "break", "fast ", "back", "Anirudh"],		
     ["dragon", "scale", "model", "train", "track", "record", "holder", ""],
     ["pepper", "mill", "worker", "strike", "zone", "call", "center", ""],
     ["harbor", "seal", "team", "captain", "chair", "lift", "ticket", ""],
@@ -1692,11 +1693,11 @@ function processInput(e) {
                     document.getElementById("KeyI").classList.remove("disabled", "key-tile-disabled");
                     document.getElementById("KeyO").classList.remove("disabled", "key-tile-disabled");
                     document.getElementById("KeyU").classList.remove("disabled", "key-tile-disabled");
-                    document.getElementById("KeyA").classList.add("key-tile-enabled", "poptile");
-                    document.getElementById("KeyE").classList.add("key-tile-enabled", "poptile");
-                    document.getElementById("KeyI").classList.add("key-tile-enabled", "poptile");
-                    document.getElementById("KeyO").classList.add("key-tile-enabled", "poptile");
-                    document.getElementById("KeyU").classList.add("key-tile-enabled", "poptile");
+                    document.getElementById("KeyA").classList.add("key-tile-enabled", "droptile");
+                    document.getElementById("KeyE").classList.add("key-tile-enabled", "droptile");
+                    document.getElementById("KeyI").classList.add("key-tile-enabled", "droptile");
+                    document.getElementById("KeyO").classList.add("key-tile-enabled", "droptile");
+                    document.getElementById("KeyU").classList.add("key-tile-enabled", "droptile");
                     document.getElementById("answer").style.color = "lightgray";
                     // document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
 					updateAnswer("ONLY VOWELS LEFT!");
