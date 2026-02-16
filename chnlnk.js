@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.15.03";
+const BUILD_VERSION = "2025.02.16.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -961,6 +961,14 @@ var days = parseInt((d / 1000) / 86400);
 if ((localStorage.getItem('gameovercl38') == 1) && (!localStorage.cl38reset) && (localStorage.clgamecnt == 6) && (days == 38)) {
 	localStorage.removeItem('gameovercl38');
 	localStorage.cl38reset = 1;
+	localStorage.monthclplayed = Number(localStorage.monthclplayed) - 1;
+	localStorage.starclxcount = Number(localStorage.starclxcount) - 1;
+	localStorage.totalclplayed = Number(localStorage.totalclplayed) - 1;
+	localStorage.totalclstreak = Number(localStorage.starcl0count) + Number(localStorage.starcl1count) + Number(localStorage.starcl2count) + Number(localStorage.starcl3count) + Number(localStorage.starcl4count) + Number(localStorage.starcl5count) ;
+}
+if ((localStorage.getItem('gameovercl39') == 1) && (!localStorage.cl39reset) && (localStorage.clgamecnt == 6) && (days == 39)) {
+	localStorage.removeItem('gameovercl39');
+	localStorage.cl39reset = 1;
 	localStorage.monthclplayed = Number(localStorage.monthclplayed) - 1;
 	localStorage.starclxcount = Number(localStorage.starclxcount) - 1;
 	localStorage.totalclplayed = Number(localStorage.totalclplayed) - 1;
