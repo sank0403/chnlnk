@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.16.01";
+const BUILD_VERSION = "2025.02.18.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -1551,6 +1551,7 @@ var masterwordlist = [
 	["pepper","mill","worker","strike","zone","call","center",""],
 	["harbor","seal","team","captain","chair","lift","ticket",""],
 	["riverbank","erosion","control","panel","show","time","keeper",""],
+	["sleep","walking","pole","jumping","jack","rabbit","hutch","elysia"],
 	["meadow","lark","song","bird","cage","match","point",""],
 	["lantern","light","house","key","note","pad","lock",""],
 	["timber","wolf","pack","ice","cube","tray","table",""],
