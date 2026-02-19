@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.18.01";
+const BUILD_VERSION = "2025.02.19.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -945,8 +945,6 @@ if (!localStorage.clshowalert) {
 if (!localStorage.clhardmode) {
     localStorage.setItem("clhardmode", 0);
 }
-
-
 
 // if (localStorage.getItem('gameovercl30') == 0 && (!localStorage.cl30reset)) {
 	// localStorage.removeItem('gameovercl30');
@@ -4070,21 +4068,30 @@ function processInput(e) {
         setTimeout(removeblink, 3000);
     }
 
-    if (Number(localStorage.clguesscnt) === 6) {
-        const availableLetters = getUnrevealedConsonants();
-        const mysteryLetter = availableLetters[Math.floor(Math.random() * availableLetters.length)];
+	if (Number(localStorage.clguesscnt) === 6) {
 
-        localStorage.clMysteryLetter = mysteryLetter;
-        if (!mysteryLetter || mysteryLetter === "undefined") {
-            //do nothing
-        } else {
-            localStorage.clMysteryActive = "true";
-            markTileWithQuestion(localStorage.clMysteryLetter); // visually add ❓
-            showMysteryAdded();
-            // document.getElementById("answer").innerText = "IDENTIFY THE MYSTERY LETTER IN THE NEXT TRY FOR A BONUS!"	
-            updateAnswer("Identify the mystery letter in the next try for a Bonus!");
-        }
-    }
+		// Filter out blanks BEFORE selecting
+		const availableLetters = getUnrevealedConsonants().filter(letter => {
+			return typeof letter === "string" && letter.trim().length > 0;
+		});
+
+		// If nothing left, safely skip mystery letter
+		if (availableLetters.length === 0) {
+			return;
+		}
+
+		const mysteryLetter = availableLetters[Math.floor(Math.random() * availableLetters.length)];
+		localStorage.clMysteryLetter = mysteryLetter;
+
+		if (!mysteryLetter || mysteryLetter === "undefined") {
+			return; // safe skip
+		}
+
+		localStorage.clMysteryActive = "true";
+		markTileWithQuestion(mysteryLetter);
+		showMysteryAdded();
+		updateAnswer("Identify the mystery letter in the next try for a Bonus!");
+	}
 
     if (Number(localStorage.cllivescnt == 5)) {
         for (let i = 0; i < wordonewidth; i++) {
