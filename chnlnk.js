@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.19.02";
+const BUILD_VERSION = "2025.02.19.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -1416,10 +1416,10 @@ async function myFunction() {
     let clueicon = "";
     switch (gameCount) {
         case 0: clueicon = "⚪ ⚪ ⚪ ⚪ ⚪"; break;
-        case 1: clueicon = "⚪ ⚪ ⚪ ⚪ ⭐"; break;
-        case 2: clueicon = "⚪ ⚪ ⚪ ⭐ ⭐"; break;
-        case 3: clueicon = "⚪ ⚪ ⭐ ⭐ ⭐"; break;
-        case 4: clueicon = "⚪ ⭐ ⭐ ⭐ ⭐"; break;
+        case 1: clueicon = "⭐ ❌ ❌ ❌ ❌"; break;
+        case 2: clueicon = "⭐ ⭐ ❌ ❌ ❌"; break;
+        case 3: clueicon = "⭐ ⭐ ⭐ ❌ ❌"; break;
+        case 4: clueicon = "⭐ ⭐ ⭐ ⭐ ❌"; break;
         case 5: clueicon = "⭐ ⭐ ⭐ ⭐ ⭐"; break;
         case 6: clueicon = "❌❌❌❌❌"; break;
     }
@@ -1432,7 +1432,7 @@ ${cluehdr} - ${clueicon}
 `;
 
     if (tierlevel !== "") {
-        copyText += `\n${tiericon} Tier: ${tierlevel}\n`;
+        copyText += `${tiericon} Tier: ${tierlevel}\n`;
     }
 
     copyText += `\nhttps://thechnlnk.com`;
@@ -1444,10 +1444,6 @@ ${cluehdr} - ${clueicon}
                 title: "CHN LNK",
                 text: copyText   // everything goes here
             });
-
-            const HTMLButton = document.getElementById("HTMLButton");
-            HTMLButton.innerText = "SHARED";
-            setTimeout(ResetButton, 1000);
             return;
 
         } catch (err) {
