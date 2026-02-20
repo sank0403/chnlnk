@@ -1432,7 +1432,7 @@ ${cluehdr} - ${clueicon}
 `;
 
     if (tierlevel !== "") {
-        copyText += `${tiericon} Tier: ${tierlevel}\n`;
+        copyText += `${tiericon} Level: ${tierlevel}\n`;
     }
 
     copyText += `\nhttps://thechnlnk.com`;
