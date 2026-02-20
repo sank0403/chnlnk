@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.19.01";
+const BUILD_VERSION = "2025.02.19.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -935,12 +935,12 @@ if (!localStorage.totalclplayed) {
     localStorage.setItem("starcl4count", 0);
     localStorage.setItem("starcl5count", 0);
     localStorage.setItem("starclxcount", 0);
-    localStorage.setItem("clshowalert", 0);
+    // localStorage.setItem("clshowalert", 0);
 }
 
-if (!localStorage.clshowalert) {
-    localStorage.setItem("clshowalert", 0);
-}
+// if (!localStorage.clshowalert) {
+    // localStorage.setItem("clshowalert", 0);
+// }
 
 if (!localStorage.clhardmode) {
     localStorage.setItem("clhardmode", 0);
@@ -956,22 +956,15 @@ var a = new Date(); // Current date now.
 var b = new Date(2025, 12, 9, 0, 0, 0, 0); // Start of CHN LNK.
 var d = (a - b); // Difference in milliseconds.
 var days = parseInt((d / 1000) / 86400);
-if ((localStorage.getItem('gameovercl38') == 1) && (!localStorage.cl38reset) && (localStorage.clgamecnt == 6) && (days == 38)) {
-	localStorage.removeItem('gameovercl38');
-	localStorage.cl38reset = 1;
-	localStorage.monthclplayed = Number(localStorage.monthclplayed) - 1;
-	localStorage.starclxcount = Number(localStorage.starclxcount) - 1;
-	localStorage.totalclplayed = Number(localStorage.totalclplayed) - 1;
-	localStorage.totalclstreak = Number(localStorage.starcl0count) + Number(localStorage.starcl1count) + Number(localStorage.starcl2count) + Number(localStorage.starcl3count) + Number(localStorage.starcl4count) + Number(localStorage.starcl5count) ;
-}
-if ((localStorage.getItem('gameovercl39') == 1) && (!localStorage.cl39reset) && (localStorage.clgamecnt == 6) && (days == 39)) {
-	localStorage.removeItem('gameovercl39');
-	localStorage.cl39reset = 1;
-	localStorage.monthclplayed = Number(localStorage.monthclplayed) - 1;
-	localStorage.starclxcount = Number(localStorage.starclxcount) - 1;
-	localStorage.totalclplayed = Number(localStorage.totalclplayed) - 1;
-	localStorage.totalclstreak = Number(localStorage.starcl0count) + Number(localStorage.starcl1count) + Number(localStorage.starcl2count) + Number(localStorage.starcl3count) + Number(localStorage.starcl4count) + Number(localStorage.starcl5count) ;
-}
+
+// if ((localStorage.getItem('gameovercl39') == 1) && (!localStorage.cl39reset) && (localStorage.clgamecnt == 6) && (days == 39)) {
+	// localStorage.removeItem('gameovercl39');
+	// localStorage.cl39reset = 1;
+	// localStorage.monthclplayed = Number(localStorage.monthclplayed) - 1;
+	// localStorage.starclxcount = Number(localStorage.starclxcount) - 1;
+	// localStorage.totalclplayed = Number(localStorage.totalclplayed) - 1;
+	// localStorage.totalclstreak = Number(localStorage.starcl0count) + Number(localStorage.starcl1count) + Number(localStorage.starcl2count) + Number(localStorage.starcl3count) + Number(localStorage.starcl4count) + Number(localStorage.starcl5count) ;
+// }
 if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('gameovercl' + days) != 1) {
     localStorage['gameovercl' + days] = 0;
     localStorage['gamestatcl' + days] = 0;
@@ -1400,40 +1393,6 @@ function shakeDynamiteButton() {
 }
 
 
-
-
-// function FBFunction() {
-// 	myFunction();
-// 	setTimeout(myFunctionOpenFB, 100);
-// }
-
-// function myFunctionOpenFB() {
-// 	window.open("https://www.facebook.com/groups/329553752723826/?ref=share", "_blank");
-// }
-
-// function TwitterFunction() {
-// 	myFunction();
-// 	setTimeout(myTwitterOpenFB, 100);
-// }
-
-// function myTwitterOpenFB() {
-// 	window.open("https://twitter.com/GeordleGame", "_blank");
-// }
-
-// function WAFunction() {
-// 	myFunction();
-// 	setTimeout(myFunctionOpenWA, 100);
-// }
-
-// function myFunctionOpenWA() {
-// 	/* window.open("https://wa.me/?text=urlencodedtext", "_blank"); */
-// 	/* var linktext = "Paste Stats and Share!"; */
-// 	/* var walink = "https://wa.me/?text=" + linktext; */
-// 	/* window.open(walink); */
-// 	window.open("https://wa.me/", "_blank");
-// }
-
-
 document.getElementById("hardmodetoggle").addEventListener("change", function() {
     if (this.checked) {
         // console.log("Timed Mode Enabled");
@@ -1449,61 +1408,60 @@ document.getElementById("hardmodetoggle").addEventListener("change", function() 
 });
 
 //Clipboard Code
-function myFunction() {
-    if (localStorage.clgamecnt == 6) {
-        var cluehdr = "X/5";
-    } else {
-        cluehdr = localStorage.clgamecnt + "/5";
-    }
-    switch (Number(localStorage.clgamecnt)) {
-        case 0:
-            var clueicon = "⚪ ⚪ ⚪ ⚪ ⚪"
-            break;
-        case 1:
-            var clueicon = "⚪ ⚪ ⚪ ⚪ ⭐"
-            break;
-        case 2:
-            var clueicon = "⚪ ⚪ ⚪ ⭐ ⭐"
-            break;
-        case 3:
-            var clueicon = "⚪ ⚪ ⭐ ⭐ ⭐"
-            break;
-        case 4:
-            var clueicon = "⚪ ⭐ ⭐ ⭐ ⭐"
-            break;
-        case 5:
-            var clueicon = "⭐ ⭐ ⭐ ⭐ ⭐"
-            break;
-        case 6:
-            var clueicon = "❌❌❌❌❌"
-            break;
+async function myFunction() {
+    const gameCount = Number(localStorage.clgamecnt);
+
+    const cluehdr = (gameCount === 6) ? "X/5" : `${gameCount}/5`;
+
+    let clueicon = "";
+    switch (gameCount) {
+        case 0: clueicon = "⚪ ⚪ ⚪ ⚪ ⚪"; break;
+        case 1: clueicon = "⚪ ⚪ ⚪ ⚪ ⭐"; break;
+        case 2: clueicon = "⚪ ⚪ ⚪ ⭐ ⭐"; break;
+        case 3: clueicon = "⚪ ⚪ ⭐ ⭐ ⭐"; break;
+        case 4: clueicon = "⚪ ⭐ ⭐ ⭐ ⭐"; break;
+        case 5: clueicon = "⭐ ⭐ ⭐ ⭐ ⭐"; break;
+        case 6: clueicon = "❌❌❌❌❌"; break;
     }
 
-    if (tierlevel == "") {
-        var copyText = "🔗 CHN LNK # " + days + " 🧩 \n\n" + cluehdr + " - " + clueicon + "\n🔥 Streak: " + localStorage.totalclstreak + " | ⭐ Stars: " + localStorage.totalclstars + "\n\nhttps://thechnlnk.com";
-    } else {
-        var copyText = "🔗 CHN LNK # " + days + " 🧩 \n\n" + cluehdr + " - " + clueicon + "\n🔥 Streak: " + localStorage.totalclstreak + " | ⭐ Stars: " + localStorage.totalclstars + "\n" + tiericon + " Tier: " + tierlevel + "\n\nhttps://thechnlnk.com";
+    let copyText =
+`🔗 CHN LNK #${days} 🧩
+
+${cluehdr} - ${clueicon}
+🔥 Streak: ${localStorage.totalclstreak} | ⭐ Stars: ${localStorage.totalclstars}
+`;
+
+    if (tierlevel !== "") {
+        copyText += `\n${tiericon} Tier: ${tierlevel}\n`;
     }
 
+    copyText += `\nhttps://thechnlnk.com`;
 
-    /* Copy the text inside the text field */
+    // ⭐ MOBILE: Native share sheet
+    if (navigator.share && /Mobi|Android|iPhone/i.test(navigator.userAgent)) {
+        try {
+            await navigator.share({
+                title: "CHN LNK",
+                text: copyText   // everything goes here
+            });
+
+            const HTMLButton = document.getElementById("HTMLButton");
+            HTMLButton.innerText = "SHARED";
+            setTimeout(ResetButton, 1000);
+            return;
+
+        } catch (err) {
+            console.log("Native share cancelled, falling back to clipboard.");
+        }
+    }
+
+    // ⭐ DESKTOP: Copy to clipboard only
     navigator.clipboard.writeText(copyText);
 
-    //Button Text
-    let HTMLButton = document.getElementById("HTMLButton");
-    HTMLButton.innerText = "COPIED"
+    const HTMLButton = document.getElementById("HTMLButton");
+    HTMLButton.innerText = "COPIED";
     setTimeout(ResetButton, 1000);
 }
-
-// var firstwordlist =  ["river",			"garden",						"coffee",						"market",						"harbor",						"winter",						"silver",						"forest",						"party",						"black",						"cotton",						"yellow",						"ocean",						"music",						"desert",						"morning",						"traffic",						"crystal",						"thunder",						"island",						"candle",						"rocket",						"family",						"summer",						"cotton",						"marble",						"dragon",						"pepper",						"harbor",						"riverbank",						"meadow",						"lantern",						"timber",						"coral",						"velvet",						"canyon",						"orchard",						"glacier",						"prairie",						"summit",						"harborfront",						"compass",						"lantern",						"canyon",						"meadow",						"timber",						"coral",						"velvet",						"glacier",			"prairie",			"summit",			"compass",			"lantern",			"canyon",			"harbor",			"maple",			"copper",			"puzzle",			"shadow",			"signal",			"berry",			"iron",			"canyon",			"harbor",			"falcon",			"marble",			"timber",			"lantern",			"meadow",			"glacier",			"prairie",			"summit",			"compass",			"coral",			"velvet",			"harborfront",			"riverbed",			"gardenia",			"coffee",			"market",			"winter",			"silver",			"forest",			"ocean",			"music",			"desert",			"morning",			"traffic",			"crystal",			"thunder",			"island",			"candle",			"rocket",			"family",			"summer",			"cotton",			"marble",			"dragon",			"pepper",			"lantern",			"canyon",			"meadow",			"timber",			"coral",			"harbor",			"maple",			"copper",			"puzzle",			"shadow",			"signal",			"berry",			"iron",			"canyon",			"harbor",			"falcon",			"marble",			"timber",			"lantern",			"meadow",			"glacier",			"prairie",			"summit",			"compass",			"coral",			"velvet",			"harborfront",			"riverbed",			"gardenia",			"coffee",			"market",			"winter",			"silver",			"forest",			"ocean",			"music",			"desert",			"morning",			"traffic",			"crystal",			"thunder",			"island",			"candle",			"rocket",			"family",			"summer",			"cotton",			"marble",			"dragon",			"pepper",			"lantern",			"canyon",			"meadow",			"timber",			"coral",			"harbor",			"maple",			"copper",			"puzzle",			"shadow",			"signal",			"berry",			"iron",			"canyon",			"harbor",			"falcon",			"marble",			"timber",			"lantern",			"meadow",			"glacier",			"prairie",			"summit",			"compass",			"coral",			"velvet",			"harborfront",			"riverbed",			"gardenia",			"coffee",			"market",			"winter",			"silver",			"forest",			"ocean",			"music",			"desert",			"morning",			"traffic",			"crystal",			"thunder",			"island",			"candle",			"rocket",			"family",			"summer",			"cotton",			"marble",			"dragon",			"pepper",			"lantern",			"canyon",			"meadow",			"timber",			"coral",			"harbor",			"maple",			"copper",			"puzzle",			"shadow",			"signal",			"berry",			"iron",			"canyon",			"harbor",			"falcon",			"marble",			"timber",			"lantern",			"meadow",			"glacier",			"prairie",			"summit",			"compass",			"coral",			"velvet",			"harborfront",			"riverbed",			"gardenia",			"coffee",			"market",			"winter",			"silver",			"forest",			"ocean",			"music",			"desert",			"morning",			"traffic",			"crystal",			"thunder",			"island",			"candle",			"rocket",			"family",			"summer",			"cotton",			"marble",			"dragon",			"pepper",			"lantern",			"canyon",			"meadow",			"timber",			"coral"];
-// var secondwordlist = ["stone",						"path",						"break",						"share",						"dock",						"storm",						"spoon",						"trail",						"animal",						"box",						"candy",						"banana",						"tide",						"sheet",						"wind",						"dew",						"light",						"clear",						"clap",						"nation",						"flame",						"fuel",						"bond",						"heat",						"thread",						"statue",						"scale",						"mill",						"seal",						"erosion",						"lark",						"light",						"wolf",						"reef",						"rope",						"wall",						"apple",						"melt",						"dog",						"peak",						"market",						"rose",						"glow",						"echo",						"grass",						"frame",						"sand",						"curtain",			"ice",			"fire",			"meeting",			"point",			"festival",			"rim",			"light",			"leaf",			"wire",			"piece",			"cast",			"tower",			"patch",			"forge",			"floor",			"mist",			"wing",			"floor",			"yard",			"post",			"bloom",			"runoff",			"trail",			"ridge",			"needle",			"bloom",			"touch",			"pier",			"clay",			"bloom",			"roast",			"stall",			"coat",			"lining",			"edge",			"spray",			"box",			"sand",			"star",			"jam",			"ball",			"roll",			"breeze",			"wax",			"launch",			"tree",			"camp",			"candy",			"arch",			"fire",			"spray",			"glow",			"trail",			"grassland",			"log",			"stone",			"crane",			"syrup",			"mine",			"lock",			"line",			"flare",			"smoothie",			"nail",			"ridge",			"crane",			"crest",			"quarry",			"beam",			"hook",			"stream",			"drift",			"wind",			"trailhead",			"bearing",			"cove",			"ribbon",			"cafe",			"silt",			"scent",			"bean",			"trend",			"frost",			"ore",			"canopy",			"current",			"scale",			"mirage",			"routine",			"circle",			"shard",			"burst",			"reef",			"holder",			"booster",			"album",			"breeze",			"thread",			"step",			"wing",			"grinder",			"shade",			"echo",			"larkspur",			"wolfhound",			"bloomfield",			"rope",			"grove",			"plate",			"board",			"puppet",			"jammer",			"tart",			"grip",			"bend",			"watch",			"dive",			"tile",			"cut",			"flame",			"brook",			"crust",			"field",			"crest",			"card",			"branch",			"fabric",			"rail",			"stonework",			"petal",			"mug",			"basket",			"chill",			"chain",			"fire",			"floor",			"note",			"bloom",			"glory",			"lane",			"cave",			"stormfront",			"dockside",			"smoke",			"stage",			"crest",			"solstice",			"bale",			"column",			"crest",			"seed",			"hook",			"rimstone",			"grasshopper",			"sawdust",			"lagoon",			"pilot",			"timberline",			"circuit",			"master",			"ridge",			"pulse",			"harvest",			"alloy",			"switchback",			"jetty",			"crestline",			"quarryman",			"ridgepole",			"wick",			"clover",			"icefall",			"homestead",			"outlook",			"heading",			"shoal",			"drapery",			"pavilion",			"gravel",			"blossom",			"grinder",			"forecast",			"icicle",			"pendant",			"understory",			"breaker",			"harmony",			"outpost",			"routine",			"merge",			"prism",			"rumble",			"ferry",			"lantern",			"nozzle",			"reunion",			"monsoon",			"textile",			"mosaic",			"crestfall",			"kernel",			"signal",			"overlook",			"pasture",			"outbuilding",			"tidepool"];
-// var thirdwordlist = [	"cold",		"finder",	"room",		"price",	"worker",	"drain",	"rest",		"mix",		"cracker",	"office",	"bar",		"split",		"pool",		"metal",	"mill",		"drop",			"speed","view","back","state","thrower","tank","paper","wave","count","garden","model","worker","team","control","song","house","pack","shark","swing","flower","core","water","house","hour","stall","garden","stick","chamber","roots","house","bar","call","sheet","drill","room","guard","season","shot","beam","spring","brush","work","iron","bridge","work","ahead","plan","cloud","span","lamp","sale","office","field","stream","marker","line","point","season","screen","walk","pot","cycle","level","holder","rack","fabric","case","bottle","office","bar","light","session","room","call","block","seal","pad","house","fire","strip","support","pit","paint","worm","mix","zone","cabin","path","lift","bottle","shaft","pick","cook","gun","maker","polish","trail","operator","hill","stone","balance","shot","flow","wood","break","sign","wall","beach","cut","table","layer","candle","counter","line","bite","deposit","cover","event","model","image","check","drive","edge","pipe","shark","ring","seat","cover","block","mill","ladder","span","wheel","tree","sound","bloom","pack","road","knot","street","rack","game","show","code","shell","strength","road","tower","bomb","floor","line","thrower","trout","layer","mouse","badge","trick","line","softener","car","wall","softener","holder","case","factor","store","break","lamp","pad","season","vine","marker","painting","line","market","alarm","name","hill","light","weight","base","hill","packet","shot","pool","field","trail","shore","boat","ridge","board","key","line","rate","season","wheel","road","stone","drive","tool","beam","holder","patch","route","act","point","change","water","rod","stage","pit","trail","wheel","model","drop","chain","layer","bar","line","guard","task","lane","light","strip","dock","post","flame","photo","rain","mill","tile","ridge","grinder","tower","deck","fence","frame","life"];
-// var forthwordlist = [	"front",	"fee",		"key",		"tag",		"bee",		"pipe",		"stop",		"tape",		"jack",		"space",	"graph",	"personality",	"table",	"plate",	"stone",	"zone",			"trap","point","pack","fair","squad","top","cut","form","down","party","train","strike","captain","panel","bird","key","ice","tank","dance","bed","value","bottle","plant","glass","holder","tool","figure","music","rock","party","stool","sign","music","bit","service","duty","ticket","put","balance","water","fire","bench","gate","deck","flow","start","ahead","cover","class","shade","price","hours","test","flow","stone","dance","blank","ticket","saver","through","holder","path","ground","ring","mount","softener","study","cap","chair","code","house","player","service","center","party","team","lock","party","pit","mall","beam","crew","brush","hole","match","defense","fever","finder","ticket","cap","light","pocket","stove","metal","space","remover","mix","badge","station","path","scale","caller","chart","carving","point","post","clock","house","line","runner","cake","wax","offer","graph","mark","slip","charge","planner","train","search","list","time","case","cleaner","bite","tone","belt","charge","letter","worker","rail","class","house","bark","wave","season","leader","map","work","light","mount","piece","time","word","shock","test","map","bell","squad","plan","cook","squad","line","cake","trap","number","shot","graph","sheet","wash","clock","sheet","ring","study","test","room","point","shade","lock","ticket","leaf","stone","brush","graph","stall","clock","tag","station","house","limit","line","climb","stamp","caller","table","test","mix","leave","ramp","trail","game","chain","graph","limit","ticket","house","map","wall","time","box","balance","ring","work","map","break","guard","order","wheel","holder","name","crew","mix","hub","train","zone","reaction","cake","stool","cook","duty","force","marker","house","mall","worker","office","thrower","frame","storm","worker","floor","trail","wheel","bell","chair","line","shop","jacket"];
-// var fifthwordlist = [	"line",		"schedule",	"chain",	"team",		"sting",	"cleaner",	"sign",		"measure",	"hammer",	"bar",		"paper",	"test",			"cloth",	"number",	"age",		"defense",		"door","guard","leader","trade","goal","shelf","line","letter","town","favor","track","zone","chair","show","cage","note","cube","top","card","frame","chain","cap","food","ceiling","ring","box","eight","hall","slide","trick","sample","post","stand","rate","charge","station","booth","away","scale","wheel","drill","press","keeper","chair","chart","line","time","charge","room","tree","point","long","drive","rate","wall","floor","page","price","mode","gate","ring","finder","floor","tone","point","sheet","group","lock","lift","word","key","card","charge","stage","favor","spirit","step","trick","stop","walk","balance","chief","stroke","punch","point","line","pitch","fee","booth","lock","beam","watch","pipe","shop","bar","tool","tape","number","master","marker","reading","id","top","knife","guard","office","tower","party","cook","up","stand","seal","letter","paper","sheet","knot","rate","pad","station","party","price","keeper","study","spray","mark","shift","loop","card","head","strike","car","act","rules","chip","form","ticket","board","maker","flow","beam","point","work","keeper","search","wave","drive","maker","rope","leader","layout","book","car","dance","stand","door","plate","caller","paper","metal","station","tower","music","tone","group","drive","service","guard","tree","step","booth","pile","path","stroke","paper","holder","tower","line","master","key","line","cook","rate","duty","name","runner","score","match","form","access","marker","piece","store","paper","line","booth","rules","maker","clock","keeper","cutter","board","tone","bench","maker","room","duty","form","house","badge","tag","chief","match","cap","station","marker","time","stand","sample","booklet","station","field","stone","key","walk","strike","chair","squad","shop","drain","badge","lamp","mix","house","rope","lift","cook","keeper","pocket"];
-// var sixthwordlist = [	"cook",		"change",	"link",		"spirit",	"operation","spray",	"language",	"step",		"toe",		"chart",	"bag",		"pilot",		"pattern",	"crunch",	"limit",	"system",		"frame","rail","board","route","keeper","life","dance","carrier","square","box","record","call","lift","time","match","pad","tray","hat","trick","shop","reaction","stone","chain","fan","tone","cutter","ball","pass","show","shot","size","office","alone","limit","card","master","worker","game","model","house","sergeant","release","role","lift","top","cook","zone","card","service","house","guard","shot","train","card","clock","plan","number","match","shift","code","leader","tool","lamp","shift","guard","metal","leader","step","ticket","search","chain","table","rate","name","bag","level","count","shot","sign","through","board","officer","count","line","guard","cook","perfect","schedule","worker","step","balance","tower","wrench","keeper","code","box","measure","plate","key","line","room","card","shelf","edge","rail","chair","bell","favor","book","hill","alone","stamp","carrier","plane","music","work","limit","lock","master","trick","match","net","group","bottle","sheet","worker","hole","reader","shot","zone","wash","break","committee","bag","letter","booth","game","space","chart","split","guard","bench","net","party","form","train","space","swing","board","grid","stand","wash","floor","mixer","frame","rack","id","plane","shop","master","guard","stand","shift","leader","time","charge","duty","bark","ladder","worker","driver","finder","count","weight","badge","bell","cook","code","chain","dance","booklet","limit","officer","plate","up","card","point","letter","code","stone","work","room","weight","dance","worker","committee","space","tower","net","blade","meeting","shift","press","space","service","station","letter","party","number","line","officer","point","lock","master","line","keeper","mixer","size","cover","master","test","path","chain","through","zone","lift","leader","keeper","pipe","number","shade","tape","party","swing","ticket","stove","badge","watch"];
-// var lastwordlist = [	"book",		"order",	"cable",	"level",	"manual",	"bottle",	"barrier",	"ladder",	"ring",		"patterns",	"drop",		"episode",		"maker",	"time",		"line",		"check",		"shop","car","game","map","net","jacket","floor","bag","root","office","holder","center","ticket","keeper","point","lock","table","trick","shot","keeper","time","path","link","club","shift","blade","room","code","case","clock","chart","chair","complex","line","holder","key","shift","plan","citizen","party","major","valve","player","shaft","score","stove","marker","reader","counter","rules","duty","caller","station","trick","tower","layout","crunch","point","key","word","board","kit","light","worker","rail","shop","role","ladder","booth","party","store","runner","limit","tag","holder","ground","down","caller","maker","lane","game","badge","down","cutter","duty","booklet","score","board","shift","count","board","guard","set","role","word","cutter","step","rack","chain","dance","service","reader","life","case","car","lift","rope","box","stand","climb","complex","duty","bag","crash","stand","flow","line","step","key","shot","point","weight","leader","rack","metal","badge","punch","dock","caller","marker","station","room","chair","holder","carrier","worker","piece","bar","top","level","rail","press","weight","trick","letter","station","bar","dance","meeting","line","alone","station","plan","bowl","shop","mount","number","crash","keeper","key","duty","light","worker","role","keeper","rate","station","chip","rail","shift","seat","tool","down","scale","number","rope","stove","word","store","floor","cover","line","badge","rack","hill","reader","guard","head","word","path","flow","service","scale","floor","badge","chair","bar","bell","weight","edge","room","worker","release","bar","counter","master","head","favor","plate","cook","badge","guard","step","code","cook","net","bowl","chart","charge","key","score","finder","store","lane","marker","ticket","role","role","cleaner","plate","tree","measure","favor","dance","booth","pipe","number","tower"];
-// var submitterlist = [	"","","","","","","","","Divya","Vidya","Kanishk","Div","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",];
-
 
 var masterwordlist = [
 	["river","stone","cold","front","line","cook","book",""],
@@ -2082,36 +2040,6 @@ var wordfour = masterwordlist[index][3].toUpperCase();
 var wordfive = masterwordlist[index][4].toUpperCase();
 var wordsix = masterwordlist[index][5].toUpperCase();
 var wordlast = masterwordlist[index][6].toUpperCase();
-// if (wordone.length > 8 || wordtwo.length > 8 || wordthree.length > 8 || wordfour.length > 8 || wordfive.length > 8 || wordsix.length > 8 || wordlast.length > 8) {
-// const box1 = document.getElementById("boardfirst");
-// box1.style.setProperty("padding-left", "10px");
-// box1.style.setProperty("padding-top", "10px");	
-// box1.style.setProperty("padding-bottom", "4px");	
-// const box2 = document.getElementById("boardsecond");
-// box2.style.setProperty("padding-left", "10px");
-// box2.style.setProperty("padding-top", "4px");	
-// box2.style.setProperty("padding-bottom", "4px");	
-// const box3 = document.getElementById("boardthird");
-// box3.style.setProperty("padding-left", "10px");
-// box3.style.setProperty("padding-top", "4px");	
-// box3.style.setProperty("padding-bottom", "4px");	
-// const box4 = document.getElementById("boardforth");
-// box4.style.setProperty("padding-left", "10px");
-// box4.style.setProperty("padding-top", "4px");	
-// box4.style.setProperty("padding-bottom", "4px");	
-// const box5 = document.getElementById("boardfifth");
-// box5.style.setProperty("padding-left", "10px");
-// box5.style.setProperty("padding-top", "4px");	
-// box5.style.setProperty("padding-bottom", "4px");	
-// const box6 = document.getElementById("boardsixth");
-// box6.style.setProperty("padding-left", "10px");
-// box6.style.setProperty("padding-top", "4px");	
-// box6.style.setProperty("padding-bottom", "4px");	
-// const box7 = document.getElementById("boardlast");
-// box7.style.setProperty("padding-left", "10px");
-// box7.style.setProperty("padding-top", "4px");
-// const boxes = document.querySelectorAll(".vertical-glow"); boxes.forEach(box => { box.style.setProperty("margin-left", "18px"); });	
-// }
 
 var word = (wordone + wordtwo + wordthree + wordfour + wordfive + wordsix + wordlast).toUpperCase();
 var solveword = (wordtwo + wordthree + wordfour + wordfive + wordsix).toUpperCase();
@@ -3960,15 +3888,15 @@ function processInput(e) {
         // 		// LetterFound = 0;				
         // 	}
         // }	
-        if (localStorage.consocount > 5 && localStorage.clshowalert == 0 && localStorage.totalclplayed > 0) {
-            OpenADDModal();
-            localStorage.clshowalert = 1;
-        }
+        // if (localStorage.consocount > 5 && localStorage.clshowalert == 0 && localStorage.totalclplayed > 0) {
+            // OpenADDModal();
+            // localStorage.clshowalert = 1;
+        // }
 
-        if (localStorage.consocount > 5 && localStorage.clshowalert == 4 && localStorage.totalclplayed > 0) {
-            OpenTIMEModal();
-            localStorage.clshowalert = 5;
-        }
+        // if (localStorage.consocount > 5 && localStorage.clshowalert == 4 && localStorage.totalclplayed > 0) {
+            // OpenTIMEModal();
+            // localStorage.clshowalert = 5;
+        // }
         if ((Number(localStorage.consocount) == solveword.length - Number(localStorage.vowelcount)) && localStorage.vowelactive == 0) {
             disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
             document.querySelectorAll('span[id*="-"].disabled').forEach(tile => {
@@ -4404,16 +4332,17 @@ function processInput(e) {
         localStorage.clgamestarted = 0;
         localStorage.clhardmode = 0;
         setTimeout(ConfettiStart, 1000);
-        if (localStorage.clshowalert > 1 && localStorage.clshowalert < 4) {
-            setTimeout(OpenStats, 6800);
-            setTimeout(OpenHINTModal, 4800);
-            localStorage.clshowalert = Number(localStorage.clshowalert) + 1;
-        } else {
-            setTimeout(OpenStats, 4800)
-            if (localStorage.clshowalert == 1) {
-                localStorage.clshowalert = Number(localStorage.clshowalert) + 1;
-            }
-        }
+		setTimeout(OpenStats, 4800);
+        // if (localStorage.clshowalert > 1 && localStorage.clshowalert < 4) {
+            // setTimeout(OpenStats, 6800);
+            // setTimeout(OpenHINTModal, 4800);
+            // localStorage.clshowalert = Number(localStorage.clshowalert) + 1;
+        // } else {
+            // setTimeout(OpenStats, 4800)
+            // if (localStorage.clshowalert == 1) {
+                // localStorage.clshowalert = Number(localStorage.clshowalert) + 1;
+            // }
+        // }
     }
     let clwordone = "";
     for (let i = 0; i < wordonewidth; i++) {
