@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.19.03";
+const BUILD_VERSION = "2025.02.19.04";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -486,8 +486,6 @@ document.getElementById("leaderboardHeader").addEventListener("click", async fun
     }
 });
 
-
-
 async function loaddynamites() {
     const user = auth.currentUser;
     if (!user) return; // safety check
@@ -507,8 +505,27 @@ async function loaddynamites() {
 
         const serverDynamite = d.dynamite;
         const localDynamite = Number(localStorage.cldynamite ?? 0);
-
-        if (serverDynamite !== localDynamite) {
+		// Stat Retreive Block
+        if (d.name === 'Bijoy' && localStorage.totalclplayed != d.ztplayed){
+			localStorage.cldynamite = d.dynamite;
+			localStorage.monthclplayed = d.played;
+			localStorage.monthclstars = d.stars;
+			localStorage.monthwins = d.wins;
+			localStorage.totalclplayed = d.ztplayed;
+			localStorage.totalclstars = d.ztstars;
+			localStorage.totalclstreak = d.ztstreak;
+			localStorage.totalclwins = d.ztwins;
+			localStorage.starcl1count = d.zzstar1;
+			localStorage.starcl2count = d.zzstar2;
+			localStorage.starcl3count = d.zzstar3;
+			localStorage.starcl4count = d.zzstar4;
+			localStorage.starcl5count = d.zzstar5;
+			localStorage.starclxcount = d.zzstarx;
+			statsRetreival();
+			return;
+		}
+		
+		if (serverDynamite !== localDynamite) {
             localStorage.cldynamite = serverDynamite;
             showDynamitePopup(serverDynamite - localDynamite);
         }
@@ -542,6 +559,23 @@ function showDynamitePopup(amountGained) {
     };
 }
 
+function statsRetreival() {
+	const popup = document.createElement("div");
+    popup.className = "dynamite-popup";
+    popup.innerHTML = `
+        <div class="dynamite-popup-inner">
+            <h2>📶 Stats Retreived ✅ </h2>
+			<p>Congrats! Your Stats are successfully Retreived.</p><br>
+			<button id="closeDynamitePopup">OK</button>
+        </div>
+    `;
+    document.body.appendChild(popup);
+
+    document.getElementById("closeDynamitePopup").onclick = () => {
+        popup.remove();
+		window.location.reload();
+    };
+}
 
 async function loadLeaderboard() {
     const leaderboardBody = document.getElementById("leaderboardBody");
