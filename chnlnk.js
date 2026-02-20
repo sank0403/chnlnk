@@ -771,16 +771,16 @@ function postStatsToWhatsApp() {
             var clueicon = "⚪ ⚪ ⚪ ⚪ ⚪"
             break;
         case 1:
-            var clueicon = "⚪ ⚪ ⚪ ⚪ ⭐"
+            var clueicon = "⭐ ❌ ❌ ❌ ❌"
             break;
         case 2:
-            var clueicon = "⚪ ⚪ ⚪ ⭐ ⭐"
+            var clueicon = "⭐ ⭐ ❌ ❌ ❌"
             break;
         case 3:
-            var clueicon = "⚪ ⚪ ⭐ ⭐ ⭐"
+            var clueicon = "⭐ ⭐ ⭐ ❌ ❌"
             break;
         case 4:
-            var clueicon = "⚪ ⭐ ⭐ ⭐ ⭐"
+            var clueicon = "⭐ ⭐ ⭐ ⭐ ❌"
             break;
         case 5:
             var clueicon = "⭐ ⭐ ⭐ ⭐ ⭐"
@@ -805,7 +805,7 @@ function postStatsToWhatsApp() {
 }
 
 function buildStats(puzzleNumber, movesUsed, dots, streak, stars, tier, tiericon) {
-    const tierLine = tier ? `${tiericon} Tier: ${tier}` : "";
+    const tierLine = tier ? `${tiericon} Level: ${tier}` : "";
     return `🔗 CHN LNK # ${puzzleNumber} 🧩
 
 ${movesUsed} - ${dots}
