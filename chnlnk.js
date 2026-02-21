@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.19.04";
+const BUILD_VERSION = "2025.02.20.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -504,7 +504,7 @@ async function loaddynamites() {
         if (!("dynamite" in d)) return;
 
         const serverDynamite = d.dynamite;
-        const localDynamite = Number(localStorage.cldynamite ?? 0);
+		const localDynamite = Number(localStorage.cldynamite ?? 0);
 		// Stat Retreive Block
         if (d.name === 'Bijoy' && localStorage.totalclplayed != d.ztplayed){
 			localStorage.cldynamite = d.dynamite;
@@ -540,22 +540,39 @@ function showDynamitePopup(amountGained) {
 
     const popup = document.createElement("div");
     popup.className = "dynamite-popup";
-    popup.innerHTML = `
-        <div class="dynamite-popup-inner">
-            <h2>💣 Dynamites Awarded 🏆 </h2>
-			<p style="white-space: nowrap;">For a <strong>Top 3 Finish</strong> in the Monthly Leaderboard!</p>
-			${gained > 0 ? `<p>+${gained} new Dynamites added!</p>` : ""}
-            <p>Congrats! You now have <strong>${localStorage.cldynamite}</strong> Dynamites.</p><br>
-            <button id="closeDynamitePopup">OK</button>
-        </div>
-    `;
+
+    // SPECIAL CASE → gained exactly 2 (invite reward)
+    if (gained === 2) {
+        popup.innerHTML = `
+            <div class="dynamite-popup-inner">
+                <h2>💣 Dynamites Awarded 📧</h2>
+                <p style="white-space: nowrap;">Thanks for your referral to <strong>CHN LNK</strong>!</p>
+                <p>You earned <strong>+2 Dynamites</strong> for spreading the word.</p><br>
+                <p>You now have <strong>${localStorage.cldynamite}</strong> Dynamites.</p><br>
+                <button id="closeDynamitePopup">OK</button>
+            </div>
+        `;
+    }
+
+    // DEFAULT POPUP → leaderboard Top 3
+    else {
+        popup.innerHTML = `
+            <div class="dynamite-popup-inner">
+                <h2>💣 Dynamites Awarded 🏆 </h2>
+                <p style="white-space: nowrap;">For a <strong>Top 3 Finish</strong> in the Monthly Leaderboard!</p>
+                ${gained > 0 ? `<p>+${gained} new Dynamites added!</p>` : ""}
+                <p>Congrats! You now have <strong>${localStorage.cldynamite}</strong> Dynamites.</p><br>
+                <button id="closeDynamitePopup">OK</button>
+            </div>
+        `;
+    }
 
     document.body.appendChild(popup);
 
     document.getElementById("closeDynamitePopup").onclick = () => {
         popup.remove();
-    const dyn = Number(localStorage.cldynamite || 0);
-    document.getElementById("dynamite-btn").innerText = "💣 x" + dyn;		
+        const dyn = Number(localStorage.cldynamite || 0);
+        document.getElementById("dynamite-btn").innerText = "💣 x" + dyn;
     };
 }
 
@@ -1233,8 +1250,6 @@ function openLifeTradeModal() {
         isPaused = false; // resume timer
     };
 }
-
-
 
 
 function applyLifeTrade() {
@@ -3035,9 +3050,15 @@ window.onload = function() {
 			localStorage.setItem("slotmachine", 1);
 		}
         // Load dynamites after Firestore is ready
-        if (shouldRunDynamitesToday()) {
-            setTimeout(() => loaddynamites(), 50);
-        }
+		const gameOverKey = 'gameovercl' + days;
+
+		if (localStorage.getItem(gameOverKey) === "1") {
+			// Always run when today's game is over
+			setTimeout(() => loaddynamites(), 50);
+		} else if (shouldRunDynamitesToday()) {
+			// Otherwise run only once per day
+			setTimeout(() => loaddynamites(), 50);
+		}
     });
 
     UpdateChart();
