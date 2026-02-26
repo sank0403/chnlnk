@@ -16,7 +16,7 @@ if (refUser && !localStorage.referralCounted) {
 }
 
 
-const BUILD_VERSION = "2025.02.25.01";
+const BUILD_VERSION = "2025.02.25.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -464,9 +464,6 @@ async function submitLeaderboardEntry(playerName) {
             zzstar5,
             zzstarx,
             updated: serverTimestamp(),
-
-            // ⭐ Ensure referral fields exist
-            totalReferrals: snap.exists() ? snap.data().totalReferrals || 0 : 0
         };
 
         await setDoc(ref, updates, { merge: true });
