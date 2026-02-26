@@ -407,7 +407,7 @@ p {
 
 /* WIDEN SHARE + RAFFLE ONLY */
 .button-row .buttonmode {
-    width: 140px;   /* adjust to taste: 90, 100, 110, 120 */
+    width: 160px;   /* adjust to taste: 90, 100, 110, 120 */
 }
 
 /* Remove width from the global .buttonmode so it doesn't override */
@@ -441,9 +441,6 @@ p {
     background: #990000;
     border-color: #7a0000;
 }
-
-
-
 .buttonmode1 {
     border-radius: 6px;
     font-weight: bold;
@@ -485,6 +482,79 @@ p {
   flex-wrap: wrap;
   justify-content: center; 
 } */
+
+.invite-inner {
+    display: inline-flex;
+    align-items: center;   /* perfect vertical alignment */
+    gap: 4px;              /* spacing between text + icon */
+}
+
+.blink-icon {
+    animation: wiggle 0.9s infinite ease-in-out;
+    display: inline-block;
+    font-size: 1em;        /* matches text height */
+    line-height: 1;        /* prevents height expansion */
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25%      { transform: rotate(-12deg); }
+    50%      { transform: rotate(12deg); }
+    75%      { transform: rotate(-8deg); }
+}
+
+/* REFERRAL LEADERBOARD — MATCH MONTHLY EXACTLY */
+
+#referralCollapsible {
+    margin-top: 10px;
+    border-top: 1px solid #444;
+    padding-top: 10px;
+    display: none; 
+}
+
+#referralHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #222;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    user-select: none;
+}
+
+#referralHeader:hover {
+    background: #333;
+}
+
+#referralContent {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+}
+
+#referralTable {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+    color: white;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+#referralTable th,
+#referralTable td {
+    padding: 6px;
+    border-bottom: 1px solid #444;
+    text-align: center;
+}
+
+#referralTable th {
+    background: #333;
+}
+
 
 
 
