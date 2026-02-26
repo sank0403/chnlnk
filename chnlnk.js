@@ -6,17 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-// Capture ?ref=username on load
-const urlParams = new URLSearchParams(window.location.search);
-const refUser = urlParams.get("ref");
-
-// Only store if we haven't counted this referral before
-if (refUser && !localStorage.referralCounted) {
-    localStorage.referrer = refUser;
-}
-
-
-const BUILD_VERSION = "2025.02.25.04";
+const BUILD_VERSION = "2025.02.20.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -338,7 +328,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // ⭐ Refresh leaderboard
                 await loadLeaderboard();
-				await loadReferralLeaderboard();
+
                 container.remove();
 
             } catch (err) {
@@ -423,8 +413,6 @@ async function submitLeaderboardEntry(playerName) {
         const ref = doc(db, "leaderboard", playerId);
         const snap = await getDoc(ref);
 
-        let isFirstTimeUser = false;
-
         if (snap.exists()) {
             const old = snap.data();
 
@@ -439,9 +427,6 @@ async function submitLeaderboardEntry(playerName) {
             if (!statsChanged && !monthChanged) {
                 return;
             }
-        } else {
-            // ⭐ This is a NEW USER
-            isFirstTimeUser = true;
         }
 
         // If here → first write OR stats changed OR month changed
@@ -463,78 +448,14 @@ async function submitLeaderboardEntry(playerName) {
             zzstar4,
             zzstar5,
             zzstarx,
-            updated: serverTimestamp(),
+            updated: serverTimestamp()
         };
 
         await setDoc(ref, updates, { merge: true });
 
-        // ⭐ Handle referral ONLY on first-time user creation
-		// Run referral logic ONLY if the user has never counted a referral before
-		if (!localStorage.referralCounted) {
-			await handleReferralOnSignup();
-		}
-
-
     } catch (err) {
         console.error("Error saving leaderboard entry:", err);
     }
-}
-
-async function handleReferralOnSignup() {
-    const refUser = localStorage.referrer;
-
-    // No referrer stored → nothing to do
-    if (!refUser) return;
-
-    // If we've already counted this referral, stop
-    if (localStorage.referralCounted === "true") return;
-
-    // Find the referrer in Firestore by name
-    const q = query(
-        collection(db, "leaderboard"),
-        where("name", "==", refUser)
-    );
-
-    const snap = await getDocs(q);
-    if (snap.empty) return;
-
-    const refDoc = snap.docs[0].ref;
-
-    // Increment ONLY total referrals
-    await updateDoc(refDoc, {
-        totalReferrals: increment(1)
-    });
-
-    // Mark referral as counted so it never increments again
-    localStorage.referralCounted = "true";
-}
-
-async function loadReferralLeaderboard() {
-    const leaderboardBody = document.getElementById("referralLeaderboardBody");
-    leaderboardBody.innerHTML = "<tr><td colspan='3'>Loading...</td></tr>";
-
-    const q = query(
-        collection(db, "leaderboard"),
-        orderBy("totalReferrals", "desc"),
-        limit(10)
-    );
-
-    const snap = await getDocs(q);
-    leaderboardBody.innerHTML = "";
-
-    let rank = 1;
-    snap.forEach(docSnap => {
-        const d = docSnap.data();
-
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${rank}</td>
-            <td>${d.name}</td>
-            <td>${d.totalReferrals}</td>
-        `;
-        leaderboardBody.appendChild(row);
-        rank++;
-    });
 }
 
 
@@ -556,8 +477,6 @@ document.getElementById("leaderboardHeader").addEventListener("click", async fun
         // Load leaderboard BEFORE expanding
         if (!leaderboardLoadedThisSession) {
             await loadLeaderboard();   // now valid because function is async
-            await loadReferralLeaderboard();   // now valid because function is async
-			
             leaderboardLoadedThisSession = true;
         }
 
@@ -566,34 +485,6 @@ document.getElementById("leaderboardHeader").addEventListener("click", async fun
         toggle.textContent = "▲";
     }
 });
-
-let referralLoadedThisSession = false;
-
-document.getElementById("referralHeader").addEventListener("click", async function() {
-    const content = document.getElementById("referralContent");
-    const toggle = document.getElementById("referralToggle");
-
-    const isOpen = content.style.maxHeight && content.style.maxHeight !== "0px";
-
-    if (isOpen) {
-        // CLOSE
-        content.style.maxHeight = "0px";
-        toggle.textContent = "▼";
-    } else {
-        // OPEN
-
-        // Load referral leaderboard BEFORE expanding
-        if (!referralLoadedThisSession) {
-            await loadReferralLeaderboard();
-            referralLoadedThisSession = true;
-        }
-
-        // Expand AFTER content is fully rendered
-        content.style.maxHeight = content.scrollHeight + "px";
-        toggle.textContent = "▲";
-    }
-});
-
 
 async function loaddynamites() {
     const user = auth.currentUser;
@@ -966,17 +857,14 @@ function postStatsToWhatsApp() {
 
 function buildStats(puzzleNumber, movesUsed, dots, streak, stars, tier, tiericon) {
     const tierLine = tier ? `${tiericon} Level: ${tier}` : "";
-    const playerName = localStorage.playerName;
-
     return `🔗 CHN LNK # ${puzzleNumber} 🧩
 
-	${movesUsed} - ${dots}
-	🔥 Streak: ${streak} | ⭐ Stars: ${stars}
-	${tierLine}
+${movesUsed} - ${dots}
+🔥 Streak: ${streak} | ⭐ Stars: ${stars}
+${tierLine}
 
-	https://thechnlnk.com/?ref=${encodeURIComponent(playerName)}`;
+https://thechnlnk.com`;
 }
-
 
 
 function updateAnswer(text) {
@@ -1009,7 +897,6 @@ async function OpenStats() {
 
     // Now show the leaderboard 
     document.getElementById("leaderboardCollapsible").style.display = "block";
-    document.getElementById("referralCollapsible").style.display = "block";
 }
 
 async function OpenStatsGO() {
@@ -1022,7 +909,6 @@ async function OpenStatsGO() {
 
     // Now show the leaderboard 
     document.getElementById("leaderboardCollapsible").style.display = "block";
-    document.getElementById("referralCollapsible").style.display = "block";
 }
 
 
@@ -1179,7 +1065,7 @@ function SetTier() {
         tiericon = "🥇";
     } else if (localStorage.totalclstreak >= 100) {
         tierlevel = "Ultimate (Streak 100+)";
-        tiericon = "💎";
+        tiericon = "🏆";
     } else {
         tierlevel = "";
         tiericon = "";
@@ -1598,9 +1484,7 @@ ${cluehdr} - ${clueicon}
         copyText += `${tiericon} Level: ${tierlevel}\n`;
     }
 
-	const playerName = localStorage.playerName;
-	copyText += `\nhttps://thechnlnk.com/?ref=${encodeURIComponent(playerName)}`;
-
+    copyText += `\nhttps://thechnlnk.com`;
 
     // ⭐ MOBILE: Native share sheet
     if (navigator.share && /Mobi|Android|iPhone/i.test(navigator.userAgent)) {
