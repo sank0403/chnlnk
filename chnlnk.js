@@ -16,7 +16,7 @@ if (refUser && !localStorage.referralCounted) {
 }
 
 
-const BUILD_VERSION = "2025.02.25.02";
+const BUILD_VERSION = "2025.02.25.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -469,9 +469,11 @@ async function submitLeaderboardEntry(playerName) {
         await setDoc(ref, updates, { merge: true });
 
         // ⭐ Handle referral ONLY on first-time user creation
-        if (isFirstTimeUser) {
-            await handleReferralOnSignup();
-        }
+		// Run referral logic ONLY if the user has never counted a referral before
+		if (!localStorage.referralCounted) {
+			await handleReferralOnSignup();
+		}
+
 
     } catch (err) {
         console.error("Error saving leaderboard entry:", err);
