@@ -16,7 +16,7 @@ if (refUser && !localStorage.referralCounted) {
 }
 
 
-const BUILD_VERSION = "2025.02.25.03";
+const BUILD_VERSION = "2025.02.25.04";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -966,14 +966,17 @@ function postStatsToWhatsApp() {
 
 function buildStats(puzzleNumber, movesUsed, dots, streak, stars, tier, tiericon) {
     const tierLine = tier ? `${tiericon} Level: ${tier}` : "";
+    const playerName = localStorage.playerName;
+
     return `🔗 CHN LNK # ${puzzleNumber} 🧩
 
-${movesUsed} - ${dots}
-🔥 Streak: ${streak} | ⭐ Stars: ${stars}
-${tierLine}
+	${movesUsed} - ${dots}
+	🔥 Streak: ${streak} | ⭐ Stars: ${stars}
+	${tierLine}
 
-https://thechnlnk.com`;
+	https://thechnlnk.com/?ref=${encodeURIComponent(playerName)}`;
 }
+
 
 
 function updateAnswer(text) {
@@ -1595,7 +1598,9 @@ ${cluehdr} - ${clueicon}
         copyText += `${tiericon} Level: ${tierlevel}\n`;
     }
 
-    copyText += `\nhttps://thechnlnk.com`;
+	const playerName = localStorage.playerName;
+	copyText += `\nhttps://thechnlnk.com/?ref=${encodeURIComponent(playerName)}`;
+
 
     // ⭐ MOBILE: Native share sheet
     if (navigator.share && /Mobi|Android|iPhone/i.test(navigator.userAgent)) {
