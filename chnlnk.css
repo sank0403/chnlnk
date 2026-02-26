@@ -234,6 +234,7 @@ p {
 .wa-wrapper {
     display: flex;
     align-items: center;
+	cursor: pointer;
 }
 
 
@@ -476,6 +477,31 @@ p {
     width: 115px;
     height: 30px;
 }
+/* Wrap both bottom buttons in a flex column */
+.button-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* gap: 10px; */
+}
+
+/* Normalize both bottom buttons */
+.button-bottom a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    max-width: 260px;     /* matches your top row */
+    height: 28px;
+    padding: 0 12px;
+    box-sizing: border-box;
+
+    /* font-size: 14px; */
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 5px;
+}
 
 /* .button-row {
   display: flex;
@@ -490,9 +516,9 @@ p {
 }
 
 .blink-icon {
-    animation: wiggle 0.9s infinite ease-in-out;
+    animation: wiggle 0.9s 10 ease-in-out;
     display: inline-block;
-    font-size: 1em;        /* matches text height */
+    font-size: 1.3em;        /* matches text height */
     line-height: 1;        /* prevents height expansion */
 }
 
@@ -502,61 +528,6 @@ p {
     50%      { transform: rotate(12deg); }
     75%      { transform: rotate(-8deg); }
 }
-
-/* REFERRAL LEADERBOARD — MATCH MONTHLY EXACTLY */
-
-#referralCollapsible {
-    margin-top: 10px;
-    border-top: 1px solid #444;
-    padding-top: 10px;
-    display: none; 
-}
-
-#referralHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #222;
-    padding: 10px 15px;
-    border-radius: 6px;
-    cursor: pointer;
-    color: white;
-    font-weight: bold;
-    user-select: none;
-}
-
-#referralHeader:hover {
-    background: #333;
-}
-
-#referralContent {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.35s ease;
-}
-
-#referralTable {
-    width: 100%;
-    margin-top: 10px;
-    border-collapse: collapse;
-    color: white;
-    font-size: 14px;
-    margin-bottom: 10px;
-}
-
-#referralTable th,
-#referralTable td {
-    padding: 6px;
-    border-bottom: 1px solid #444;
-    text-align: center;
-}
-
-#referralTable th {
-    background: #333;
-}
-
-
-
 
 .popup {
     position: fixed;

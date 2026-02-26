@@ -21,27 +21,30 @@
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Expires" content="0">	
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="chnlnk.css?v=27" rel="stylesheet">
+    <link href="chnlnk.css?v=30" rel="stylesheet">
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
     <!-- add icon link for all standard browsers -->
     <script type="module">
         import {
             initializeApp
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import {
-            getFirestore,
-            collection,
-            doc,
-            setDoc,
-            getDoc,
-            getDocs,
-            query,
-            orderBy,
-            deleteDoc,
-            limit,
-            where,
-            serverTimestamp
-        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+		import {
+			getFirestore,
+			collection,
+			doc,
+			setDoc,
+			getDoc,
+			getDocs,
+			query,
+			orderBy,
+			deleteDoc,
+			limit,
+			where,
+			serverTimestamp,
+			updateDoc,      // ⭐ ADD THIS
+			increment       // ⭐ ADD THIS
+		} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 
         import {
             getAuth,
@@ -80,6 +83,9 @@
         window.limit = limit;
         window.where = where;
         window.deleteDoc = deleteDoc;
+		window.updateDoc = updateDoc;   // ⭐ REQUIRED
+		window.increment = increment;   // ⭐ REQUIRED
+		
     </script>
 
     <!-- Primary Meta Tags -->
@@ -330,7 +336,7 @@
                             <ul class="rules-list">
                                 <li>Play every day to build your streak.</li>
                                 <li>Every <strong style="color:white;">10‑Day Streak</strong> earns <strong style="color:white;">3 Dynamites</strong>.</li>
-                                <li>Earn <strong style="color:white;">Badges</strong> at streaks of 10, 25, 50, and 100.</li>
+                                <li>Earn <strong style="color:white;">Badges</strong> at streaks of 10(🥉), 25(🥈), 50(🥇), and 100(💎).</li>
                                 <li>Finish in the <strong style="color:white;">Top 3</strong> of the Monthly Leaderboard to win bonus Dynamites.</li>
                             </ul>
                         </div>
@@ -369,127 +375,136 @@
         </div>
 
     </div>
-    <div class="summary" id="summary">
-        <div class="summary-header">
-            <div class="title"><strong>
-                    <!-- Statistics -->
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12 text-center">
-                                <h3>SUMMARY</h3>
-                            </div>
-                        </div>
-                    </div>
-                </strong></div>
-            <button data-close1-button class="close-button">&times;</button>
-        </div>
-        <div class="summary-body">
-            <div id="stats-item">
-                <span id="11" class="summary-item"></span>
-                <span id="12" class="summary-item"></span>
-                <span id="13" class="summary-item"></span>
-                <span id="14" class="summary-item"></span>
-            </div>
-            <!-- <div id="ffhdr"></div> -->
-            <!-- <div id="ffdtl"></div> -->
-            <!--<center><img src="1002.gif"style="width:30%;height:1%;"></center>-->
-            <!--<center><img src="1000.gif"style="width:35%;height:35%;"></center>-->
-            <!--<p style="color:darkgray" align="justify" >If you enjoyed playing this game, you can show your support by <strong style='color: var(--green);' ><a href="https://www.buymeacoffee.com/sank0403" target="_"><u>Buying Us A Coffee</u></a></strong> ☕️, to help future development and upkeep of this game. <b>THANK YOU for playing GEORDLE! 🌎 </b><br><br></p>-->
-            <div id="leaderboardCollapsible">
-                <div id="leaderboardHeader">
-                    <span>🏆 MONTHLY LEADERBOARD </span>
-                    <span id="leaderboardToggle">▼</span>
-                </div>
+		<div class="summary" id="summary">
+			<div class="summary-header">
+				<div class="title"><strong>
+						<div class="container">
+							<div class="row">
+								<div class="col-md-12 text-center">
+									<h3>SUMMARY</h3>
+								</div>
+							</div>
+						</div>
+				</strong></div>
+				<button data-close1-button class="close-button">&times;</button>
+			</div>
 
-                <div id="leaderboardContent">
-                    <table id="leaderboardTable">
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Name</th>
-                                <th>Stars</th>
-                                <th>Wins</th>
-                                <th>Win%</th>
-                                <!-- <th>Streak</th> -->
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboardBody">
-                            <tr>
-                                <td colspan="6" style="text-align:center;">Loading...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="edit-row">
-                        <button id="changeNameBtn" class="buttonmode">EDIT</button>
-                        <span id="nrNote" class="nr-note">NR – Not Ranked in Top 100</span>
-                    </div>
-                </div>
-            </div>
-            <br>
-            <br>
-            <div id="sdhdr"><b>⭐ STAR DISTRIBUTION ⭐</b></div>
-            <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
-            <br>
-            <!-- The button used to copy the text -->
-            <div class="button-container">
-				<div class="button-row">
-					<button id="HTMLButton" class="buttonmode" onclick="myFunction(); this.blur();">
-						SHARE
-					</button>
+			<div class="summary-body">
 
-				<div class="wa-wrapper">
-					<img src="whatsapp.png"
-						 id="wabutton"
-						 class="wa-icon"
-						 title="WhatsApp Options"
-						 style="height:35px;"
-						 onclick="postStatsToWhatsApp()">
+				<!-- SUMMARY STATS -->
+				<div id="stats-item">
+					<span id="11" class="summary-item"></span>
+					<span id="12" class="summary-item"></span>
+					<span id="13" class="summary-item"></span>
+					<span id="14" class="summary-item"></span>
 				</div>
 
+				<!-- MONTHLY LEADERBOARD -->
+				<div id="leaderboardCollapsible">
+					<div id="leaderboardHeader">
+						<span>🏆 MONTHLY LEADERBOARD</span>
+						<span id="leaderboardToggle">▼</span>
+					</div>
 
-					<div data-hintmodal-target="#hintmodal" id="hintbutton">
-						<button id="Rafflebutton" class="buttonmode" title="Join Monthly Raffle">
-							RAFFLE
-						</button>
+					<div id="leaderboardContent">
+						<table id="leaderboardTable">
+							<thead>
+								<tr>
+									<th>Rank</th>
+									<th>Name</th>
+									<th>Stars</th>
+									<th>Wins</th>
+									<th>Win%</th>
+								</tr>
+							</thead>
+							<tbody id="leaderboardBody">
+								<tr>
+									<td colspan="6" style="text-align:center;">Loading...</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<div class="edit-row">
+							<button id="changeNameBtn" class="buttonmode">EDIT</button>
+							<span id="nrNote" class="nr-note">NR – Not Ranked in Top 100</span>
+						</div>
 					</div>
 				</div>
-                <!-- Coffee button INSIDE the same container -->
-                <a href="https://buymeacoffee.com/sank0403" target="_blank" id="coffeeFullWidthButton">
-                    <strong style="font-size: 150%;">☕</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BUY CHN LNK A COFFEE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong style="font-size: 150%;">👍</strong>
-                </a>
-            </div>
-            <!-- <p style="color:lightgray" align="justify">If you enjoyed playing 🔗<strong style="color:white;">CHN LNK</strong>🧩, you can show your support by <strong style='color: var(--green);'><a href="https://www.buymeacoffee.com/sank0403" target="_">BUYING US A COFFEE</a></strong> ☕️. THANK YOU for all the Love! 💕 </p> -->
-            <!-- <a href="https://buymeacoffee.com/sank0403" target="_blank" id="coffeeButton"> ☕ BUY CHN LNK A COFFEE 👍 </a> -->
-        </div>
-        <!-- <div class="top-row"> -->
-                <div style="display:none;" <class data-addmodal-target="#addmodal" id="addbutton"><button id="addpop" class="buttonmode"></button></class>
-                </div>
-                <div style="display:none;" <class data-timemodal-target="#timemodal" id="timebutton"><button id="timepop" class="buttonmode"></button></class>
-                </div>
-        <!-- </div> -->
-        <hr>
-        <div id="footer">
-			<div id="submission">
-				<a href="https://docs.google.com/forms/d/e/1FAIpQLSeZinZwGDTCZ_Cfp_CVlSllO7nFb1vLnFW4ZPrbje767FsKgQ/viewform?usp=publish-editor" target="_">
-					<span class="flash1"> 
-					<span class="flash1-dot"></span> 
-					📩 SUBMIT A CHN LNK 
-					</span>
-				</a>
-			</div>		
-			<div id="centerblock">
-				<span id="bbhdr">NEW GAME IN</span>
-				<span id="bb"></span>
+
+				<br>
+
+				<!-- STAR DISTRIBUTION -->
+				<div id="sdhdr"><b>⭐ STAR DISTRIBUTION ⭐</b></div>
+				<canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+
+				<br>
+
+				<!-- SHARE / INVITE / COFFEE BUTTONS -->
+				<div class="button-container">
+					<div class="button-row">
+
+						<button id="HTMLButton" class="buttonmode" onclick="myFunction(); this.blur();" title="Share Stats!">
+							<span class="invite-inner">
+								<span class="blink-icon">📲</span> SHARE
+							</span>
+						</button>
+
+						<div class="wa-wrapper">
+							<img src="whatsapp.png"
+								 id="wabutton"
+								 class="wa-icon"
+								 title="Share on WhatsApp!"
+								 style="height:35px;"
+								 onclick="postStatsToWhatsApp()">
+						</div>
+
+						<div data-hintmodal-target="#hintmodal" id="hintbutton">
+							<button id="Rafflebutton" class="buttonmode" title="Join Monthly Raffle!">
+								<span class="invite-inner">
+									INVITE <span class="blink-icon">🎁</span>
+								</span>
+							</button>
+						</div>
+
+					</div>
+					<div class="button-bottom">
+						<a href="https://buymeacoffee.com/sank0403" target="_blank" id="coffeeFullWidthButton" title="Support Us!">
+							<strong style="font-size:150%;">☕</strong>
+							&nbsp;&nbsp;&nbsp;BUY CHN LNK A COFFEE&nbsp;&nbsp;&nbsp;
+							<strong style="font-size:150%;">👍</strong>
+						</a>
+						<a href="https://dles.gg/game/chn-lnk?ref=owners-badge" target="_blank" title="Rate Us!" class="buttonmode" ><strong style="font-size:150%;">🎖️</strong>&nbsp; Rate CHN LNK on DLES.gg &nbsp;<strong style="font-size:150%;">🎖️</strong>️</a>
+						<!-- <a href="https://dles.gg/game/chn-lnk?ref=owners-badge" target="_blank" alt="Rate CHN LNK on DLES.gg" class="buttonmode" >⭐⭐⭐⭐⭐on DLES.gg </a> -->
+					</div>
+				</div>
+			</div> <!-- END summary-body -->
+
+			<hr>
+
+			<div id="footer">
+				<div id="submission">
+					<a href="https://docs.google.com/forms/d/e/1FAIpQLSeZinZwGDTCZ_Cfp_CVlSllO7nFb1vLnFW4ZPrbje767FsKgQ/viewform?usp=publish-editor" target="_">
+						<span class="flash1">
+							<span class="flash1-dot"></span>
+							📩 SUBMIT A CHN LNK
+						</span>
+					</a>
+				</div>
+
+				<div id="centerblock">
+					<span id="bbhdr">NEW GAME IN</span>
+					<span id="bb"></span>
+				</div>
+
+				<div data-pastmodal-target="#pastmodal" id="pastbutton">
+					<button id="Archivebutton" class="buttonmodetext glasslink" onclick="playArchive()">
+						📅 PLAY PAST CHAINS
+					</button>
+				</div>
 			</div>
-            <div data-pastmodal-target="#pastmodal" id="pastbutton">
-                <button id="Archivebutton" class="buttonmodetext glasslink" onclick="playArchive()">
-                    📅 PLAY PAST CHAINS
-                </button>
-            </div>
-        </div>		
-		
-     <!-- <br> -->
-    </div>
+
+		</div> <!-- END summary -->
+
     <div class="hintmodal" id="hintmodal">
         <div class="hintmodal-header">
             <div class="title"><strong>
@@ -506,8 +521,8 @@
         </div>
         <div class="hintmodal-body">
             <!-- <strong style="color:white;">Length of First Name and Last Name</strong> along with the <strong style="color:white;">STARTING LETTERS </strong>are given below. Use this wisely to identify the player! -->
-            We are trying to spread the word about <strong style="color:white;">CHN LNK </strong>and you can help the cause. If you enjoyed the game, please use the link below to EMAIL your Friends and Family, and invite them to play. In return, we will enter you into a monthly raffle️, where one lucky winner will win an Amazon Gift Card 🎁. <br>
-			<br>Also, every referral will earn you two bonus Dynamites 💣. 
+            We are trying to spread the word about <strong style="color:white;">CHN LNK </strong>and you can help the cause. If you enjoyed the game, please use the link below to EMAIL your Friends and Family, and invite them to play. In return, we will enter you into a monthly raffle️, where one lucky winner will win an <strong style="color:white;">AMAZON GIFT CARD 🎁. </strong><br>
+			<br>Also, every referral will earn you <strong style="color:white;">TWO BONUS DYNAMITES 💣.</strong> 
             <center>
 				<br>
 				<a id="emailLink" href="#" class="buttonmode">
@@ -517,9 +532,9 @@
 				</a>
 				<br><br>
 			</center>
+			<br>
             PS: Only add the email address of the recepients, and leave all other content of the email as such. You can send as many invites as you want. The more folks you invite the better your chances are in the draw.<br>
             <br>
-
             <script>
                 function randomStr(len, arr) {
                     let ans = '';
@@ -546,7 +561,7 @@
 					);
             </script>
             <div id="additionalhint"></div>
-            <br><br>
+            <br>
         </div>
     </div>
 
@@ -745,7 +760,7 @@
             <p style="font-size: 16px; line-height: 1.4; margin-bottom: 24px;"> If you are an existing user, your stats will be carried over. </p> <button id="migrationOkBtn" style=" background: #f7d354; color: #000; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 50%; "> OK </button><br><br><br>Please remember to bookmark the new URL.<br> <span style="font-size: 14px; color: #f7d354;">https://thechnlnk.com</span>
         </div>
     </div>
-    <script src="chnlnk.js?v=27"></script>
+    <script src="chnlnk.js?v=30"></script>
 </div>
 </body>
 </html>

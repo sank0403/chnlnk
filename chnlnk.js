@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.26.01";
+const BUILD_VERSION = "2025.02.26.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -951,8 +951,13 @@ function FinalClue() {
 //Button Text
 function ResetButton() {
     let HTMLButton = document.getElementById("HTMLButton");
-    HTMLButton.innerText = "SHARE"
+    HTMLButton.innerHTML = `
+        <span class="invite-inner">
+            📲 SHARE
+        </span>
+    `;
 }
+
 
 
 //Display Footer after game
@@ -1065,7 +1070,7 @@ function SetTier() {
         tiericon = "🥇";
     } else if (localStorage.totalclstreak >= 100) {
         tierlevel = "Ultimate (Streak 100+)";
-        tiericon = "🏆";
+        tiericon = "💎";
     } else {
         tierlevel = "";
         tiericon = "";
@@ -1504,7 +1509,7 @@ ${cluehdr} - ${clueicon}
     navigator.clipboard.writeText(copyText);
 
     const HTMLButton = document.getElementById("HTMLButton");
-    HTMLButton.innerText = "COPIED";
+    HTMLButton.innerText = "✅COPIED";
     setTimeout(ResetButton, 1000);
 }
 
@@ -4364,7 +4369,7 @@ function processInput(e) {
         }
         if (streak === 100) {
             setTimeout(function() {
-                showStreakPopup("ULTIMATE BADGE (100+ STREAK) ALERT - 🏆");
+                showStreakPopup("ULTIMATE BADGE (100+ STREAK) ALERT - 💎");
             }, 5000);
         }
         updateDynamiteUI();
