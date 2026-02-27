@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.26.04";
+const BUILD_VERSION = "2025.02.27.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -328,7 +328,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // ⭐ Refresh leaderboard
                 await loadLeaderboard();
-
                 container.remove();
 
             } catch (err) {
@@ -458,33 +457,35 @@ async function submitLeaderboardEntry(playerName) {
     }
 }
 
-
 let leaderboardLoadedThisSession = false;
 
 document.getElementById("leaderboardHeader").addEventListener("click", async function() {
     const content = document.getElementById("leaderboardContent");
     const toggle = document.getElementById("leaderboardToggle");
+    const winners = document.getElementById("previousMonthWinners");
 
     const isOpen = content.style.maxHeight && content.style.maxHeight !== "0px";
 
     if (isOpen) {
         // CLOSE
         content.style.maxHeight = "0px";
+        winners.classList.add("hidden");
         toggle.textContent = "▼";
     } else {
         // OPEN
 
-        // Load leaderboard BEFORE expanding
         if (!leaderboardLoadedThisSession) {
-            await loadLeaderboard();   // now valid because function is async
+            await loadLeaderboard();
+            await loadPreviousMonthWinners();
             leaderboardLoadedThisSession = true;
         }
 
-        // Now expand AFTER content is fully rendered
+        winners.classList.remove("hidden");
         content.style.maxHeight = content.scrollHeight + "px";
         toggle.textContent = "▲";
     }
 });
+
 
 async function loaddynamites() {
     const user = auth.currentUser;
@@ -593,6 +594,26 @@ function statsRetreival() {
 		window.location.reload();
     };
 }
+
+async function loadPreviousMonthWinners() {
+    const ref = doc(db, "winnerlist", "latest");
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+
+    document.getElementById("prevWinnersTitle").textContent =
+        `${data.monthLabel} Winners:`;
+
+	document.getElementById("prev1").innerHTML = `<span class="rotate-medal">🥇</span> ${data.first}`;
+	document.getElementById("prev2").innerHTML = `<span class="rotate-medal">🥈</span> ${data.second}`;
+	document.getElementById("prev3").innerHTML = `<span class="rotate-medal">🥉</span> ${data.third}`;
+
+
+    document.getElementById("previousMonthWinners").classList.remove("hidden");
+}
+
 
 async function loadLeaderboard() {
     const leaderboardBody = document.getElementById("leaderboardBody");
