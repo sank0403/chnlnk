@@ -518,7 +518,13 @@ p {
 .blink-icon {
     animation: wiggle 0.9s 10 ease-in-out;
     display: inline-block;
-    font-size: 1.3em;        /* matches text height */
+    font-size: 1.4em;        /* matches text height */
+    line-height: 1;        /* prevents height expansion */
+}
+
+.blink-icon1 {
+    display: inline-block;
+    font-size: 1.4em;        /* matches text height */
     line-height: 1;        /* prevents height expansion */
 }
 

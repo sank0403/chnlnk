@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.26.02";
+const BUILD_VERSION = "2025.02.26.04";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -953,7 +953,7 @@ function ResetButton() {
     let HTMLButton = document.getElementById("HTMLButton");
     HTMLButton.innerHTML = `
         <span class="invite-inner">
-            📲 SHARE
+            SHARE<span class="blink-icon1">📲</span>
         </span>
     `;
 }
@@ -1509,7 +1509,12 @@ ${cluehdr} - ${clueicon}
     navigator.clipboard.writeText(copyText);
 
     const HTMLButton = document.getElementById("HTMLButton");
-    HTMLButton.innerText = "✅COPIED";
+    // HTMLButton.innerText = "COPIED✅";
+    HTMLButton.innerHTML = `
+        <span class="invite-inner">
+            COPIED<span class="blink-icon1">✅</span>
+        </span>
+    `;	
     setTimeout(ResetButton, 1000);
 }
 
