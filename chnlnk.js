@@ -604,7 +604,7 @@ async function loadPreviousMonthWinners() {
     const data = snap.data();
 
     document.getElementById("prevWinnersTitle").textContent =
-        `${data.monthLabel} Winners:`;
+        `${data.monthLabel} Winners`;
 
 	document.getElementById("prev1").innerHTML = `<span class="rotate-medal">🥇</span> ${data.first}`;
 	document.getElementById("prev2").innerHTML = `<span class="rotate-medal">🥈</span> ${data.second}`;
