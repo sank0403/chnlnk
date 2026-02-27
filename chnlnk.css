@@ -384,7 +384,7 @@ p {
     padding-top: 0 !important;
 }
 .bottom-hr {
-    margin-top: -10px;
+    margin-top: -5px;
     margin-bottom: 2px;
 
 }
@@ -394,7 +394,7 @@ p {
     display: block;
     width: 100%;
     max-width: 260px;   /* ← MUST match .button-row max-width */
-    margin: 10px auto 0px auto;
+    margin: 10px auto 5px auto;
 
     background-color: green;
     color: white;
