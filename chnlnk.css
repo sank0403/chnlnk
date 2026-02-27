@@ -622,41 +622,48 @@ ul {
 	margin-Bottom : 25px;
 }
 
-.prev-winner {
+.prev-winners-row {
     display: flex;
-    flex-direction: column;     /* medal on top, name below */
-    align-items: center;
-    justify-content: center;
-    padding: 4px 6px;
-    background: #2a2a2a;
+    flex-direction: column;      /* title on top */
+    align-items: center;         /* center the title */
+    padding: 5px;
+    margin: 10px 0 0px 0;
+    background: #1e1e1e;
+    border: 1px solid #333;
     border-radius: 6px;
-    color: #fff;
-    font-size: 0.8rem;          /* readable but compact */
-    min-width: 55px;            /* prevents squishing */
+    font-weight: 600;
 }
 
 .prev-winner-title {
     color: #f0c674;
     font-size: 0.8rem;
+    text-align: center;
+    margin-bottom: 6px;
     white-space: nowrap;
 }
 
-.prev-winners-row {
+.prev-winner-container {
     display: flex;
+    justify-content: space-evenly;   /* evenly spaced winners */
+    width: 100%;
+}
+
+.prev-winner {
+    display: flex;
+    flex-direction: column;          /* medal above name */
     align-items: center;
-    gap: 10px;
-    padding: 8px 10px;
-    margin: 6px 0 10px 0;
-    background: #1e1e1e;
-    border: 1px solid #333;
+    background: #2a2a2a;
+    padding: 6px 10px;
     border-radius: 6px;
-    font-weight: 600;
-    flex-wrap: wrap;            /* ensures no overflow */
+    color: #fff;
+    font-size: 0.82rem;
+    min-width: 60px;
 }
 
 .rotate-medal {
     display: inline-block;
-    font-size: 1rem;
+    font-size: 1.1rem;
+    margin-bottom: 2px;
     animation: spinMedal 2.4s linear infinite;
 }
 
@@ -664,8 +671,6 @@ ul {
     0%   { transform: rotateY(0deg); }
     100% { transform: rotateY(360deg); }
 }
-
-
 
 .hidden {
     display: none;
