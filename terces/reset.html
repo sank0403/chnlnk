@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CHN LNK - Reset</title>
+</head>
+
+<body>
+<div id="resetPopup" style="
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #1e1e1e;
+    color: #fff;
+    padding: 20px 28px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    display: none;
+    z-index: 9999;
+">
+    Level has been reset.
+</div>
+
+<script>
+var a = new Date(); 
+var b = new Date(2025, 12, 9, 0, 0, 0, 0); 
+var d = (a - b); 
+var days = parseInt((d / 1000) / 86400);
+
+if (localStorage.getItem('gameovercl' + days) == 1) {
+    localStorage.removeItem('gameovercl' + days);
+    localStorage.monthclplayed = Number(localStorage.monthclplayed) - 1;
+    localStorage.totalclplayed = Number(localStorage.totalclplayed) - 1;
+
+    switch (Number(localStorage.clstarscnt)) {
+        case 0:
+            localStorage.starclxcount = Number(localStorage.starclxcount) - 1;
+            localStorage.totalclstreak = Number(localStorage.starcl0count) + Number(localStorage.starcl1count) + Number(localStorage.starcl2count) + Number(localStorage.starcl3count) + Number(localStorage.starcl4count) + Number(localStorage.starcl5count);
+            break;
+        case 1:
+            localStorage.totalclstars = Number(localStorage.totalclstars) - 1;
+            localStorage.monthclstars = Number(localStorage.monthclstars) - 1;
+            localStorage.starcl1count = Number(localStorage.starcl1count) - 1;
+            localStorage.totalclstreak = Number(localStorage.totalclstreak) - 1;
+            localStorage.totalclwins = Number(localStorage.totalclwins) - 1;
+            localStorage.monthwins = Number(localStorage.monthwins) - 1;
+            break;
+        case 2:
+            localStorage.totalclstars = Number(localStorage.totalclstars) - 2;
+            localStorage.monthclstars = Number(localStorage.monthclstars) - 2;
+            localStorage.starcl2count = Number(localStorage.starcl2count) - 1;
+            localStorage.totalclstreak = Number(localStorage.totalclstreak) - 1;
+            localStorage.totalclwins = Number(localStorage.totalclwins) - 1;
+            localStorage.monthwins = Number(localStorage.monthwins) - 1;
+            break;
+        case 3:
+            localStorage.totalclstars = Number(localStorage.totalclstars) - 3;
+            localStorage.monthclstars = Number(localStorage.monthclstars) - 3;
+            localStorage.starcl3count = Number(localStorage.starcl3count) - 1;
+            localStorage.totalclstreak = Number(localStorage.totalclstreak) - 1;
+            localStorage.totalclwins = Number(localStorage.totalclwins) - 1;
+            localStorage.monthwins = Number(localStorage.monthwins) - 1;
+            break;
+        case 4:
+            localStorage.totalclstars = Number(localStorage.totalclstars) - 4;
+            localStorage.monthclstars = Number(localStorage.monthclstars) - 4;
+            localStorage.starcl4count = Number(localStorage.starcl4count) - 1;
+            localStorage.totalclstreak = Number(localStorage.totalclstreak) - 1;
+            localStorage.totalclwins = Number(localStorage.totalclwins) - 1;
+            localStorage.monthwins = Number(localStorage.monthwins) - 1;
+            break;
+        case 5:
+            localStorage.totalclstars = Number(localStorage.totalclstars) - 5;
+            localStorage.monthclstars = Number(localStorage.monthclstars) - 5;
+            localStorage.starcl5count = Number(localStorage.starcl5count) - 1;
+            localStorage.totalclstreak = Number(localStorage.totalclstreak) - 1;
+            localStorage.totalclwins = Number(localStorage.totalclwins) - 1;
+            localStorage.monthwins = Number(localStorage.monthwins) - 1;
+            break;
+    }
+	document.getElementById("resetPopup").style.display = "block";
+
+	setTimeout(() => {
+		document.getElementById("resetPopup").style.display = "none";
+	}, 2000);
+
+}
+</script>
+
+</body>
+</html>
