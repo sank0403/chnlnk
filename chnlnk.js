@@ -7,7 +7,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.03.04.02";
+const BUILD_VERSION = "2025.03.04.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -346,18 +346,36 @@ function initMonthlyStats() {
     const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
     const lastMonth = localStorage.monthcl_lastMonth;
 
-    // New month OR first time ever → reset monthly stats
-    if ((lastMonth !== currentMonth) || (!lastMonth)) {
-        localStorage.monthcl_lastMonth = currentMonth;
+    const todayNum = now.getDate();
+    const played = Number(localStorage.monthclplayed);
 
-        // Reset monthly stats
+    // --- CASE 1: First time ever OR new month → full reset ---
+    if (!lastMonth || lastMonth !== currentMonth) {
+        localStorage.monthcl_lastMonth = currentMonth;
         localStorage.monthclplayed = 0;
         localStorage.monthclstars = 0;
         localStorage.monthwins = 0;
+        return;
     }
 
-    // Same month → do nothing
+    // --- CASE 2: Corrupted or impossible values → full reset ---
+    const invalidPlayed =
+        isNaN(played) ||
+        played < 0 ||
+        played > todayNum ||
+        played > 31;
+
+    if (invalidPlayed) {
+        localStorage.monthcl_lastMonth = currentMonth;
+        localStorage.monthclplayed = 0;
+        localStorage.monthclstars = 0;
+        localStorage.monthwins = 0;
+        return;
+    }
+
+    // Same month and values are valid → do nothing
 }
+
 
 
 function showError(message) {
