@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.03.03.03";
+const BUILD_VERSION = "2025.03.04.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -18,6 +18,7 @@ if (localStorage.getItem("skipReloadOnce") === "1") {
         location.reload();
     }
 }
+
 var gameOver = false;
 let isPaused = false;
 
@@ -370,6 +371,7 @@ function showError(message) {
 
 async function submitLeaderboardEntry(playerName) {
 
+    // --- Extract stats from localStorage ---
     const played = Number(localStorage.monthclplayed) || 0;
     const stars = Number(localStorage.monthclstars) || 0;
     const wins = Number(localStorage.monthwins) || 0;
@@ -391,22 +393,49 @@ async function submitLeaderboardEntry(playerName) {
 
     const now = new Date();
     const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    const today = now.getDate();
+
+    // --- Auth guard ---
+    if (!auth.currentUser) {
+        await logWriteFailure("unknown", playerName, "no-auth", {
+            message: "auth.currentUser was null"
+        });
+        return;
+    }
 
     const playerId = auth.currentUser.uid;
-    const today = new Date().getDate();
 
-    if (played > today) {
-        showError("Invalid Stats: Total Played cannot exceed today's date.");
-        return;
-    }
-    if (wins > played) {
-        showError("Invalid Stats: Wins cannot exceed Total Played.");
-        return;
-    }
-    if (stars > (5 * wins)) {
-        showError("Invalid Stats: Stars cannot exceed max possible value.");
-        return;
-    }
+	// --- Basic validation with logging ---
+	if (played > today) {
+		await logWriteFailure(playerId, playerName, "client-played-exceeds-today", {
+			played,
+			today
+		});
+		showError("Invalid Stats: Total Played cannot exceed today's date.");
+		return;
+	}
+
+	if (wins > played) {
+		await logWriteFailure(playerId, playerName, "client-wins-exceed-played", {
+			wins,
+			played
+		});
+		showError("Invalid Stats: Wins cannot exceed Total Played.");
+		return;
+	}
+
+	if (stars > (5 * wins)) {
+		await logWriteFailure(playerId, playerName, "client-stars-exceed-limit", {
+			stars,
+			wins,
+			maxAllowed: wins * 5
+		});
+		showError("Invalid Stats: Stars cannot exceed max possible value.");
+		return;
+	}
+
+
+    let updates = null; // <-- declared outside try so catch can access it
 
     try {
         const ref = doc(db, "leaderboard", playerId);
@@ -422,14 +451,14 @@ async function submitLeaderboardEntry(playerName) {
 
             const monthChanged = old.month !== monthKey;
 
-            // 🚫 Skip write if nothing changed
+            // --- Skip write if nothing changed ---
             if (!statsChanged && !monthChanged) {
                 return;
             }
         }
 
-        // If here → first write OR stats changed OR month changed
-        const updates = {
+        // --- Build updates object ---
+        updates = {
             name: playerName,
             played,
             stars,
@@ -450,12 +479,35 @@ async function submitLeaderboardEntry(playerName) {
             updated: serverTimestamp()
         };
 
+        // --- Perform write ---
         await setDoc(ref, updates, { merge: true });
 
     } catch (err) {
-        console.error("Error saving leaderboard entry:", err);
+        // --- Log failure remotely ---
+        await logWriteFailure(playerId, playerName, err.code || "unknown", {
+            updates,
+            message: err.message
+        });
+        throw err;
     }
 }
+
+async function logWriteFailure(uid, playerName, reason, details) {
+    try {
+        await addDoc(collection(db, "write_failures"), {
+            uid: uid || "unknown",
+            playerName: playerName || "unknown",
+            reason,
+            details,
+            ts: serverTimestamp(),       // TTL field
+            userAgent: navigator.userAgent,
+            path: window.location.pathname
+        });
+    } catch (e) {
+        console.error("Failed to log write failure:", e);
+    }
+}
+
 
 let leaderboardLoadedThisSession = false;
 
