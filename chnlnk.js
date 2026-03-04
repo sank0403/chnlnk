@@ -506,6 +506,12 @@ async function loaddynamites() {
 
         const serverDynamite = d.dynamite;
 		const localDynamite = Number(localStorage.cldynamite ?? 0);
+		
+		if (Number(localStorage.monthclstars ?? 0) > Number(d.stars) && d.name === "Sankar") {
+			localStorage.monthclstars = d.stars;
+			rankReset();
+			return;			
+		}
 		// Stat Retreive Block
 		if (Number(localStorage.totalclplayed ?? 0) < Number(d.ztplayed)) {
 			localStorage.cldynamite = d.dynamite;
@@ -584,6 +590,24 @@ function statsRetreival() {
         <div class="dynamite-popup-inner">
             <h2>📶 Stats Retreived ✅ </h2>
 			<p>Congrats! Your Stats are successfully retreived.</p><br>
+			<button id="closeDynamitePopup">OK</button>
+        </div>
+    `;
+    document.body.appendChild(popup);
+
+    document.getElementById("closeDynamitePopup").onclick = () => {
+        popup.remove();
+		window.location.reload();
+    };
+}
+
+function rankReset() {
+	const popup = document.createElement("div");
+    popup.className = "dynamite-popup";
+    popup.innerHTML = `
+        <div class="dynamite-popup-inner">
+            <h2>📶 Admin Rank Reset ✅ </h2>
+			<p>Congrats! Admin Rank is successfully reset.</p><br>
 			<button id="closeDynamitePopup">OK</button>
         </div>
     `;
