@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.02.27.01";
+const BUILD_VERSION = "2025.03.03.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -507,7 +507,7 @@ async function loaddynamites() {
         const serverDynamite = d.dynamite;
 		const localDynamite = Number(localStorage.cldynamite ?? 0);
 		// Stat Retreive Block
-        if (localStorage.totalclplayed != d.ztplayed){
+		if (Number(localStorage.totalclplayed ?? 0) < Number(d.ztplayed)) {
 			localStorage.cldynamite = d.dynamite;
 			localStorage.monthclplayed = d.played;
 			localStorage.monthclstars = d.stars;
@@ -525,8 +525,8 @@ async function loaddynamites() {
 			statsRetreival();
 			return;
 		}
-		
-		if (serverDynamite !== localDynamite) {
+	
+		if (serverDynamite > localDynamite) {
             localStorage.cldynamite = serverDynamite;
             showDynamitePopup(serverDynamite - localDynamite);
         }
@@ -583,7 +583,7 @@ function statsRetreival() {
     popup.innerHTML = `
         <div class="dynamite-popup-inner">
             <h2>📶 Stats Retreived ✅ </h2>
-			<p>Congrats! Your Stats are successfully Retreived.</p><br>
+			<p>Congrats! Your Stats are successfully retreived.</p><br>
 			<button id="closeDynamitePopup">OK</button>
         </div>
     `;
@@ -1597,6 +1597,7 @@ var masterwordlist = [
 	["harborfront","market","stall","holder","ring","tone","shift",""],
 	["compass","rose","garden","tool","box","cutter","blade",""],
 	["lantern","glow","stick","figure","eight","ball","room",""],
+	["shutter","speed","tracking","device","control","panel","board","Vidya"],
 	["canyon","echo","chamber","music","hall","pass","code",""],
 	["meadow","grass","roots","rock","slide","show","case",""],
 	["timber","frame","house","party","trick","shot","clock",""],

@@ -343,6 +343,7 @@ var masterwordlist = [
 	["harborfront","market","stall","holder","ring","tone","shift",""],
 	["compass","rose","garden","tool","box","cutter","blade",""],
 	["lantern","glow","stick","figure","eight","ball","room",""],
+	["shutter","speed","tracking","device","control","panel","board","Vidya"],
 	["canyon","echo","chamber","music","hall","pass","code",""],
 	["meadow","grass","roots","rock","slide","show","case",""],
 	["timber","frame","house","party","trick","shot","clock",""],
