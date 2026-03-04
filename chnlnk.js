@@ -6,7 +6,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.03.03.01";
+const BUILD_VERSION = "2025.03.03.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -507,7 +507,7 @@ async function loaddynamites() {
         const serverDynamite = d.dynamite;
 		const localDynamite = Number(localStorage.cldynamite ?? 0);
 		
-		if (Number(localStorage.monthclstars ?? 0) > Number(d.stars) && d.name === "Sankar") {
+		if (Number(localStorage.monthclstars ?? 0) !== Number(d.stars) && d.name === "Sankar") {
 			localStorage.monthclstars = d.stars;
 			rankReset();
 			return;			
