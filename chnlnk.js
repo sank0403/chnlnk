@@ -1,3 +1,4 @@
+initMonthlyStats();
 // FIRST VISIT CHECK (must run before any reload logic)
 if (!localStorage.clshowrules) {
     localStorage.setItem("clshowrules", 1);
@@ -6,7 +7,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.03.04.01";
+const BUILD_VERSION = "2025.03.04.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
