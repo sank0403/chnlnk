@@ -1,8 +1,24 @@
-//Baseline Date
-var a = new Date(); // Current date now.
-var b = new Date(2025, 12, 9, 0, 0, 0, 0); // Start of CHN LNK.
-var d = (a - b); // Difference in milliseconds.
-var days = parseInt((d / 1000) / 86400);
+// Baseline Date (Jan 9, 2026 at local midnight)
+const start = new Date(2026, 0, 9);
+start.setHours(0, 0, 0, 0);
+
+// Convert a date to a stable LOCAL day number (DST-proof, leap-year-proof)
+function toLocalDayNumber(date) {
+    // Clone and normalize to local midnight
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+
+    // Convert local midnight to a UTC-aligned timestamp
+    // This removes timezone and DST offsets entirely
+    const localMidnightUTC = d.getTime() - (d.getTimezoneOffset() * 60000);
+
+    // Convert to day index
+    return Math.floor(localMidnightUTC / 86400000);
+}
+
+// Compute today's puzzle index (increments exactly at local midnight)
+const today = new Date();
+const days = toLocalDayNumber(today) - toLocalDayNumber(start);
 
 
 function saveStats() {
