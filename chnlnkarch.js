@@ -47,11 +47,30 @@ localStorage.setItem("clshowalert",0);
 setTimeout(OpenRules, 1100);
 } */
 
-//Baseline Date
-var a = new Date(); // Current date now.
-var b = new Date(2025, 12, 9, 0, 0, 0, 0); // Start of TENIZ.
-var d = (a - b); // Difference in milliseconds.
-var maxdays = parseInt((d / 1000) / 86400);
+// Baseline Date (Jan 9, 2026 at local midnight)
+const start = new Date(2026, 0, 9);
+start.setHours(0, 0, 0, 0);
+
+// Convert a date to a stable LOCAL day number (DST-proof, leap-year-proof)
+function toLocalDayNumber(date) {
+    // Clone and normalize to local midnight
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+
+    // Convert local midnight to a UTC-aligned timestamp
+    // This removes timezone and DST offsets entirely
+    const localMidnightUTC = d.getTime() - (d.getTimezoneOffset() * 60000);
+
+    // Convert to day index
+    return Math.floor(localMidnightUTC / 86400000);
+}
+
+// Compute today's puzzle index (increments exactly at local midnight)
+const today = new Date();
+const maxdays = toLocalDayNumber(today) - toLocalDayNumber(start);
+
+
+
 /* if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('gameovercl' + days) != 1) {
 	localStorage['gameovercl' + days] = 0;
 	localStorage.setItem("cllives","⚪⚪⚪⚪⚪");
@@ -841,7 +860,41 @@ var masterwordlist = [
 	["skate","ramp","up","wind","fall","fashion","sense",""],
 	["sharp","knife","edge","case","study","guide","line",""],
 	["early","bird","call","center","piece","meal","plan",""],
-	["salad","fork","over","pass","time","travel","light",""]	
+	["salad","fork","over","pass","time","travel","light",""],
+	["ketchup","bottle","neck","deep","dive","bar","mitzvah"],
+	["home","school","bell","bottom","dollar","sign","off"],
+	["fighter","jet","ski","jump","rope","swing","set"],
+	["history","channel","surf","board","game","face","lift"],
+	["auto","pay","day","care","free","trade","show"],
+	["chemical","reaction","time","sheet","cake","pop","tart"],
+	["steam","train","car","race","track","team","sport"],
+	["garbage","truck","bed","room","number","pad","lock"],
+	["giant","squid","ink","jet","black","top","heavy"],
+	["full","moon","dust","storm","front","page","turner"],
+	["easy","street","food","chain","saw","dust","buster"],
+	["beaded","curtain","call","off","hand","ball","drop"],
+	["sure","fire","drill","sergeant","major","general","store"],
+	["honey","comb","over","hang","tight","space","force"],
+	["prune","juice","glass","ceiling","fan","base","coat"],
+	["serving","spoon","feed","back","talk","radio","station"],
+	["smooth","move","over","night","watch","dog","house"],
+	["main","squeeze","bottle","rocket","science","fair","game"],
+	["mission","control","freak","accident","report","back","draft"],
+	["cotton","candy","bar","soap","bubble","gum","drop"],
+	["wrecking","ball","point","guard","rail","road","block"],
+	["grass","fed","up","hill","side","kick","start"],
+	["prom","dress","code","red","pepper","jack","hammer"],
+	["fist","fight","dirty","laundry","list","price","cut"],
+	["drug","store","credit","check","mark","off","road"],
+	["finger","tip","toe","nail","file","cabinet","member"],
+	["magnet","school","lunch","counter","strike","gold","mine"],
+	["daily","double","time","share","price","check","engine"],
+	["flying","high","road","house","sitting","room","mate"],
+	["popsicle","stick","around","town","car","jack","rabbit"],
+	["exhaust","pipe","bomb","shell","game","over","time"],
+	["maple","sugar","high","fashion","show","room","divider"],
+	["hornet","nest","egg","salad","bowl","cut","loose"],
+	["magazine","cover","letter","head","cold","water","slide"],	
 ];
 
 // if (days%firstwordlist.length > 0){

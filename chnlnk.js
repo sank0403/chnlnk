@@ -7,7 +7,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2025.03.04.03";
+const BUILD_VERSION = "2026.03.05.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -560,50 +560,67 @@ document.getElementById("leaderboardHeader").addEventListener("click", async fun
 
 async function loaddynamites() {
     const user = auth.currentUser;
-    if (!user) return; // safety check
+    if (!user) return;
 
     const currentUID = user.uid;
     const playerRef = doc(db, "leaderboard", currentUID);
 
     try {
         const snap = await getDoc(playerRef);
-
         if (!snap.exists()) return;
 
         const d = snap.data();
+
+        // -----------------------------
+        // OPTIONAL POPUP CHECK (users collection)
+        // -----------------------------
+        const userRef = doc(db, "users", currentUID);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+            const u = userSnap.data();
+
+			if (u.popup && u.popup.seen === false) {
+				showPopupToUser(u.popup.type, u.popup.message);
+				await updateDoc(userRef, { "popup.seen": true });
+			}
+
+        }
+        // -----------------------------
 
         // If server has no dynamite field → do nothing
         if (!("dynamite" in d)) return;
 
         const serverDynamite = d.dynamite;
-		const localDynamite = Number(localStorage.cldynamite ?? 0);
-		
-		if (Number(localStorage.monthclstars ?? 0) !== Number(d.stars) && d.name === "Sankar") {
-			localStorage.monthclstars = d.stars;
-			rankReset();
-			return;			
-		}
-		// Stat Retreive Block
-		if (Number(localStorage.totalclplayed ?? 0) < Number(d.ztplayed)) {
-			localStorage.cldynamite = d.dynamite;
-			localStorage.monthclplayed = d.played;
-			localStorage.monthclstars = d.stars;
-			localStorage.monthwins = d.wins;
-			localStorage.totalclplayed = d.ztplayed;
-			localStorage.totalclstars = d.ztstars;
-			localStorage.totalclstreak = d.ztstreak;
-			localStorage.totalclwins = d.ztwins;
-			localStorage.starcl1count = d.zzstar1;
-			localStorage.starcl2count = d.zzstar2;
-			localStorage.starcl3count = d.zzstar3;
-			localStorage.starcl4count = d.zzstar4;
-			localStorage.starcl5count = d.zzstar5;
-			localStorage.starclxcount = d.zzstarx;
-			statsRetreival();
-			return;
-		}
-	
-		if (serverDynamite > localDynamite) {
+        const localDynamite = Number(localStorage.cldynamite ?? 0);
+
+        if (Number(localStorage.monthclstars ?? 0) !== Number(d.stars) && d.name === "Sankar") {
+            localStorage.monthclstars = d.stars;
+            rankReset();
+            return;
+        }
+
+        // Stat Retrieve Block
+        if (Number(localStorage.totalclplayed ?? 0) < Number(d.ztplayed)) {
+            localStorage.cldynamite = d.dynamite;
+            localStorage.monthclplayed = d.played;
+            localStorage.monthclstars = d.stars;
+            localStorage.monthwins = d.wins;
+            localStorage.totalclplayed = d.ztplayed;
+            localStorage.totalclstars = d.ztstars;
+            localStorage.totalclstreak = d.ztstreak;
+            localStorage.totalclwins = d.ztwins;
+            localStorage.starcl1count = d.zzstar1;
+            localStorage.starcl2count = d.zzstar2;
+            localStorage.starcl3count = d.zzstar3;
+            localStorage.starcl4count = d.zzstar4;
+            localStorage.starcl5count = d.zzstar5;
+            localStorage.starclxcount = d.zzstarx;
+            statsRetreival();
+            return;
+        }
+
+        if (serverDynamite > localDynamite) {
             localStorage.cldynamite = serverDynamite;
             showDynamitePopup(serverDynamite - localDynamite);
         }
@@ -612,6 +629,7 @@ async function loaddynamites() {
         console.error("Error loading dynamites:", err);
     }
 }
+
 
 function showDynamitePopup(amountGained) {
     const gained = amountGained > 0 ? amountGained : 0;
@@ -654,6 +672,56 @@ function showDynamitePopup(amountGained) {
     };
 }
 
+function showPopupToUser(type, message, reloadOnClose = false) {
+    const popup = document.createElement("div");
+    popup.className = "dynamite-popup";
+
+    // Icon mapping
+    const icons = {
+        announcement: "📢",
+        warning: "⚠️",
+        reward: "🏆",
+        default: "🔔"
+    };
+
+    // Title mapping (your switch block)
+    let title = "";
+    switch (type) {
+        case "announcement":
+            title = "Announcement";
+            break;
+        case "warning":
+            title = "Important";
+            break;
+        case "reward":
+            title = "Congratulations!";
+            break;
+        default:
+            title = "Message";
+    }
+
+    const icon = icons[type] || icons.default;
+
+    popup.innerHTML = `
+        <div class="dynamite-popup-inner">
+            <h2>${icon} ${title}</h2>
+            <p>${message}</p><br>
+            <button id="closeGenericPopup">OK</button>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    document.getElementById("closeGenericPopup").onclick = () => {
+        popup.remove();
+        if (reloadOnClose) {
+            window.location.reload();
+        }
+    };
+}
+
+
+
 function statsRetreival() {
 	const popup = document.createElement("div");
     popup.className = "dynamite-popup";
@@ -671,6 +739,9 @@ function statsRetreival() {
 		window.location.reload();
     };
 }
+
+
+
 
 function rankReset() {
 	const popup = document.createElement("div");
@@ -1123,11 +1194,27 @@ if (!localStorage.clhardmode) {
 	// localStorage.cl30reset = 1;
 // }
 	
-//Baseline Date
-var a = new Date(); // Current date now.
-var b = new Date(2025, 12, 9, 0, 0, 0, 0); // Start of CHN LNK.
-var d = (a - b); // Difference in milliseconds.
-var days = parseInt((d / 1000) / 86400);
+// Baseline Date (Jan 9, 2026 at local midnight)
+const start = new Date(2026, 0, 9);
+start.setHours(0, 0, 0, 0);
+
+// Convert a date to a stable LOCAL day number (DST-proof, leap-year-proof)
+function toLocalDayNumber(date) {
+    // Clone and normalize to local midnight
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+
+    // Convert local midnight to a UTC-aligned timestamp
+    // This removes timezone and DST offsets entirely
+    const localMidnightUTC = d.getTime() - (d.getTimezoneOffset() * 60000);
+
+    // Convert to day index
+    return Math.floor(localMidnightUTC / 86400000);
+}
+
+// Compute today's puzzle index (increments exactly at local midnight)
+const today = new Date();
+const days = toLocalDayNumber(today) - toLocalDayNumber(start);
 
 // if ((localStorage.getItem('gameovercl39') == 1) && (!localStorage.cl39reset) && (localStorage.clgamecnt == 6) && (days == 39)) {
 	// localStorage.removeItem('gameovercl39');
@@ -2190,7 +2277,41 @@ var masterwordlist = [
 	["skate","ramp","up","wind","fall","fashion","sense",""],
 	["sharp","knife","edge","case","study","guide","line",""],
 	["early","bird","call","center","piece","meal","plan",""],
-	["salad","fork","over","pass","time","travel","light",""]	
+	["salad","fork","over","pass","time","travel","light",""],
+	["ketchup","bottle","neck","deep","dive","bar","mitzvah"],
+	["home","school","bell","bottom","dollar","sign","off"],
+	["fighter","jet","ski","jump","rope","swing","set"],
+	["history","channel","surf","board","game","face","lift"],
+	["auto","pay","day","care","free","trade","show"],
+	["chemical","reaction","time","sheet","cake","pop","tart"],
+	["steam","train","car","race","track","team","sport"],
+	["garbage","truck","bed","room","number","pad","lock"],
+	["giant","squid","ink","jet","black","top","heavy"],
+	["full","moon","dust","storm","front","page","turner"],
+	["easy","street","food","chain","saw","dust","buster"],
+	["beaded","curtain","call","off","hand","ball","drop"],
+	["sure","fire","drill","sergeant","major","general","store"],
+	["honey","comb","over","hang","tight","space","force"],
+	["prune","juice","glass","ceiling","fan","base","coat"],
+	["serving","spoon","feed","back","talk","radio","station"],
+	["smooth","move","over","night","watch","dog","house"],
+	["main","squeeze","bottle","rocket","science","fair","game"],
+	["mission","control","freak","accident","report","back","draft"],
+	["cotton","candy","bar","soap","bubble","gum","drop"],
+	["wrecking","ball","point","guard","rail","road","block"],
+	["grass","fed","up","hill","side","kick","start"],
+	["prom","dress","code","red","pepper","jack","hammer"],
+	["fist","fight","dirty","laundry","list","price","cut"],
+	["drug","store","credit","check","mark","off","road"],
+	["finger","tip","toe","nail","file","cabinet","member"],
+	["magnet","school","lunch","counter","strike","gold","mine"],
+	["daily","double","time","share","price","check","engine"],
+	["flying","high","road","house","sitting","room","mate"],
+	["popsicle","stick","around","town","car","jack","rabbit"],
+	["exhaust","pipe","bomb","shell","game","over","time"],
+	["maple","sugar","high","fashion","show","room","divider"],
+	["hornet","nest","egg","salad","bowl","cut","loose"],
+	["magazine","cover","letter","head","cold","water","slide"],	
 ];
 // if (days%firstwordlist.length > 0){
 // var offset = Math.floor(days/firstwordlist.length);
