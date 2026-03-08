@@ -7,7 +7,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2026.03.05.01";
+const BUILD_VERSION = "2026.03.08.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -2313,19 +2313,19 @@ var masterwordlist = [
 	["hornet","nest","egg","salad","bowl","cut","loose"],
 	["magazine","cover","letter","head","cold","water","slide"],	
 ];
-// if (days%firstwordlist.length > 0){
-// var offset = Math.floor(days/firstwordlist.length);
-// }
-// else{
-// var offset = (days/firstwordlist.length) - 1;
-// }
-// if (days > firstwordlist.length){
-// var index  = days - 1 - (offset * firstwordlist.length);
-// }
-// else {
+if (days%masterwordlist.length > 0){
+	var offset = Math.floor(days/masterwordlist.length);
+}
+else{
+	var offset = (days/masterwordlist.length) - 1;
+}
+if (days > masterwordlist.length){
+	var index  = days - 1 - (offset * masterwordlist.length);
+}
+else {
+	var index = days - 1;
+}
 // var index = days - 1;
-// }
-var index = days - 1;
 var wordone = masterwordlist[index][0].toUpperCase();
 var wordtwo = masterwordlist[index][1].toUpperCase();
 var wordthree = masterwordlist[index][2].toUpperCase();
