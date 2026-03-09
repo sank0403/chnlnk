@@ -7,7 +7,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2026.03.08.01";
+const BUILD_VERSION = "2026.03.09.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -574,18 +574,83 @@ async function loaddynamites() {
         // -----------------------------
         // OPTIONAL POPUP CHECK (users collection)
         // -----------------------------
-        const userRef = doc(db, "users", currentUID);
-        const userSnap = await getDoc(userRef);
+		const userRef = doc(db, "users", currentUID);
+		const userSnap = await getDoc(userRef);
 
-        if (userSnap.exists()) {
-            const u = userSnap.data();
+		if (userSnap.exists()) {
+			const u = userSnap.data();
 
-			if (u.popup && u.popup.seen === false) {
-				showPopupToUser(u.popup.type, u.popup.message);
-				await updateDoc(userRef, { "popup.seen": true });
+			// --- RESET FLAG LOGIC ---
+			if (u.popup && u.popup.reset === true) {
+
+				if (localStorage.getItem('gameovercl' + days) == 1) {
+					localStorage.removeItem('gameovercl' + days);
+					localStorage.monthclplayed = Number(localStorage.monthclplayed) - 1;
+					localStorage.totalclplayed = Number(localStorage.totalclplayed) - 1;
+
+					switch (Number(localStorage.clstarscnt)) {
+						case 0:
+							localStorage.starclxcount = Number(localStorage.starclxcount) - 1;
+							localStorage.totalclstreak = Number(localStorage.starcl0count) + Number(localStorage.starcl1count) + Number(localStorage.starcl2count) + Number(localStorage.starcl3count) + Number(localStorage.starcl4count) + Number(localStorage.starcl5count);
+							break;
+						case 1:
+							localStorage.totalclstars = Number(localStorage.totalclstars) - 1;
+							localStorage.monthclstars = Number(localStorage.monthclstars) - 1;
+							localStorage.starcl1count = Number(localStorage.starcl1count) - 1;
+							localStorage.totalclstreak = Number(localStorage.totalclstreak) - 1;
+							localStorage.totalclwins = Number(localStorage.totalclwins) - 1;
+							localStorage.monthwins = Number(localStorage.monthwins) - 1;
+							break;
+						case 2:
+							localStorage.totalclstars = Number(localStorage.totalclstars) - 2;
+							localStorage.monthclstars = Number(localStorage.monthclstars) - 2;
+							localStorage.starcl2count = Number(localStorage.starcl2count) - 1;
+							localStorage.totalclstreak = Number(localStorage.totalclstreak) - 1;
+							localStorage.totalclwins = Number(localStorage.totalclwins) - 1;
+							localStorage.monthwins = Number(localStorage.monthwins) - 1;
+							break;
+						case 3:
+							localStorage.totalclstars = Number(localStorage.totalclstars) - 3;
+							localStorage.monthclstars = Number(localStorage.monthclstars) - 3;
+							localStorage.starcl3count = Number(localStorage.starcl3count) - 1;
+							localStorage.totalclstreak = Number(localStorage.totalclstreak) - 1;
+							localStorage.totalclwins = Number(localStorage.totalclwins) - 1;
+							localStorage.monthwins = Number(localStorage.monthwins) - 1;
+							break;
+						case 4:
+							localStorage.totalclstars = Number(localStorage.totalclstars) - 4;
+							localStorage.monthclstars = Number(localStorage.monthclstars) - 4;
+							localStorage.starcl4count = Number(localStorage.starcl4count) - 1;
+							localStorage.totalclstreak = Number(localStorage.totalclstreak) - 1;
+							localStorage.totalclwins = Number(localStorage.totalclwins) - 1;
+							localStorage.monthwins = Number(localStorage.monthwins) - 1;
+							break;
+						case 5:
+							localStorage.totalclstars = Number(localStorage.totalclstars) - 5;
+							localStorage.monthclstars = Number(localStorage.monthclstars) - 5;
+							localStorage.starcl5count = Number(localStorage.starcl5count) - 1;
+							localStorage.totalclstreak = Number(localStorage.totalclstreak) - 1;
+							localStorage.totalclwins = Number(localStorage.totalclwins) - 1;
+							localStorage.monthwins = Number(localStorage.monthwins) - 1;
+							break;
+					}
+				}
+				await updateDoc(userRef, {
+					"popup.reset": false
+				});
+				window.location.reload();			
+				return;
 			}
 
-        }
+			// --- POPUP LOGIC ---
+			if (u.popup && u.popup.seen === false) {
+				showPopupToUser(u.popup.type, u.popup.message);
+
+				await updateDoc(userRef, {
+					"popup.seen": true
+				});
+			}
+		}
         // -----------------------------
 
         // If server has no dynamite field → do nothing
