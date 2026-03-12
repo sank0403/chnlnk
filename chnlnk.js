@@ -932,6 +932,9 @@ function addFFUser(slot) {
         </td>
 		 <td></td>   <!-- NEW: empty delete-icon column -->
     `;
+    // ⭐ Autofocus AFTER the HTML is inserted
+    const input = document.getElementById(`ffInput${slot}`);
+    input.focus();	
 }
 
 function saveFFUser(slot) {
