@@ -7,7 +7,47 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2026.03.12.04";
+(function importFFFromURL() {
+    const allowedHost = "thechnlnk.com";
+    if (window.location.hostname !== allowedHost) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const encoded = params.get("ff");
+    if (!encoded) return; // Only run when ?ff= is present
+
+    try {
+        const decoded = atob(encoded);
+        const list = JSON.parse(decoded);
+
+        if (!Array.isArray(list)) return;
+
+        // Clean names
+        let cleaned = list
+            .map(n => (typeof n === "string" ? n.trim() : ""))
+            .filter(n => n.length > 0);
+
+        // Remove receiver's own name
+        const myName = (localStorage.playerName || "").trim().toUpperCase();
+        cleaned = cleaned.filter(n => n.toUpperCase() !== myName);
+
+        // Enforce max 4 friends (You + 4 = 5 rows)
+        cleaned = cleaned.slice(0, 4);
+
+        // Save final list
+        localStorage.ffList = JSON.stringify(cleaned);
+        console.log("Imported F&F list:", cleaned);
+
+        // Clean the URL
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, "", cleanUrl);
+
+    } catch (e) {
+        console.warn("Invalid F&F import link");
+    }
+})();
+
+
+const BUILD_VERSION = "2026.03.12.06";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -561,7 +601,6 @@ document.getElementById("leaderboardHeader").addEventListener("click", async fun
 
 
 document.getElementById("notifyAllBtn").addEventListener("click", async () => {
-
     const ff = window.ffLeaderboard || [];
 
     const me = localStorage.playerName || "Me";
@@ -579,14 +618,23 @@ document.getElementById("notifyAllBtn").addEventListener("click", async () => {
         .map((p, i) => `${i + 1}. ${p.name} (${p.stars}⭐ ${p.wins}W ${p.winpct}%)`)
         .join("\n");
 
+    // 🔹 Build sharable F&F link (names only, local model)
+    const ffNames = all.map(p => p.name);
+    const encoded = btoa(JSON.stringify(ffNames));
+    const baseUrl = window.location.origin + window.location.pathname;
+    const shareLink = `${baseUrl}?ff=${encoded}`;
+
     const message =
-`I'm tracking all of us on the new CHN LNK Friends & Family Leaderboard.
+		`I'm tracking all of us on the new CHN LNK Friends & Family Leaderboard.
 
-Current Ranking:
-${rankedList}
+		Current Ranking:
+		${rankedList}
 
-Add me back and let's see who wins top spot at the end of the month! 🔥
-`;
+		Click this link to add the same group to your F&F:
+		${shareLink}
+
+		Let's see who wins top spot at the end of the month! 🔥
+		`;
 
     if (navigator.share) {
         await navigator.share({ title: "CHN LNK Challenge", text: message });
@@ -611,89 +659,11 @@ function saveFFList(list) {
     localStorage.ffList = JSON.stringify(list);
 }
 
-// ---------------------------------------------------------
-// Save YOUR friend list into your own nameToUid doc
-// ---------------------------------------------------------
-async function saveMyFFListToNameToUid() {
-    const uid = auth.currentUser.uid;
-    const rawName = localStorage.playerName || "";
-    const cleanName = rawName.trim();
-    if (!cleanName) return;
-
-    const docId = cleanName.toUpperCase();
-    const ref = doc(db, "nameToUid", docId);
-
-    const list = getFFList(); // from global helper
-
-    // Allowed because this is YOUR OWN nameToUid doc
-    await setDoc(ref, {
-        uid,
-        name: cleanName,
-        friends: list
-    }, { merge: true });
-}
 
 
 let ffLoadedThisSession = false;
 
 document.addEventListener("DOMContentLoaded", () => {
-
-    // ---------------------------------------------------------
-    // Ensure your own name→UID mapping (allowed by your rules)
-    // ---------------------------------------------------------
-    async function ensureOwnNameMapping() {
-        const uid = auth.currentUser.uid;
-        const rawName = localStorage.playerName || "";
-        const cleanName = rawName.trim();
-        if (!cleanName) return;
-
-        const docId = cleanName.toUpperCase();
-        const ref = doc(db, "nameToUid", docId);
-
-        const snap = await getDoc(ref);
-
-        if (!snap.exists()) {
-            // Allowed by your rules because uid == request.auth.uid
-            await setDoc(ref, { uid, name: cleanName });
-            return;
-        }
-
-        const data = snap.data();
-        if (data.uid !== uid) {
-            // update is NOT allowed by your rules → skip
-            return;
-        }
-    }
-
-    // ---------------------------------------------------------
-    // Lookup friend name → UID (NO WRITES because rules forbid)
-    // ---------------------------------------------------------
-    async function lookupUidByName(name) {
-        const clean = name.trim().replace(/\s+/g, " ").normalize("NFC");
-        const docId = clean.toUpperCase();
-
-        // 1. Try nameToUid (read allowed)
-        const ref = doc(db, "nameToUid", docId);
-        const snap = await getDoc(ref);
-
-        if (snap.exists()) {
-            return snap.data().uid;
-        }
-
-        // 2. Fallback: search leaderboard by exact name
-        const q = query(
-            collection(db, "leaderboard"),
-            where("name", "==", clean)
-        );
-        const qsnap = await getDocs(q);
-
-        if (qsnap.empty) return null;
-
-        const uid = qsnap.docs[0].id;
-
-        // ❗ DO NOT WRITE MAPPING — your rules forbid it
-        return uid;
-    }
 
     // ---------------------------------------------------------
     // F&F Collapsible Click Handler
@@ -709,11 +679,7 @@ document.addEventListener("DOMContentLoaded", () => {
             toggle.textContent = "▼";
         } else {
 
-            await ensureOwnNameMapping();
-
             if (!ffLoadedThisSession) {
-				await ensureOwnNameMapping();
-				await saveMyFFListToNameToUid();
                 await loadFFLeaderboard();
                 ffLoadedThisSession = true;
             }
@@ -731,6 +697,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tbody.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
 
         const uid = auth.currentUser.uid;
+        const monthKey = new Date().toISOString().slice(0,7); // YYYY-MM
 
         // --- A. Fetch YOUR stats ---
         let you = null;
@@ -761,16 +728,12 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         }
 
-        // --- B. Fetch FRIEND stats ---
+        // --- B. Fetch FRIEND stats (LOCAL ONLY — NO UID LOOKUPS) ---
         const list = getFFList();
 
         // Show CHALLENGE button only if at least one friend exists
         const challengeBtn = document.getElementById("notifyAllBtn");
-        if (list.length > 0) {
-            challengeBtn.style.display = "inline-block";
-        } else {
-            challengeBtn.style.display = "none";
-        }
+        challengeBtn.style.display = list.length > 0 ? "inline-block" : "none";
 
         const friends = [];
 
@@ -778,9 +741,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const friendName = list[i];
             if (!friendName) continue;
 
-            let friendUID = await lookupUidByName(friendName);
+            // Query leaderboard by NAME ONLY
+            const q = query(
+                collection(db, "leaderboard"),
+                where("name", "==", friendName),
+                where("month", "==", monthKey)
+            );
 
-            if (!friendUID) {
+            const snap = await getDocs(q);
+
+            if (snap.empty) {
+                // Friend exists locally but not on leaderboard
                 friends.push({
                     id: null,
                     name: friendName,
@@ -792,32 +763,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 continue;
             }
 
-            try {
-                const fRef = doc(db, "leaderboard", friendUID);
-                const fSnap = await getDoc(fRef);
+            // If multiple entries exist, pick the highest ranked
+            const results = [];
+            snap.forEach(doc => results.push({ id: doc.id, ...doc.data() }));
 
-                if (fSnap.exists()) {
-                    friends.push({ id: friendUID, ...fSnap.data() });
-                } else {
-                    friends.push({
-                        id: friendUID,
-                        name: friendName,
-                        stars: "-",
-                        wins: "-",
-                        winpct: "-",
-                        updated: 9999999999999
-                    });
-                }
-            } catch {
-                friends.push({
-                    id: friendUID,
-                    name: friendName,
-                    stars: "-",
-                    wins: "-",
-                    winpct: "-",
-                    updated: 9999999999999
-                });
-            }
+            results.sort((a, b) =>
+                b.stars - a.stars ||
+                b.wins - a.wins ||
+                b.winpct - a.winpct ||
+                a.updated - b.updated
+            );
+
+            friends.push(results[0]);
         }
 
         // --- C. Combine + Sort ---
@@ -898,37 +855,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-async function ensureOwnNameMapping() {
-    const uid = auth.currentUser.uid;
-    const rawName = localStorage.playerName || "";
-    const cleanName = rawName.trim();
-    if (!cleanName) return;
-
-    const docId = cleanName.toUpperCase(); // lookup key
-    const ref = doc(db, "nameToUid", docId);
-
-    const snap = await getDoc(ref);
-
-    if (!snap.exists()) {
-        // Mapping missing → create it
-        await setDoc(ref, {
-            uid,
-            name: cleanName
-        });
-        return;
-    }
-
-    const data = snap.data();
-
-    if (data.uid !== uid) {
-        // Mapping exists but UID is wrong → update it
-        await setDoc(ref, {
-            uid,
-            name: cleanName
-        });
-    }
-}
-
 function addFFUser(slot) {
     const tbody = document.getElementById("ffBody");
     const row = tbody.children[slot - 1];
@@ -980,7 +906,6 @@ async function saveFFUser(slot) {
 
     list[slot - 2] = name;
     saveFFList(list);
-	await saveMyFFListToNameToUid();
     // Force a fresh reload
     ffLoadedThisSession = false;
 
@@ -1000,7 +925,6 @@ async function deleteFFUser(name) {
     let list = getFFList();
     list = list.filter(n => n && n.toUpperCase() !== name.toUpperCase());
     saveFFList(list);
-	await saveMyFFListToNameToUid();
     // Refresh the table
     ffLoadedThisSession = false;
     loadFFLeaderboard();
