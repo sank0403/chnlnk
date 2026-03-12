@@ -47,7 +47,7 @@ if (!localStorage.clshowrules) {
 })();
 
 
-const BUILD_VERSION = "2026.03.12.06";
+const BUILD_VERSION = "2026.03.12.07";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -599,9 +599,26 @@ document.getElementById("leaderboardHeader").addEventListener("click", async fun
     }
 });
 
-
 document.getElementById("notifyAllBtn").addEventListener("click", async () => {
-    const ff = window.ffLeaderboard || [];
+    let ff = window.ffLeaderboard || [];
+
+    // 🔥 DELETE INVALID USERS FROM LOCALSTORAGE AND MEMORY
+    const invalidNames = ff
+        .filter(p => p.id === null || p.stars === "-" || p.wins === "-" || p.winpct === "-")
+        .map(p => p.name);
+
+    // Remove from localStorage
+    let ffList = JSON.parse(localStorage.ffList || "[]");
+    ffList = ffList.filter(name => !invalidNames.includes(name));
+    localStorage.ffList = JSON.stringify(ffList);
+
+    // Remove from in-memory leaderboard
+    ff = ff.filter(p => !invalidNames.includes(p.name));
+
+    // 🔥 REFRESH LEADERBOARD UI
+    await loadFFLeaderboard();
+    // 🔥 END INVALID DELETE + REFRESH
+
 
     const me = localStorage.playerName || "Me";
     const meStats = ff.find(p => p.name === me) || { name: me, stars: 0, wins: 0, winpct: 0 };
@@ -621,20 +638,20 @@ document.getElementById("notifyAllBtn").addEventListener("click", async () => {
     // 🔹 Build sharable F&F link (names only, local model)
     const ffNames = all.map(p => p.name);
     const encoded = btoa(JSON.stringify(ffNames));
-    const baseUrl = window.location.origin + window.location.pathname;
+    const baseUrl = "thechnlnk.com";
     const shareLink = `${baseUrl}?ff=${encoded}`;
 
     const message =
-		`I'm tracking all of us on the new CHN LNK Friends & Family Leaderboard.
+`I'm tracking all of us on the new CHN LNK Friends & Family Leaderboard.
 
-		Current Ranking:
-		${rankedList}
+Current Ranking:
+${rankedList}
 
-		Click this link to add the same group to your F&F:
-		${shareLink}
+Click this link to add the same group to your F&F:
+${shareLink}
 
-		Let's see who wins top spot at the end of the month! 🔥
-		`;
+Let's see who wins top spot at the end of the month! 🔥
+`;
 
     if (navigator.share) {
         await navigator.share({ title: "CHN LNK Challenge", text: message });
@@ -733,8 +750,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Show CHALLENGE button only if at least one friend exists
         const challengeBtn = document.getElementById("notifyAllBtn");
+        const challengeBtnTxt = document.getElementById("cpNote");
+		
         challengeBtn.style.display = list.length > 0 ? "inline-block" : "none";
-
+        challengeBtnTxt.style.display = list.length > 0 ? "inline-block" : "none";
+		
         const friends = [];
 
         for (let i = 0; i < list.length; i++) {
