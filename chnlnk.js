@@ -47,7 +47,7 @@ if (!localStorage.clshowrules) {
 })();
 
 
-const BUILD_VERSION = "2026.03.12.07";
+const BUILD_VERSION = "2026.03.12.08";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -1254,6 +1254,9 @@ async function loadLeaderboard() {
     const currentUID = auth.currentUser.uid;
     const currentPlayerName = localStorage.playerName;
 
+    // 🔥 ADMIN NAME — EXCLUDE COMPLETELY
+    const ADMIN_NAME = "Sankar";
+
     const now = new Date();
     const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
@@ -1270,7 +1273,7 @@ async function loadLeaderboard() {
             console.warn("Could not load current player doc:", e);
         }
 
-        // --- 1. Read TOP 5 ---
+        // --- 1. Read TOP 5 (fetch 6 to compensate for admin removal) ---
         const topQ = query(
             collection(db, "leaderboard"),
             where("month", "==", monthKey),
@@ -1278,14 +1281,21 @@ async function loadLeaderboard() {
             orderBy("wins", "desc"),
             orderBy("winpct", "desc"),
             orderBy("updated", "asc"),
-            limit(5)
+            limit(6)
         );
 
         const topSnap = await getDocs(topQ);
         leaderboardBody.innerHTML = "";
 
-        const top5 = [];
-        topSnap.forEach(docSnap => top5.push({ id: docSnap.id, ...docSnap.data() }));
+        // Filter out admin by name
+        let top5 = [];
+        topSnap.forEach(docSnap => {
+            const d = { id: docSnap.id, ...docSnap.data() };
+            if (d.name !== ADMIN_NAME) top5.push(d);
+        });
+
+        // Always keep exactly 5 rows
+        top5 = top5.slice(0, 5);
 
         // --- 2. Render top 5 with tie-aware ranks ---
         let displayRank = 1;
@@ -1318,21 +1328,21 @@ async function loadLeaderboard() {
                 <td>${p.winpct}%</td>
             `;
 
-		if (p.id === currentUID) {
-			row.style.background = "rgba(255,255,255,0.1)";
-			row.style.fontWeight = "bold";
-			row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
-		}
+            if (p.id === currentUID) {
+                row.style.background = "rgba(255,255,255,0.1)";
+                row.style.fontWeight = "bold";
+                row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+            }
 
             leaderboardBody.appendChild(row);
         }
 
         // --- 3. If player is in top 5, stop here ---
         const inTop5 = top5.some(p => p.id === currentUID);
-		document.getElementById("nrNote").style.display = "none"; 
+        document.getElementById("nrNote").style.display = "none";
         if (inTop5) return;
 
-        // --- 4. Read TOP 100 ---
+        // --- 4. Read TOP 100 (fetch 101 to compensate for admin removal) ---
         const top100Q = query(
             collection(db, "leaderboard"),
             where("month", "==", monthKey),
@@ -1340,60 +1350,64 @@ async function loadLeaderboard() {
             orderBy("wins", "desc"),
             orderBy("winpct", "desc"),
             orderBy("updated", "asc"),
-            limit(100)
+            limit(101)
         );
 
         const top100Snap = await getDocs(top100Q);
-        const top100 = [];
-        top100Snap.forEach(docSnap => top100.push({ id: docSnap.id, ...docSnap.data() }));
+
+        // Filter out admin by name
+        let top100 = [];
+        top100Snap.forEach(docSnap => {
+            const d = { id: docSnap.id, ...docSnap.data() };
+            if (d.name !== ADMIN_NAME) top100.push(d);
+        });
+
+        // Always keep exactly 100 rows
+        top100 = top100.slice(0, 100);
 
         // --- 5. Check if user is in top 100 ---
         const idx = top100.findIndex(p => p.id === currentUID);
 
-	if (idx === -1) {
-		// --- A. Spacer row with three vertical dots ---
-		const spacer = document.createElement("tr");
-		spacer.innerHTML = `
-			<td style="text-align:center;">⋮</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		`;
-		leaderboardBody.appendChild(spacer);		
-		// --- A. Show the 100th ranked player as row 6 ---
-		const last = top100[top100.length - 1]; // the 100th player
+        if (idx === -1) {
+            // Spacer row
+            const spacer = document.createElement("tr");
+            spacer.innerHTML = `
+                <td style="text-align:center;">⋮</td>
+                <td></td><td></td><td></td><td></td>
+            `;
+            leaderboardBody.appendChild(spacer);
 
-		const lastRow = document.createElement("tr");
-		lastRow.innerHTML = `
-			<td>100</td>
-			<td>${last.name}</td>
-			<td>${last.stars}</td>
-			<td>${last.wins}</td>
-			<td>${last.winpct}%</td>
-		`;
-		leaderboardBody.appendChild(lastRow);
+            // 100th player
+            const last = top100[top100.length - 1];
+            const lastRow = document.createElement("tr");
+            lastRow.innerHTML = `
+                <td>100</td>
+                <td>${last.name}</td>
+                <td>${last.stars}</td>
+                <td>${last.wins}</td>
+                <td>${last.winpct}%</td>
+            `;
+            leaderboardBody.appendChild(lastRow);
 
-		// --- B. Show the current user as NR (row 7) ---
-		const userRow = document.createElement("tr");
-		userRow.innerHTML = `
-			<td>NR*</td>
-			<td>${currentPlayerName}</td>
-			<td>${playerData?.stars ?? "-"}</td>
-			<td>${playerData?.wins ?? "-"}</td>
-			<td>${playerData?.winpct ?? "-"}%</td>
-		`;
-		userRow.style.background = "rgba(255,255,255,0.1)";
-		userRow.style.fontWeight = "bold";
-		userRow.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
-		leaderboardBody.appendChild(userRow);
+            // NR row
+            const userRow = document.createElement("tr");
+            userRow.innerHTML = `
+                <td>NR*</td>
+                <td>${currentPlayerName}</td>
+                <td>${playerData?.stars ?? "-"}</td>
+                <td>${playerData?.wins ?? "-"}</td>
+                <td>${playerData?.winpct ?? "-"}%</td>
+            `;
+            userRow.style.background = "rgba(255,255,255,0.1)";
+            userRow.style.fontWeight = "bold";
+            userRow.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+            leaderboardBody.appendChild(userRow);
 
-		document.getElementById("nrNote").style.display = "inline";
-		return;
-	}
-	else { 
-			document.getElementById("nrNote").style.display = "none"; 
-			}
+            document.getElementById("nrNote").style.display = "inline";
+            return;
+        } else {
+            document.getElementById("nrNote").style.display = "none";
+        }
 
         // --- 6. User IS in top 100 → compute tie-aware rank ---
         let rank = 1;
@@ -1415,19 +1429,16 @@ async function loadLeaderboard() {
 
         const d = top100[idx];
 
-        // --- 7. Render user row as the extra entry ---
-				// --- A. Spacer row with three vertical dots ---
-		if (rank >= 7) {		
-			const spacer = document.createElement("tr");
-			spacer.innerHTML = `
-				<td style="text-align:center;">⋮</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			`;
-			leaderboardBody.appendChild(spacer);
-		}
+        // --- 7. Render user row as extra entry ---
+        if (rank >= 7) {
+            const spacer = document.createElement("tr");
+            spacer.innerHTML = `
+                <td style="text-align:center;">⋮</td>
+                <td></td><td></td><td></td><td></td>
+            `;
+            leaderboardBody.appendChild(spacer);
+        }
+
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${
@@ -1452,6 +1463,7 @@ async function loadLeaderboard() {
         leaderboardBody.innerHTML = "<tr><td colspan='6'>Error loading leaderboard.</td></tr>";
     }
 }
+
 
 
 function showGame() {
