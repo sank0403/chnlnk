@@ -1309,14 +1309,12 @@ async function loadLeaderboard() {
 
     const currentUID = auth.currentUser.uid;
     const currentPlayerName = localStorage.playerName;
-    const ADMIN_NAME = "Sankar";   // ⭐ Admin name to exclude from rankings
-    const isAdmin = currentPlayerName === ADMIN_NAME;
 
     const now = new Date();
     const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
     try {
-        // --- A. Read current player's doc ---
+        // --- A. Read current player's doc (1 read) ---
         let playerData = null;
         try {
             const playerRef = doc(db, "leaderboard", currentUID);
@@ -1342,11 +1340,8 @@ async function loadLeaderboard() {
         const topSnap = await getDocs(topQ);
         leaderboardBody.innerHTML = "";
 
-        let top5 = [];
+        const top5 = [];
         topSnap.forEach(docSnap => top5.push({ id: docSnap.id, ...docSnap.data() }));
-
-        // ⭐ Remove admin from public leaderboard
-        top5 = top5.filter(p => p.name !== ADMIN_NAME);
 
         // --- 2. Render top 5 with tie-aware ranks ---
         let displayRank = 1;
@@ -1379,14 +1374,19 @@ async function loadLeaderboard() {
                 <td>${p.winpct}%</td>
             `;
 
+		if (p.id === currentUID) {
+			row.style.background = "rgba(255,255,255,0.1)";
+			row.style.fontWeight = "bold";
+			row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+		}
+
             leaderboardBody.appendChild(row);
         }
 
-        // --- 3. If admin is in top 5, DO NOT show them (they were filtered out)
-        // But if admin is logged in, we still show their row later.
+        // --- 3. If player is in top 5, stop here ---
         const inTop5 = top5.some(p => p.id === currentUID);
-        document.getElementById("nrNote").style.display = "none";
-        if (inTop5 && !isAdmin) return;
+		document.getElementById("nrNote").style.display = "none"; 
+        if (inTop5) return;
 
         // --- 4. Read TOP 100 ---
         const top100Q = query(
@@ -1400,59 +1400,56 @@ async function loadLeaderboard() {
         );
 
         const top100Snap = await getDocs(top100Q);
-        let top100 = [];
+        const top100 = [];
         top100Snap.forEach(docSnap => top100.push({ id: docSnap.id, ...docSnap.data() }));
-
-        // ⭐ Remove admin from public leaderboard
-        top100 = top100.filter(p => p.name !== ADMIN_NAME);
 
         // --- 5. Check if user is in top 100 ---
         const idx = top100.findIndex(p => p.id === currentUID);
 
-        // --- Admin is NOT in top 100 (public), but admin should still see their own row ---
-        if (idx === -1) {
-            // Spacer row
-            const spacer = document.createElement("tr");
-            spacer.innerHTML = `
-                <td style="text-align:center;">⋮</td>
-                <td></td><td></td><td></td><td></td>
-            `;
-            leaderboardBody.appendChild(spacer);
+	if (idx === -1) {
+		// --- A. Spacer row with three vertical dots ---
+		const spacer = document.createElement("tr");
+		spacer.innerHTML = `
+			<td style="text-align:center;">⋮</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		`;
+		leaderboardBody.appendChild(spacer);		
+		// --- A. Show the 100th ranked player as row 6 ---
+		const last = top100[top100.length - 1]; // the 100th player
 
-            // Show 100th ranked player
-            const last = top100[top100.length - 1];
-            const lastRow = document.createElement("tr");
-            lastRow.innerHTML = `
-                <td>100</td>
-                <td>${last.name}</td>
-                <td>${last.stars}</td>
-                <td>${last.wins}</td>
-                <td>${last.winpct}%</td>
-            `;
-            leaderboardBody.appendChild(lastRow);
+		const lastRow = document.createElement("tr");
+		lastRow.innerHTML = `
+			<td>100</td>
+			<td>${last.name}</td>
+			<td>${last.stars}</td>
+			<td>${last.wins}</td>
+			<td>${last.winpct}%</td>
+		`;
+		leaderboardBody.appendChild(lastRow);
 
-            // ⭐ Show admin's own row as NR (only to admin)
-            if (isAdmin) {
-                const userRow = document.createElement("tr");
-                userRow.innerHTML = `
-                    <td>NR*</td>
-                    <td>${currentPlayerName}</td>
-                    <td>${playerData?.stars ?? "-"}</td>
-                    <td>${playerData?.wins ?? "-"}</td>
-                    <td>${playerData?.winpct ?? "-"}%</td>
-                `;
-                userRow.style.background = "rgba(255,255,255,0.1)";
-                userRow.style.fontWeight = "bold";
-                userRow.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
-                leaderboardBody.appendChild(userRow);
+		// --- B. Show the current user as NR (row 7) ---
+		const userRow = document.createElement("tr");
+		userRow.innerHTML = `
+			<td>NR*</td>
+			<td>${currentPlayerName}</td>
+			<td>${playerData?.stars ?? "-"}</td>
+			<td>${playerData?.wins ?? "-"}</td>
+			<td>${playerData?.winpct ?? "-"}%</td>
+		`;
+		userRow.style.background = "rgba(255,255,255,0.1)";
+		userRow.style.fontWeight = "bold";
+		userRow.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+		leaderboardBody.appendChild(userRow);
 
-                document.getElementById("nrNote").style.display = "inline";
-            }
-
-            return;
-        }
-
-        document.getElementById("nrNote").style.display = "none";
+		document.getElementById("nrNote").style.display = "inline";
+		return;
+	}
+	else { 
+			document.getElementById("nrNote").style.display = "none"; 
+			}
 
         // --- 6. User IS in top 100 → compute tie-aware rank ---
         let rank = 1;
@@ -1474,36 +1471,37 @@ async function loadLeaderboard() {
 
         const d = top100[idx];
 
-        // --- 7. Render admin row ONLY for admin ---
-        if (isAdmin) {
-            if (rank >= 7) {
-                const spacer = document.createElement("tr");
-                spacer.innerHTML = `
-                    <td style="text-align:center;">⋮</td>
-                    <td></td><td></td><td></td><td></td>
-                `;
-                leaderboardBody.appendChild(spacer);
-            }
+        // --- 7. Render user row as the extra entry ---
+				// --- A. Spacer row with three vertical dots ---
+		if (rank >= 7) {		
+			const spacer = document.createElement("tr");
+			spacer.innerHTML = `
+				<td style="text-align:center;">⋮</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			`;
+			leaderboardBody.appendChild(spacer);
+		}
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${
+                rank === 1 ? "🥇" :
+                rank === 2 ? "🥈" :
+                rank === 3 ? "🥉" :
+                rank
+            }</td>
+            <td>${d.name}</td>
+            <td>${d.stars}</td>
+            <td>${d.wins}</td>
+            <td>${d.winpct}%</td>
+        `;
+        row.style.background = "rgba(255,255,255,0.1)";
+        row.style.fontWeight = "bold";
+        row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
 
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${
-                    rank === 1 ? "🥇" :
-                    rank === 2 ? "🥈" :
-                    rank === 3 ? "🥉" :
-                    rank
-                }</td>
-                <td>${d.name}</td>
-                <td>${d.stars}</td>
-                <td>${d.wins}</td>
-                <td>${d.winpct}%</td>
-            `;
-            row.style.background = "rgba(255,255,255,0.1)";
-            row.style.fontWeight = "bold";
-            row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
-
-            leaderboardBody.appendChild(row);
-        }
+        leaderboardBody.appendChild(row);
 
     } catch (err) {
         console.error("Leaderboard error:", err);
