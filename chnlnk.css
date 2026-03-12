@@ -301,6 +301,159 @@ p {
     color: #6AAA64;
     font-weight: bold;
 }
+/* F&F COLLAPSIBLE WRAPPER — matches monthly leaderboard */
+#ffCollapsible {
+    margin-top: 2px;
+    /* border-top: 1px solid #444; */
+    padding-top: 10px;
+    display: none; /* hide until game is done */
+}
+
+
+/* HEADER — identical to monthly */
+#ffHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #222;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    user-select: none;
+}
+
+#ffHeader:hover {
+    background: #333;
+}
+
+/* COLLAPSIBLE CONTENT — identical animation */
+#ffContent {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+}
+
+/* TABLE — exact match */
+#ffTable {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+    color: white;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+#ffTable th,
+#ffTable td {
+    padding: 6px;
+    border-bottom: 1px solid #444;
+    text-align: center;
+}
+
+#ffTable th {
+    background: #333;
+}
+
+/* CURRENT PLAYER ROW (if you ever use it) */
+.ff-current-player-row {
+    font-weight: bold;
+    background: rgba(255, 255, 0, 0.25);
+    border-radius: 6px;
+}
+
+.ff-current-player-cell {
+    color: #6AAA64;
+    font-weight: bold;
+}
+
+/* ADD USER BUTTON — consistent with theme */
+.ff-add-btn {
+    background: #444;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    border: none;
+}
+
+
+.ff-delete-icon {
+    cursor: pointer;
+    color: #f55;
+    font-size: 16px;
+    padding-left: 10px;
+}
+.ff-delete-icon:hover {
+    color: #ff7777;
+}
+
+.ff-subheader {
+    background: #1a1a1a;
+    margin-top: 16px;
+    border-top: 1px solid #333;
+}
+
+.new-badge {
+    background: #ff3b3b;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 6px;
+    margin-left: 8px;
+    animation: pulse 1.4s infinite ease-in-out;
+    letter-spacing: 0.5px;
+}
+
+@keyframes pulse {
+    0%   { transform: scale(1); opacity: 1; }
+    50%  { transform: scale(1.15); opacity: 0.75; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+#notifyAllBtn {
+    display: none;
+}
+
+.lb-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #222;
+    cursor: pointer;
+    user-select: none;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.lb-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lb-icon {
+    font-size: 12px;
+    line-height: 1;
+}
+
+.lb-title {
+    line-height: 1;
+}
+
+.lb-arrow {
+    font-size: 12px;
+    line-height: 1;
+    transition: transform 0.2s ease;
+}
+
+.lb-header.open .lb-arrow {
+    transform: rotate(180deg);
+}
 
 
 /* .wa-icon { */

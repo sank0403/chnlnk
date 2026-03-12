@@ -7,7 +7,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2026.03.12.01";
+const BUILD_VERSION = "2026.03.12.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -542,6 +542,7 @@ document.getElementById("leaderboardHeader").addEventListener("click", async fun
         content.style.maxHeight = "0px";
         winners.classList.add("hidden");
         toggle.textContent = "▼";
+		// document.getElementById("ffCollapsible").style.display = "none";
     } else {
         // OPEN
 
@@ -554,8 +555,439 @@ document.getElementById("leaderboardHeader").addEventListener("click", async fun
         winners.classList.remove("hidden");
         content.style.maxHeight = content.scrollHeight + "px";
         toggle.textContent = "▲";
+		// document.getElementById("ffCollapsible").style.display = "block";
     }
 });
+
+
+document.getElementById("notifyAllBtn").addEventListener("click", async () => {
+
+    const ff = window.ffLeaderboard || [];
+
+    const me = localStorage.playerName || "Me";
+    const meStats = ff.find(p => p.name === me) || { name: me, stars: 0, wins: 0, winpct: 0 };
+
+    let all = [meStats, ...ff.filter(p => p.name !== me)];
+
+    all.sort((a, b) => {
+        if (b.stars !== a.stars) return b.stars - a.stars;
+        if (b.wins !== a.wins) return b.wins - a.wins;
+        return b.winpct - a.winpct;
+    });
+
+    const rankedList = all
+        .map((p, i) => `${i + 1}. ${p.name} (${p.stars}⭐ ${p.wins}W ${p.winpct}%)`)
+        .join("\n");
+
+    const message =
+`I'm tracking all of us on the new CHN LNK Friends & Family leaderboard.
+
+Current Ranking:
+${rankedList}
+
+Add me back and let's see who wins top spot at the end of the month! 🔥
+`;
+
+    if (navigator.share) {
+        await navigator.share({ title: "CHN LNK Challenge", text: message });
+    } else {
+        navigator.clipboard.writeText(message);
+        alert("Message copied!");
+    }
+});
+
+
+
+
+let ffLoadedThisSession = false;
+document.addEventListener("DOMContentLoaded", () => {
+
+    // ---------------------------------------------------------
+    // Helpers for localStorage friend list
+    // ---------------------------------------------------------
+    function getFFList() {
+        try {
+            return JSON.parse(localStorage.ffList || "[]");
+        } catch {
+            return [];
+        }
+    }
+
+    function saveFFList(list) {
+        localStorage.ffList = JSON.stringify(list);
+    }
+
+    // ---------------------------------------------------------
+    // Ensure your own name→UID mapping (allowed by your rules)
+    // ---------------------------------------------------------
+    async function ensureOwnNameMapping() {
+        const uid = auth.currentUser.uid;
+        const rawName = localStorage.playerName || "";
+        const cleanName = rawName.trim();
+        if (!cleanName) return;
+
+        const docId = cleanName.toUpperCase();
+        const ref = doc(db, "nameToUid", docId);
+
+        const snap = await getDoc(ref);
+
+        if (!snap.exists()) {
+            // Allowed by your rules because uid == request.auth.uid
+            await setDoc(ref, { uid, name: cleanName });
+            return;
+        }
+
+        const data = snap.data();
+        if (data.uid !== uid) {
+            // update is NOT allowed by your rules → skip
+            return;
+        }
+    }
+
+    // ---------------------------------------------------------
+    // Lookup friend name → UID (NO WRITES because rules forbid)
+    // ---------------------------------------------------------
+    async function lookupUidByName(name) {
+        const clean = name.trim().replace(/\s+/g, " ").normalize("NFC");
+        const docId = clean.toUpperCase();
+
+        // 1. Try nameToUid (read allowed)
+        const ref = doc(db, "nameToUid", docId);
+        const snap = await getDoc(ref);
+
+        if (snap.exists()) {
+            return snap.data().uid;
+        }
+
+        // 2. Fallback: search leaderboard by exact name
+        const q = query(
+            collection(db, "leaderboard"),
+            where("name", "==", clean)
+        );
+        const qsnap = await getDocs(q);
+
+        if (qsnap.empty) return null;
+
+        const uid = qsnap.docs[0].id;
+
+        // ❗ DO NOT WRITE MAPPING — your rules forbid it
+        return uid;
+    }
+
+    // ---------------------------------------------------------
+    // F&F Collapsible Click Handler
+    // ---------------------------------------------------------
+    document.getElementById("ffHeader").addEventListener("click", async function() {
+        const content = document.getElementById("ffContent");
+        const toggle = document.getElementById("ffToggle");
+
+        const isOpen = content.style.maxHeight && content.style.maxHeight !== "0px";
+
+        if (isOpen) {
+            content.style.maxHeight = "0px";
+            toggle.textContent = "▼";
+        } else {
+
+            await ensureOwnNameMapping();
+
+            if (!ffLoadedThisSession) {
+                await loadFFLeaderboard();
+                ffLoadedThisSession = true;
+            }
+
+            content.style.maxHeight = content.scrollHeight + "px";
+            toggle.textContent = "▲";
+        }
+    });
+
+    // ---------------------------------------------------------
+    // Load F&F Leaderboard (YOU + FRIENDS)
+    // ---------------------------------------------------------
+    async function loadFFLeaderboard() {
+        const tbody = document.getElementById("ffBody");
+        tbody.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
+
+        const uid = auth.currentUser.uid;
+
+        // --- A. Fetch YOUR stats ---
+        let you = null;
+        try {
+            const meRef = doc(db, "leaderboard", uid);
+            const meSnap = await getDoc(meRef);
+
+            if (meSnap.exists()) {
+                you = { id: uid, ...meSnap.data() };
+            } else {
+                you = {
+                    id: uid,
+                    name: localStorage.playerName || "You",
+                    stars: 0,
+                    wins: 0,
+                    winpct: 0,
+                    updated: 0
+                };
+            }
+        } catch (err) {
+            you = {
+                id: uid,
+                name: localStorage.playerName || "You",
+                stars: 0,
+                wins: 0,
+                winpct: 0,
+                updated: 0
+            };
+        }
+
+        // --- B. Fetch FRIEND stats ---
+// --- B. Fetch FRIEND stats ---
+		const list = getFFList();
+
+		// Show CHALLENGE button only if at least one friend exists
+		const challengeBtn = document.getElementById("notifyAllBtn");
+		if (list.length > 0) {
+			challengeBtn.style.display = "inline-block";
+		} else {
+			challengeBtn.style.display = "none";
+		}
+
+		const friends = [];
+
+
+        for (let i = 0; i < list.length; i++) {
+            const friendName = list[i];
+            if (!friendName) continue;
+
+            let friendUID = await lookupUidByName(friendName);
+
+            if (!friendUID) {
+                friends.push({
+                    id: null,
+                    name: friendName,
+                    stars: "-",
+                    wins: "-",
+                    winpct: "-",
+                    updated: 9999999999999
+                });
+                continue;
+            }
+
+            try {
+                const fRef = doc(db, "leaderboard", friendUID);
+                const fSnap = await getDoc(fRef);
+
+                if (fSnap.exists()) {
+                    friends.push({ id: friendUID, ...fSnap.data() });
+                } else {
+                    friends.push({
+                        id: friendUID,
+                        name: friendName,
+                        stars: "-",
+                        wins: "-",
+                        winpct: "-",
+                        updated: 9999999999999
+                    });
+                }
+            } catch {
+                friends.push({
+                    id: friendUID,
+                    name: friendName,
+                    stars: "-",
+                    wins: "-",
+                    winpct: "-",
+                    updated: 9999999999999
+                });
+            }
+        }
+
+        // --- C. Combine + Sort ---
+        const combined = [you, ...friends];
+
+        combined.sort((a, b) => {
+            const sa = Number(a.stars) || 0;
+            const sb = Number(b.stars) || 0;
+            if (sb !== sa) return sb - sa;
+
+            const wa = Number(a.wins) || 0;
+            const wb = Number(b.wins) || 0;
+            if (wb !== wa) return wb - wa;
+
+            const pa = Number(a.winpct) || 0;
+            const pb = Number(b.winpct) || 0;
+            if (pb !== pa) return pb - pa;
+
+            return (a.updated || 0) - (b.updated || 0);
+        });
+		window.ffLeaderboard = combined;
+        // --- D. Render ---
+        tbody.innerHTML = "";
+
+        for (let i = 0; i < combined.length; i++) {
+            const p = combined[i];
+            const rank = i + 1;
+
+            const row = document.createElement("tr");
+			const isYou = p.id === uid;
+			const isInvalid = p.id === null || p.stars === "-" || p.wins === "-" || p.winpct === "-";
+			row.innerHTML = `
+				<td>${rank}</td>
+				<td>${p.name}</td>
+				<td>${p.stars}</td>
+				<td>${p.wins}</td>
+				<td>${p.winpct}%</td>
+				<td>
+					${!isYou ? `<span class="ff-delete-icon" onclick="deleteFFUser('${p.name}')">X</span>` : ""}
+				</td>
+			`;
+			if (isYou) {
+				row.style.background = "rgba(255,255,255,0.1)";
+				row.style.fontWeight = "bold";
+				row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+			}
+
+			if (!isYou && isInvalid) {
+				row.style.background = "rgba(255,0,0,0.15)";
+				row.style.color = "#ff6b6b";
+				row.style.fontWeight = "bold";
+			}
+            tbody.appendChild(row);
+        }
+
+        // --- E. Fill empty slots ---
+        for (let i = combined.length + 1; i <= 5; i++) {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${i}</td>
+                <td><button class="ff-add-btn" onclick="addFFUser(${i})">Add User</button></td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+				<td></td>   <!-- NEW: empty delete-icon column -->
+            `;
+            tbody.appendChild(row);
+        }
+    }
+	window.loadFFLeaderboard = loadFFLeaderboard;
+});
+
+async function ensureOwnNameMapping() {
+    const uid = auth.currentUser.uid;
+    const rawName = localStorage.playerName || "";
+    const cleanName = rawName.trim();
+    if (!cleanName) return;
+
+    const docId = cleanName.toUpperCase(); // lookup key
+    const ref = doc(db, "nameToUid", docId);
+
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) {
+        // Mapping missing → create it
+        await setDoc(ref, {
+            uid,
+            name: cleanName
+        });
+        return;
+    }
+
+    const data = snap.data();
+
+    if (data.uid !== uid) {
+        // Mapping exists but UID is wrong → update it
+        await setDoc(ref, {
+            uid,
+            name: cleanName
+        });
+    }
+}
+
+function getFFList() {
+    try {
+        return JSON.parse(localStorage.ffList || "[]");
+    } catch {
+        return [];
+    }
+}
+
+function saveFFList(list) {
+    localStorage.ffList = JSON.stringify(list);
+}
+
+
+
+function addFFUser(slot) {
+    const tbody = document.getElementById("ffBody");
+    const row = tbody.children[slot - 1];
+
+    row.innerHTML = `
+        <td>${slot}</td>
+        <td colspan="4">
+            <div style="display:flex; gap:8px; align-items:center;">
+                <input id="ffInput${slot}" 
+                       type="text" 
+                       placeholder="Enter friend's name"
+                       style="flex:1; padding:6px; border-radius:6px; border:1px solid #444; background:#000; color:#fff;">
+                
+                <button class="ff-add-btn" onclick="saveFFUser(${slot})">Save</button>
+            </div>
+        </td>
+		 <td></td>   <!-- NEW: empty delete-icon column -->
+    `;
+}
+
+function saveFFUser(slot) {
+    let name = document.getElementById(`ffInput${slot}`).value;
+
+    name = name.trim().replace(/\s+/g, " ").normalize("NFC");
+
+    if (!name) {
+        const tbody = document.getElementById("ffBody");
+        const row = tbody.children[slot - 1];
+        row.innerHTML = `
+            <td>${slot}</td>
+            <td><button class="ff-add-btn" onclick="addFFUser(${slot})">Add User</button></td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td></td>
+        `;
+        return;
+    }
+
+    const list = getFFList();
+    const exists = list.some(n => n && n.toUpperCase() === name.toUpperCase());
+    if (exists) {
+        alert("This friend is already added.");
+        return;
+    }
+
+    list[slot - 2] = name;
+    saveFFList(list);
+
+    // Force a fresh reload
+    ffLoadedThisSession = false;
+
+    const header = document.getElementById("ffHeader");
+
+    // 1. Collapse (simulate user click)
+    header.click();
+
+    // 2. Reopen after animation (simulate second click)
+    setTimeout(() => {
+        header.click();
+    }, 150);
+}
+
+
+function deleteFFUser(name) {
+    let list = getFFList();
+    list = list.filter(n => n && n.toUpperCase() !== name.toUpperCase());
+    saveFFList(list);
+
+    // Refresh the table
+    ffLoadedThisSession = false;
+    loadFFLeaderboard();
+}
+window.deleteFFUser = deleteFFUser;
 
 
 async function loaddynamites() {
@@ -1156,6 +1588,8 @@ async function OpenStats() {
 
     // Now show the leaderboard 
     document.getElementById("leaderboardCollapsible").style.display = "block";
+	document.getElementById("ffCollapsible").style.display = "block";
+
 }
 
 async function OpenStatsGO() {
@@ -1168,6 +1602,8 @@ async function OpenStatsGO() {
 
     // Now show the leaderboard 
     document.getElementById("leaderboardCollapsible").style.display = "block";
+	document.getElementById("ffCollapsible").style.display = "block";
+
 }
 
 
@@ -1649,7 +2085,11 @@ function shuffle(array) {
 
 function useDynamite() {
     if (gameOver) return;
-
+	// if (localStorage.clMysteryActive === "true") {
+        // const MysteryLetter = localStorage.clMysteryLetter;
+        // removeQuestionFromTile(MysteryLetter);
+        // localStorage.clMysteryActive = "false";
+    // }
     let dyn = Number(localStorage.cldynamite || 0);
 
     const forbiddenLetters = new Set(
