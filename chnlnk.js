@@ -7,7 +7,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2026.03.11.01";
+const BUILD_VERSION = "2026.03.12.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -1562,19 +1562,35 @@ function showLifeRestored() {
 function showDynamiteAdded() {
     const pop = document.createElement("div");
     pop.id = "life-restored";
+
     if (localStorage.clhardmode == 1) {
         pop.innerText = "+2 DYNAMITES 💣";
     } else {
         pop.innerText = "+1 DYNAMITE 💣";
     }
+
     document.body.appendChild(pop);
+
+    // ⭐ Animate the dynamite button
+    // animateDynamiteButton();
+
+    // ⭐ If tutorial not shown, show it now
+    if (!localStorage.getItem("cldynamiteTutorialShown")) {
+        setTimeout(() => {
+            showStreakPopup(
+                "💣 DYNAMITE ELIMINATES 3 INVALID LETTERS FROM THE KEYBOARD ⌨️"
+            );
+            localStorage.setItem("cldynamiteTutorialShown", "true");
+        }, 2600); // small delay so animation feels smooth
+    }
+
     setTimeout(() => pop.remove(), 2000);
 }
 
 function showMysteryAdded() {
     const pop = document.createElement("div");
     pop.id = "life-restored";
-    pop.innerText = "MYSTERY LETTER ❓";
+    pop.innerText = "IDENTIFY MYSTERY LETTER ❓";
     document.body.appendChild(pop);
 
     setTimeout(() => pop.remove(), 2000);
@@ -1632,71 +1648,71 @@ function shuffle(array) {
 }
 
 function useDynamite() {
-    if (!gameOver) {
+    if (gameOver) return;
 
-        // ⭐ First-time tutorial message
-        if (!localStorage.getItem("cldynamiteTutorialShown")) {
-            showStreakPopup("💣 DYNAMITE ELIMINATES 3 INVALID LETTERS FROM THE KEYBOARD ⌨️. \n HIT AGAIN TO USE!");
-            document.getElementById("answer").innerText = "";
-            localStorage.setItem("cldynamiteTutorialShown", "true");
-            return;
-        }
+    let dyn = Number(localStorage.cldynamite || 0);
 
-        let dyn = Number(localStorage.cldynamite || 0);
+    const forbiddenLetters = new Set(
+        (wordtwo + wordthree + wordfour + wordfive + wordsix).split("")
+    );
 
-        const forbiddenLetters = new Set(
-            (wordtwo + wordthree + wordfour + wordfive + wordsix).split("")
-        );
+    const keys = [...document.querySelectorAll(".key-tile")];
 
-        const keys = [...document.querySelectorAll(".key-tile")];
+    const eligibleKeys = keys.filter(k => {
+        if (k.classList.contains("disabled")) return false;
 
-        const eligibleKeys = keys.filter(k => {
-            if (k.classList.contains("disabled")) return false;
+        const letter = k.id.replace("Key", "");
+        if (forbiddenLetters.has(letter)) return false;
 
-            const letter = k.id.replace("Key", "");
-            if (forbiddenLetters.has(letter)) return false;
+        return true;
+    });
 
-            return true;
-        });
-
-        if (eligibleKeys.length < 3) {
-            showMessage("NOT ENOUGH KEYS TO BE ELIMINATED!");
-            shakeDynamiteButton();
-            return;
-        }
-
-        // ⭐ Consume 1 dynamite
-        localStorage.cldynamite = dyn - 1;
-        updateDynamiteUI();
-
-        // Shuffle to make selection random
-        shuffle(eligibleKeys);
-
-        const toRemove = eligibleKeys.slice(0, 3);
-
-        let disabledkeyarr = [];
-        let temp = JSON.parse(localStorage.getItem("cldisabledkey"));
-        if (temp && temp.length > 0) disabledkeyarr = temp;
-
-        const removedLetters = [];
-
-        toRemove.forEach(k => {
-            k.classList.add("disabled");
-
-            const letter = k.id.replace("Key", "");
-            removedLetters.push(letter);
-
-            disabledkeyarr.push(letter);
-        });
-
-        localStorage.setItem("cldisabledkey", JSON.stringify(disabledkeyarr));
-
-        showMessage("DYNAMITE ELIMINATED: " + removedLetters.join(", "));
-        localStorage.setItem("cldynamiteUsedThisRound", "true");
-
-        showDynamiteBlast();
+    if (eligibleKeys.length < 3) {
+        showMessage("NOT ENOUGH KEYS TO BE ELIMINATED!");
+        shakeDynamiteButton();
+        return;
     }
+
+    // ⭐ Consume 1 dynamite
+    localStorage.cldynamite = dyn - 1;
+    updateDynamiteUI();
+
+    shuffle(eligibleKeys);
+
+    const toRemove = eligibleKeys.slice(0, 3);
+
+    let disabledkeyarr = JSON.parse(localStorage.getItem("cldisabledkey")) || [];
+    const removedLetters = [];
+
+    toRemove.forEach(k => {
+        k.classList.add("disabled");
+
+        const letter = k.id.replace("Key", "");
+        removedLetters.push(letter);
+
+        disabledkeyarr.push(letter);
+    });
+
+    localStorage.setItem("cldisabledkey", JSON.stringify(disabledkeyarr));
+    localStorage.setItem("cldynamiteUsedThisRound", "true");
+
+    showDynamiteBlast();
+
+    // ⭐ First-time tutorial AFTER action, showing removed letters
+    if (!localStorage.getItem("cldynamiteTutorialShown")) {
+        localStorage.setItem("cldynamiteTutorialShown", "true");
+
+        showStreakPopup(
+			"💣 DYNAMITE ELIMINATES 3 INVALID LETTERS FROM THE KEYBOARD ⌨️" +
+            "\nDYNAMITE ELIMINATED: " + removedLetters.join(", ") 
+        );
+        return;
+    }
+
+    // Normal message for future uses
+    showMessage("DYNAMITE ELIMINATED: " + removedLetters.join(", "));
 }
+
 
 
 function showMessage(msg) {
