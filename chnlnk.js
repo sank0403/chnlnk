@@ -7,7 +7,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2026.03.12.03";
+const BUILD_VERSION = "2026.03.12.04";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -580,7 +580,7 @@ document.getElementById("notifyAllBtn").addEventListener("click", async () => {
         .join("\n");
 
     const message =
-`I'm tracking all of us on the new CHN LNK Friends & Family leaderboard.
+`I'm tracking all of us on the new CHN LNK Friends & Family Leaderboard.
 
 Current Ranking:
 ${rankedList}
@@ -596,26 +596,47 @@ Add me back and let's see who wins top spot at the end of the month! 🔥
     }
 });
 
+// ---------------------------------------------------------
+// GLOBAL Helpers for localStorage friend list
+// ---------------------------------------------------------
+function getFFList() {
+    try {
+        return JSON.parse(localStorage.ffList || "[]");
+    } catch {
+        return [];
+    }
+}
 
+function saveFFList(list) {
+    localStorage.ffList = JSON.stringify(list);
+}
+
+// ---------------------------------------------------------
+// Save YOUR friend list into your own nameToUid doc
+// ---------------------------------------------------------
+async function saveMyFFListToNameToUid() {
+    const uid = auth.currentUser.uid;
+    const rawName = localStorage.playerName || "";
+    const cleanName = rawName.trim();
+    if (!cleanName) return;
+
+    const docId = cleanName.toUpperCase();
+    const ref = doc(db, "nameToUid", docId);
+
+    const list = getFFList(); // from global helper
+
+    // Allowed because this is YOUR OWN nameToUid doc
+    await setDoc(ref, {
+        uid,
+        name: cleanName,
+        friends: list
+    }, { merge: true });
+}
 
 
 let ffLoadedThisSession = false;
+
 document.addEventListener("DOMContentLoaded", () => {
-
-    // ---------------------------------------------------------
-    // Helpers for localStorage friend list
-    // ---------------------------------------------------------
-    function getFFList() {
-        try {
-            return JSON.parse(localStorage.ffList || "[]");
-        } catch {
-            return [];
-        }
-    }
-
-    function saveFFList(list) {
-        localStorage.ffList = JSON.stringify(list);
-    }
 
     // ---------------------------------------------------------
     // Ensure your own name→UID mapping (allowed by your rules)
@@ -691,6 +712,8 @@ document.addEventListener("DOMContentLoaded", () => {
             await ensureOwnNameMapping();
 
             if (!ffLoadedThisSession) {
+				await ensureOwnNameMapping();
+				await saveMyFFListToNameToUid();
                 await loadFFLeaderboard();
                 ffLoadedThisSession = true;
             }
@@ -739,19 +762,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // --- B. Fetch FRIEND stats ---
-// --- B. Fetch FRIEND stats ---
-		const list = getFFList();
+        const list = getFFList();
 
-		// Show CHALLENGE button only if at least one friend exists
-		const challengeBtn = document.getElementById("notifyAllBtn");
-		if (list.length > 0) {
-			challengeBtn.style.display = "inline-block";
-		} else {
-			challengeBtn.style.display = "none";
-		}
+        // Show CHALLENGE button only if at least one friend exists
+        const challengeBtn = document.getElementById("notifyAllBtn");
+        if (list.length > 0) {
+            challengeBtn.style.display = "inline-block";
+        } else {
+            challengeBtn.style.display = "none";
+        }
 
-		const friends = [];
-
+        const friends = [];
 
         for (let i = 0; i < list.length; i++) {
             const friendName = list[i];
@@ -817,7 +838,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return (a.updated || 0) - (b.updated || 0);
         });
-		window.ffLeaderboard = combined;
+
+        // ⭐ Make available globally for Notify All
+        window.ffLeaderboard = combined;
+
         // --- D. Render ---
         tbody.innerHTML = "";
 
@@ -826,29 +850,32 @@ document.addEventListener("DOMContentLoaded", () => {
             const rank = i + 1;
 
             const row = document.createElement("tr");
-			const isYou = p.id === uid;
-			const isInvalid = p.id === null || p.stars === "-" || p.wins === "-" || p.winpct === "-";
-			row.innerHTML = `
-				<td>${rank}</td>
-				<td>${p.name}</td>
-				<td>${p.stars}</td>
-				<td>${p.wins}</td>
-				<td>${p.winpct}%</td>
-				<td>
-					${!isYou ? `<span class="ff-delete-icon" onclick="deleteFFUser('${p.name}')">X</span>` : ""}
-				</td>
-			`;
-			if (isYou) {
-				row.style.background = "rgba(255,255,255,0.1)";
-				row.style.fontWeight = "bold";
-				row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
-			}
+            const isYou = p.id === uid;
+            const isInvalid = p.id === null || p.stars === "-" || p.wins === "-" || p.winpct === "-";
 
-			if (!isYou && isInvalid) {
-				row.style.background = "rgba(255,0,0,0.15)";
-				row.style.color = "#ff6b6b";
-				row.style.fontWeight = "bold";
-			}
+            row.innerHTML = `
+                <td>${rank}</td>
+                <td>${p.name}</td>
+                <td>${p.stars}</td>
+                <td>${p.wins}</td>
+                <td>${p.winpct}%</td>
+                <td>
+                    ${!isYou ? `<span class="ff-delete-icon" onclick="deleteFFUser('${p.name}')">X</span>` : ""}
+                </td>
+            `;
+
+            if (isYou) {
+                row.style.background = "rgba(255,255,255,0.1)";
+                row.style.fontWeight = "bold";
+                row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+            }
+
+            if (!isYou && isInvalid) {
+                row.style.background = "rgba(255,0,0,0.15)";
+                row.style.color = "#ff6b6b";
+                row.style.fontWeight = "bold";
+            }
+
             tbody.appendChild(row);
         }
 
@@ -861,13 +888,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
-				<td></td>   <!-- NEW: empty delete-icon column -->
+                <td></td>
             `;
             tbody.appendChild(row);
         }
     }
-	window.loadFFLeaderboard = loadFFLeaderboard;
+
+    window.loadFFLeaderboard = loadFFLeaderboard;
 });
+
 
 async function ensureOwnNameMapping() {
     const uid = auth.currentUser.uid;
@@ -900,20 +929,6 @@ async function ensureOwnNameMapping() {
     }
 }
 
-function getFFList() {
-    try {
-        return JSON.parse(localStorage.ffList || "[]");
-    } catch {
-        return [];
-    }
-}
-
-function saveFFList(list) {
-    localStorage.ffList = JSON.stringify(list);
-}
-
-
-
 function addFFUser(slot) {
     const tbody = document.getElementById("ffBody");
     const row = tbody.children[slot - 1];
@@ -937,7 +952,7 @@ function addFFUser(slot) {
     input.focus();	
 }
 
-function saveFFUser(slot) {
+async function saveFFUser(slot) {
     let name = document.getElementById(`ffInput${slot}`).value;
 
     name = name.trim().replace(/\s+/g, " ").normalize("NFC");
@@ -965,7 +980,7 @@ function saveFFUser(slot) {
 
     list[slot - 2] = name;
     saveFFList(list);
-
+	await saveMyFFListToNameToUid();
     // Force a fresh reload
     ffLoadedThisSession = false;
 
@@ -981,11 +996,11 @@ function saveFFUser(slot) {
 }
 
 
-function deleteFFUser(name) {
+async function deleteFFUser(name) {
     let list = getFFList();
     list = list.filter(n => n && n.toUpperCase() !== name.toUpperCase());
     saveFFList(list);
-
+	await saveMyFFListToNameToUid();
     // Refresh the table
     ffLoadedThisSession = false;
     loadFFLeaderboard();
@@ -1294,12 +1309,14 @@ async function loadLeaderboard() {
 
     const currentUID = auth.currentUser.uid;
     const currentPlayerName = localStorage.playerName;
+    const ADMIN_NAME = "Sankar";   // ⭐ Admin name to exclude from rankings
+    const isAdmin = currentPlayerName === ADMIN_NAME;
 
     const now = new Date();
     const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
     try {
-        // --- A. Read current player's doc (1 read) ---
+        // --- A. Read current player's doc ---
         let playerData = null;
         try {
             const playerRef = doc(db, "leaderboard", currentUID);
@@ -1325,8 +1342,11 @@ async function loadLeaderboard() {
         const topSnap = await getDocs(topQ);
         leaderboardBody.innerHTML = "";
 
-        const top5 = [];
+        let top5 = [];
         topSnap.forEach(docSnap => top5.push({ id: docSnap.id, ...docSnap.data() }));
+
+        // ⭐ Remove admin from public leaderboard
+        top5 = top5.filter(p => p.name !== ADMIN_NAME);
 
         // --- 2. Render top 5 with tie-aware ranks ---
         let displayRank = 1;
@@ -1359,19 +1379,14 @@ async function loadLeaderboard() {
                 <td>${p.winpct}%</td>
             `;
 
-		if (p.id === currentUID) {
-			row.style.background = "rgba(255,255,255,0.1)";
-			row.style.fontWeight = "bold";
-			row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
-		}
-
             leaderboardBody.appendChild(row);
         }
 
-        // --- 3. If player is in top 5, stop here ---
+        // --- 3. If admin is in top 5, DO NOT show them (they were filtered out)
+        // But if admin is logged in, we still show their row later.
         const inTop5 = top5.some(p => p.id === currentUID);
-		document.getElementById("nrNote").style.display = "none"; 
-        if (inTop5) return;
+        document.getElementById("nrNote").style.display = "none";
+        if (inTop5 && !isAdmin) return;
 
         // --- 4. Read TOP 100 ---
         const top100Q = query(
@@ -1385,56 +1400,59 @@ async function loadLeaderboard() {
         );
 
         const top100Snap = await getDocs(top100Q);
-        const top100 = [];
+        let top100 = [];
         top100Snap.forEach(docSnap => top100.push({ id: docSnap.id, ...docSnap.data() }));
+
+        // ⭐ Remove admin from public leaderboard
+        top100 = top100.filter(p => p.name !== ADMIN_NAME);
 
         // --- 5. Check if user is in top 100 ---
         const idx = top100.findIndex(p => p.id === currentUID);
 
-	if (idx === -1) {
-		// --- A. Spacer row with three vertical dots ---
-		const spacer = document.createElement("tr");
-		spacer.innerHTML = `
-			<td style="text-align:center;">⋮</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		`;
-		leaderboardBody.appendChild(spacer);		
-		// --- A. Show the 100th ranked player as row 6 ---
-		const last = top100[top100.length - 1]; // the 100th player
+        // --- Admin is NOT in top 100 (public), but admin should still see their own row ---
+        if (idx === -1) {
+            // Spacer row
+            const spacer = document.createElement("tr");
+            spacer.innerHTML = `
+                <td style="text-align:center;">⋮</td>
+                <td></td><td></td><td></td><td></td>
+            `;
+            leaderboardBody.appendChild(spacer);
 
-		const lastRow = document.createElement("tr");
-		lastRow.innerHTML = `
-			<td>100</td>
-			<td>${last.name}</td>
-			<td>${last.stars}</td>
-			<td>${last.wins}</td>
-			<td>${last.winpct}%</td>
-		`;
-		leaderboardBody.appendChild(lastRow);
+            // Show 100th ranked player
+            const last = top100[top100.length - 1];
+            const lastRow = document.createElement("tr");
+            lastRow.innerHTML = `
+                <td>100</td>
+                <td>${last.name}</td>
+                <td>${last.stars}</td>
+                <td>${last.wins}</td>
+                <td>${last.winpct}%</td>
+            `;
+            leaderboardBody.appendChild(lastRow);
 
-		// --- B. Show the current user as NR (row 7) ---
-		const userRow = document.createElement("tr");
-		userRow.innerHTML = `
-			<td>NR*</td>
-			<td>${currentPlayerName}</td>
-			<td>${playerData?.stars ?? "-"}</td>
-			<td>${playerData?.wins ?? "-"}</td>
-			<td>${playerData?.winpct ?? "-"}%</td>
-		`;
-		userRow.style.background = "rgba(255,255,255,0.1)";
-		userRow.style.fontWeight = "bold";
-		userRow.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
-		leaderboardBody.appendChild(userRow);
+            // ⭐ Show admin's own row as NR (only to admin)
+            if (isAdmin) {
+                const userRow = document.createElement("tr");
+                userRow.innerHTML = `
+                    <td>NR*</td>
+                    <td>${currentPlayerName}</td>
+                    <td>${playerData?.stars ?? "-"}</td>
+                    <td>${playerData?.wins ?? "-"}</td>
+                    <td>${playerData?.winpct ?? "-"}%</td>
+                `;
+                userRow.style.background = "rgba(255,255,255,0.1)";
+                userRow.style.fontWeight = "bold";
+                userRow.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+                leaderboardBody.appendChild(userRow);
 
-		document.getElementById("nrNote").style.display = "inline";
-		return;
-	}
-	else { 
-			document.getElementById("nrNote").style.display = "none"; 
-			}
+                document.getElementById("nrNote").style.display = "inline";
+            }
+
+            return;
+        }
+
+        document.getElementById("nrNote").style.display = "none";
 
         // --- 6. User IS in top 100 → compute tie-aware rank ---
         let rank = 1;
@@ -1456,45 +1474,42 @@ async function loadLeaderboard() {
 
         const d = top100[idx];
 
-        // --- 7. Render user row as the extra entry ---
-				// --- A. Spacer row with three vertical dots ---
-		if (rank >= 7) {		
-			const spacer = document.createElement("tr");
-			spacer.innerHTML = `
-				<td style="text-align:center;">⋮</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			`;
-			leaderboardBody.appendChild(spacer);
-		}
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${
-                rank === 1 ? "🥇" :
-                rank === 2 ? "🥈" :
-                rank === 3 ? "🥉" :
-                rank
-            }</td>
-            <td>${d.name}</td>
-            <td>${d.stars}</td>
-            <td>${d.wins}</td>
-            <td>${d.winpct}%</td>
-        `;
-        row.style.background = "rgba(255,255,255,0.1)";
-        row.style.fontWeight = "bold";
-        row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+        // --- 7. Render admin row ONLY for admin ---
+        if (isAdmin) {
+            if (rank >= 7) {
+                const spacer = document.createElement("tr");
+                spacer.innerHTML = `
+                    <td style="text-align:center;">⋮</td>
+                    <td></td><td></td><td></td><td></td>
+                `;
+                leaderboardBody.appendChild(spacer);
+            }
 
-        leaderboardBody.appendChild(row);
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${
+                    rank === 1 ? "🥇" :
+                    rank === 2 ? "🥈" :
+                    rank === 3 ? "🥉" :
+                    rank
+                }</td>
+                <td>${d.name}</td>
+                <td>${d.stars}</td>
+                <td>${d.wins}</td>
+                <td>${d.winpct}%</td>
+            `;
+            row.style.background = "rgba(255,255,255,0.1)";
+            row.style.fontWeight = "bold";
+            row.querySelectorAll("td").forEach(td => td.classList.add("current-player-cell"));
+
+            leaderboardBody.appendChild(row);
+        }
 
     } catch (err) {
         console.error("Leaderboard error:", err);
         leaderboardBody.innerHTML = "<tr><td colspan='6'>Error loading leaderboard.</td></tr>";
     }
 }
-
-
 
 
 function showGame() {
