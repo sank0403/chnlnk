@@ -47,7 +47,7 @@ if (!localStorage.clshowrules) {
 })();
 
 
-const BUILD_VERSION = "2026.03.12.08";
+const BUILD_VERSION = "2026.03.12.09";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -58,6 +58,255 @@ if (localStorage.getItem("skipReloadOnce") === "1") {
         localStorage.setItem("clBuildVersion", BUILD_VERSION);
         location.reload();
     }
+}
+
+// --- Rank-based brag pools ---
+const brags_rank1 = [
+  "I’m sitting on the throne again 👑. Someone polish my crown. #FnF_rank1",
+  "Top spot secured. The view from up here is crazy 😎. #FnF_rank1",
+  "I’m not competing. I’m teaching. #FnF_rank1",
+  "Leaderboard update: I’m still him. #FnF_rank1",
+  "Crown’s on, streak’s hot 🔥👑. Try me. #FnF_rank1",
+  "I’m basically a walking trophy case 🏆. #FnF_rank1",
+  "If you’re reading this, you’re behind me. #FnF_rank1",
+  "I’m the final boss of this leaderboard. #FnF_rank1",
+  "I didn’t climb here. I belong here. #FnF_rank1",
+  "The throne fits perfectly. Weird. #FnF_rank1",
+  "I’m the reason the leaderboard exists. #FnF_rank1",
+  "I’m not lucky. I’m consistent. #FnF_rank1",
+  "Top spot again? Yawn. #FnF_rank1",
+  "I woke up and chose domination. #FnF_rank1",
+  "I don’t chase ranks. Ranks chase me. #FnF_rank1",
+  "I’m the benchmark. Everyone else is homework. #FnF_rank1",
+  "I’m the main character of this leaderboard. #FnF_rank1",
+  "I’m the plot twist nobody survives. #FnF_rank1",
+  "I’m the standard they try to reach. #FnF_rank1",
+  "I’m the one they study to improve. #FnF_rank1",
+  "I’m the undefeated storyline. #FnF_rank1",
+  "I’m the boss fight they can’t beat. #FnF_rank1",
+  "I’m the top of the food chain. #FnF_rank1",
+  "I’m the scoreboard’s favorite child. #FnF_rank1",
+  "I’m the one who sets the curve. #FnF_rank1",
+  "I’m the one they warn new players about. #FnF_rank1",
+  "I’m the top spot’s landlord — rent is due. #FnF_rank1",
+  "I’m the one who makes #2 nervous. #FnF_rank1",
+  "I’m the one who makes the rules. #FnF_rank1",
+  "I’m the one who breaks the game. #FnF_rank1",
+  "I’m the one they screenshot. #FnF_rank1",
+  "I’m the one they try to copy. #FnF_rank1",
+  "I’m the one who makes winning look easy. #FnF_rank1",
+  "I’m the one who turns pressure into performance. #FnF_rank1",
+  "I’m the one who doesn’t move — the world moves around me. #FnF_rank1",
+  "I’m the one who makes the leaderboard look good. #FnF_rank1",
+  "I’m the one who keeps the crown warm. #FnF_rank1",
+  "I’m the one who ends arguments. #FnF_rank1",
+  "I’m the one who makes the top spot look effortless. #FnF_rank1"
+];
+
+const brags_rank2 = [
+  "I’m only one spot away. Whoever’s #1 should start sweating 😏. #FnF_rank2",
+  "Second place, but the takeover is loading… #FnF_rank2",
+  "I’m right behind the leader. Breathing down their neck 😈. #FnF_rank2",
+  "Almost at the top. Almost. #FnF_rank2",
+  "Enjoy your lead while it lasts 👀. #FnF_rank2",
+  "I’m #2 but built like a #1. #FnF_rank2",
+  "I’m the storm before the dethroning. #FnF_rank2",
+  "I’m the pressure the leader feels at night. #FnF_rank2",
+  "I’m the shadow right behind #1. #FnF_rank2",
+  "I’m the sequel that’s better than the original. #FnF_rank2",
+  "I’m the next chapter. #FnF_rank2",
+  "I’m the upgrade. #FnF_rank2",
+  "I’m the threat level rising. #FnF_rank2",
+  "I’m the warm-up for the takeover. #FnF_rank2",
+  "I’m the one they fear the most. #FnF_rank2",
+  "I’m the almost-champion with champion energy. #FnF_rank2",
+  "I’m the pressure cooker. #FnF_rank2",
+  "I’m the one who knocks on #1’s door. #FnF_rank2",
+  "I’m the one who makes #1 nervous. #FnF_rank2",
+  "I’m the one who turns second place into danger. #FnF_rank2",
+  "I’m the one who’s about to flip the script. #FnF_rank2",
+  "I’m the one who’s closing the gap. #FnF_rank2",
+  "I’m the one who’s rewriting the rankings. #FnF_rank2",
+  "I’m the one who’s about to take the crown. #FnF_rank2",
+  "I’m the one who keeps #1 awake. #FnF_rank2",
+  "I’m the one who makes the chase exciting. #FnF_rank2",
+  "I’m the one who’s almost there. #FnF_rank2",
+  "I’m the one who’s sharpening my claws. #FnF_rank2",
+  "I’m the one who’s coming in hot. #FnF_rank2",
+  "I’m the one who’s about to make history. #FnF_rank2",
+  "I’m the one who’s too close for comfort. #FnF_rank2",
+  "I’m the one who’s breathing fire. #FnF_rank2",
+  "I’m the one who’s about to break through. #FnF_rank2",
+  "I’m the one who’s turning pressure into progress. #FnF_rank2",
+  "I’m the one who’s about to take over. #FnF_rank2",
+  "I’m the one who’s rewriting the leaderboard. #FnF_rank2",
+  "I’m the one who’s knocking on the throne. #FnF_rank2"
+];
+
+const brags_rank3 = [
+  "Top 3 and dangerous 😮‍💨. #FnF_rank3",
+  "Bronze today, gold tomorrow. #FnF_rank3",
+  "I’m in striking distance. Watch this space. #FnF_rank3",
+  "Third place but rising like a problem. #FnF_rank3",
+  "Two people above me… for now. #FnF_rank3",
+  "I’m the sleeper pick. #FnF_rank3",
+  "I’m the quiet threat. #FnF_rank3",
+  "I’m the midpoint menace. #FnF_rank3",
+  "I’m the one they forget until it’s too late. #FnF_rank3",
+  "I’m the spark before the fire. #FnF_rank3",
+  "I’m the middle child with main-character energy. #FnF_rank3",
+  "I’m the calm before the leaderboard quake. #FnF_rank3",
+  "I’m the bronze bullet. #FnF_rank3",
+  "I’m the rising tide. #FnF_rank3",
+  "I’m the pressure from below. #FnF_rank3",
+  "I’m the one who’s about to shake things up. #FnF_rank3",
+  "I’m the bronze medalist with gold ambition. #FnF_rank3",
+  "I’m the one who’s heating up. #FnF_rank3",
+  "I’m the one who’s creeping upward. #FnF_rank3",
+  "I’m the one who’s about to surprise everyone. #FnF_rank3",
+  "I’m the one who’s sharpening my strategy. #FnF_rank3",
+  "I’m the one who’s gaining momentum. #FnF_rank3",
+  "I’m the one who’s turning bronze into brilliance. #FnF_rank3",
+  "I’m the one who’s about to break into the top 2. #FnF_rank3",
+  "I’m the one who’s quietly plotting. #FnF_rank3",
+  "I’m the one who’s building pressure. #FnF_rank3",
+  "I’m the one who’s about to make noise. #FnF_rank3",
+  "I’m the one who’s rising from the middle. #FnF_rank3",
+  "I’m the one who’s turning third into threat. #FnF_rank3",
+  "I’m the one who’s about to disrupt the top spots. #FnF_rank3",
+  "I’m the one who’s climbing with intent. #FnF_rank3",
+  "I’m the one who’s turning patience into progress. #FnF_rank3",
+  "I’m the one who’s about to catch fire. #FnF_rank3",
+  "I’m the one who’s lurking in the shadows. #FnF_rank3",
+  "I’m the one who’s about to strike. #FnF_rank3",
+  "I’m the one who’s turning bronze into danger. #FnF_rank3",
+  "I’m the one who’s about to make a move. #FnF_rank3"
+];
+
+const brags_rank4 = [
+  "I’m warming up. The climb starts now 🔥. #FnF_rank4",
+  "Fourth place but plotting something scary. #FnF_rank4",
+  "Everyone above me should stay alert. #FnF_rank4",
+  "I’m the dark horse of this leaderboard. #FnF_rank4",
+  "I’m coming for the top spots. Slowly. Menacingly. #FnF_rank4",
+  "I’m the quiet comeback. #FnF_rank4",
+  "I’m the one they underestimate. #FnF_rank4",
+  "I’m the underdog with bite. #FnF_rank4",
+  "I’m the one who ruins someone’s comfort zone. #FnF_rank4",
+  "I’m the sleeper agent. #FnF_rank4",
+  "I’m the comeback arc loading. #FnF_rank4",
+  "I’m the one who’s about to surprise everyone. #FnF_rank4",
+  "I’m the pressure from the depths. #FnF_rank4",
+  "I’m the one who climbs when no one’s watching. #FnF_rank4",
+  "I’m the fourth place with first-place hunger. #FnF_rank4",
+  "I’m the one sharpening my skills down here. #FnF_rank4",
+  "I’m the one who’s about to flip the script. #FnF_rank4",
+  "I’m the one who turns fourth into fear. #FnF_rank4",
+  "I’m the one who’s not done yet. #FnF_rank4",
+  "I’m the one who’s about to make noise. #FnF_rank4",
+  "I’m the one who’s charging up. #FnF_rank4",
+  "I’m the one who’s about to rise. #FnF_rank4",
+  "I’m the one who’s building momentum. #FnF_rank4",
+  "I’m the one who’s preparing the comeback. #FnF_rank4",
+  "I’m the one who’s about to shake the rankings. #FnF_rank4",
+  "I’m the one who’s turning fourth into fire. #FnF_rank4",
+  "I’m the one who’s about to climb fast. #FnF_rank4",
+  "I’m the one who’s quietly dangerous. #FnF_rank4",
+  "I’m the one who’s about to break expectations. #FnF_rank4",
+  "I’m the one who’s turning pressure into power. #FnF_rank4",
+  "I’m the one who’s about to shock the top 3. #FnF_rank4",
+  "I’m the one who’s rising from the depths. #FnF_rank4",
+  "I’m the one who’s about to ignite. #FnF_rank4",
+  "I’m the one who’s turning fourth into fuel. #FnF_rank4",
+  "I’m the one who’s about to disrupt the leaderboard. #FnF_rank4",
+  "I’m the one who’s climbing with purpose. #FnF_rank4"
+];
+
+const brags_rank5 = [
+  "I’m last… but dangerous. Comeback season loading 🔥. #FnF_rank5",
+  "I’m plotting my rise from the shadows 😎. #FnF_rank5",
+  "Don’t worry about my rank. Worry about my potential. #FnF_rank5",
+  "I’m the underdog. And that’s scary. #FnF_rank5",
+  "Laugh now. I’ll see you at the top later. #FnF_rank5",
+  "I’m the bottom seed with top-tier ambition. #FnF_rank5",
+  "I’m the plot twist waiting to happen. #FnF_rank5",
+  "I’m the one with nothing to lose. #FnF_rank5",
+  "I’m the chaos factor. #FnF_rank5",
+  "I’m the comeback story in progress. #FnF_rank5",
+  "I’m the one who starts slow and ends strong. #FnF_rank5",
+  "I’m the fifth place with first-place dreams. #FnF_rank5",
+  "I’m the one who’s about to ruin someone’s month. #FnF_rank5",
+  "I’m the sleeper hit. #FnF_rank5",
+  "I’m the one who’s charging up. #FnF_rank5",
+  "I’m the one who’s not staying down here. #FnF_rank5",
+  "I’m the one who’s about to flip the leaderboard upside down. #FnF_rank5",
+  "I’m the one who’s cooking something. #FnF_rank5",
+  "I’m the one who’s about to shock everyone. #FnF_rank5",
+  "I’m the one who’s turning last place into legend. #FnF_rank5",
+  "I’m the one who’s about to rise from the ashes. #FnF_rank5",
+  "I’m the one who’s quietly preparing revenge. #FnF_rank5",
+  "I’m the one who’s about to climb five spots. #FnF_rank5",
+  "I’m the one who’s turning losses into lessons. #FnF_rank5",
+  "I’m the one who’s about to make a comeback. #FnF_rank5",
+  "I’m the one who’s building the ultimate return. #FnF_rank5",
+  "I’m the one who’s about to surprise the whole board. #FnF_rank5",
+  "I’m the one who’s turning last into launchpad. #FnF_rank5",
+  "I’m the one who’s about to break expectations. #FnF_rank5",
+  "I’m the one who’s rising from the bottom. #FnF_rank5",
+  "I’m the one who’s about to make noise. #FnF_rank5",
+  "I’m the one who’s turning fifth into fire. #FnF_rank5",
+  "I’m the one who’s about to climb like crazy. #FnF_rank5",
+  "I’m the one who’s about to rewrite the story. #FnF_rank5",
+  "I’m the one who’s about to shock the leaderboard. #FnF_rank5"
+];
+
+// --- Callout brags (optional) ---
+const brags_callouts = [
+  "Hey {name}, blink twice if you need help catching up. #FnF_callout",
+  "{name}, I’m farming you for wins at this point 😬. #FnF_callout",
+  "{name}, I’m about to pass you again. #FnF_callout",
+  "Someone check on {name}. They’re struggling. #FnF_callout",
+  "{name}, enjoy your lead while it lasts. #FnF_callout",
+  "{name}, I hope you stretched. I’m right behind you. #FnF_callout",
+  "{name}, you good? Your rank looks shaky. #FnF_callout",
+  "{name}, I’m closing in. Don’t trip. #FnF_callout",
+  "{name}, I’m on your heels like a shadow. #FnF_callout",
+  "{name}, I’m about to make you regret logging in. #FnF_callout",
+  "{name}, I’m the reason you keep checking the leaderboard. #FnF_callout",
+  "{name}, I’m gaining on you like interest. #FnF_callout",
+  "{name}, I’m the pressure you feel at night. #FnF_callout",
+  "{name}, I’m the plot twist you didn’t ask for. #FnF_callout",
+  "{name}, I’m coming for your spot. Warm it up for me. #FnF_callout",
+  "{name}, I’m the storm on your horizon. #FnF_callout",
+  "{name}, I’m the one who’s about to ruin your day. #FnF_callout",
+  "{name}, I’m the one you should be worried about. #FnF_callout",
+  "{name}, I’m the one who’s about to overtake you. #FnF_callout",
+  "{name}, I’m the one who’s creeping up fast. #FnF_callout",
+  "{name}, I’m the one who’s about to shake your confidence. #FnF_callout",
+  "{name}, I’m the one who’s turning up the pressure. #FnF_callout",
+  "{name}, I’m the one who’s about to flip the rankings. #FnF_callout",
+  "{name}, I’m the one who’s coming in hot. #FnF_callout",
+  "{name}, I’m the one who’s about to take your spot. #FnF_callout"
+];
+
+
+function getBragLine(rank, totalPlayers, closestName) {
+    let pool;
+
+    if (rank === 1) pool = brags_rank1;
+    else if (rank === 2 && totalPlayers >= 2) pool = brags_rank2;
+    else if (rank === 3 && totalPlayers >= 3) pool = brags_rank3;
+    else if (rank === 4 && totalPlayers >= 4) pool = brags_rank4;
+    else if (rank === 5 && totalPlayers === 5) pool = brags_rank5;
+    else pool = brags_rank1; // fallback for weird states
+
+    // 20% chance to use a callout brag
+    if (closestName && Math.random() < 0.4) {
+        const callout = brags_callouts[Math.floor(Math.random() * brags_callouts.length)];
+        return callout.replace("{name}", closestName);
+    }
+
+    return pool[Math.floor(Math.random() * pool.length)];
 }
 
 var gameOver = false;
@@ -190,7 +439,6 @@ function hideNamePopup() {
 function getDefaultPlayerName() {
     return "CLUser" + Date.now();
 }
-
 
 async function initPlayerName() {
     return new Promise(async resolve => {
@@ -631,26 +879,35 @@ document.getElementById("notifyAllBtn").addEventListener("click", async () => {
         return b.winpct - a.winpct;
     });
 
+    // ⭐ Build ranked list (names only)
     const rankedList = all
-        .map((p, i) => `${i + 1}. ${p.name} (${p.stars}⭐ ${p.wins}W ${p.winpct}%)`)
+        .map((p, i) => `${i + 1}. ${p.name}`)
         .join("\n");
 
-    // 🔹 Build sharable F&F link (names only, local model)
+    // ⭐ Build sharable F&F link (names only)
     const ffNames = all.map(p => p.name);
     const encoded = btoa(JSON.stringify(ffNames));
-    const baseUrl = "thechnlnk.com";
+    const baseUrl = "https://thechnlnk.com";
     const shareLink = `${baseUrl}?ff=${encoded}`;
 
+    // ⭐ Get brag line based on rank
+    const rank = window.ffCurrentRank;
+    const total = window.ffTotalPlayers;
+    const closest = window.ffClosestRivalName;
+
+    let bragLine = getBragLine(rank, total, closest);
+
+    // ⭐ Build final message (brag + ranked list + link)
     const message =
-`I'm tracking all of us on the new CHN LNK Friends & Family Leaderboard.
+`${bragLine}
 
 Current Ranking:
 ${rankedList}
 
-Click this link to add the same group to your F&F:
+I made this F&F Group for CHN LNK. Click to join:
 ${shareLink}
 
-Let's see who wins top spot at the end of the month! 🔥
+Let's see who has the last laugh at the end of the month! 🔥
 `;
 
     if (navigator.share) {
@@ -660,6 +917,7 @@ Let's see who wins top spot at the end of the month! 🔥
         alert("Message copied!");
     }
 });
+
 
 // ---------------------------------------------------------
 // GLOBAL Helpers for localStorage friend list
@@ -752,8 +1010,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const challengeBtn = document.getElementById("notifyAllBtn");
         const challengeBtnTxt = document.getElementById("cpNote");
 		
-        challengeBtn.style.display = list.length > 0 ? "inline-block" : "none";
-        challengeBtnTxt.style.display = list.length > 0 ? "inline-block" : "none";
+        challengeBtn.style.display = list.length >= 0 ? "inline-block" : "none";
+        challengeBtnTxt.style.display = list.length >= 0 ? "inline-block" : "none";
 		
         const friends = [];
 
@@ -815,6 +1073,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return (a.updated || 0) - (b.updated || 0);
         });
+		
+		// ⭐ STEP 2 — Compute rank + closest rival for brag system
+		const myName = you.name;
+		const myIndex = combined.findIndex(p => p.name === myName);
+		const myRank = myIndex + 1;
+		const totalPlayers = combined.length;
+
+		window.ffCurrentRank = myRank;
+		window.ffTotalPlayers = totalPlayers;
+
+		let closest = null;
+		if (myRank > 1) {
+			closest = combined[myRank - 2].name;
+		} else if (myRank < totalPlayers) {
+			closest = combined[myRank].name;
+		}
+		window.ffClosestRivalName = closest;
+
+		// ⭐ Make available globally for Notify All
+		window.ffLeaderboard = combined;		
 
         // ⭐ Make available globally for Notify All
         window.ffLeaderboard = combined;
