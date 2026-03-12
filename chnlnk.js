@@ -7,7 +7,7 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
-const BUILD_VERSION = "2026.03.09.01";
+const BUILD_VERSION = "2026.03.11.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -582,7 +582,7 @@ async function loaddynamites() {
 
 			// --- RESET FLAG LOGIC ---
 			if (u.popup && u.popup.reset === true) {
-
+				
 				if (localStorage.getItem('gameovercl' + days) == 1) {
 					localStorage.removeItem('gameovercl' + days);
 					localStorage.monthclplayed = Number(localStorage.monthclplayed) - 1;
@@ -645,10 +645,17 @@ async function loaddynamites() {
 			// --- POPUP LOGIC ---
 			if (u.popup && u.popup.seen === false) {
 				showPopupToUser(u.popup.type, u.popup.message);
-
+				const serverDynamite1 = d.dynamite;
+				const localDynamite1 = Number(localStorage.cldynamite ?? 0);
 				await updateDoc(userRef, {
 					"popup.seen": true
 				});
+				if (serverDynamite1 > localDynamite1) {
+					localStorage.cldynamite = serverDynamite1;
+					const dyn1 = Number(localStorage.cldynamite || 0);
+					document.getElementById("dynamite-btn").innerText = "💣 x" + dyn1;					
+					// return;
+				}				
 			}
 		}
         // -----------------------------
