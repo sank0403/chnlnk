@@ -2399,14 +2399,13 @@ function showSafetyNetPopup() {
     setTimeout(() => pop.remove(), 2000);
 }
 
-
 function updateHintProgress(consecutiveDaysPlayed, hintAvailable) {
     const circle = document.getElementById("hint-circle");
     const bulb = document.getElementById("hint-bulb");
 
     // If hint is already earned, freeze at 100%
     if (hintAvailable) {
-        circle.style.background = `conic-gradient(#ffd84d 360deg, #444 360deg)`;
+        circle.style.background = `conic-gradient(white 360deg, #444 360deg)`; 
         bulb.classList.add("ready");
         return;
     }
@@ -2416,7 +2415,7 @@ function updateHintProgress(consecutiveDaysPlayed, hintAvailable) {
     const degrees = (percent / 100) * 360;
 
     circle.style.background = `conic-gradient(
-        #ffd84d ${degrees}deg,
+        white ${degrees}deg,   /* CHANGED from yellow → white */
         #444 ${degrees}deg
     )`;
 
@@ -2426,6 +2425,7 @@ function updateHintProgress(consecutiveDaysPlayed, hintAvailable) {
         bulb.classList.remove("ready");
     }
 }
+
 
 document.getElementById("hint-bulb").addEventListener("click", () => {
 	if (gameOver) return;

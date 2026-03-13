@@ -132,7 +132,7 @@ p {
 /* Lit / ready state */
 #hint-bulb.ready {
     opacity: 1;
-    filter: drop-shadow(0 0 8px gold);
+    /* filter: drop-shadow(0 0 8px white); */
 }
 
 
