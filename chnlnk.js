@@ -7,6 +7,20 @@ if (!localStorage.clshowrules) {
     localStorage.setItem("skipReloadOnce", "1");
 }
 
+function getHintState() {
+    return {
+        consecutiveDays: Number(localStorage.consecutiveDays || 0),
+        hintAvailable: localStorage.hintAvailable === "true",
+        lastPlayed: localStorage.lastPlayed || null
+    };
+}
+
+function saveHintState(days, available) {
+    localStorage.consecutiveDays = days;
+    localStorage.hintAvailable = available;
+    localStorage.lastPlayed = new Date().toDateString();
+}
+
 (function importFFFromURL() {
     const allowedHost = "thechnlnk.com";
     if (window.location.hostname !== allowedHost) return;
@@ -47,7 +61,7 @@ if (!localStorage.clshowrules) {
 })();
 
 
-const BUILD_VERSION = "2026.03.12.09";
+const BUILD_VERSION = "2026.03.13.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -288,6 +302,47 @@ const brags_callouts = [
   "{name}, I’m the one who’s coming in hot. #FnF_callout",
   "{name}, I’m the one who’s about to take your spot. #FnF_callout"
 ];
+
+function onDailyPuzzleCompleted() {
+    let { consecutiveDays, hintAvailable, lastPlayed } = getHintState();
+
+    const today = new Date().toDateString();
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+
+    // If hint is already earned, freeze progress
+    if (hintAvailable) {
+        updateHintProgress(consecutiveDays, true);
+        return;
+    }
+
+    // First time ever
+    if (!lastPlayed) {
+        consecutiveDays = 1;
+    }
+    else if (lastPlayed === today) {
+        // Already played today → do nothing
+    }
+    else if (lastPlayed === yesterday) {
+        // Played yesterday → streak continues
+        consecutiveDays++;
+    }
+    else {
+        // Missed a day → reset to 0
+        consecutiveDays = 0;
+
+        // Now count today as Day 1
+        consecutiveDays = 1;
+    }
+
+    // Check if hint earned
+    if (consecutiveDays >= 4) {
+        hintAvailable = true;
+    }
+
+    saveHintState(consecutiveDays, hintAvailable);
+    updateHintProgress(consecutiveDays, hintAvailable);
+}
+
 
 
 function getBragLine(rank, totalPlayers, closestName) {
@@ -2335,6 +2390,56 @@ function showMysteryAdded() {
     setTimeout(() => pop.remove(), 2000);
 }
 
+function showSafetyNetPopup() {
+    const pop = document.createElement("div");
+    pop.id = "life-restored"; // reuse same styling
+    pop.innerText = "😇 SAFETY NET ACTIVE — NO LIFE LOST!";
+    document.body.appendChild(pop);
+
+    setTimeout(() => pop.remove(), 2000);
+}
+
+
+function updateHintProgress(consecutiveDaysPlayed, hintAvailable) {
+    const circle = document.getElementById("hint-circle");
+    const bulb = document.getElementById("hint-bulb");
+
+    // If hint is already earned, freeze at 100%
+    if (hintAvailable) {
+        circle.style.background = `conic-gradient(#ffd84d 360deg, #444 360deg)`;
+        bulb.classList.add("ready");
+        return;
+    }
+
+    // Otherwise show progress toward earning it
+    const percent = Math.min(consecutiveDaysPlayed, 4) * 25;
+    const degrees = (percent / 100) * 360;
+
+    circle.style.background = `conic-gradient(
+        #ffd84d ${degrees}deg,
+        #444 ${degrees}deg
+    )`;
+
+    if (percent === 100) {
+        bulb.classList.add("ready");
+    } else {
+        bulb.classList.remove("ready");
+    }
+}
+
+document.getElementById("hint-bulb").addEventListener("click", () => {
+	if (gameOver) return;
+    const { hintAvailable } = getHintState();
+
+    if (!hintAvailable) {
+        // Safety net NOT charged
+        updateAnswer("Safety Net Inactive — play 4 consecutive days to activate!");
+    } else {
+        // Safety net READY
+        updateAnswer("Safety Net Active — one incorrect entry won’t cost a life!");
+    }
+});
+
 function showPerfectSolve() {
     const box = document.createElement("div");
     box.id = "perfect-solve";
@@ -3792,10 +3897,20 @@ function updateMomentumBar() {
 }
 
 function handleMomentumFailure() {
+	const { hintAvailable } = getHintState();
     if (localStorage.cllivescnt < 5) {
-        localStorage.cllivescnt = Number(localStorage.cllivescnt) + 1;
-        flashBarRed();
-        updateLivesDisplay();
+		if (!hintAvailable) {
+			localStorage.cllivescnt = Number(localStorage.cllivescnt) + 1;
+			flashBarRed();
+			updateLivesDisplay();
+		}
+		else{
+			// SAFETY NET ACTIVATED
+			showSafetyNetPopup();
+			localStorage.hintAvailable = false;
+			localStorage.consecutiveDaysPlayed = 0;
+			updateHintProgress(0, false);							
+		}
     }
 }
 
@@ -3949,6 +4064,7 @@ function updateLivesDisplay() {
         localStorage.clgamestarted = 0;
         localStorage.clhardmode = 0;
         setTimeout(OpenStats, 3200);
+		onDailyPuzzleCompleted(); 
     }
     // }
 }
@@ -4083,6 +4199,8 @@ function revealSlotMachineRow(rowId, finalWord, delayStart = 0) {
 
 window.onload = function() {
     initMonthlyStats();
+	const { consecutiveDays, hintAvailable } = getHintState();
+	updateHintProgress(consecutiveDays, hintAvailable);
     const now = new Date();
     const today =
         now.getFullYear() + "-" +
@@ -4836,7 +4954,7 @@ function processInput(e) {
     if (gameOver) return;
     localStorage.clgamestarted = 1;
     document.getElementById("toggle-row").style.display = "none";
-    localStorage.clguesscnt = Number(localStorage.clguesscnt) + 1;
+    localStorage.clguesscnt = Number(localStorage.clguesscnt) + 1;	
     document.getElementById("lives").classList.remove("blink");
     document.getElementById("answer").innerText = "";
     var LetterFound = 0;
@@ -5073,57 +5191,66 @@ function processInput(e) {
         disabledkeyarr = [].concat.apply([], disabledkeyarr);
         localStorage.setItem("cldisabledkey", JSON.stringify(disabledkeyarr));
     }
-
+	const { hintAvailable } = getHintState();
     if (LetterFound == 0) {
-        localStorage.cllivescnt = Number(localStorage.cllivescnt) + 1;
-        document.getElementById("answer").style.color = "lightgray";
-        switch (Number(localStorage.cllivescnt)) {
-            case 0:
-                localStorage.cllives = "⚪⚪⚪⚪⚪";
-                break;
-            case 1:
-                localStorage.cllives = "⚪⚪⚪⚪";
-                // document.getElementById("answer").innerText = "FIRST LIFE LOST!"
-                updateAnswer("First Life Lost!");
-                break;
-            case 2:
-                localStorage.cllives = "⚪⚪⚪";
-                // document.getElementById("answer").innerText = "SECOND LIFE LOST!"
-                updateAnswer("Second Life Lost!");
-                break;
-            case 3:
-                localStorage.cllives = "⚪⚪";
-                // document.getElementById("answer").innerText = "THIRD LIFE LOST!"
-                updateAnswer("Third Life Lost!");
-                break;
-            case 4:
-                localStorage.cllives = "⚪";
-                // document.getElementById("answer").innerText = "FOURTH LIFE LOST - LAST LIFE ALERT!"
-                updateAnswer("FOURTH LIFE LOST - LAST LIFE ALERT!");
-                setTimeout(FinalClue, 1500);
+		if (!hintAvailable) {
+			localStorage.cllivescnt = Number(localStorage.cllivescnt) + 1;
+			document.getElementById("answer").style.color = "lightgray";
+			switch (Number(localStorage.cllivescnt)) {
+				case 0:
+					localStorage.cllives = "⚪⚪⚪⚪⚪";
+					break;
+				case 1:
+					localStorage.cllives = "⚪⚪⚪⚪";
+					// document.getElementById("answer").innerText = "FIRST LIFE LOST!"
+					updateAnswer("First Life Lost!");
+					break;
+				case 2:
+					localStorage.cllives = "⚪⚪⚪";
+					// document.getElementById("answer").innerText = "SECOND LIFE LOST!"
+					updateAnswer("Second Life Lost!");
+					break;
+				case 3:
+					localStorage.cllives = "⚪⚪";
+					// document.getElementById("answer").innerText = "THIRD LIFE LOST!"
+					updateAnswer("Third Life Lost!");
+					break;
+				case 4:
+					localStorage.cllives = "⚪";
+					// document.getElementById("answer").innerText = "FOURTH LIFE LOST - LAST LIFE ALERT!"
+					updateAnswer("FOURTH LIFE LOST - LAST LIFE ALERT!");
+					setTimeout(FinalClue, 1500);
 
-                // Offer star-for-life trade when only 1 life remains
-                const today = new Date().toDateString();
-                if (Number(localStorage.cllivescnt) == 4 &&
-                    Number(localStorage.totalclstars) >= 2 &&
-                    localStorage.cltradeoffered !== today) {
+					// Offer star-for-life trade when only 1 life remains
+					const today = new Date().toDateString();
+					if (Number(localStorage.cllivescnt) == 4 &&
+						Number(localStorage.totalclstars) >= 2 &&
+						localStorage.cltradeoffered !== today) {
 
-                    localStorage.cltradeoffered = today; // prevent repeat offers
-                    openLifeTradeModal();
-                }
-                break;
-                // case 5: localStorage.cllives = "⚠️";
-                // 	document.getElementById("answer").innerText = "LAST LIFE ALERT!"
-                // 	setTimeout(FinalClue, 500);	
-                // 	break;
-            case 5:
-                localStorage.cllives = "❌❌❌❌❌";
-                break;
-        }
+						localStorage.cltradeoffered = today; // prevent repeat offers
+						openLifeTradeModal();
+					}
+					break;
+					// case 5: localStorage.cllives = "⚠️";
+					// 	document.getElementById("answer").innerText = "LAST LIFE ALERT!"
+					// 	setTimeout(FinalClue, 500);	
+					// 	break;
+				case 5:
+					localStorage.cllives = "❌❌❌❌❌";
+					break;
+			}
 
-        document.getElementById("lives").innerText = localStorage.cllives;
-        document.getElementById("lives").classList.add("blink");
-        setTimeout(removeblink, 3000);
+			document.getElementById("lives").innerText = localStorage.cllives;
+			document.getElementById("lives").classList.add("blink");
+			setTimeout(removeblink, 3000);
+		}	
+		else{
+			// SAFETY NET ACTIVATED
+			showSafetyNetPopup();
+			localStorage.hintAvailable = false;
+			localStorage.consecutiveDaysPlayed = 0;
+			updateHintProgress(0, false);							
+		}	
     }
 
 	if (Number(localStorage.clguesscnt) === 6) {
@@ -5239,6 +5366,7 @@ function processInput(e) {
         localStorage.clgamestarted = 0;
         localStorage.clhardmode = 0;
         setTimeout(OpenStats, 3200);
+		onDailyPuzzleCompleted();
     }
 
     if (Number(localStorage.clcorrect) == word.length) {
@@ -5463,6 +5591,7 @@ function processInput(e) {
         localStorage.clhardmode = 0;
         setTimeout(ConfettiStart, 1000);
 		setTimeout(OpenStats, 4800);
+		onDailyPuzzleCompleted();
         // if (localStorage.clshowalert > 1 && localStorage.clshowalert < 4) {
             // setTimeout(OpenStats, 6800);
             // setTimeout(OpenHINTModal, 4800);
