@@ -890,24 +890,13 @@ document.getElementById("notifyAllBtn").addEventListener("click", async () => {
     const baseUrl = "https://thechnlnk.com";
     const shareLink = `${baseUrl}?ff=${encoded}`;
 
-    // ⭐ Get brag line based on rank
-    const rank = window.ffCurrentRank;
-    const total = window.ffTotalPlayers;
-    const closest = window.ffClosestRivalName;
-
-    let bragLine = getBragLine(rank, total, closest);
-
-    // ⭐ Build final message (brag + ranked list + link)
+   // ⭐ Build final message (brag + ranked list + link)
     const message =
-`${bragLine}
+`I made this F&F Group for CHN LNK. Click to join:
+${shareLink}
 
 Current Ranking:
 ${rankedList}
-
-I made this F&F Group for CHN LNK. Click to join:
-${shareLink}
-
-Let's see who has the last laugh at the end of the month! 🔥
 `;
 
     if (navigator.share) {
@@ -917,6 +906,69 @@ Let's see who has the last laugh at the end of the month! 🔥
         alert("Message copied!");
     }
 });
+
+document.getElementById("bragBtn").addEventListener("click", async () => {
+    let ff = window.ffLeaderboard || [];
+
+    // 🔥 DELETE INVALID USERS FROM LOCALSTORAGE AND MEMORY
+    const invalidNames = ff
+        .filter(p => p.id === null || p.stars === "-" || p.wins === "-" || p.winpct === "-")
+        .map(p => p.name);
+
+    // Remove from localStorage
+    let ffList = JSON.parse(localStorage.ffList || "[]");
+    ffList = ffList.filter(name => !invalidNames.includes(name));
+    localStorage.ffList = JSON.stringify(ffList);
+
+    // Remove from in-memory leaderboard
+    ff = ff.filter(p => !invalidNames.includes(p.name));
+
+    // 🔥 REFRESH LEADERBOARD UI
+    await loadFFLeaderboard();
+    // 🔥 END INVALID DELETE + REFRESH
+
+
+    const me = localStorage.playerName || "Me";
+    const meStats = ff.find(p => p.name === me) || { name: me, stars: 0, wins: 0, winpct: 0 };
+
+    let all = [meStats, ...ff.filter(p => p.name !== me)];
+
+    all.sort((a, b) => {
+        if (b.stars !== a.stars) return b.stars - a.stars;
+        if (b.wins !== a.wins) return b.wins - a.wins;
+        return b.winpct - a.winpct;
+    });
+
+    // ⭐ Build ranked list WITH STATS
+    const rankedList = all
+        .map((p, i) => `${i + 1}. ${p.name} (${p.stars}⭐ ${p.wins}W ${p.winpct}%)`)
+        .join("\n");
+
+    // ⭐ Get brag line based on rank
+    const rank = window.ffCurrentRank;
+    const total = window.ffTotalPlayers;
+    const closest = window.ffClosestRivalName;
+
+    let bragLine = getBragLine(rank, total, closest);
+
+    // ⭐ Build final message (brag + ranked list)
+    const message =
+`${bragLine}
+
+Current Ranking:
+${rankedList}
+
+🔥Let's see who has the last laugh at the end of the month! #thechnlnk
+`;
+
+    if (navigator.share) {
+        await navigator.share({ title: "CHN LNK Bragging Rights", text: message });
+    } else {
+        navigator.clipboard.writeText(message);
+        alert("Message copied!");
+    }
+});
+
 
 
 // ---------------------------------------------------------
@@ -1008,11 +1060,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Show CHALLENGE button only if at least one friend exists
         const challengeBtn = document.getElementById("notifyAllBtn");
-        const challengeBtnTxt = document.getElementById("cpNote");
+        const bragBtn = document.getElementById("bragBtn");
+        const fnftextBtn = document.getElementById("cpNote");
 		
-        challengeBtn.style.display = list.length >= 0 ? "inline-block" : "none";
-        challengeBtnTxt.style.display = list.length >= 0 ? "inline-block" : "none";
-		
+        challengeBtn.style.display = list.length > 0 ? "inline-block" : "none";
+        bragBtn.style.display = list.length > 0 ? "inline-block" : "none";
+        fnftextBtn.style.display = list.length === 0 ? "block" : "none";
         const friends = [];
 
         for (let i = 0; i < list.length; i++) {

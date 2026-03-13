@@ -414,7 +414,7 @@ p {
     100% { transform: scale(1); opacity: 1; }
 }
 
-#notifyAllBtn, #cpNote {
+#notifyAllBtn, #bragBtn {
     display: none;
 }
 
@@ -2898,6 +2898,12 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
 .nr-note {
     font-size: 10px;
     opacity: 0.8;
+    white-space: nowrap;
+}
+
+.cp-note {
+    font-size: 11px;
+    /* opacity: 0.8; */
     white-space: nowrap;
 }
 
