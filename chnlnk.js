@@ -310,15 +310,11 @@ function onDailyPuzzleCompleted() {
     const today = new Date().toDateString();
     const yesterday = new Date(Date.now() - 86400000).toDateString();
 
-    // If hint is already earned, freeze progress
     if (hintAvailable) {
         updateHintProgress(consecutiveDays, true);
         return;
     }
 
-    // --- FIXED LOGIC FOR TRUE 0% STATE ---
-
-    // First time ever
     if (!lastPlayed) {
         consecutiveDays = 1;
     }
@@ -326,26 +322,25 @@ function onDailyPuzzleCompleted() {
         // Already played today → do nothing
     }
     else if (lastPlayed === yesterday) {
-        // Played yesterday → streak continues
-        consecutiveDays++;		
+        consecutiveDays++;
     }
     else {
         // Missed a day → reset to 0%
         consecutiveDays = 0;
 
-        // Show 0% immediately
-        saveHintState(consecutiveDays, false, today);
-        updateHintProgress(consecutiveDays, false);
+        // Show 0% immediately, but DO NOT mark today as played
+        saveHintState(0, false, lastPlayed);
+        updateHintProgress(0, false);
 
-        // Now count today's play as Day 1 (25%)
+        // Now count today's play as Day 1
         consecutiveDays = 1;
     }
 
-    // Check if hint earned
     if (consecutiveDays >= 4) {
         hintAvailable = true;
     }
 
+    // IMPORTANT: mark today as played only AFTER completion
     saveHintState(consecutiveDays, hintAvailable, today);
     updateHintProgress(consecutiveDays, hintAvailable);
 }
@@ -4328,10 +4323,12 @@ function onGameLoad() {
     const yesterday = new Date(Date.now() - 86400000).toDateString();
 
     if (lastPlayed && lastPlayed !== today && lastPlayed !== yesterday) {
-        saveHintState(0, false, today);   // IMPORTANT FIX
+        // Reset streak but DO NOT mark today as played
+        saveHintState(0, false, lastPlayed);
         updateHintProgress(0, false);
     }
 }
+
 
 
 function initialize() {
