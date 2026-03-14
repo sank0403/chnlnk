@@ -15,11 +15,12 @@ function getHintState() {
     };
 }
 
-function saveHintState(days, available) {
+function saveHintState(days, available, lastPlayed) {
     localStorage.consecutiveDays = days;
     localStorage.hintAvailable = available;
-    localStorage.lastPlayed = new Date().toDateString();
+    localStorage.lastPlayed = lastPlayed;
 }
+
 
 (function importFFFromURL() {
     const allowedHost = "thechnlnk.com";
@@ -327,7 +328,7 @@ function onDailyPuzzleCompleted() {
     else if (lastPlayed === yesterday) {
         // Played yesterday → streak continues
         consecutiveDays++;
-		if (consecutiveDays === 2){
+		if (consecutiveDays === 3){
 			alert("Hello! I am an alert box!!");
 		}
     }
