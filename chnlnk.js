@@ -62,7 +62,7 @@ function saveHintState(days, available, lastPlayed) {
 })();
 
 
-const BUILD_VERSION = "2026.03.13.04";
+const BUILD_VERSION = "2026.03.14.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -327,8 +327,7 @@ function onDailyPuzzleCompleted() {
     }
     else if (lastPlayed === yesterday) {
         // Played yesterday → streak continues
-        consecutiveDays++;
-		alert("Note the new feature on Safety Net");
+        consecutiveDays++;		
     }
     else {
         // Missed a day → reset to 0%
@@ -3914,6 +3913,7 @@ function handleMomentumFailure() {
 		else{
 			// SAFETY NET ACTIVATED
 			showSafetyNetPopup();
+			const { lastPlayed } = getHintState(); // keep the old date
 			saveHintState(0, false, new Date().toDateString());
 			updateHintProgress(0, false);						
 		}
@@ -4205,6 +4205,7 @@ function revealSlotMachineRow(rowId, finalWord, delayStart = 0) {
 
 window.onload = function() {
     initMonthlyStats();
+	onGameLoad();  // ← reset streak BEFORE drawing UI
 	const { consecutiveDays, hintAvailable } = getHintState();
 	updateHintProgress(consecutiveDays, hintAvailable);
     const now = new Date();
@@ -4267,7 +4268,6 @@ window.onload = function() {
     UpdateChart();
 }
 
-
 document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {
         refreshArchiveModal();
@@ -4320,6 +4320,18 @@ window.addEventListener("DOMContentLoaded", () => {
         // disable timed mode logic here
     }
 });
+
+function onGameLoad() {
+    let { consecutiveDays, hintAvailable, lastPlayed } = getHintState();
+
+    const today = new Date().toDateString();
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+
+    if (lastPlayed && lastPlayed !== today && lastPlayed !== yesterday) {
+        saveHintState(0, false, today);   // IMPORTANT FIX
+        updateHintProgress(0, false);
+    }
+}
 
 
 function initialize() {
@@ -5253,6 +5265,7 @@ function processInput(e) {
 		else{
 			// SAFETY NET ACTIVATED
 			showSafetyNetPopup();
+			const { lastPlayed } = getHintState(); // keep the old date
 			saveHintState(0, false, new Date().toDateString());
 			updateHintProgress(0, false);							
 		}	
