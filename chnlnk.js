@@ -62,7 +62,7 @@ function saveHintState(days, available, lastPlayed) {
 })();
 
 
-const BUILD_VERSION = "2026.03.14.01";
+const BUILD_VERSION = "2026.03.14.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -3909,7 +3909,7 @@ function handleMomentumFailure() {
 			// SAFETY NET ACTIVATED
 			showSafetyNetPopup();
 			const { lastPlayed } = getHintState(); // keep the old date
-			saveHintState(0, false, new Date().toDateString());
+			saveHintState(0, false, null);
 			updateHintProgress(0, false);						
 		}
     }
@@ -5263,7 +5263,7 @@ function processInput(e) {
 			// SAFETY NET ACTIVATED
 			showSafetyNetPopup();
 			const { lastPlayed } = getHintState(); // keep the old date
-			saveHintState(0, false, new Date().toDateString());
+			saveHintState(0, false, null);
 			updateHintProgress(0, false);							
 		}	
     }
