@@ -62,7 +62,7 @@ function saveHintState(days, available, lastPlayed) {
 })();
 
 
-const BUILD_VERSION = "2026.03.13.02";
+const BUILD_VERSION = "2026.03.13.04";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -328,9 +328,7 @@ function onDailyPuzzleCompleted() {
     else if (lastPlayed === yesterday) {
         // Played yesterday → streak continues
         consecutiveDays++;
-		if (consecutiveDays === 3){
-			alert("Hello! I am an alert box!!");
-		}
+		alert("Note the new feature on Safety Net");
     }
     else {
         // Missed a day → reset to 0%
@@ -2408,7 +2406,7 @@ function showSafetyNetPopup() {
     setTimeout(() => pop.remove(), 2000);
 }
 
-function updateHintProgress(consecutiveDaysPlayed, hintAvailable) {
+function updateHintProgress(consecutiveDays, hintAvailable) {
     const circle = document.getElementById("hint-circle");
     const bulb = document.getElementById("hint-bulb");
 
@@ -2420,7 +2418,7 @@ function updateHintProgress(consecutiveDaysPlayed, hintAvailable) {
     }
 
     // Otherwise show progress toward earning it
-    const percent = Math.min(consecutiveDaysPlayed, 4) * 25;
+    const percent = Math.min(consecutiveDays, 4) * 25;
     const degrees = (percent / 100) * 360;
 
     circle.style.background = `conic-gradient(
@@ -3916,9 +3914,8 @@ function handleMomentumFailure() {
 		else{
 			// SAFETY NET ACTIVATED
 			showSafetyNetPopup();
-			localStorage.hintAvailable = false;
-			localStorage.consecutiveDaysPlayed = 0;
-			updateHintProgress(0, false);							
+			saveHintState(0, false, new Date().toDateString());
+			updateHintProgress(0, false);						
 		}
     }
 }
@@ -5256,8 +5253,7 @@ function processInput(e) {
 		else{
 			// SAFETY NET ACTIVATED
 			showSafetyNetPopup();
-			localStorage.hintAvailable = false;
-			localStorage.consecutiveDaysPlayed = 0;
+			saveHintState(0, false, new Date().toDateString());
 			updateHintProgress(0, false);							
 		}	
     }
