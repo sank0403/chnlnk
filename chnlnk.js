@@ -61,7 +61,7 @@ function saveHintState(days, available) {
 })();
 
 
-const BUILD_VERSION = "2026.03.13.01";
+const BUILD_VERSION = "2026.03.13.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -315,6 +315,8 @@ function onDailyPuzzleCompleted() {
         return;
     }
 
+    // --- FIXED LOGIC FOR TRUE 0% STATE ---
+
     // First time ever
     if (!lastPlayed) {
         consecutiveDays = 1;
@@ -327,10 +329,14 @@ function onDailyPuzzleCompleted() {
         consecutiveDays++;
     }
     else {
-        // Missed a day → reset to 0
+        // Missed a day → reset to 0%
         consecutiveDays = 0;
 
-        // Now count today as Day 1
+        // Show 0% immediately
+        saveHintState(consecutiveDays, false, today);
+        updateHintProgress(consecutiveDays, false);
+
+        // Now count today's play as Day 1 (25%)
         consecutiveDays = 1;
     }
 
@@ -339,10 +345,9 @@ function onDailyPuzzleCompleted() {
         hintAvailable = true;
     }
 
-    saveHintState(consecutiveDays, hintAvailable);
+    saveHintState(consecutiveDays, hintAvailable, today);
     updateHintProgress(consecutiveDays, hintAvailable);
 }
-
 
 
 function getBragLine(rank, totalPlayers, closestName) {
