@@ -327,6 +327,9 @@ function onDailyPuzzleCompleted() {
     else if (lastPlayed === yesterday) {
         // Played yesterday → streak continues
         consecutiveDays++;
+		if (consecutiveDays === 2){
+			alert("Hello! I am an alert box!!");
+		}
     }
     else {
         // Missed a day → reset to 0%
