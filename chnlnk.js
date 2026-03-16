@@ -1447,8 +1447,21 @@ async function loaddynamites() {
         const serverDynamite = d.dynamite;
         const localDynamite = Number(localStorage.cldynamite ?? 0);
 
-        if (Number(localStorage.monthclstars ?? 0) !== Number(d.stars) && d.name === "Sankar") {
+        if (d.name === "Sankar") {
+            localStorage.cldynamite = d.dynamite;
+            localStorage.monthclplayed = d.played;
             localStorage.monthclstars = d.stars;
+            localStorage.monthwins = d.wins;
+            localStorage.totalclplayed = d.ztplayed;
+            localStorage.totalclstars = d.ztstars;
+            localStorage.totalclstreak = d.ztstreak;
+            localStorage.totalclwins = d.ztwins;
+            localStorage.starcl1count = d.zzstar1;
+            localStorage.starcl2count = d.zzstar2;
+            localStorage.starcl3count = d.zzstar3;
+            localStorage.starcl4count = d.zzstar4;
+            localStorage.starcl5count = d.zzstar5;
+            localStorage.starclxcount = d.zzstarx;
             rankReset();
             return;
         }
