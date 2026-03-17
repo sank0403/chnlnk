@@ -62,7 +62,7 @@ function saveHintState(days, available, lastPlayed) {
 })();
 
 
-const BUILD_VERSION = "2026.03.14.03";
+const BUILD_VERSION = "2026.03.17.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -1447,27 +1447,14 @@ async function loaddynamites() {
         const serverDynamite = d.dynamite;
         const localDynamite = Number(localStorage.cldynamite ?? 0);
 
-        // if (d.name === "Sankar") {
-            // localStorage.cldynamite = d.dynamite;
-            // localStorage.monthclplayed = d.played;
-            // localStorage.monthclstars = d.stars;
-            // localStorage.monthwins = d.wins;
-            // localStorage.totalclplayed = d.ztplayed;
-            // localStorage.totalclstars = d.ztstars;
-            // localStorage.totalclstreak = d.ztstreak;
-            // localStorage.totalclwins = d.ztwins;
-            // localStorage.starcl1count = d.zzstar1;
-            // localStorage.starcl2count = d.zzstar2;
-            // localStorage.starcl3count = d.zzstar3;
-            // localStorage.starcl4count = d.zzstar4;
-            // localStorage.starcl5count = d.zzstar5;
-            // localStorage.starclxcount = d.zzstarx;
-            // rankReset();
-            // return;
-        // }
+        if (Number(localStorage.monthclstars ?? 0) !== Number(d.stars) && d.name === "Sankar") {
+            localStorage.monthclstars = d.stars;
+            rankReset();
+            return;
+        }
 
         // Stat Retrieve Block
-        if (Number(localStorage.totalclplayed ?? 0) < Number(d.ztplayed)) {
+        if (Number(localStorage.totalclplayed ?? 0) < Number(d.ztplayed) || Number(localStorage.monthclplayed ?? 0) < Number(d.played)){
             localStorage.cldynamite = d.dynamite;
             localStorage.monthclplayed = d.played;
             localStorage.monthclstars = d.stars;
