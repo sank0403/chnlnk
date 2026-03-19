@@ -62,7 +62,7 @@ function saveHintState(days, available, lastPlayed) {
 })();
 
 
-const BUILD_VERSION = "2026.03.17.01";
+const BUILD_VERSION = "2026.03.18.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -1339,6 +1339,35 @@ async function deleteFFUser(name) {
 window.deleteFFUser = deleteFFUser;
 
 
+document.getElementById("dynamite-btn").addEventListener("click", () => {
+    if (!gameOver) return;
+
+    OpenRules();
+
+    // Expand MASTER collapsible by simulating a click if it's not already open
+    const master = document.querySelector(".collapsible.master");
+    if (master && !master.classList.contains("active")) {
+        master.click();
+    }
+
+    // Expand DYNAMITE collapsible by simulating a click if it's not already open
+    const dynamiteButton = Array.from(document.querySelectorAll(".collapsible"))
+        .find(btn => btn.textContent.includes("Dynamite"));
+
+    if (dynamiteButton && !dynamiteButton.classList.contains("active")) {
+        dynamiteButton.click();
+    }
+
+    // Smooth scroll into view
+    setTimeout(() => {
+        dynamiteButton.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }, 200);
+});
+
+
 async function loaddynamites() {
     const user = auth.currentUser;
     if (!user) return;
@@ -2427,19 +2456,46 @@ function updateHintProgress(consecutiveDays, hintAvailable) {
     }
 }
 
-
 document.getElementById("hint-bulb").addEventListener("click", () => {
-	if (gameOver) return;
-    const { hintAvailable } = getHintState();
+    if (!gameOver) {
+        // NORMAL BEHAVIOR DURING GAMEPLAY
+        const { hintAvailable } = getHintState();
 
-    if (!hintAvailable) {
-        // Safety net NOT charged
-        updateAnswer("Safety Net Inactive — play 4 consecutive days to activate!");
-    } else {
-        // Safety net READY
-        updateAnswer("Safety Net Active — one incorrect entry won’t cost a life!");
+        if (!hintAvailable) {
+            updateAnswer("Safety Net Inactive — play 4 consecutive days to activate!");
+        } else {
+            updateAnswer("Safety Net Active — one incorrect entry won’t cost a life!");
+        }
+        return;
     }
+
+    // GAME OVER → OPEN MODAL + EXPAND SAFETY NET
+    OpenRules();
+
+    // Expand MASTER collapsible ("📘 Additional Rules") using a real click
+    const master = document.querySelector(".collapsible.master");
+    if (master && !master.classList.contains("active")) {
+        master.click();
+    }
+
+    // Expand SAFETY NET collapsible using a real click
+    const safetyButton = Array.from(document.querySelectorAll(".collapsible"))
+        .find(btn => btn.textContent.includes("Safety Net"));
+
+    if (safetyButton && !safetyButton.classList.contains("active")) {
+        safetyButton.click();
+    }
+
+    // Smooth scroll into view
+    setTimeout(() => {
+        safetyButton.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }, 200);
 });
+
+
 
 function showPerfectSolve() {
     const box = document.createElement("div");
