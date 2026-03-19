@@ -62,7 +62,7 @@ function saveHintState(days, available, lastPlayed) {
 })();
 
 
-const BUILD_VERSION = "2026.03.18.01";
+const BUILD_VERSION = "2026.03.19.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -310,40 +310,46 @@ function onDailyPuzzleCompleted() {
     const today = new Date().toDateString();
     const yesterday = new Date(Date.now() - 86400000).toDateString();
 
+    // -----------------------------------------
+    // PHASE 2 — HOLD MODE
+    // If Safety Net is already active:
+    // Completing the puzzle keeps it active.
+    // Missing a day is handled in onGameLoad().
+    // -----------------------------------------
     if (hintAvailable) {
+        saveHintState(consecutiveDays, true, today);
         updateHintProgress(consecutiveDays, true);
         return;
     }
+
+    // -----------------------------------------
+    // PHASE 1 — EARNING MODE
+    // Only track streak if Safety Net is NOT active yet.
+    // -----------------------------------------
 
     if (!lastPlayed) {
         consecutiveDays = 1;
     }
     else if (lastPlayed === today) {
-        // Already played today → do nothing
+        // Already completed today → do nothing
     }
     else if (lastPlayed === yesterday) {
         consecutiveDays++;
     }
     else {
-        // Missed a day → reset to 0%
-        consecutiveDays = 0;
-
-        // Show 0% immediately, but DO NOT mark today as played
-        saveHintState(0, false, lastPlayed);
-        updateHintProgress(0, false);
-
-        // Now count today's play as Day 1
+        // Missed a day → reset streak
         consecutiveDays = 1;
     }
 
+    // Earn Safety Net at 4 days
     if (consecutiveDays >= 4) {
         hintAvailable = true;
     }
 
-    // IMPORTANT: mark today as played only AFTER completion
     saveHintState(consecutiveDays, hintAvailable, today);
     updateHintProgress(consecutiveDays, hintAvailable);
 }
+
 
 
 function getBragLine(rank, totalPlayers, closestName) {
@@ -2788,6 +2794,7 @@ var masterwordlist = [
 	["maple","leaf","spring","water","wheel","house","party",""],
 	["copper","wire","brush","fire","drill","sergeant","major",""],
 	["puzzle","piece","work","bench","press","release","valve",""],
+	["race","car","alarm","clock","face","mask","out","alski"],
 	["shadow","cast","iron","gate","keeper","role","player",""],
 	["signal","tower","bridge","deck","chair","lift","shaft",""],
 	["berry","patch","work","flow","chart","top","score",""],
@@ -4378,12 +4385,20 @@ function onGameLoad() {
     const today = new Date().toDateString();
     const yesterday = new Date(Date.now() - 86400000).toDateString();
 
-    if (lastPlayed && lastPlayed !== today && lastPlayed !== yesterday) {
-        // Reset streak but DO NOT mark today as played
+    // If Safety Net is active and the player missed a day → reset it
+    if (hintAvailable && lastPlayed && lastPlayed !== today && lastPlayed !== yesterday) {
+        saveHintState(0, false, lastPlayed);
+        updateHintProgress(0, false);
+        return;
+    }
+
+    // If Safety Net is NOT active, streak resets only if missed a day
+    if (!hintAvailable && lastPlayed && lastPlayed !== today && lastPlayed !== yesterday) {
         saveHintState(0, false, lastPlayed);
         updateHintProgress(0, false);
     }
 }
+
 
 
 

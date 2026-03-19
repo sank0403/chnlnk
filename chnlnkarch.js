@@ -378,6 +378,7 @@ var masterwordlist = [
 	["maple","leaf","spring","water","wheel","house","party",""],
 	["copper","wire","brush","fire","drill","sergeant","major",""],
 	["puzzle","piece","work","bench","press","release","valve",""],
+	["race","car","alarm","clock","face","mask","out","alski"],
 	["shadow","cast","iron","gate","keeper","role","player",""],
 	["signal","tower","bridge","deck","chair","lift","shaft",""],
 	["berry","patch","work","flow","chart","top","score",""],
