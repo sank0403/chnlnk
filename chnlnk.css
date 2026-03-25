@@ -3139,8 +3139,8 @@ border-left: 3px solid #ffffff; border-bottom: 3px solid #ffffff;
     display: inline-block;
     opacity: 0;
     transform: translateX(-50px) scale(0.95);
-    animation: glowImpactColor 0.75s cubic-bezier(.22,1.4,.36,1) forwards;
-    animation-delay: 3s;
+    animation: glowImpactColor 2.75s cubic-bezier(.22,1.4,.36,1) forwards;
+    animation-delay: 2.5s;
 }
 
 @keyframes glowImpactColor {
