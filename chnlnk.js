@@ -62,7 +62,7 @@ function saveHintState(days, available, lastPlayed) {
 })();
 
 
-const BUILD_VERSION = "2026.03.19.01";
+const BUILD_VERSION = "2026.03.27.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -863,19 +863,50 @@ async function submitLeaderboardEntry(playerName) {
 
 async function logWriteFailure(uid, playerName, reason, details) {
     try {
+        // 1. Log the failure
         await addDoc(collection(db, "write_failures"), {
             uid: uid || "unknown",
             playerName: playerName || "unknown",
             reason,
             details,
-            ts: serverTimestamp(),       // TTL field
+            ts: serverTimestamp(),
             userAgent: navigator.userAgent,
             path: window.location.pathname
         });
+
+        // 2. Also notify the user with a popup
+        if (uid) {
+            const userRef = doc(db, "users", uid);
+
+            const message = `Hey ${playerName} - Looks like your stats didn't save the last time. Please refresh the page and reach us at info@thechnlnk.com if that doesn't solve the issue. Cheers!`;
+
+            await updateDoc(userRef, {
+                popup: {
+                    type: "announcement",
+                    message,
+                    seen: false
+                }
+            }).catch(async err => {
+                // If user doc doesn't exist, create it
+                if (err.message.includes("No document")) {
+                    await setDoc(userRef, {
+                        popup: {
+                            type: "announcement",
+                            message,
+                            seen: false
+                        }
+                    });
+                } else {
+                    throw err;
+                }
+            });
+        }
+
     } catch (e) {
         console.error("Failed to log write failure:", e);
     }
 }
+
 
 
 let leaderboardLoadedThisSession = false;
