@@ -21,6 +21,12 @@ function saveHintState(days, available, lastPlayed) {
     localStorage.lastPlayed = lastPlayed;
 }
 
+function triggerVibration(pattern = [75]) {
+    if ("vibrate" in navigator) {
+        navigator.vibrate(pattern);
+    }
+}
+
 
 (function importFFFromURL() {
     const allowedHost = "thechnlnk.com";
@@ -4454,11 +4460,32 @@ function initialize() {
         ele1.innerHTML += "By " + masterwordlist[index][7];
         // ele1.classList.add("flash2");
     }
-    if(days == 26){
-		let ele1 = document.getElementById("submitter");
-		ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:white; font-size:18px;">🍁CANUCKLE</strong><strong style="color:white; font-size:18px;"> EDITION🍁</strong></a>';		
+    // if(days == 26){
+		// let ele1 = document.getElementById("submitter");
+		// ele1.innerHTML = '<a href="https://www.canucklegame.ca/" target="_blank"><strong style="color:white; font-size:18px;">🍁CANUCKLE</strong><strong style="color:white; font-size:18px;"> EDITION🍁</strong></a>';		
 		// ele1.classList.add("flash2");
-    }
+    // }
+
+	if (days === 100) {
+		const popup = document.createElement("div");
+		popup.className = "dynamite-popup";
+		popup.innerHTML = `
+			<div class="dynamite-popup-inner">
+				<h2>🎁 Bonus Opportunity 🎉</h2>
+				<p style="white-space: nowrap;">We are celebrating <strong>100 days of CHN LNK</strong>!</p>
+				<p>Go to the <strong>PLAY PAST CHAINS</strong> link on the summary page and send us screenshots showing you have played all 100 days to win 25 bonus Dynamites!</p><br>
+				<p>Email us at <strong>info@thechnlnk.com</strong> with your leaderboard name.</p><br>
+				<button id="closeDynamitePopup">OK</button>
+			</div>
+		`;
+
+		// ⭐ THIS WAS MISSING
+		document.body.appendChild(popup);
+
+		// ⭐ THIS WAS ALSO MISSING
+		document.getElementById("closeDynamitePopup").onclick = () => popup.remove();
+	}
+
 
 
     /* 	document.getElementById("pzlhdr").style.display = "none";
@@ -5290,6 +5317,7 @@ function processInput(e) {
                 document.getElementById("answer").style.color = "lightgray";
                 // document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
                 updateAnswer("ONLY VOWELS LEFT!");
+				triggerVibration(); // single pulse
                 setTimeout(FinalClue, 1500);
                 // }, 1000);
             });
