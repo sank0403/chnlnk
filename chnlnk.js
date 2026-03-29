@@ -1801,31 +1801,31 @@ async function loadLeaderboard() {
         document.getElementById("nrNote").style.display = "none";
         if (inTop5) return;
 
-        // --- 4. Read TOP 100 (fetch 101 to compensate for admin removal) ---
-        const top100Q = query(
+        // --- 4. Read TOP 250 (fetch 251 to compensate for admin removal) ---
+        const top250Q = query(
             collection(db, "leaderboard"),
             where("month", "==", monthKey),
             orderBy("stars", "desc"),
             orderBy("wins", "desc"),
             orderBy("winpct", "desc"),
             orderBy("updated", "asc"),
-            limit(101)
+            limit(251)
         );
 
-        const top100Snap = await getDocs(top100Q);
+        const top250Snap = await getDocs(top250Q);
 
         // Filter out admin by name
-        let top100 = [];
-        top100Snap.forEach(docSnap => {
+        let top250 = [];
+        top250Snap.forEach(docSnap => {
             const d = { id: docSnap.id, ...docSnap.data() };
-            if (d.name !== ADMIN_NAME) top100.push(d);
+            if (d.name !== ADMIN_NAME) top250.push(d);
         });
 
-        // Always keep exactly 100 rows
-        top100 = top100.slice(0, 100);
+        // Always keep exactly 250 rows
+        top250 = top250.slice(0, 250);
 
-        // --- 5. Check if user is in top 100 ---
-        const idx = top100.findIndex(p => p.id === currentUID);
+        // --- 5. Check if user is in top 250 ---
+        const idx = top250.findIndex(p => p.id === currentUID);
 
         if (idx === -1) {
             // Spacer row
@@ -1836,11 +1836,11 @@ async function loadLeaderboard() {
             `;
             leaderboardBody.appendChild(spacer);
 
-            // 100th player
-            const last = top100[top100.length - 1];
+            // 250th player
+            const last = top250[top250.length - 1];
             const lastRow = document.createElement("tr");
             lastRow.innerHTML = `
-                <td>100</td>
+                <td>250</td>
                 <td>${last.name}</td>
                 <td>${last.stars}</td>
                 <td>${last.wins}</td>
@@ -1868,12 +1868,12 @@ async function loadLeaderboard() {
             document.getElementById("nrNote").style.display = "none";
         }
 
-        // --- 6. User IS in top 100 → compute tie-aware rank ---
+        // --- 6. User IS in top 250 → compute tie-aware rank ---
         let rank = 1;
-        for (let i = 0; i < top100.length; i++) {
+        for (let i = 0; i < top250.length; i++) {
             if (i > 0) {
-                const prev = top100[i - 1];
-                const curr = top100[i];
+                const prev = top250[i - 1];
+                const curr = top250[i];
 
                 const tied =
                     prev.stars === curr.stars &&
@@ -1883,10 +1883,10 @@ async function loadLeaderboard() {
                 if (!tied) rank = i + 1;
             }
 
-            if (top100[i].id === currentUID) break;
+            if (top250[i].id === currentUID) break;
         }
 
-        const d = top100[idx];
+        const d = top250[idx];
 
         // --- 7. Render user row as extra entry ---
         if (rank >= 7) {
