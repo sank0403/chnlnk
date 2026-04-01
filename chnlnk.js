@@ -68,7 +68,7 @@ function triggerVibration(pattern = [75]) {
 })();
 
 
-const BUILD_VERSION = "2026.03.28.01";
+const BUILD_VERSION = "2026.04.01.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -3675,10 +3675,9 @@ function playArchive() {
     const archiveEnd = days - 1; // yesterday's day number
     let currentDayNumber = archiveEnd;
 
-    // Start at yesterday
+    // Start at yesterday (real date, no normalization here)
     let cursor = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
 
-    // ⭐ Collect months first
     const monthNodes = [];
 
     while (currentDayNumber >= 1) {
@@ -3696,7 +3695,6 @@ function playArchive() {
         const grid = document.createElement("div");
         grid.classList.add("calendar-grid");
 
-        // Weekday labels
         const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         dayNames.forEach(d => {
             const dn = document.createElement("div");
@@ -3705,42 +3703,35 @@ function playArchive() {
             grid.appendChild(dn);
         });
 
-        // Offset for first day of month
         const firstOfMonth = new Date(year, month, 1);
         const startOffset = firstOfMonth.getDay();
 
-		// ⭐ FILLER TILES BEFORE THE 1ST — EMPTY, DISABLED, NO DATE NUMBER
-		for (let i = 0; i < startOffset; i++) {
-			const filler = document.createElement("div");
-			filler.classList.add("day");
-			filler.innerHTML = ""; // no date number
-			grid.appendChild(filler);
-		}
+        for (let i = 0; i < startOffset; i++) {
+            const filler = document.createElement("div");
+            filler.classList.add("day");
+            filler.innerHTML = "";
+            grid.appendChild(filler);
+        }
+
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-        // ⭐ FIRST PASS: collect all valid dates (dates before today)
+
         const validDates = [];
         for (let d = 1; d <= daysInMonth; d++) {
             const cellDate = new Date(year, month, d);
             const cellNorm = normalize(cellDate);
-
-            if (cellNorm < todayNorm) {
-                validDates.push(d);
-            }
+            if (cellNorm < todayNorm) validDates.push(d);
         }
 
-        // ⭐ SECOND PASS: assign archive day numbers BACKWARD
         const mapping = {};
         for (let i = validDates.length - 1; i >= 0; i--) {
             if (currentDayNumber < 1) break;
             mapping[validDates[i]] = currentDayNumber--;
         }
 
-        // ⭐ THIRD PASS: render calendar normally (1 → 31)
         for (let d = 1; d <= daysInMonth; d++) {
             const cellDate = new Date(year, month, d);
             const cellNorm = normalize(cellDate);
 
-            // Future dates → disabled
             if (cellNorm >= todayNorm) {
                 const empty = document.createElement("div");
                 empty.classList.add("day", "disabled");
@@ -3749,7 +3740,6 @@ function playArchive() {
                 continue;
             }
 
-            // Dates before the archive started → disabled but visible
             if (!(d in mapping)) {
                 const empty = document.createElement("div");
                 empty.classList.add("day", "disabled");
@@ -3758,7 +3748,6 @@ function playArchive() {
                 continue;
             }
 
-            // Valid archive day
             const q = mapping[d];
 
             const link = document.createElement("a");
@@ -3772,7 +3761,6 @@ function playArchive() {
                 <div class="day-num">${d}</div>
             `;
 
-            // Apply correct/failed colors
             const over1 = localStorage.getItem("archovercl" + q);
             const stat1 = localStorage.getItem("archstatcl" + q);
             const over2 = localStorage.getItem("gameovercl" + q);
@@ -3790,18 +3778,14 @@ function playArchive() {
         monthDiv.appendChild(grid);
         monthNodes.push(monthDiv);
 
-        cursor.setMonth(cursor.getMonth() - 1);
-        cursor.setDate(1);
+        // ⭐ Non-mutating, safe month step: always go to the 1st of the previous month
+        cursor = new Date(year, month - 1, 1);
     }
 
-    // ⭐ DOM order: oldest → newest (Jan → Feb)
     monthNodes.reverse().forEach(m => board.appendChild(m));
 
-    // ⭐ Initialize slider AFTER months exist
     setupMonthNavigation();
 }
-
-
 
 
 let currentMonthIndex = 0;
