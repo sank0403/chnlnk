@@ -51,8 +51,8 @@ function triggerVibration(pattern = [75]) {
         const myName = (localStorage.playerName || "").trim().toUpperCase();
         cleaned = cleaned.filter(n => n.toUpperCase() !== myName);
 
-        // Enforce max 4 friends (You + 4 = 5 rows)
-        cleaned = cleaned.slice(0, 4);
+        // Enforce max 4 friends (You + 7 = 8 rows)
+        cleaned = cleaned.slice(0, 7);
 
         // Save final list
         localStorage.ffList = JSON.stringify(cleaned);
@@ -68,7 +68,7 @@ function triggerVibration(pattern = [75]) {
 })();
 
 
-const BUILD_VERSION = "2026.04.02.01";
+const BUILD_VERSION = "2026.04.02.02";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -1380,7 +1380,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // --- E. Fill empty slots ---
-        for (let i = combined.length + 1; i <= 5; i++) {
+        for (let i = combined.length + 1; i <= 8; i++) {
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td>${i}</td>
