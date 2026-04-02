@@ -68,7 +68,7 @@ function triggerVibration(pattern = [75]) {
 })();
 
 
-const BUILD_VERSION = "2026.04.02.02";
+const BUILD_VERSION = "2026.04.02.03";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -244,7 +244,7 @@ const brags_rank4 = [
 ];
 
 const brags_rank5 = [
-  "I’m last… but dangerous. Comeback season loading 🔥. #FnF_rank5",
+  "I’m fifth… but dangerous. Comeback season loading 🔥. #FnF_rank5",
   "I’m plotting my rise from the shadows 😎. #FnF_rank5",
   "Don’t worry about my rank. Worry about my potential. #FnF_rank5",
   "I’m the underdog. And that’s scary. #FnF_rank5",
@@ -263,7 +263,7 @@ const brags_rank5 = [
   "I’m the one who’s about to flip the leaderboard upside down. #FnF_rank5",
   "I’m the one who’s cooking something. #FnF_rank5",
   "I’m the one who’s about to shock everyone. #FnF_rank5",
-  "I’m the one who’s turning last place into legend. #FnF_rank5",
+  "I’m the one who’s turning fifth place into legend. #FnF_rank5",
   "I’m the one who’s about to rise from the ashes. #FnF_rank5",
   "I’m the one who’s quietly preparing revenge. #FnF_rank5",
   "I’m the one who’s about to climb five spots. #FnF_rank5",
@@ -271,7 +271,7 @@ const brags_rank5 = [
   "I’m the one who’s about to make a comeback. #FnF_rank5",
   "I’m the one who’s building the ultimate return. #FnF_rank5",
   "I’m the one who’s about to surprise the whole board. #FnF_rank5",
-  "I’m the one who’s turning last into launchpad. #FnF_rank5",
+  "I’m the one who’s turning fifth into launchpad. #FnF_rank5",
   "I’m the one who’s about to break expectations. #FnF_rank5",
   "I’m the one who’s rising from the bottom. #FnF_rank5",
   "I’m the one who’s about to make noise. #FnF_rank5",
@@ -280,6 +280,107 @@ const brags_rank5 = [
   "I’m the one who’s about to rewrite the story. #FnF_rank5",
   "I’m the one who’s about to shock the leaderboard. #FnF_rank5"
 ];
+
+const brags_rank6 = [
+  "I’m sixth, but I’m the storm forming quietly. #FnF_rank6",
+  "I’m the one everyone forgets until it’s too late. #FnF_rank6",
+  "I’m the sleeper agent of this leaderboard. #FnF_rank6",
+  "I’m the calm before someone else’s disaster. #FnF_rank6",
+  "I’m sixth, but I’m studying everyone’s weaknesses. #FnF_rank6",
+  "I’m the one who rises when others get comfortable. #FnF_rank6",
+  "I’m the shadow climbing the ranks. #FnF_rank6",
+  "I’m the one who’s about to ruin someone’s week. #FnF_rank6",
+  "I’m sixth, but my comeback arc is loading. #FnF_rank6",
+  "I’m the one who’s quietly sharpening my skills. #FnF_rank6",
+  "I’m the one who’s about to jump three spots. #FnF_rank6",
+  "I’m the one who’s charging up in silence. #FnF_rank6",
+  "I’m sixth, but I’m built for late‑game chaos. #FnF_rank6",
+  "I’m the one who’s about to flip the script. #FnF_rank6",
+  "I’m the one who’s turning sixth into momentum. #FnF_rank6",
+  "I’m the one who’s about to make the leaderboard nervous. #FnF_rank6",
+  "I’m the one who’s quietly plotting greatness. #FnF_rank6",
+  "I’m sixth, but I’m not staying here long. #FnF_rank6",
+  "I’m the one who’s about to surprise the top half. #FnF_rank6",
+  "I’m the one who’s turning sixth into a launchpad. #FnF_rank6",
+  "I’m the one who’s about to break expectations. #FnF_rank6",
+  "I’m the one who’s rising from the shadows. #FnF_rank6",
+  "I’m the one who’s about to make noise from below. #FnF_rank6",
+  "I’m the one who’s turning sixth into fire. #FnF_rank6",
+  "I’m the one who’s about to climb like a problem. #FnF_rank6",
+  "I’m the one who’s rewriting the bottom‑half story. #FnF_rank6",
+  "I’m the one who’s about to shake the board awake. #FnF_rank6",
+  "I’m the one who’s turning sixth into danger. #FnF_rank6",
+  "I’m the one who’s about to rise unexpectedly. #FnF_rank6",
+  "I’m the one who’s preparing a silent takeover. #FnF_rank6"
+];
+
+const brags_rank7 = [
+  "I’m seventh, but I’m vibing like I’m top three. #FnF_rank7",
+  "I’m the chaos gremlin of this leaderboard. #FnF_rank7",
+  "I’m seventh, but my confidence is undefeated. #FnF_rank7",
+  "I’m the wildcard nobody asked for. #FnF_rank7",
+  "I’m the one who’s here for the drama, not the stats. #FnF_rank7",
+  "I’m seventh, but I’m playing like I’m first. #FnF_rank7",
+  "I’m the one who’s about to cause problems on purpose. #FnF_rank7",
+  "I’m the comedic relief with main‑character energy. #FnF_rank7",
+  "I’m seventh, but I’m dangerous when motivated. #FnF_rank7",
+  "I’m the one who’s about to start climbing unhinged. #FnF_rank7",
+  "I’m the one who’s turning seventh into a storyline. #FnF_rank7",
+  "I’m seventh, but I’m built different. #FnF_rank7",
+  "I’m the one who’s about to ruin someone’s comfort zone. #FnF_rank7",
+  "I’m seventh, but I’m cooking something questionable. #FnF_rank7",
+  "I’m the one who’s about to jump out of nowhere. #FnF_rank7",
+  "I’m seventh, but I’m not scared of the top. #FnF_rank7",
+  "I’m the one who’s about to make a chaotic comeback. #FnF_rank7",
+  "I’m seventh, but I’m still a threat. #FnF_rank7",
+  "I’m the one who’s turning seventh into entertainment. #FnF_rank7",
+  "I’m seventh, but I’m plotting a miracle. #FnF_rank7",
+  "I’m the one who’s about to break someone’s lead. #FnF_rank7",
+  "I’m seventh, but I’m not done yet. #FnF_rank7",
+  "I’m the one who’s about to climb like a glitch. #FnF_rank7",
+  "I’m seventh, but I’m still in the game. #FnF_rank7",
+  "I’m the one who’s about to cause leaderboard turbulence. #FnF_rank7",
+  "I’m seventh, but I’m aiming for chaos. #FnF_rank7",
+  "I’m the one who’s about to make seventh iconic. #FnF_rank7",
+  "I’m seventh, but I’m rising soon. #FnF_rank7",
+  "I’m the one who’s about to shock the middle ranks. #FnF_rank7",
+  "I’m seventh, but I’m not staying here. #FnF_rank7"
+];
+
+const brags_rank8 = [
+  "I’m last… but I’m the final boss in disguise. #FnF_rank8",
+  "I’m eighth, but I’m everyone’s worst nightmare waiting to happen. #FnF_rank8",
+  "I’m the plot twist at the bottom of the board. #FnF_rank8",
+  "I’m last, but I’m living rent‑free in everyone’s future. #FnF_rank8",
+  "I’m the underdog with villain potential. #FnF_rank8",
+  "I’m eighth, but I’m the most dangerous one here. #FnF_rank8",
+  "I’m the rock bottom rocket ship. #FnF_rank8",
+  "I’m last, but I’m charging up something unholy. #FnF_rank8",
+  "I’m eighth, but I’m about to ruin someone’s month. #FnF_rank8",
+  "I’m the bottom seed with main‑character energy. #FnF_rank8",
+  "I’m last, but I’m not scared of heights. #FnF_rank8",
+  "I’m eighth, but I’m plotting a ridiculous comeback. #FnF_rank8",
+  "I’m the one who rises when everyone stops paying attention. #FnF_rank8",
+  "I’m last, but I’m the funniest threat alive. #FnF_rank8",
+  "I’m eighth, but I’m cooking chaos. #FnF_rank8",
+  "I’m the one who’s about to jump six spots for no reason. #FnF_rank8",
+  "I’m last, but I’m still dangerous. #FnF_rank8",
+  "I’m eighth, but I’m the spark of leaderboard drama. #FnF_rank8",
+  "I’m the one who’s turning last place into legend. #FnF_rank8",
+  "I’m last, but I’m not staying down here. #FnF_rank8",
+  "I’m eighth, but I’m the comeback arc waiting to happen. #FnF_rank8",
+  "I’m the one who’s about to shock the entire board. #FnF_rank8",
+  "I’m last, but I’m still in the fight. #FnF_rank8",
+  "I’m eighth, but I’m the chaos engine. #FnF_rank8",
+  "I’m the one who’s about to flip the leaderboard upside down. #FnF_rank8",
+  "I’m last, but I’m the most entertaining one here. #FnF_rank8",
+  "I’m eighth, but I’m plotting something spicy. #FnF_rank8",
+  "I’m the one who’s about to make last place iconic. #FnF_rank8",
+  "I’m last, but I’m rising soon. #FnF_rank8",
+  "I’m eighth, but I’m the comeback nobody expects. #FnF_rank8"
+];
+
+
 
 // --- Callout brags (optional) ---
 const brags_callouts = [
@@ -365,7 +466,10 @@ function getBragLine(rank, totalPlayers, closestName) {
     else if (rank === 2 && totalPlayers >= 2) pool = brags_rank2;
     else if (rank === 3 && totalPlayers >= 3) pool = brags_rank3;
     else if (rank === 4 && totalPlayers >= 4) pool = brags_rank4;
-    else if (rank === 5 && totalPlayers === 5) pool = brags_rank5;
+    else if (rank === 5 && totalPlayers >= 5) pool = brags_rank5;
+    else if (rank === 6 && totalPlayers >= 6) pool = brags_rank6;
+    else if (rank === 7 && totalPlayers >= 7) pool = brags_rank7;
+    else if (rank === 8 && totalPlayers === 8) pool = brags_rank8;
     else pool = brags_rank1; // fallback for weird states
 
     // 20% chance to use a callout brag
