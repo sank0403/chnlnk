@@ -793,7 +793,7 @@ document.getElementById("fbSubmit").addEventListener("click", async () => {
     hideFeedbackPopup();
 
     // Delay stats opening slightly so toast is visible
-    setTimeout(OpenStats, 600);
+    setTimeout(OpenStats, 1500);
 });
 
 
@@ -818,13 +818,13 @@ function showThankYouToast() {
     // fade in
     setTimeout(() => toast.classList.add("show"), 10);
 
-    // fade out after 2.5 seconds
+    // fade out after 3.5 seconds
     setTimeout(() => {
         toast.classList.remove("show");
 
         // fully hide after fade-out
         setTimeout(() => toast.classList.add("hidden"), 400);
-    }, 2500);
+    }, 3500);
 }
 
 function showError(message) {
