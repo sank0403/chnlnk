@@ -68,7 +68,7 @@ function triggerVibration(pattern = [75]) {
 })();
 
 
-const BUILD_VERSION = "2026.04.01.01";
+const BUILD_VERSION = "2026.04.02.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -733,6 +733,99 @@ function initMonthlyStats() {
 }
 
 
+let selectedRating = null;
+
+function showFeedbackPopup() {
+    document.getElementById("feedbackPopup").classList.remove("hidden");
+}
+
+function hideFeedbackPopup() {
+    document.getElementById("feedbackPopup").classList.add("hidden");
+}
+
+document.querySelectorAll(".fb-star").forEach(btn => {
+    btn.addEventListener("click", () => {
+        selectedRating = btn.dataset.value;
+
+        // highlight selected
+        document.querySelectorAll(".fb-star").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+
+        // enable submit
+        const submitBtn = document.getElementById("fbSubmit");
+        submitBtn.classList.remove("disabled");
+        submitBtn.disabled = false;
+    });
+});
+
+document.getElementById("fbCancel").addEventListener("click", () => {
+	localStorage.lastFeedbackDate = new Date().toLocaleDateString('en-CA');
+    hideFeedbackPopup();
+    OpenStats();
+});
+
+document.getElementById("fbSubmit").addEventListener("click", async () => {
+    const text = document.getElementById("fbText").value;
+
+    const feedbackData = {
+        uid: auth.currentUser?.uid || null,
+        playerName: localStorage.playerName || null,
+        // country: localStorage.country || null,
+        rating: Number(selectedRating),
+        text: text.trim(),
+        updated: serverTimestamp()
+    };
+
+    try {
+        await addDoc(collection(db, "feedback"), feedbackData);
+
+        // ⭐ Save last feedback date for 50‑day cooldown
+        localStorage.lastFeedbackDate = new Date().toLocaleDateString('en-CA');
+		localStorage.cldynamite = Number(localStorage.cldynamite || 0) + 5;
+		const dyn = Number(localStorage.cldynamite || 0);
+		document.getElementById("dynamite-btn").innerText = "💣 x" + dyn;
+        // ⭐ Show thank-you toast
+        showThankYouToast();
+    } catch (err) {
+        console.error("Feedback save error:", err);
+    }
+
+    hideFeedbackPopup();
+
+    // Delay stats opening slightly so toast is visible
+    setTimeout(OpenStats, 600);
+});
+
+
+function shouldShowFeedbackPopup() {
+    const last = localStorage.lastFeedbackDate;
+    if (!last) return true;
+
+    const lastDate = new Date(last);
+    const now = new Date();
+
+    const diffMs = now - lastDate;
+    const days50 = 50 * 24 * 60 * 60 * 1000;
+
+    return diffMs > days50;
+}
+
+
+function showThankYouToast() {
+    const toast = document.getElementById("thankYouToast");
+    toast.classList.remove("hidden");
+
+    // fade in
+    setTimeout(() => toast.classList.add("show"), 10);
+
+    // fade out after 2.5 seconds
+    setTimeout(() => {
+        toast.classList.remove("show");
+
+        // fully hide after fade-out
+        setTimeout(() => toast.classList.add("hidden"), 400);
+    }, 2500);
+}
 
 function showError(message) {
     const popup = document.getElementById("errorPopup");
@@ -5718,8 +5811,17 @@ function processInput(e) {
         localStorage.gameclwon = 1;
         localStorage.clgamestarted = 0;
         localStorage.clhardmode = 0;
-        setTimeout(ConfettiStart, 1000);
-		setTimeout(OpenStats, 4800);
+		setTimeout(ConfettiStart, 1000);
+		setTimeout(() => {
+			const playerName = localStorage.getItem("playerName");
+
+			// Must have a name AND must be past the 50‑day cooldown
+			if (playerName && playerName.trim() !== "" && shouldShowFeedbackPopup()) {
+				showFeedbackPopup();
+			} else {
+				OpenStats();
+			}
+		}, 4800);
 		onDailyPuzzleCompleted();
         // if (localStorage.clshowalert > 1 && localStorage.clshowalert < 4) {
             // setTimeout(OpenStats, 6800);
