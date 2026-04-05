@@ -1718,6 +1718,7 @@ async function loaddynamites() {
 
         if (Number(localStorage.monthclstars ?? 0) !== Number(d.stars) && d.name === "Sankar") {
             localStorage.monthclstars = d.stars;
+			localStorage.totalclstars = d.ztstars;
             rankReset();
             return;
         }
