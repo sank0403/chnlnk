@@ -1716,15 +1716,16 @@ async function loaddynamites() {
         const serverDynamite = d.dynamite;
         const localDynamite = Number(localStorage.cldynamite ?? 0);
 
-        if (Number(localStorage.monthclstars ?? 0) !== Number(d.stars) && d.name === "Sankar") {
-            localStorage.monthclstars = d.stars;
-			localStorage.totalclstars = d.ztstars;
-            rankReset();
-            return;
-        }
+       // if (Number(localStorage.monthclstars ?? 0) !== Number(d.stars) && d.name === "Sankar") {
+          //  localStorage.monthclstars = d.stars;
+		  //  localStorage.totalclstars = d.ztstars;
+          //  rankReset();
+          //  return;
+       // }
 
         // Stat Retrieve Block
-        if (Number(localStorage.totalclplayed ?? 0) < Number(d.ztplayed) || Number(localStorage.monthclplayed ?? 0) < Number(d.played)){
+       // if (Number(localStorage.totalclplayed ?? 0) < Number(d.ztplayed) || Number(localStorage.monthclplayed ?? 0) < Number(d.played)){
+		if (Number(localStorage.totalclplayed ?? 0) < Number(d.ztplayed)){	
             localStorage.cldynamite = d.dynamite;
             localStorage.monthclplayed = d.played;
             localStorage.monthclstars = d.stars;
