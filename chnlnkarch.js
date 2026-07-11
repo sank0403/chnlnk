@@ -1402,7 +1402,7 @@ function intialize() {
             currTile.classList.add("starting");
         }
         document.getElementById("answer").style.color = "lightgray";
-        document.getElementById("answer").innerHTML = "You have already played this chain!<br>Go Back for more Archives."
+        updateAnswer("You have already played this chain!<br>Go Back for more Archives.");
         disableconsos();
         disablevowels();
     } else {
