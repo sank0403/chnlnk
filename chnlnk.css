@@ -1020,6 +1020,8 @@ ul {
     flex-direction: column;
     /* medal above name */
     align-items: center;
+    justify-content: center;   /* centers vertically if needed */
+    text-align: center;        /* ← centers the text horizontally */	
     background: #2a2a2a;
     padding: 6px 10px;
     border-radius: 6px;
