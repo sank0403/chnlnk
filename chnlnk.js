@@ -779,7 +779,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 await setDoc(
                     doc(db, "leaderboard", playerId), {
                         name: newName,
-                        updated: serverTimestamp()
+                        updatedUTC: serverTimestamp()
                     }, {
                         merge: true
                     }
@@ -1048,7 +1048,8 @@ async function submitLeaderboardEntry(playerName) {
             zzstar4,
             zzstar5,
             zzstarx,
-            updated: serverTimestamp()
+            updatedUTC: serverTimestamp(),
+			updated: new Date()
         };
 
         // --- Perform write ---
