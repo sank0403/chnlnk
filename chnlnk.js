@@ -974,7 +974,15 @@ async function submitLeaderboardEntry(playerName) {
 	const hh = String(now.getHours()).padStart(2, "0");
 	const mm = String(now.getMinutes()).padStart(2, "0");
 	const ss = String(now.getSeconds()).padStart(2, "0");
-	const updated = Number(`${YYYY}${MM}${DD}${hh}${mm}${ss}`);	
+	//const updated = Number(`${YYYY}${MM}${DD}${hh}${mm}${ss}`);	
+	const updated = new Date(
+	    YYYY,
+	    Number(MM) - 1,  // JS months are 0–11
+	    Number(DD),
+	    Number(hh),
+	    Number(mm),
+	    Number(ss)
+	);
 
     // --- Auth guard ---
     if (!auth.currentUser) {
