@@ -967,6 +967,15 @@ async function submitLeaderboardEntry(playerName) {
     const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
     const today = now.getDate();
 
+	const YYYY = now.getFullYear();
+	const MM = String(now.getMonth() + 1).padStart(2, "0");
+	const DD = String(now.getDate()).padStart(2, "0");
+	
+	const hh = String(now.getHours()).padStart(2, "0");
+	const mm = String(now.getMinutes()).padStart(2, "0");
+	const ss = String(now.getSeconds()).padStart(2, "0");
+	const updated = Number(`${YYYY}${MM}${DD}${hh}${mm}${ss}`);	
+
     // --- Auth guard ---
     if (!auth.currentUser) {
         await logWriteFailure("unknown", playerName, "no-auth", {
@@ -1049,7 +1058,7 @@ async function submitLeaderboardEntry(playerName) {
             zzstar5,
             zzstarx,
             updatedUTC: serverTimestamp(),
-			updated: new Date()
+			updated
         };
 
         // --- Perform write ---
