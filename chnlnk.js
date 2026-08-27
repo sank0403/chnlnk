@@ -68,7 +68,7 @@ function triggerVibration(pattern = [75]) {
 })();
 
 
-const BUILD_VERSION = "2026.08.07.01";
+const BUILD_VERSION = "2026.08.27.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
