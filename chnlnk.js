@@ -68,7 +68,7 @@ function triggerVibration(pattern = [75]) {
 })();
 
 
-const BUILD_VERSION = "2026.08.27.01";
+const BUILD_VERSION = "2026.10.17.01";
 
 if (localStorage.getItem("skipReloadOnce") === "1") {
     // Clear the flag and skip reload this one time
@@ -3698,6 +3698,58 @@ var masterwordlist = [
 	["smooth","move","over","night","watch","dog","house",""],
 	["pretty","boy","wonder","land","slide","show","girl",""],
 	["loose","cannon","ball","park","bench","press","pass",""],
+	["food","coloring","book","smart","watch","party","crasher",""],
+	["flip","side","street","fair","play","money","chip",""],
+	["free","speech","bubble","bath","toy","train","conductor",""],
+	["guilt","trip","wire","tap","water","bottle","cap",""],
+	["squeaky","clean","break","free","kick","back","pocket",""],
+	["white","hot","potato","salad","bar","fight","night",""],
+	["crystal","ball","park","bench","press","play","list",""],
+	["true","north","wind","farm","animal","crossing","guard",""],
+	["small","world","power","walk","away","team","up",""],
+	["facial","hair","spray","tan","line","dance","floor",""],
+	["marble","run","dry","clean","house","hunting","lodge",""],
+	["sterling","silver","dollar","store","brand","name","tag",""],
+	["root","beer","garden","variety","pack","animal","control",""],
+	["common","good","night","school","dance","studio","audience",""],
+	["wide","open","air","guitar","string","cheese","puff",""],
+	["user","friendly","fire","alarm","bell","pepper","spray",""],
+	["hermit","crab","apple","juice","box","set","piece",""],
+	["bubble","tea","kettle","corn","maze","runner","up",""],
+	["home","video","game","time","off","white","elephant",""],
+	["tube","sock","monkey","business","class","ring","bearer",""],
+	["candle","wax","paper","trail","mix","tape","recorder",""],
+	["second","home","front","seat","cover","art","studio",""],
+	["slumber","party","dress","shirt","pocket","square","one",""],
+	["gold","rush","job","opening","night","life","coach",""],
+	["hot","chocolate","cake","batter","up","north","pole",""],
+	["look","sharp","turn","back","road","test","flight",""],
+	["common","cold","fish","oil","paint","roller","skating",""],
+	["punk","rock","candy","cane","sugar","high","five",""],
+	["street","corner","office","romance","novel","idea","man",""],
+	["knee","high","pitch","dark","chocolate","milk","mustache",""],
+	["grand","prize","fighter","jet","fuel","tank","top",""],
+	["instant","classic","rock","hard","candy","corn","syrup",""],
+	["stained","glass","ceiling","fan","mail","box","office",""],
+	["electric","guitar","solo","career","day","dream","team",""],
+	["happy","birthday","girl","power","line","drawing","room",""],
+	["root","vegetable","oil","drum","set","free","spirit",""],
+	["hot","spring","chicken","dinner","party","line","item",""],
+	["open","house","guest","list","price","war","chest",""],
+	["forbidden","fruit","cocktail","party","foul","ball","game",""],
+	["spare","tire","swing","set","point","blank","canvas",""],
+	["comfort","food","court","martial","law","school","bus",""],
+	["trigger","warning","shot","glass","house","arrest","warrant",""],
+	["mobile","home","free","time","trial","period","piece",""],
+	["maiden","name","brand","new","moon","landing","strip",""],
+	["bad","dream","big","picture","day","camp","counselor",""],
+	["queen","bee","hive","mind","control","freak","show",""],
+	["creature","comfort","zone","out","cold","turkey","trot",""],
+	["dig","deep","fried","chicken","dance","recital","hall",""],
+	["early","bird","brain","freeze","frame","rate","hike",""],
+	["olive","green","tea","party","bus","tour","guide",""],
+	["bone","dry","ice","cold","front","line","drive",""],
+	["hot","water","main","street","art","class","reunion",""],	
 ];
 if (days%masterwordlist.length > 0){
 	var offset = Math.floor(days/masterwordlist.length);
