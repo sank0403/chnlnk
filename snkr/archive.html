@@ -13,14 +13,34 @@
 	<title>CHN LNK Archive — The Daily Word Chain Game</title>
 	<meta name="title" content="CHN LNK">
 	<meta name="description" content="The Daily Word Chain Game.">
-	<link href="chnlnk.css?v=61" rel="stylesheet">
-	<script defer src="chnlnkarch.js?v=61"></script>
+	<link href="chnlnk.css?v=65" rel="stylesheet">
+	<script defer src="chnlnkarch.js?v=65"></script>
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
     <!-- add icon link for all standard browsers -->
     <link rel = "icon" href = "https://thechnlnk.com/icon.jpg" 
             type = "image/x-icon">  	
  </head>
 <body class="archive-page">
+    <!-- REDESIGN v65: the main game's loading page, ported verbatim
+         from index.html. The fixed opaque overlay covers the page
+         from first paint while the archive builds underneath;
+         chnlnkarch.js clears it at the end of intialize() — the
+         archive's showGame() moment — on every load, fresh or
+         already-played, exactly as in main. -->
+<div id="loader"> 
+<div class="spinner" "correct">
+</div> <div id="loadingRow" style="display:flex; justify-content:center; margin-top:10px;">
+  <div class="tile loading-correct">L</div>
+  <div class="tile loading-correct">O</div>
+  <div class="tile loading-correct">A</div>
+  <div class="tile loading-correct">D</div>
+  <div class="tile loading-correct">I</div>
+  <div class="tile loading-correct">N</div>
+  <div class="tile loading-correct">G</div>
+</div>
+
+</p> </div>
+
     <!-- REDESIGN v59: the main game's header row (same markup, same
          classes). The GAME RULES / DAILY CHAIN buttons are removed —
          the rules modal itself stays in the page below, as does its

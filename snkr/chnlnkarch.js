@@ -1548,6 +1548,17 @@ function intialize() {
             }
         })
     }
+    // REDESIGN v65: the main game's showGame() moment, ported. The
+    // #loader overlay (archive.html) has covered the page from first
+    // paint while everything above built; clear it now that
+    // construction is finished — on every load (fresh start or
+    // already-played), exactly as in main, where showGame() runs at
+    // the end of setup for every load. The archive has no #game
+    // wrapper; the fixed opaque overlay is the cover, so clearing
+    // it is the whole dismissal. No wheel in the archive: the board
+    // simply appears when the loader clears, as it did before.
+    var loaderEl = document.getElementById("loader");
+    if (loaderEl) loaderEl.style.display = "none";
     // SetTier();
     // var winpct = Math.round(localStorage.totalclwins / localStorage.totalclplayed * 100);
     // document.getElementById(11).innerText = "PLAYED: " + localStorage.totalclplayed;
