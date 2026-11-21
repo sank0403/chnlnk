@@ -691,46 +691,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const overlay = document.getElementById("globalOverlay");
 
+        // REDESIGN v56: presentation rebuilt in the redesign modal family —
+        // all styling now lives in chnlnk.css (.name-edit-* classes, matching
+        // #namePopup's .popup-box treatment). Was: inline styles from the old
+        // design (black box, 2px yellow border, yellow-on-black x button).
         const container = document.createElement("div");
         container.id = "nameEditContainer";
-        container.style.position = "fixed";
-        container.style.top = "120px";
-        container.style.left = "50%";
-        container.style.transform = "translateX(-50%)";
-        container.style.zIndex = "9999999";
-        container.style.background = "black";
-        container.style.padding = "10px";
-        container.style.border = "2px solid yellow";
-        container.style.position = "fixed";
-        //  Close button
+        container.className = "name-edit-popup";
+
+        // REDESIGN v56 (Sankar's spec): a header, in the family's style
+        const header = document.createElement("h2");
+        header.textContent = "Enter Your New Name";
+
+        //  Close button (same remove-on-click handler below)
         const closeBtn = document.createElement("button");
-        closeBtn.textContent = "x";
-        closeBtn.style.position = "absolute";
-        closeBtn.style.top = "-10px"; // move it slightly above the container
-        closeBtn.style.right = "-10px"; // shift it outside the right edge
-        closeBtn.style.background = "black"; // match container background
-        closeBtn.style.color = "yellow";
-        closeBtn.style.border = "2px solid yellow";
-        closeBtn.style.borderRadius = "50%";
-        closeBtn.style.width = "24px";
-        closeBtn.style.height = "24px";
-        closeBtn.style.fontSize = "16px";
-        closeBtn.style.lineHeight = "20px";
-        closeBtn.style.cursor = "pointer";
-        closeBtn.style.zIndex = "10000000"; // ensure it's above everything
+        closeBtn.textContent = "×";
+        closeBtn.className = "name-edit-close";
+
         const input = document.createElement("input");
         input.type = "text";
         input.maxLength = 20;
         input.placeholder = "Enter New Name";
+        // REDESIGN v56 (Sankar's spec): the box opens showing the CURRENT
+        // name, fully selected (see focus+select below), so typing simply
+        // overwrites it. Was: an empty box.
+        input.value = localStorage.playerName || "";
 
         const saveBtn = document.createElement("button");
         saveBtn.textContent = "SAVE";
-        saveBtn.className = "buttonmode1";
+        saveBtn.className = "name-edit-save";
 
         const error = document.createElement("p");
-        error.style.color = "red";
+        error.className = "name-edit-error";
         error.style.display = "none";
 
+        container.appendChild(header);
         container.appendChild(closeBtn);
         container.appendChild(input);
         container.appendChild(saveBtn);
@@ -738,8 +733,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         overlay.appendChild(container);
 
-        // ⭐ Autofocus
+        // ⭐ Autofocus — v56: also select the current name so it can be
+        // overwritten by typing (Sankar's spec)
         input.focus();
+        input.select();
 
         // ⭐ Close handler
         closeBtn.addEventListener("click", () => {
@@ -2903,7 +2900,7 @@ function showDynamiteBlast() {
 function shakeDynamiteButton() {
     const btn = document.getElementById("dynamite-btn");
     if ((!localStorage.cldynamite) || (Number(localStorage.cldynamite) === 0)) {
-        showMessage("NO DYNAMITES AVAILABLE. <br>CHECK ? TO LEARN MORE.");
+        showMessage("NO DYNAMITES AVAILABLE. CHECK ? TO LEARN MORE."); // REDESIGN v57: hard <br> removed — the strip is one line now (words unchanged)
     }
     btn.classList.add("shake");
     setTimeout(() => btn.classList.remove("shake"), 400);
@@ -5007,7 +5004,11 @@ window.onload = function() {
 				const settleMs = Math.max(350 + (wordone.length - 1) * 200, 200 + 350 + (wordlast.length - 1) * 200) + 60;
 				setTimeout(() => {
 					if (localStorage.vowelactive != 1 && (!localStorage.clguesscnt || localStorage.clguesscnt == "0")) {
-						updateAnswer("Build the chain from top to bottom. Tap a consonant to begin — vowels stay locked until every consonant is found.");
+						// REDESIGN v56: intro copy is Sankar's own (user-directed,
+						// supersedes the mockup-agreed intro — he judged the old
+						// second half redundant with the legend). Colour (yellow
+						// fb-info) and the post-wheel timing are unchanged.
+						updateAnswer("Build the chain from Top to Bottom using active letters.");
 					}
 				}, settleMs);
 			}, 1000);
@@ -5511,9 +5512,9 @@ function initialize() {
                     msg = "GREAT GOING! YOU WON " + localStorage.clstarscnt + " STARS TODAY.";
                 }
 
-                if (bonusApplied) {
-                    msg += "<br> (INCLUDING +1 TIMED MODE BONUS!)";
-                }
+                // REDESIGN v57 (Sankar): the timed-bonus suffix is dropped — a
+                // bonus win shows the plain win text (the star count already
+                // includes the bonus). Star-count logic untouched.
 
                 document.getElementById("answer").innerHTML = msg;
                 document.getElementById("answer").classList.remove("fb-correct", "fb-wrong", "fb-locked", "fb-win", "fb-info"); // REDESIGN: feedback-kind class for CSS
@@ -5767,13 +5768,38 @@ function initialize() {
             }
         }
         // REDESIGN v53 (Sankar's wording; presentation only — restore logic
-        // untouched): an IN-PROGRESS restore (guesses made, game not over;
-        // finished games take the game-over branch above, fresh loads have
-        // clguesscnt 0 and keep the intro flow) posts this to the strip.
+        // untouched): an IN-PROGRESS restore posts this to the strip.
         // updateAnswer's classifier puts it in the yellow fb-info family
         // with the unified pulse.
-        if (Number(localStorage.clguesscnt) > 0) {
-            updateAnswer("Right where you left off — keep building the chain.");
+        // REDESIGN v56 (Sankar's rule): EVERY reload of an unfinished game
+        // gets this message, guessed or not — the v53 gate (clguesscnt > 0)
+        // left the strip BLANK on a no-guess refresh and on the Timed Mode
+        // arm reload. The reload signal is his own once-a-day wheel flag:
+        // the day-init block resets slotmachine to 0 and the load handler
+        // sets it to 1 only AFTER initialize() returns, so inside
+        // initialize() it reads 1 exactly on reloads. The day's first load
+        // (slotmachine 0) keeps the wheel + intro flow; finished games take
+        // the game-over branch above and never reach here.
+        if (localStorage.getItem("slotmachine") == 1) {
+            // REDESIGN v57 (Sankar): a timed game's ENTRY load gets its own
+            // message. Signals, all his: clhardmode == 1 (timer on),
+            // clguesscnt == 0 (play has not begun), and momentumStart ABSENT
+            // at this point of initialize() — the arm handler writes only
+            // clhardmode, and the timer's first tick (~1s after the entry
+            // load) is what creates momentumStart; nothing writes it during
+            // initialize()'s synchronous run. So "absent" identifies the
+            // entry load exactly: every later load of this game (in-progress
+            // refresh, or a no-guess refresh after entry) finds momentumStart
+            // present and takes the generic restore message below, timed or
+            // not — exactly as v56. First loads (slotmachine 0) never reach
+            // here; finished games take the game-over branch above.
+            if (localStorage.clhardmode == 1
+                && Number(localStorage.clguesscnt || 0) === 0
+                && !localStorage.getItem("momentumStart")) {
+                updateAnswer("Timer is active — every second counts!");
+            } else {
+                updateAnswer("Right where you left off — keep building the chain.");
+            }
         }
     }
 
@@ -5814,11 +5840,11 @@ function processInput(e) {
                     if (localStorage.clhardmode == 1) {
                         localStorage.cldynamite = dyn + 2;
                         // document.getElementById("answer").innerText = "PERFECT GUESS! \n YOU GAINED +2 DYNAMITES!";
-                        updateAnswer("Perfect Guess! <br> You Gained +2 Dynamites!");
+                        updateAnswer("Perfect Guess! You Gained +2 Dynamites!"); // REDESIGN v57: hard <br> removed — one-line strip (words unchanged)
                     } else {
                         localStorage.cldynamite = dyn + 1;
                         // document.getElementById("answer").innerText = "PERFECT GUESS! \n YOU GAINED +1 DYNAMITE!";
-                        updateAnswer("Perfect Guess! <br> You Gained +1 Dynamite!");
+                        updateAnswer("Perfect Guess! You Gained +1 Dynamite!"); // REDESIGN v57: hard <br> removed — one-line strip (words unchanged)
                     }
                     updateDynamiteUI();
                     showDynamiteAdded();
@@ -6375,7 +6401,9 @@ function processInput(e) {
         }
 
         if (bonusApplied) {
-            msg += "<br> (INCLUDING +1 TIMED MODE BONUS!)";
+            // REDESIGN v57 (Sankar): bonus suffix no longer appended to the
+            // win text (count already includes it). Lives/stars logic below
+            // is untouched.
             localStorage.cllives = "♥".repeat(localStorage.clstarscnt);
             localStorage.cllives = (localStorage.cllives || "").replace(/⚪/g, "♥").replace(/⭐/g, "★"); // REDESIGN FIX: migrate legacy lives glyphs saved by the old game (⚪/⭐) to the new ♥/★ so hearts/stars render for returning players
             document.getElementById("lives").innerText = localStorage.cllives;
