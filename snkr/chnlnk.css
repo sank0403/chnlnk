@@ -6969,3 +6969,67 @@ body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
 .poll-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
 .poll-buttons button { flex: 1 1 0; max-width: 160px; padding: 10px 4px; border-radius: 8px; font-size: 14px; font-weight: 800; cursor: pointer; }
 .poll-yes, .poll-no { background: #45454E; border: 1px solid #55555E; color: #FFFFFF; line-height: 1.3; }
+
+/* ============================================================
+   REDESIGN v66 — Safety Net Saver popup. A third sibling in the
+   feedback/poll family: it reuses .feedback-popup / .feedback-box
+   for the overlay and box, .poll-close for the ×, .poll-question
+   for the text and .poll-buttons for the button row.
+   The badge replicates the board's OWN Safety Net ring badge at
+   100% — the same geometry, border, inner disc and angel SVG as
+   #hint-progress / #hint-circle / #hint-bulb in the redesign
+   layer above, class-scoped (no duplicated IDs), with the ring
+   painted full exactly as updateHintProgress paints an active
+   net inline: conic-gradient(white 360deg, #444 360deg). The
+   bulb needs no .ready class: it simply never takes the dimmed
+   opacity the board's unready bulb carries.
+   "Keep it active" takes the family's primary treatment (the
+   Timed popup's Yes / feedback Submit: #3DDC68, dark text);
+   "Let it reset" is the grey chip family.
+   ============================================================ */
+.netsaver-box { position: relative; }
+.netsaver-badge {
+    width: 36px;
+    height: 36px;
+    margin: 4px auto 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.netsaver-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid #8A8A96;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08), 0 1px 4px rgba(0, 0, 0, .45);
+    background: conic-gradient(white 360deg, #444 360deg);
+}
+.netsaver-circle::before {
+    content: "";
+    position: absolute;
+    inset: 3.5px;
+    border-radius: 50%;
+    background: #2A2A2E;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06);
+}
+.netsaver-bulb {
+    position: relative;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    display: block;
+    line-height: 0;
+    font-size: 0;
+}
+.netsaver-bulb svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+    overflow: visible;
+}
+.netsaver-keep { background: #3DDC68; border: 1px solid #3DDC68; color: #0B2E17; line-height: 1.3; }
+.netsaver-reset { background: #26262B; border: 1px solid #3A3A41; color: #F2F2F4; line-height: 1.3; }

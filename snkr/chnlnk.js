@@ -1014,6 +1014,54 @@ document.getElementById("pollClose").addEventListener("click", () => {
     OpenStats();
 });
 
+// REDESIGN v66: Safety Net Saver — a second use for dynamites, in the
+// feedback/poll popup family. When onGameLoad finds an ACTIVE Safety
+// Net whose owner missed a day (the reset branch), the reset is
+// deferred instead of executed IF the player has 10+ dynamites:
+// netSaverPending carries the pre-reset state, and showGame() pops
+// the offer over the revealed game. "Keep it active" charges exactly
+// 10 dynamites and bridges lastPlayed to yesterday so the same gap
+// can never re-offer. "Let it reset" (and the ×) runs the original
+// reset lines verbatim. Under 10 dynamites — and for partial
+// progress (net not active) — nothing here ever runs: the original
+// reset happens in onGameLoad exactly as before.
+let netSaverPending = null;
+
+function showNetSaverPopup() {
+    document.getElementById("netSaverPopup").classList.remove("hidden");
+    pauseMomentumTimer(); // modal rule: an open popup pauses the momentum timer
+}
+
+function hideNetSaverPopup() {
+    document.getElementById("netSaverPopup").classList.add("hidden");
+    resumeMomentumTimer();
+}
+
+function keepNetSaver() {
+    if (!netSaverPending) return;
+    localStorage.cldynamite = Number(localStorage.cldynamite || 0) - 10;
+    updateDynamiteUI();
+    // The reset never runs: the net stays active with its stored day
+    // count; lastPlayed bridges to yesterday so this gap can't re-offer.
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    saveHintState(netSaverPending.consecutiveDays, true, yesterday);
+    netSaverPending = null;
+    hideNetSaverPopup();
+}
+
+function resetNetSaver() {
+    if (!netSaverPending) return;
+    // The original onGameLoad reset, verbatim.
+    saveHintState(0, false, netSaverPending.lastPlayed);
+    updateHintProgress(0, false);
+    netSaverPending = null;
+    hideNetSaverPopup();
+}
+
+document.getElementById("netSaverKeep").addEventListener("click", keepNetSaver);
+document.getElementById("netSaverReset").addEventListener("click", resetNetSaver);
+document.getElementById("netSaverClose").addEventListener("click", resetNetSaver);
+
 function showError(message) {
     const popup = document.getElementById("errorPopup");
     popup.textContent = message;
@@ -2219,6 +2267,9 @@ async function loadLeaderboard() {
 function showGame() {
   document.getElementById("loader").style.display = "none";
   document.getElementById("game").style.display = "block";
+  // REDESIGN v66: a deferred Safety Net Saver offer (set in onGameLoad)
+  // appears over the revealed game.
+  if (netSaverPending) showNetSaverPopup();
 }
 
 
@@ -4980,7 +5031,7 @@ function flashTimedButton() {
 // chnlnk.css): a click that somehow still reaches the button while
 // a modal is up does nothing. Covers the class-based modal families
 // (Help / Summary / hint / add / time / past + the timed popup
-// itself), the full-screen popups (name, feedback, dynamite poll, streak) and the
+// itself), the full-screen popups (name, feedback, dynamite poll, net saver, streak) and the
 // dynamically built ones (name edit, life trade). Transient toasts
 // (Safety Net, dynamite, mystery) are NOT modals — the other nav
 // buttons stay live under them, so Timer does too.
@@ -4992,6 +5043,8 @@ function anyModalOpen() {
     if (fp && !fp.classList.contains("hidden")) return true;
     var dp = document.getElementById("dynamitePollPopup");
     if (dp && !dp.classList.contains("hidden")) return true;
+    var ns = document.getElementById("netSaverPopup");
+    if (ns && !ns.classList.contains("hidden")) return true;
     var sp = document.getElementById("streakPopup");
     if (sp && !sp.classList.contains("hidden")) return true;
     if (document.getElementById("nameEditContainer")) return true;
@@ -5196,6 +5249,14 @@ function onGameLoad() {
 
     // If Safety Net is active and the player missed a day → reset it
     if (hintAvailable && lastPlayed && lastPlayed !== today && lastPlayed !== yesterday) {
+        // REDESIGN v66: Safety Net Saver — with 10+ dynamites banked, the
+        // reset is DEFERRED and the player is offered the net for 10
+        // dynamites once the game is revealed (see showGame). Under 10,
+        // the original reset below runs unchanged.
+        if (Number(localStorage.cldynamite || 0) >= 10) {
+            netSaverPending = { consecutiveDays: consecutiveDays, lastPlayed: lastPlayed };
+            return;
+        }
         saveHintState(0, false, lastPlayed);
         updateHintProgress(0, false);
         return;
