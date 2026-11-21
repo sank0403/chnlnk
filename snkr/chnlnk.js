@@ -928,6 +928,92 @@ function showThankYouToast() {
     }, 3500);
 }
 
+// REDESIGN v63: one-time Dynamite Poll popup — a sibling of the feedback
+// popup above, taking the same post-game slot (INSTEAD of OpenStats). Shown
+// at most once per player, only in November 2026, only with more than 25
+// dynamites banked, and only on a day the feedback popup is neither due nor
+// already shown (the feedback popup's own logic is untouched and always
+// wins the slot). A vote is written to the SAME Firestore "feedback"
+// collection as regular feedback, with rating fixed at 1 and the answer
+// carried in text. Voting shows a thank-you toast in the feedback toast's
+// family — but awards NO dynamites and mentions none. Closing with the
+// × records nothing.
+const DYNAMITE_POLL_QUESTION = "Level the playing field — should Dynamites reset every month?";
+
+function shouldShowDynamitePoll() {
+    // November 2026 only (player's local date) — never after.
+    const now = new Date();
+    if (now.getFullYear() !== 2026 || now.getMonth() !== 10) return false;
+    // One time only: the stamp is set the moment the popup is shown.
+    if (localStorage.clDynPollDate) return false;
+    // More than 25 dynamites banked.
+    if (!(Number(localStorage.cldynamite || 0) > 25)) return false;
+    // Not on a feedback-popup day: neither due nor already shown today.
+    if (shouldShowFeedbackPopup()) return false;
+    if (localStorage.lastFeedbackDate === now.toLocaleDateString('en-CA')) return false;
+    return true;
+}
+
+function showDynamitePoll() {
+    // Stamp at SHOW time — vote or ×, it never shows again.
+    localStorage.clDynPollDate = new Date().toLocaleDateString('en-CA');
+    document.getElementById("dynamitePollPopup").classList.remove("hidden");
+    pauseMomentumTimer(); // modal rule: an open popup pauses the momentum timer
+}
+
+function hideDynamitePoll() {
+    document.getElementById("dynamitePollPopup").classList.add("hidden");
+    resumeMomentumTimer();
+}
+
+function showPollThankYouToast() {
+    const toast = document.getElementById("pollThankYouToast");
+    toast.classList.remove("hidden");
+
+    // fade in
+    setTimeout(() => toast.classList.add("show"), 10);
+
+    // fade out after 3.5 seconds
+    setTimeout(() => {
+        toast.classList.remove("show");
+
+        // fully hide after fade-out
+        setTimeout(() => toast.classList.add("hidden"), 400);
+    }, 3500);
+}
+
+async function submitDynamiteVote(answerLabel) {
+    const voteData = {
+        uid: auth.currentUser?.uid || null,
+        playerName: localStorage.playerName || null,
+        rating: 1,
+        text: DYNAMITE_POLL_QUESTION + " — " + answerLabel,
+        updated: serverTimestamp()
+    };
+
+    try {
+        await addDoc(collection(db, "feedback"), voteData);
+
+        // Thank-you toast — no dynamites awarded, none mentioned.
+        showPollThankYouToast();
+    } catch (err) {
+        console.error("Dynamite poll save error:", err);
+    }
+
+    hideDynamitePoll();
+
+    // Delay stats opening slightly so toast is visible (mirrors fbSubmit)
+    setTimeout(OpenStats, 1500);
+}
+
+document.getElementById("pollYes").addEventListener("click", () => submitDynamiteVote("Yes, reset them!"));
+document.getElementById("pollNo").addEventListener("click", () => submitDynamiteVote("No, don't touch them!"));
+document.getElementById("pollClose").addEventListener("click", () => {
+    // Close without answering: nothing is recorded (mirrors fbCancel's flow).
+    hideDynamitePoll();
+    OpenStats();
+});
+
 function showError(message) {
     const popup = document.getElementById("errorPopup");
     popup.textContent = message;
@@ -4894,7 +4980,7 @@ function flashTimedButton() {
 // chnlnk.css): a click that somehow still reaches the button while
 // a modal is up does nothing. Covers the class-based modal families
 // (Help / Summary / hint / add / time / past + the timed popup
-// itself), the full-screen popups (name, feedback, streak) and the
+// itself), the full-screen popups (name, feedback, dynamite poll, streak) and the
 // dynamically built ones (name edit, life trade). Transient toasts
 // (Safety Net, dynamite, mystery) are NOT modals — the other nav
 // buttons stay live under them, so Timer does too.
@@ -4904,6 +4990,8 @@ function anyModalOpen() {
     if (np && !np.classList.contains("hidden")) return true;
     var fp = document.getElementById("feedbackPopup");
     if (fp && !fp.classList.contains("hidden")) return true;
+    var dp = document.getElementById("dynamitePollPopup");
+    if (dp && !dp.classList.contains("hidden")) return true;
     var sp = document.getElementById("streakPopup");
     if (sp && !sp.classList.contains("hidden")) return true;
     if (document.getElementById("nameEditContainer")) return true;
@@ -4992,8 +5080,9 @@ window.onload = function() {
     if (lastAnimate !== today) {
         // Play animation today
         document.getElementById("submitter").classList.add("submitter-fade");
-		document.getElementById("top-resources").classList.add("top-slide");
-		document.querySelector(".top-stack").classList.add("top-slide");
+		// REDESIGN v63: entrance float-in disabled 2026-11-21 — uncomment to re-enable.
+		// document.getElementById("top-resources").classList.add("top-slide");
+		// document.querySelector(".top-stack").classList.add("top-slide");
         // Store today's date so it won't play again until tomorrow
         localStorage.setItem("AnimationDate", today);
     }
@@ -6525,6 +6614,8 @@ function processInput(e) {
 			// Must have a name AND must be past the 50‑day cooldown
 			if (playerName && playerName.trim() !== "" && shouldShowFeedbackPopup()) {
 				showFeedbackPopup();
+			} else if (playerName && playerName.trim() !== "" && shouldShowDynamitePoll()) {
+				showDynamitePoll();
 			} else {
 				OpenStats();
 			}

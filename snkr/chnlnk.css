@@ -3371,13 +3371,18 @@ div.scroll {
 /* 100% { opacity: 1; transform: translateY(0); } */
 /* } */
 
-/* Keyboard slides up from bottom */
+/* Keyboard entrance animation — commented out 2026-11-21; uncomment this rule to re-enable.
+   The JS keeps adding .keyboard-slide to every keyboard row, harmlessly,
+   while this rule is off, and the keyboardUp keyframes below stay in place.
+   REDESIGN v63: this commented rule is the single switch — the v52
+   neutralizing override that sat in the redesign layer has been removed.
 .keyboard-slide {
     opacity: 0;
     transform: translateY(40px);
     animation: keyboardUp 0.6s ease-out forwards;
     animation-delay: 0.6s;
 }
+*/
 
 @keyframes keyboardUp {
     0% {
@@ -6029,24 +6034,6 @@ input:checked + .slider:before { transform: translateX(20px); }
     #vowel-legend .legend-text { letter-spacing: -.02em; }
 }
 
-/* Keyboard entrance animation REMOVED (user, v52 finishing pass:
-   "Remove the keyboard animation at start of game — only animation
-   should be the wheel spinning at top and bottom word"). His JS adds
-   .keyboard-slide to every keyboard row; the base rule (line ~3375)
-   started the rows at opacity 0 / translateY(40px) and slid them up
-   (keyboardUp .6s ease-out, .6s delay). The rows are now simply
-   present and static from the first frame. The class and the base
-   rule stay in place — only the entrance animation is neutralized
-   here. No other animation is touched: the slot-wheel flicker
-   (slotSpin/slotLock), tile flips, the feedback pulse, the
-   hearts/stars flip, the mystery flash and confetti all remain.
-   Archive-safe: chnlnkarch.js/archive.html never use .keyboard-slide. */
-.keyboard-slide {
-    opacity: 1;
-    transform: none;
-    animation: none;
-}
-
 /* Timed slot height hold (finishing pass): while the momentum bar is
    actually running (his JS sets #momentum-bar-container's inline
    display to "block"), the .timed-slot keeps the toggle row's height
@@ -6948,3 +6935,37 @@ body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
     0%, 100% { border-color: var(--mx-green); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
     50% { border-color: #ffffff; box-shadow: 0 0 0 2px rgba(255, 255, 255, .95), 0 0 14px 3px rgba(255, 255, 255, .35); }
 }
+
+/* ============================================================
+   REDESIGN v63 — Dynamite Poll popup (Item B). A sibling of the
+   feedback popup: it reuses .feedback-popup / .feedback-box for
+   the overlay and box, so it inherits the family surface, border
+   and width. The × mirrors .name-edit-close.
+   The poll thank-you toast reuses .thankyou-toast unchanged.
+   REDESIGN v64: both answer buttons get IDENTICAL neutral styling
+   (medium grey #45454E, border #55555E, white text) — a green Yes
+   could bias the vote. Scoped to .poll-yes / .poll-no only; the
+   Timed popup's green Yes and the feedback Submit are untouched.
+   Labels carry explicit <br>s so both wrap symmetrically
+   ("Yes, reset / them!" and "No, don't touch / them!").
+   ============================================================ */
+.poll-box { position: relative; }
+.poll-close {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--rd-muted);
+    font-size: 1.25rem;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+}
+.poll-question { font-size: 16px; line-height: 1.45; margin: 8px 0 2px; }
+.poll-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+.poll-buttons button { flex: 1 1 0; max-width: 160px; padding: 10px 4px; border-radius: 8px; font-size: 14px; font-weight: 800; cursor: pointer; }
+.poll-yes, .poll-no { background: #45454E; border: 1px solid #55555E; color: #FFFFFF; line-height: 1.3; }
