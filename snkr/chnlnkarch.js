@@ -34,6 +34,19 @@ function updateAnswer(text) {
     el.classList.remove("run-border");
     void el.offsetWidth;
     el.classList.add("run-border");
+    // REDESIGN v59: the main game's feedback classifier, ported verbatim —
+    // CSS owns the strip's colours + pulse from the text alone. Three modes
+    // only: green = correct, red = wrong / life lost / game over, yellow =
+    // everything else. Presentation only; the texts are mapped to the main
+    // game's at their construction sites (see the v59 CHANGELOG table).
+    const fbText = text.replace(/<[^>]*>/g, " ").toLowerCase();
+    let fbKind = "fb-info";
+    if (/great going|you won/.test(fbText)) fbKind = "fb-win";
+    else if (/isn't in the chain|out of lives|life lost|last life alert/.test(fbText)) fbKind = "fb-wrong";
+    else if (/^correct/.test(fbText)) fbKind = "fb-correct";
+    else if (/vowels are now unlocked|vowels stay locked/.test(fbText)) fbKind = "fb-locked";
+    el.classList.remove("fb-correct", "fb-wrong", "fb-locked", "fb-win", "fb-info");
+    el.classList.add(fbKind);
 }
 /* window.localStorage;
 if (!localStorage.totalclplayed){
@@ -1174,7 +1187,7 @@ var vowelactive = 0;
 if (vowelactive != 1) {
     document.getElementById("answer").style.color = "lightgray";
     // document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND";
-	updateAnswer("Vowels are disabled till all other letters are found!");
+	updateAnswer("Build the chain from Top to Bottom using active letters."); // REDESIGN v59: the main game's intro (was "Vowels are disabled till all other letters are found!")
 }
 window.onload = function() {
     intialize();
@@ -1960,7 +1973,7 @@ function processInput(e) {
                     document.getElementById("KeyU").classList.add("key-tile-enabled");					
                     document.getElementById("answer").style.color = "lightgray";
                     // document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
-					updateAnswer("ONLY VOWELS LEFT!");
+					updateAnswer("That's every consonant — vowels are now unlocked!"); // REDESIGN v59: the main game's unlock line (was "ONLY VOWELS LEFT!")
 					triggerVibration(); // single pulse
 					setTimeout(FinalClue, 1500);
                 // }, 1000);
@@ -1980,6 +1993,7 @@ function processInput(e) {
     }
 
     if (LetterFound == 0) {
+        archShakeBoard(); // REDESIGN v59: the main game's board shake on a wrong guess (presentation only)
         livescnt += 1;
         document.getElementById("answer").style.color = "lightgray";
         switch (livescnt) {
@@ -1989,22 +2003,22 @@ function processInput(e) {
             case 1:
                 lives = "⚪⚪⚪⚪";
                 // document.getElementById("answer").innerText = "FIRST LIFE LOST!"
-				updateAnswer("First Life Lost!");
+				updateAnswer(e.code[3] + " isn't in the chain — life lost. 4 lives left."); // REDESIGN v59: the main game's wrong-guess line (was "First Life Lost!")
                 break;
             case 2:
                 lives = "⚪⚪⚪";
                 // document.getElementById("answer").innerText = "SECOND LIFE LOST!"
-				updateAnswer("Second Life Lost!");
+				updateAnswer(e.code[3] + " isn't in the chain — life lost. 3 lives left."); // REDESIGN v59: the main game's wrong-guess line (was "Second Life Lost!")
                 break;
             case 3:
                 lives = "⚪⚪";
                 // document.getElementById("answer").innerText = "THIRD LIFE LOST!"
-				updateAnswer("Third Life Lost!");
+				updateAnswer(e.code[3] + " isn't in the chain — life lost. 2 lives left."); // REDESIGN v59: the main game's wrong-guess line (was "Third Life Lost!")
                 break;
             case 4:
                 lives = "⚪";
                 // document.getElementById("answer").innerText = "FOURTH LIFE LOST - LAST LIFE ALERT!"
-				updateAnswer("FOURTH LIFE LOST - LAST LIFE ALERT!");
+				updateAnswer(e.code[3] + " isn't in the chain — life lost. 1 life left."); // REDESIGN v59: the main game's wrong-guess line (was "FOURTH LIFE LOST - LAST LIFE ALERT!")
                 setTimeout(FinalClue, 1500);
                 break;
                 // case 5: localStorage.cllives = "⚠️";
@@ -2019,6 +2033,19 @@ function processInput(e) {
         document.getElementById("lives").innerText = lives;
         document.getElementById("lives").classList.add("blink");
         setTimeout(removeblink, 3000);
+    }
+
+    if (LetterFound != 0) {
+        // REDESIGN v59: the main game's correct-guess message (the archive
+        // showed none). Mirrors the main game's placement and its one
+        // exception: the guess that completes the consonants keeps the
+        // unlock message posted above instead. A game-winning guess is
+        // overwritten by the win message later in this same call.
+        var justUnlockedArch = (consocount == solveword.length - vowelcount) && "AEIOU".indexOf(e.code[3]) < 0;
+        if (!justUnlockedArch) {
+            var letterCountArch = solveword.split(e.code[3]).length - 1;
+            updateAnswer("Correct — " + e.code[3] + " appears " + letterCountArch + (letterCountArch === 1 ? " time." : " times."));
+        }
     }
 
     if (livescnt == 5) {
@@ -2075,7 +2102,7 @@ function processInput(e) {
         }
         document.getElementById("answer").style.color = "lightgray";
         // document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
-		updateAnswer("Game Over! Out Of Lives.<br>Go Back for more Archives.");
+		updateAnswer("Out of lives — GAME OVER!<br>Go Back for more Archives."); // REDESIGN v60: the main game's lose line as line 1, the archive's own second line restored (v59 had dropped it)
     }
 
     if (correct == word.length) {
@@ -2240,3 +2267,136 @@ function processInput(e) {
     // }		
 
 }
+
+
+// =========================
+// REDESIGN v59 (presentation only — no game logic below):
+// archive parity with the main page. Everything here only READS
+// the state the game itself produces and paints it the main
+// game's way:
+//   archShakeBoard()  — the main game's board shake (wrong guess)
+//   syncArchiveLives()— renders #lives' own glyph string as the
+//                       main game's hearts: data-left drives the
+//                       shared CSS (green hearts remaining, dark
+//                       red ✕ hearts lost, five fixed slots), and
+//                       #lives-count mirrors it. Archive rule
+//                       kept: lives NEVER become stars — there is
+//                       deliberately no stars branch here.
+//   legend relocation — the main game's: #vowel-legend moves
+//                       below the keyboard (references are by id,
+//                       so nothing behavioural changes).
+//   fitArchiveTiles() — the main game's fit philosophy: tiles as
+//                       large as the column allows while header →
+//                       legend fits the viewport with the same
+//                       12px bottom margin; leftover height is
+//                       spread across the connector strips. Sets
+//                       only the --tile / --tile-small / --spread
+//                       custom properties on #board.
+function archShakeBoard() {
+    var board = document.getElementById("board");
+    if (!board) return;
+    board.classList.remove("board-shake");
+    void board.offsetWidth;
+    board.classList.add("board-shake");
+}
+
+function syncArchiveLives() {
+    var el = document.getElementById("lives");
+    if (!el) return;
+    var text = el.textContent || "";
+    var remaining = (text.match(/⚪/g) || []).length;
+    if (text.indexOf("❌") >= 0) remaining = 0;
+    el.dataset.left = remaining;
+    el.classList.toggle("lives-depleted", remaining == 0 && text.length > 0);
+    var count = document.getElementById("lives-count");
+    if (count) {
+        count.innerHTML = remaining + "<small> / 5</small>";
+        count.classList.toggle("low", remaining <= 1);
+    }
+}
+
+function fitArchiveTiles() {
+    var board = document.getElementById("board");
+    var row = document.getElementById("boardfirst");
+    var legend = document.getElementById("vowel-legend");
+    if (!board || !row || !legend) return;
+    var maxLen = Math.max(wordone.length, wordtwo.length, wordthree.length, wordfour.length, wordfive.length, wordsix.length, wordlast.length);
+    if (!(maxLen > 0)) return;
+    var smallBoard = !!board.querySelector(".tilesmall");
+    var RATIO = 0.757; // the CSS bands' --tile-small / --tile ratio
+    var boardStyle = getComputedStyle(board);
+    var rowStyle = getComputedStyle(row);
+    var inner = board.clientWidth - (parseFloat(boardStyle.paddingLeft) || 0) - (parseFloat(boardStyle.paddingRight) || 0) - (parseFloat(rowStyle.paddingLeft) || 0) - (parseFloat(rowStyle.paddingRight) || 0);
+    if (!(inner > 0)) return;
+    var gap = parseFloat(rowStyle.columnGap) || 5;
+    var vw = window.innerWidth || document.documentElement.clientWidth || 390;
+    var cap = 54.6 * vw / 390; // the main game's cap: 54.6px at 390 wide, scaled
+    var widthFit = (inner - (maxLen - 1) * gap) / maxLen;
+    var size = Math.min(cap, widthFit); // ACTIVE tile size (the small size on small boards)
+    var apply = function() {
+        var large = smallBoard ? size / RATIO : size;
+        board.style.setProperty("--tile", (Math.floor(large * 100) / 100) + "px");
+        board.style.setProperty("--tile-small", (Math.floor(size * 100) / 100) + "px");
+    };
+    size = Math.floor(size * 100) / 100;
+    apply();
+    board.style.setProperty("--spread", "0px");
+    var target = window.innerHeight - 12; // the main game's bottom margin
+    var legendBottom = function() { return legend.getBoundingClientRect().bottom + window.scrollY; };
+    // Column sensitivity per 1px of active tile: 7 rows + 6 connector
+    // strips (each 0.2017 x --tile). Mirrors fitBoardTiles() in the
+    // main game, including its grow-then-spread finish.
+    var SENS = smallBoard ? (7 + 6 * 0.2017 / RATIO) : 8.21;
+    for (var pass = 0; pass < 4; pass++) {
+        var over = legendBottom() - target;
+        if (!(over > 0)) break;
+        var next = size - over / SENS - 0.02;
+        if (next < 6) next = 6;
+        if (next >= size) break;
+        size = Math.floor(next * 100) / 100;
+        apply();
+        if (next === 6) break;
+    }
+    var slack = target - legendBottom();
+    for (var g = 0; g < 3 && slack > 2 && size < widthFit; g++) {
+        var add = Math.min(widthFit - size, slack / SENS);
+        if (!(add > 0.01)) break;
+        size = Math.floor((size + add) * 100) / 100;
+        apply();
+        slack = target - legendBottom();
+    }
+    if (slack > 2) {
+        var spread = Math.floor((slack / 6) * 100) / 100;
+        board.style.setProperty("--spread", spread + "px");
+        var resid = target - legendBottom();
+        if (Math.abs(resid) > 0.5) {
+            spread = Math.floor(Math.max(0, spread + resid / 6) * 100) / 100;
+            board.style.setProperty("--spread", spread + "px");
+        }
+    }
+}
+
+(function() {
+    var livesEl = document.getElementById("lives");
+    if (livesEl && window.MutationObserver) {
+        new MutationObserver(syncArchiveLives).observe(livesEl, { childList: true, characterData: true, subtree: true });
+    }
+    window.addEventListener("load", function() {
+        // The main game's visual order: the legend sits below the
+        // keyboard. The keyboard rows are built by intialize()
+        // (registered on window load before this listener).
+        var kbRows = document.querySelectorAll(".keyboard-row");
+        var legendEl = document.getElementById("vowel-legend");
+        if (kbRows.length && legendEl) {
+            kbRows[kbRows.length - 1].after(legendEl);
+        }
+        // The main game's strip -> keyboard clearance (its glow
+        // reaches ~8px below the strip box at pulse peak).
+        if (kbRows.length) kbRows[0].style.marginTop = "14px";
+        syncArchiveLives();
+        fitArchiveTiles();
+    });
+    window.addEventListener("resize", fitArchiveTiles);
+    window.addEventListener("orientationchange", fitArchiveTiles);
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(fitArchiveTiles); }
+})();

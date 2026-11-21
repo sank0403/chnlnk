@@ -4534,7 +4534,7 @@ function updateLivesDisplay() {
         colorx = "green";
         localStorage.clgamecnt = 6;
         document.getElementById("answer").style.color = "lightgray";
-        updateAnswer("Out of lives — game over.");
+        updateAnswer("Out of lives — GAME OVER!");
         localStorage.setItem(('gameovercl' + days), 1);
         localStorage.setItem(('gamestatcl' + days), 0);
         if (localStorage.getItem('gameovercl' + days) == "1") {
@@ -4887,6 +4887,30 @@ function flashTimedButton() {
     if (fill) fill.style.backgroundColor = "#ff0000"; // same #ff0000 flash as flashBarRed; updateMomentumBar repaints 500ms later
 }
 
+// REDESIGN v59: is any modal/popup open right now? The Timer button
+// must behave like every other nav button while one is — his modals
+// lay their scrim over the nav, and this guard is the second half of
+// the fix (the stacking half is the #timedbutton z-index rule in
+// chnlnk.css): a click that somehow still reaches the button while
+// a modal is up does nothing. Covers the class-based modal families
+// (Help / Summary / hint / add / time / past + the timed popup
+// itself), the full-screen popups (name, feedback, streak) and the
+// dynamically built ones (name edit, life trade). Transient toasts
+// (Safety Net, dynamite, mystery) are NOT modals — the other nav
+// buttons stay live under them, so Timer does too.
+function anyModalOpen() {
+    if (document.querySelector(".modal.active, .summary.active, .hintmodal.active, .addmodal.active, .timemodal.active, .pastmodal.active")) return true;
+    var np = document.getElementById("namePopup");
+    if (np && !np.classList.contains("hidden")) return true;
+    var fp = document.getElementById("feedbackPopup");
+    if (fp && !fp.classList.contains("hidden")) return true;
+    var sp = document.getElementById("streakPopup");
+    if (sp && !sp.classList.contains("hidden")) return true;
+    if (document.getElementById("nameEditContainer")) return true;
+    if (document.getElementById("life-trade-modal")) return true;
+    return false;
+}
+
 function openTimedPopup() {
     var popup = document.getElementById("timedmodal");
     if (!popup) return;
@@ -4923,6 +4947,7 @@ function shakeBoard() {
     var btn = document.getElementById("timedbutton");
     if (btn) {
         btn.addEventListener("click", function() {
+            if (anyModalOpen()) return; // REDESIGN v59: dead while any modal is open — same as the other nav buttons
             if (btn.classList.contains("timed-locked")) return; // disabled for the day
             // REDESIGN v55 (Sankar): once timed mode is ENABLED the
             // button mimics the momentum bar — it is a display, and a
@@ -5583,7 +5608,7 @@ function initialize() {
             }
 
             document.getElementById("answer").style.color = "lightgray";
-            document.getElementById("answer").innerText = "Out of lives — game over.";
+            document.getElementById("answer").innerText = "Out of lives — GAME OVER!";
             document.getElementById("answer").classList.remove("fb-correct", "fb-wrong", "fb-locked", "fb-win", "fb-info"); // REDESIGN: feedback-kind class for CSS
             document.getElementById("answer").classList.add("fb-wrong"); // REDESIGN
         }
@@ -6229,7 +6254,7 @@ function processInput(e) {
         localStorage.clgamecnt = 6;
         document.getElementById("answer").style.color = "lightgray";
         // document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
-        updateAnswer("Out of lives — game over.");
+        updateAnswer("Out of lives — GAME OVER!");
         localStorage.setItem(('gameovercl' + days), 1);
         if (localStorage.getItem('gameovercl' + days) == "1") {
             document.querySelectorAll('span[id*="-"].disabled').forEach(tile => {

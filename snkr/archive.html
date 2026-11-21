@@ -13,63 +13,25 @@
 	<title>CHN LNK Archive — The Daily Word Chain Game</title>
 	<meta name="title" content="CHN LNK">
 	<meta name="description" content="The Daily Word Chain Game.">
-	<link href="chnlnk.css?v=58" rel="stylesheet">
-	<script defer src="chnlnkarch.js?v=58"></script>
+	<link href="chnlnk.css?v=60" rel="stylesheet">
+	<script defer src="chnlnkarch.js?v=60"></script>
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
     <!-- add icon link for all standard browsers -->
     <link rel = "icon" href = "https://thechnlnk.com/icon.jpg" 
             type = "image/x-icon">  	
  </head>
 <body class="archive-page">
-    <div id="stats">
-        <div id="stats-item">
-            <span class="stats-item">
-                <span data-modal-target="#modal" id="rulesbutton">
-                    GAME<br>RULES
-                </span>
-            </span>
-
-            <span class="stats-item">
-                <a href="https://thechnlnk.com">
-                    DAILY<br> CHAIN
-                </a>
-            </span>
-        </div>
-    </div>
-		<!-- <img class="headerimage" src="bg.png"> -->
-		<h1> CH<strong style="color:#3DDC68">AI</strong>N L<strong style="color:#3DDC68">I</strong>NK</h1>
-	<!-- <div id="title">
-		<div class="waviy">
-			<span style="--i:1">G</span>
-			<span style="--i:2">E</span>
-			<span style="--i:3">O</span>
-			<span style="--i:4">R</span>
-			<span style="--i:5">D</span>
-			<span style="--i:6">L</span>
-			<span style="--i:7">E</span>
-		</div>
-	</div> -->
-	<div class="waviy1">
-		<span style="--i:1">d</span>
-		<span style="--i:2">a</span>
-		<span style="--i:3">i</span>
-		<span style="--i:4">l</span>
-		<span style="--i:5">y</span>
-		<span style="--i:6"> </span>
-		<span style="--i:7">c</span>
-		<span style="--i:8">h</span>
-		<span style="--i:9">n</span>
-		<span style="--i:10"> </span>
-		<span style="--i:11">l</span>
-		<span style="--i:12">n</span>
-		<span style="--i:13">k</span>		
-		<span style="--i:14"> </span>
-		<span style="--i:15">#</span>
-		<span style="--i:16"></span>
-		<span style="--i:17" id="daycount"></span>
-	</div>
-	<span style="--i:18" id="submitter"></span>
-	<hr>	
+    <!-- REDESIGN v59: the main game's header row (same markup, same
+         classes). The GAME RULES / DAILY CHAIN buttons are removed —
+         the rules modal itself stays in the page below, as does its
+         overlay; chnlnkarch.js wires modal buttons by
+         querySelectorAll, so an absent button is a no-op there. -->
+    <div class="header-row">
+    <svg class="logo-mark" width="27" height="27" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 13.5a4.5 4.5 0 0 0 6.4 0l3-3a4.54 4.54 0 1 0-6.4-6.4l-1.5 1.5" stroke="#3DDC68" stroke-width="2.4" stroke-linecap="round"/><path d="M13.5 10.5a4.5 4.5 0 0 0-6.4 0l-3 3a4.54 4.54 0 1 0 6.4 6.4l1.5-1.5" stroke="#3DDC68" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <h1 class="title-scale">CH<strong style="color:#3DDC68">AI</strong>N <span class="title-link">L<strong style="color:#3DDC68">I</strong>NK</span></h1>
+    <div class="waviy1">Daily CHN LNK <strong>#<span id="daycount"></span></strong></div>
+    </div><!-- /.header-row -->
+    <span style="--i:18" id="submitter"></span>
     <div class="modal" id="modal">
         <div class="modal-header">
             <div class="title"><strong>
@@ -131,8 +93,17 @@
     </div>
     <div id="overlay"></div>
     </div>	
-    <div id="lives">
-	</div>	
+    <!-- REDESIGN v59: the main game's lives row. #lives keeps the
+         game's own glyph string (hidden by the shared CSS); the v59
+         block in chnlnkarch.js syncs data-left / the counter from
+         it, and the shared CSS draws the main game's hearts. -->
+    <div id="top-resources">
+        <div class="status-row status-row-lives">
+            <span class="status-label" id="lives-label">LIVES</span>
+            <div id="lives" data-left="5"></div>
+            <span id="lives-count">5<small> / 5</small></span>
+        </div>
+    </div>
     <!-- <div id="board"> -->
 		<!-- <br><div><u>COUNTRY</u></div><br> -->
 		<!-- <div id="boardfirst"><div id="downarrow">⬇️</div></div> -->
@@ -183,6 +154,8 @@
 	<br>
 	<!-- <hr>	 -->
     <div id="answer" hidden></div>
+    <!-- REDESIGN v59: the main game's legend line -->
+    <div id="vowel-legend"><span class="legend-icon"></span><span class="legend-label">Locked vowel</span><span class="legend-text">Vowels unlock when you find all the consonants</span></div>
 	<br>
     </body>
 </html>

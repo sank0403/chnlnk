@@ -6703,3 +6703,200 @@ body.archive-page #lives::before {
     transform: translateY(-50%);
     margin-right: 0;
 }
+
+/* ============================================================
+   CHN LNK REDESIGN — v59 (2026-11-21, from Sankar's v58 test)
+   ============================================================
+   Main game:
+   1. Timer button under modals (Sankar, phone-verified): the
+      button's label/icon carry z-index: 1 (to sit above the
+      countdown fill), but neither the button nor #game formed a
+      stacking context, so that z-index escaped to the root and
+      painted the button ABOVE the z-auto modal scrims — bright
+      and clickable while every other nav button sat dimmed
+      under its modal, its popup opening in front of the modal.
+      z-index: 0 on the (already positioned) button makes it a
+      stacking context: the z-index: 1 now competes only inside
+      the button, and the button itself paints in DOM order —
+      under every scrim, exactly like its neighbours. The click
+      handler is also guarded in chnlnk.js (anyModalOpen).
+   2. Strip font scales with width (Sankar: 10px read too small
+      on his phone): 10px at 320px wide, growing linearly to
+      12.5px at 390px, capped above. v57's fixed 10px was the
+      320px ceiling for the longest message; larger phones now
+      get the larger font. Still one line everywhere (audit
+      re-run), still the fixed 32px box.
+   3. Keyboard nudge (Sankar): the strip's pulse glow overlays
+      the keyboard's top edge. Measured at pulse peak, the
+      glow's visible tint reaches ~8px below the strip box; the
+      old gap was 3px, so the keys' top ~5px sat inside the
+      glow. The first keyboard row's margin-top goes 3px ->
+      14px: ~6px of clear air beyond the glow's reach.
+      fitBoardTiles() measures the real column, so the tiles /
+      connector spread absorb the 11px and the page still ends
+      at the 12px bottom margin.
+   4. Tile flip on correct reveals (Sankar: the mockup has it,
+      the game doesn't): processInput pairs .correct with
+      .poptile on exactly the tiles a guess newly reveals (the
+      restore path adds .correct alone; given words and the
+      end-of-game paths never pair them), so that pair is the
+      reveal signature. Those tiles now play the mockup's flip
+      (.45s ease, rotateX 0 -> 90 -> 0) instead of the old
+      dropIn. The Mystery Letter reveals through the same
+      processInput path, so it flips too. Wrong guesses keep
+      the board shake; the .animated end sequences are
+      untouched (the lose path strips .poptile before adding
+      .animated, and this rule never matches .failed tiles).
+   ============================================================ */
+
+#timedbutton { z-index: 0; }
+
+#answer { font-size: clamp(10px, calc(3.5714vw - 1.43px), 12.5px); }
+
+#game + .keyboard-row { margin-top: 14px; }
+
+#game #board .correct.poptile { animation: rdTileFlip .45s ease; }
+
+@keyframes rdTileFlip {
+    0% { transform: rotateX(0deg); }
+    50% { transform: rotateX(90deg); }
+    100% { transform: rotateX(0deg); }
+}
+
+/* ============================================================
+   v59 — ARCHIVE parity (Sankar: "the archive should look and
+   feel exactly the same as the main page"). Scoped to
+   body.archive-page throughout. The header markup in
+   archive.html is now the main game's own (header row, logo,
+   wordmark, "Daily CHN LNK #N" — the number is the archive
+   chain's own, written by the game into #daycount as before),
+   the lives row is the main game's status-row markup, the
+   strip takes the main game's text discipline, and the legend
+   line is added. The GAME RULES / DAILY CHAIN buttons are
+   removed from archive.html (route note in the CHANGELOG).
+   chnlnkarch.js logic is untouched; its v59 block only paints.
+   ============================================================ */
+
+/* --- Header: the main game's row, inset like the main column.
+   The h1/.waviy1 copies below exist only to outrank the v56
+   archive rules (which styled the old centred wordmark); their
+   values are the main game's own computed values. --- */
+body.archive-page { padding-top: clamp(12px, 1.8dvh, 20px); }
+body.archive-page .header-row { margin: 0 10px; }
+
+body.archive-page h1.title-scale {
+    font-family: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: clamp(20px, 6.1vw, 23px);
+    font-weight: 700;
+    letter-spacing: .06em;
+    line-height: 1.1;
+    margin: 0;
+    margin-right: auto;
+    text-align: left;
+    color: var(--mx-ink);
+    white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+    body.archive-page h1.title-scale { letter-spacing: .045em; }
+}
+
+body.archive-page .header-row .logo-mark { width: clamp(22px, 6.9vw, 27px); height: clamp(22px, 6.9vw, 27px); }
+
+body.archive-page .waviy1 {
+    display: block;
+    font-size: clamp(10.5px, 3.2vw, 12.5px);
+    letter-spacing: normal;
+    color: var(--mx-faint);
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0;
+    padding: 0;
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* --- Lives: the main game's panel. The element reset undoes
+   the v56/v58 glyph-row styling (panel bg, 19px glyphs, the
+   "LIVES" ::before label, the centring padding); the row now
+   carries the panel, the label is the row's own span, and the
+   shared #lives machinery (SVG hearts keyed to data-left)
+   draws the slots. The ::before reset restates the shared
+   heart strip (the v56 rule had replaced it with the label);
+   the data-left copies keep display/width ahead of that
+   reset, exactly as the shared rules do unscoped. Archive
+   rule preserved: no stars state exists here. --- */
+body.archive-page #top-resources { margin: 3px 10px 0; width: auto; }
+
+body.archive-page #lives {
+    font-size: 0;
+    letter-spacing: 0;
+    line-height: 1;
+    color: transparent;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+    min-height: 0;
+    position: relative;
+    justify-content: center;
+}
+
+body.archive-page #lives::before {
+    content: "";
+    position: static;
+    left: auto;
+    top: auto;
+    transform: none;
+    display: none;
+    height: 26px;
+    flex: 0 0 auto;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' preserveAspectRatio='xMidYMid meet'%3E%3Cpath d='M12 21s-7.5-4.9-10-9.3C.3 8.6 2.2 4.5 6.1 4.5c2.2 0 3.7 1.2 4.6 2.7.4.7 1 .7 1.4 0 .9-1.5 2.4-2.7 4.6-2.7 3.9 0 5.8 4.1 4.1 7.2C19.5 16.1 12 21 12 21z' fill='%233DDC68'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 32px 26px;
+    background-position: left center;
+    filter: drop-shadow(0 0 6px rgba(61, 220, 104, .45));
+    font-size: 0;
+    letter-spacing: normal;
+    color: transparent;
+    margin-right: 0;
+}
+
+body.archive-page #lives[data-left="1"]::before { display: block; width: 32px; }
+body.archive-page #lives[data-left="2"]::before { display: block; width: 64px; }
+body.archive-page #lives[data-left="3"]::before { display: block; width: 96px; }
+body.archive-page #lives[data-left="4"]::before { display: block; width: 128px; }
+body.archive-page #lives[data-left="5"]::before { display: block; width: 160px; }
+body.archive-page #lives.lives-depleted::before { display: none; }
+
+/* --- Strip: the main game's discipline, two lines allowed.
+   A fixed 50px box (two lines at the largest scaled font,
+   plus the main strip's own padding/border/slack) that never
+   changes size; the font is the main game's new scaled size;
+   colours come from the ported fb-* classifier in
+   chnlnkarch.js — the fb-info pair below mirrors the main
+   game's #game-scoped yellow (the unscoped fb-info is the old
+   muted grey, which the main game also overrides). No white
+   or grey strip text remains: the game's inline lightgray
+   writes lose to the fb-* !important colours, as in the main
+   game. --- */
+body.archive-page #answer {
+    width: auto;
+    height: 50px;
+    min-height: 50px;
+    margin: 3px 10px 0;
+    padding: 4px 6px;
+    font-size: clamp(10px, calc(3.5714vw - 1.43px), 12.5px);
+    white-space: normal;
+}
+
+body.archive-page #answer.fb-info { color: var(--mx-amber) !important; }
+body.archive-page #answer.run-border.fb-info { animation: mxFbWarn .65s ease-out; }
+
+/* --- Board: leftover height spreads across the connector
+   strips, as in the main game (fitArchiveTiles in
+   chnlnkarch.js sets --spread on #board). --- */
+body.archive-page #board .connector.vertical-glow {
+    height: calc(var(--tile) * 0.2017 + 5px + var(--spread, 0px));
+}
