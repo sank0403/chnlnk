@@ -5943,11 +5943,20 @@ input:checked + .slider:before { transform: translateX(20px); }
     0%, 49% { background-color: rgba(245, 184, 61, .08); border-color: #F5B83D; color: transparent; }
     50%, 100% { background-color: #7A2020; border-color: #933232; color: #fff; }
 }
-/* A missed vowel tile keeps its lock until its own flip midpoint. */
+/* A missed vowel tile keeps its lock until its own flip midpoint.
+   REDESIGN v61: the fill is now `both`, not `backwards` — with
+   `backwards` the end keyframe (opacity 0) was not retained, so
+   the moment the hide animation finished the lock snapped back
+   to full opacity and stayed on the flipped red tiles for good
+   (Sankar's screenshot). `both` keeps the pre-delay state during
+   the stagger (unchanged) AND holds opacity 0 after the flip, so
+   no tile shows a lock once the game has ended. The rule keys on
+   .failed.animated — a state only the end-of-game reveal (live
+   or restored) produces — so mid-game locks are untouched. */
 #game #board .voweltile.failed.animated::after,
 #game #board .voweltilesmall.failed.animated::after {
     content: "🔒";
-    animation: mxLoseLockHide .5s linear backwards;
+    animation: mxLoseLockHide .5s linear both;
     animation-delay: calc(var(--rb, 0s) + var(--pb, 0s));
 }
 @keyframes mxLoseLockHide {
@@ -6899,4 +6908,35 @@ body.archive-page #answer.run-border.fb-info { animation: mxFbWarn .65s ease-out
    chnlnkarch.js sets --spread on #board). --- */
 body.archive-page #board .connector.vertical-glow {
     height: calc(var(--tile) * 0.2017 + 5px + var(--spread, 0px));
+}
+
+/* ============================================================
+   REDESIGN v61
+   Item 1 (no locks on tiles at game end) lives with the lose
+   reveal rules above — see the mxLoseLockHide note.
+   ============================================================ */
+
+/* --- Item 3: the archive gets the main game's correct-reveal
+   flip. The archive's tiles carry the same .correct.poptile
+   pair at reveal, but the board is not inside #game, so the
+   v59 flip rule never reached it and the tiles kept the old
+   dropIn from the generic .poptile rule. Same keyframes, same
+   .45s ease — presentation only; the archive's .animated end
+   sequences are untouched. --- */
+body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
+
+/* --- Item 4: while Timed Mode is live and counting, the Timer
+   button draws the eye with a flashing white border. Keyed on
+   .timed-live — the class syncTimedButton() already toggles
+   for exactly the armed + started + not-over state — so the
+   flash starts with the first guess, stops the moment the
+   game ends (the button reverts to .timed-locked), and never
+   shows on the unarmed or armed-but-not-started button. The
+   pulse is border-colour + box-shadow only: the button's box
+   never changes size, so the nav row cannot shift. The fill
+   layer inside keeps its own green/yellow/red painting. --- */
+#game #timedbutton.timed-live { animation: rdTimerBorderFlash 1.2s ease-in-out infinite; }
+@keyframes rdTimerBorderFlash {
+    0%, 100% { border-color: var(--mx-green); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+    50% { border-color: #ffffff; box-shadow: 0 0 0 2px rgba(255, 255, 255, .95), 0 0 14px 3px rgba(255, 255, 255, .35); }
 }

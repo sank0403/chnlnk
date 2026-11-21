@@ -6164,7 +6164,16 @@ function processInput(e) {
 		}
 	}
 
-	if (Number(localStorage.clguesscnt) === 6) {
+	// REDESIGN v61: the Mystery Letter is never armed on a game-ending
+	// guess. The two extra conditions are the win/lose blocks' own
+	// tests further down this same call (cllivescnt has already been
+	// incremented for a wrong guess, and clcorrect already counts
+	// this guess's reveals), so when either end state is already
+	// reached the whole block is skipped — no letter is chosen, no
+	// tile is marked, no popup, no answer overwrite — and the
+	// game-over sequence below proceeds exactly as on any other
+	// guess. When the game continues, the block runs untouched.
+	if (Number(localStorage.clguesscnt) === 6 && Number(localStorage.cllivescnt) < 5 && Number(localStorage.clcorrect) < word.length) {
 
 		// Filter out blanks BEFORE selecting
 		const availableLetters = getUnrevealedConsonants().filter(letter => {
