@@ -5724,3 +5724,316 @@ input:checked + .slider:before { transform: translateX(20px); }
     #hint-bulb, #hint-bulb svg { width: 19px; height: 19px; }
     #dynamite-btn { height: 27px; min-height: 27px; }
 }
+
+/* ============================================================
+   CHN LNK REDESIGN — v52 UNIFORM SQUARE TILES (2026-11-20)
+   Sankar's rule: every tile on the board is a perfect square
+   and ALL tiles share ONE size per board. The size is computed
+   by fitBoardTiles() in chnlnk.js from the longest word of the
+   day's puzzle and the board's live inner width, and set as an
+   inline --tile on #board:
+     tile = min(54.6px, (inner − (maxLen − 1) × gap) / maxLen)
+   Until JS runs (or if it cannot measure), --tile keeps the
+   v51 :root formula as the fallback. Everything here is scoped
+   to #game: archive.html has no #game wrapper and no
+   fitBoardTiles(), so the archive is untouched by this layer.
+   ============================================================ */
+
+/* Tiles never flex-shrink. The computed size fits the longest
+   row by construction, so a tile's width can never again be
+   squeezed away from its height (the v51 7-letter-row defect). */
+#game #board .tile,
+#game #board .voweltile,
+#game #board .tilesmall,
+#game #board .voweltilesmall { flex: 0 0 auto; }
+
+/* .tilesmall / .voweltilesmall (the game's long-word classes)
+   no longer carry a size of their own: same square and same
+   font scale as every other tile on the board. The classes
+   themselves are kept (the JS still adds them); their other
+   styling (7px radius, the vowel lock cue) is unchanged. */
+#game #board .tilesmall,
+#game #board .voweltilesmall {
+    width: var(--tile);
+    height: var(--tile);
+    font-size: calc(var(--tile) * .5);
+}
+
+#game #board .tilesmall.starting,
+#game #board .voweltilesmall.starting { font-size: calc(var(--tile) * .46); }
+
+/* ============================================================
+   v52 FOLLOW-UPS (2026-11-20) — Sankar's live-test fixes
+   ============================================================ */
+
+/* --- Lives: five FIXED slots. The hidden ♥/★ glyph string is a
+   flex item inside #lives; the letter-spacing it inherits from
+   the original/v50 layers (4–5px per glyph) gave that invisible
+   item a real width (~20px) sitting BETWEEN the green strip
+   (::before) and the lost strip (::after) — so a lost heart
+   rendered ~20px to the RIGHT of the slot its green heart had
+   occupied. Zeroing the spacing makes the item 0-wide: the two
+   strips meet exactly, the group is a constant 160px, and a lost
+   life turns its own slot's heart dark-red in place. --- */
+#game #lives { letter-spacing: 0; }
+
+/* --- Connectors: WHITE chevrons (Sankar's override of the
+   mockup's green). Same 18×11 chevron, same strip. --- */
+#game #board .connector.vertical-glow::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='11' viewBox='0 0 18 11'%3E%3Cpath d='M2 2l7 7 7-7' fill='none' stroke='%23FFFFFF' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* --- Feedback strip: ALWAYS its fixed size. The strip starts
+   with the `hidden` attribute and updateAnswer() removes it when
+   a message posts — but the mid-game restore path posts nothing,
+   so on refresh the strip stayed display:none (v51 rule) and the
+   keyboard jumped up. The mockup's strip is always present:
+   force the box (the game's own message, or blank, shows as his
+   code intends). Scoped to #game; the archive keeps v51. --- */
+#game #answer[hidden] { display: flex !important; }
+
+/* --- Colour rule (Sankar): green = correct, red = wrong,
+   EVERYTHING else yellow. fb-info was the last grey: it now uses
+   the amber text colour and the same unified 0.65s pulse as the
+   other kinds (mxFbWarn keyframes). This is also what makes the
+   inactive-Safety-Net tap yellow + animated instead of grey and
+   static. --- */
+#game #answer.fb-info { color: var(--mx-amber) !important; }
+#game #answer.run-border.fb-info { animation: mxFbWarn .65s ease-out; }
+
+/* --- Nav buttons: plain GREY theme (Sankar's override of the
+   mockup's green). Same boxes, icons, labels and behaviour; the
+   fill becomes the theme's button grey, the border the theme's
+   panel edge, and the icons' hard-coded green stroke/fill is
+   recoloured to muted grey via CSS (presentation properties beat
+   the SVG attributes). --- */
+#game #stats .stats-item > * {
+    background: #2A2A30;
+    border-color: var(--mx-edge);
+}
+#game #stats .stats-item > *:hover {
+    background: #32323A;
+    border-color: var(--mx-edge);
+}
+#game #stats .stats-item svg path,
+#game #stats .stats-item svg circle,
+#game #stats .stats-item svg rect,
+#game #stats .stats-item svg line,
+#game #stats .stats-item svg polyline { stroke: var(--mx-muted); }
+#game #stats .stats-item svg [fill="#3DDC68"] { fill: var(--mx-muted); }
+
+/* --- Legend: the grid/keyboard's amber lock instead of the
+   dashed swatch, and a slightly larger font (9px → 10.5px at
+   ≤900px widths; 9.5px → 10.5px above). The row's height is held
+   at its v51 size so nothing below it moves. --- */
+#vowel-legend {
+    font-size: 10.5px;
+    height: 14px;
+    padding-top: 0;
+    padding-bottom: 0;
+    line-height: 1.2;
+}
+#vowel-legend .legend-icon {
+    width: auto;
+    height: auto;
+    border: none;
+    border-radius: 0;
+    background: none;
+    margin-right: 0;
+}
+#vowel-legend .legend-icon::after {
+    content: "🔒";
+    font-size: 10px;
+    line-height: 1;
+    color: var(--mx-amber);
+}
+
+/* --- Summary modal: PLAY PAST CHAINS matches its sibling
+   .buttonmode buttons. Its .buttonmodetext class carried a
+   literal black background/border — the last black box in the
+   modal. Fill, border, radius and typography now mirror the
+   v51-effective .buttonmode values; the link behaviour
+   (playArchive()) is untouched. --- */
+#summary #Archivebutton {
+    background: #2A2A30;
+    border: 1px solid var(--mx-edge);
+    color: var(--mx-ink);
+    border-radius: 5px;
+    font-size: 12px;
+    letter-spacing: .6px;
+}
+#summary #Archivebutton:hover { background: #32323A; }
+
+/* --- Calendar modal (Play Past Chains): day states in the main
+   the mockup's exact message green/red (Sankar: "make the green
+   and red messages consistent with the mock up — not what i had
+   originally") — won days #3DDC68, failed days #FF5A5A, dark text
+   on the bright fills — replacing the old #6AAA64 / pure #FF0000
+   (an earlier tile-family choice, #1F9D4D/#7A2020, was superseded).
+   Scoped to #pastmodal: the shared classes keep their old values
+   for the separate archive page (phase 2). The modal's other
+   leftovers (near-black day cells, #222 nav buttons, #888 day
+   names) are harmonized to the modal palette. --- */
+#pastmodal .correctarch {
+    background-color: #3DDC68 !important;
+    border-color: #3DDC68 !important;
+    color: #101216 !important;
+}
+#pastmodal .failedarch {
+    background-color: #FF5A5A !important;
+    border-color: #FF5A5A !important;
+    color: #101216 !important;
+}
+#pastmodal .day.clickable {
+    background: #2A2A30;
+    border-color: var(--mx-edge);
+}
+#pastmodal .day.clickable:hover { background: #32323A; }
+#pastmodal .day.disabled { background: rgba(255, 255, 255, .04); }
+#pastmodal .day-name { color: var(--mx-faint); }
+#pastmodal .nav-btn {
+    background: #2A2A30;
+    color: var(--mx-ink);
+}
+
+/* Lose reveal — SEQUENTIAL cascade (user: "when we lose a game the
+   reveal should have been in an animation sequentially"). His JS adds
+   .failed.animated to every missed tile in one synchronous pass, so
+   the base .animated flip (flip .5s, scaleY) ran on all rows at once.
+   Here the SAME flip is staggered per tile in row-major order — row
+   base delay --rb (rows 2-6: 0/.3/.6/.9/1.2s) plus a per-position
+   --pb in 60ms steps, mirroring the mockup's cascade — and each tile
+   holds its pre-loss face until the flip midpoint, where it swaps to
+   the failed face (#7A2020/#933232/#fff, v51 values). The win flip
+   (.correct.animated) and all lose logic are untouched. */
+#game #boardsecond { --rb: 0s; }
+#game #boardthird { --rb: .3s; }
+#game #boardforth { --rb: .6s; }
+#game #boardfifth { --rb: .9s; }
+#game #boardsixth { --rb: 1.2s; }
+#game #board .failed.animated {
+    --pb: 0s;
+    animation: flip .5s ease backwards, mxLoseSwap .5s linear backwards;
+    animation-delay: calc(var(--rb, 0s) + var(--pb, 0s));
+}
+#game #board .voweltile.failed.animated,
+#game #board .voweltilesmall.failed.animated {
+    animation: flip .5s ease backwards, mxLoseSwapVowel .5s linear backwards;
+    animation-delay: calc(var(--rb, 0s) + var(--pb, 0s));
+}
+#game #board .failed.animated:nth-child(2) { --pb: .06s; }
+#game #board .failed.animated:nth-child(3) { --pb: .12s; }
+#game #board .failed.animated:nth-child(4) { --pb: .18s; }
+#game #board .failed.animated:nth-child(5) { --pb: .24s; }
+#game #board .failed.animated:nth-child(6) { --pb: .3s; }
+#game #board .failed.animated:nth-child(7) { --pb: .36s; }
+#game #board .failed.animated:nth-child(8) { --pb: .42s; }
+#game #board .failed.animated:nth-child(9) { --pb: .48s; }
+#game #board .failed.animated:nth-child(10) { --pb: .54s; }
+#game #board .failed.animated:nth-child(11) { --pb: .6s; }
+@keyframes mxLoseSwap {
+    0%, 49% { background-color: #26262B; border-color: #3A3A41; color: transparent; }
+    50%, 100% { background-color: #7A2020; border-color: #933232; color: #fff; }
+}
+@keyframes mxLoseSwapVowel {
+    0%, 49% { background-color: rgba(245, 184, 61, .08); border-color: #F5B83D; color: transparent; }
+    50%, 100% { background-color: #7A2020; border-color: #933232; color: #fff; }
+}
+/* A missed vowel tile keeps its lock until its own flip midpoint. */
+#game #board .voweltile.failed.animated::after,
+#game #board .voweltilesmall.failed.animated::after {
+    content: "🔒";
+    animation: mxLoseLockHide .5s linear backwards;
+    animation-delay: calc(var(--rb, 0s) + var(--pb, 0s));
+}
+@keyframes mxLoseLockHide {
+    0%, 49% { opacity: .85; }
+    50%, 100% { opacity: 0; }
+}
+
+/* Mystery Letter tile (user fixes): the mystery letter is always a
+   consonant, so the tile takes the GREY consonant border and the
+   normal hidden-tile face (v51 had given it the amber vowel-style
+   border/tint). The ❓ plus a CONTINUOUS flash identify it: his own
+   flash keyframes run infinitely while the .mystery class is present,
+   and his removeQuestionFromTile() clears the classes on the next
+   guess — so the flashing stays evident until the next letter is hit,
+   exactly as long as the feature itself stays open. */
+#game #board .tile.mystery,
+#game #board .tilesmall.mystery {
+    background: #26262B;
+    /* finishing-pass correction: the border is now LITERALLY the normal
+       hidden consonant tile's border (2px solid #55555E, the base tile
+       rule) — the first v52 draft used 1px #3A3A41, a different grey. */
+    border: 2px solid #55555E;
+}
+#game #board .mystery {
+    animation: flash 1.4s ease-in-out infinite;
+}
+
+/* --- Timed Mode: the momentum bar shares the toggle's box. The
+   .timed-slot wrapper (created by slotTimedBar() in chnlnk.js) is a
+   one-cell grid holding both the bar's wrapper and the toggle row:
+   whichever is visible occupies the same place, and the block height
+   is the toggle's in both states, so nothing below moves when a
+   timed game starts. The slot takes the toggle row's own footprint
+   (centred column, same as the legend above it). --- */
+.timed-slot {
+    display: grid;
+    width: calc(100% - 20px);
+    max-width: 460px;
+    margin: 3px auto 0;
+}
+.timed-slot > * { grid-area: 1 / 1; }
+.timed-slot #toggle-row {
+    margin: 0;
+    width: 100%;
+    max-width: none;
+}
+.timed-slot .momentum-wrapper {
+    position: static;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.timed-slot #momentum-bar-container { width: 100%; }
+
+/* Legend at very small widths: 10.5px overflows 320px screens by
+   ~17px, so the row steps down a notch there only (360px and up
+   keep 10.5px). */
+@media (max-width: 340px) {
+    #vowel-legend { font-size: 9.6px; gap: 3px; }
+    #vowel-legend .legend-text { letter-spacing: -.02em; }
+}
+
+/* Keyboard entrance animation REMOVED (user, v52 finishing pass:
+   "Remove the keyboard animation at start of game — only animation
+   should be the wheel spinning at top and bottom word"). His JS adds
+   .keyboard-slide to every keyboard row; the base rule (line ~3375)
+   started the rows at opacity 0 / translateY(40px) and slid them up
+   (keyboardUp .6s ease-out, .6s delay). The rows are now simply
+   present and static from the first frame. The class and the base
+   rule stay in place — only the entrance animation is neutralized
+   here. No other animation is touched: the slot-wheel flicker
+   (slotSpin/slotLock), tile flips, the feedback pulse, the
+   hearts/stars flip, the mystery flash and confetti all remain.
+   Archive-safe: chnlnkarch.js/archive.html never use .keyboard-slide. */
+.keyboard-slide {
+    opacity: 1;
+    transform: none;
+    animation: none;
+}
+
+/* Timed slot height hold (finishing pass): while the momentum bar is
+   actually running (his JS sets #momentum-bar-container's inline
+   display to "block"), the .timed-slot keeps the toggle row's height
+   (39px as rendered) so the toggle->bar swap moves nothing below it
+   and the bar sits centred in the toggle's exact place. When the bar
+   is hidden (pre-game, non-timed games, game over) the slot sizes to
+   the toggle or collapses exactly as his game always has. */
+.timed-slot:has(#momentum-bar-container[style*="display: block"]) {
+    min-height: 39px;
+}

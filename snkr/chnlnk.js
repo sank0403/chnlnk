@@ -2214,13 +2214,16 @@ function updateAnswer(text) {
     void el.offsetWidth;
     el.classList.add("run-border");
     // REDESIGN: tag the strip with a feedback-kind class so CSS owns its colours + pulse.
-    // Message texts and timing are unchanged; classification is by keyword only.
+    // Three modes only (Sankar's rule): green = correct, red = wrong / life lost /
+    // game over, yellow = everything else (win gold is the yellow family).
+    // Texts per the final v52 rule: mockup wording for green/red cases and for the
+    // agreed yellow messages; the game's own original wording for all other messages.
     const fbText = text.replace(/<[^>]*>/g, " ").toLowerCase();
     let fbKind = "fb-info";
-    if (/great going|you won|perfect guess/.test(fbText)) fbKind = "fb-win";
-    else if (/only vowels left|vowels are disabled/.test(fbText)) fbKind = "fb-locked";
-    else if (/life lost|last life alert|game over|out of lives|time up/.test(fbText)) fbKind = "fb-wrong";
-    else if (/correct/.test(fbText)) fbKind = "fb-correct";
+    if (/great going|you won/.test(fbText)) fbKind = "fb-win";
+    else if (/isn't in the chain|out of lives|life lost|last life alert/.test(fbText)) fbKind = "fb-wrong";
+    else if (/^correct/.test(fbText)) fbKind = "fb-correct";
+    else if (/vowels are now unlocked|vowels stay locked/.test(fbText)) fbKind = "fb-locked";
     el.classList.remove("fb-correct", "fb-wrong", "fb-locked", "fb-win", "fb-info");
     el.classList.add(fbKind);
 }
@@ -2795,7 +2798,7 @@ document.getElementById("dynamite-btn").onclick = () => {
         let dyn = Number(localStorage.cldynamite || 0);
 
         if (dyn <= 0) {
-            shakeDynamiteButton();
+            shakeDynamiteButton(); // posts the empty-bank message (mockup text, see shakeDynamiteButton)
             return;
         }
 
@@ -3805,9 +3808,9 @@ var disabledkeyarr = [];
 if (localStorage.vowelactive != 1) {
     document.getElementById("answer").style.color = "lightgray";
     // document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND.";
-	if (localStorage.getItem("slotmachine") !=1){
-		updateAnswer("Vowels are disabled till all other letters are found!");
-	} 
+	// REDESIGN v52: the opening message is no longer posted here at load —
+	// it is posted when the slot-machine intro settles (see the wheel
+	// trigger in initialize()), so its pulse is not spent behind the wheel.
 }
 const openModalButtons = document.querySelectorAll('[data-modal-target]')
 const closeModalButtons = document.querySelectorAll('[data-close-button]')
@@ -4543,7 +4546,7 @@ function updateLivesDisplay() {
         colorx = "green";
         localStorage.clgamecnt = 6;
         document.getElementById("answer").style.color = "lightgray";
-        updateAnswer("Game Over! Out Of Lives.");
+        updateAnswer("Out of lives — game over.");
         localStorage.setItem(('gameovercl' + days), 1);
         localStorage.setItem(('gamestatcl' + days), 0);
         if (localStorage.getItem('gameovercl' + days) == "1") {
@@ -4700,6 +4703,66 @@ function revealSlotMachineRow(rowId, finalWord, delayStart = 0) {
 // END SLOT MACHINE FX
 // =========================
 
+// REDESIGN v52 (presentation only): uniform square tiles. Computes ONE tile
+// size for the whole board from the longest word in today's puzzle and the
+// board row's live inner width, and exposes it as the --tile custom property
+// on #board:  size = min(54.6, (inner - (maxLen - 1) x gap) / maxLen).
+// Every tile (including .tilesmall / .voweltilesmall) is sized from that var
+// in CSS, so all tiles on a board are identical squares and no row is ever
+// flex-squeezed into rectangles. Writes nothing but the CSS property; reads
+// only the word strings the builder already uses and layout metrics.
+// REDESIGN v52 (presentation only): the momentum bar must occupy the
+// Timed Mode toggle's exact place. The toggle row is relocated below
+// the keyboard at load (visual-order block in restoreGameState), while
+// the bar's wrapper sits in .top-stack up by the status card — so when
+// a timed game starts and the toggle hides, the bar appeared up there
+// instead. Wrap the toggle and the bar's wrapper in one .timed-slot
+// grid cell: whichever of the two is visible occupies the same box,
+// and the block's height never changes. All game code keeps reaching
+// both elements by id; only their DOM parent changes.
+function slotTimedBar() {
+    var toggle = document.getElementById("toggle-row");
+    var wrap = document.querySelector(".momentum-wrapper");
+    if (!toggle || !wrap || toggle.closest(".timed-slot")) return;
+    var slot = document.createElement("div");
+    slot.className = "timed-slot";
+    toggle.parentNode.insertBefore(slot, toggle);
+    slot.appendChild(wrap);
+    slot.appendChild(toggle);
+    pinTimedSlot();
+}
+
+// Pin the slot's height to the toggle's own height (measured while the
+// toggle is visible) so the block keeps that height when the toggle
+// hides and the bar shows. Called again from fitBoardTiles() because
+// at wrap time #game may still be hidden (loader), when the toggle
+// measures 0.
+function pinTimedSlot() {
+    var toggle = document.getElementById("toggle-row");
+    if (!toggle) return;
+    var slot = toggle.closest(".timed-slot");
+    if (!slot) return;
+    var th = toggle.offsetHeight;
+    if (th > 0) slot.style.height = th + "px";
+}
+
+function fitBoardTiles() {
+    var board = document.getElementById("board");
+    var row = document.getElementById("boardfirst");
+    if (!board || !row) { return; }
+    var maxLen = Math.max(wordone.length, wordtwo.length, wordthree.length, wordfour.length, wordfive.length, wordsix.length, wordlast.length);
+    var rowStyle = getComputedStyle(row);
+    var inner = row.clientWidth - (parseFloat(rowStyle.paddingLeft) || 0) - (parseFloat(rowStyle.paddingRight) || 0);
+    if (!(maxLen > 0) || !(inner > 0)) { return; }
+    var gap = parseFloat(rowStyle.columnGap) || 5;
+    var size = Math.min(54.6, (inner - (maxLen - 1) * gap) / maxLen);
+    size = Math.floor(size * 100) / 100;
+    board.style.setProperty("--tile", size + "px");
+    pinTimedSlot();
+}
+window.addEventListener("resize", fitBoardTiles);
+window.addEventListener("orientationchange", fitBoardTiles);
+
 window.onload = function() {
     initMonthlyStats();
 	onGameLoad();  // ← reset streak BEFORE drawing UI
@@ -4746,6 +4809,17 @@ window.onload = function() {
 			setTimeout(() => {
 				revealSlotMachineRow("boardfirst", wordone);
 				revealSlotMachineRow("boardlast", wordlast, 200);
+				// REDESIGN v52 (timing only): post the opening message when the
+				// wheel SETTLES, not at page load. In revealSlotMachineRow a
+				// letter locks at delayStart + 350 + index*200, so the last
+				// letter of the later row (boardlast, delayStart 200) settles
+				// at 200 + 350 + (len-1)*200; +60ms lets the final lock land.
+				const settleMs = Math.max(350 + (wordone.length - 1) * 200, 200 + 350 + (wordlast.length - 1) * 200) + 60;
+				setTimeout(() => {
+					if (localStorage.vowelactive != 1 && (!localStorage.clguesscnt || localStorage.clguesscnt == "0")) {
+						updateAnswer("Build the chain from top to bottom. Tap a consonant to begin — vowels stay locked until every consonant is found.");
+					}
+				}, settleMs);
 			}, 1000);
 
 			localStorage.setItem("slotmachine", 1);
@@ -5158,8 +5232,10 @@ function initialize() {
 	    kbAnchor.after(legendEl);
 	    legendEl.after(toggleEl);
 	}
+	slotTimedBar(); // REDESIGN v52 (presentation only): bar shares the toggle's box
 
 	showGame();
+	fitBoardTiles(); // REDESIGN v52 (presentation only): size the board's tiles now that #game is visible and measurable
     // Listen for Key Press
     document.addEventListener("keyup", (e) => {
         if ("KeyA" <= e.code && e.code <= "KeyZ") {
@@ -5331,7 +5407,7 @@ function initialize() {
             }
 
             document.getElementById("answer").style.color = "lightgray";
-            document.getElementById("answer").innerText = "Game Over! Out Of Lives.";
+            document.getElementById("answer").innerText = "Out of lives — game over.";
             document.getElementById("answer").classList.remove("fb-correct", "fb-wrong", "fb-locked", "fb-win", "fb-info"); // REDESIGN: feedback-kind class for CSS
             document.getElementById("answer").classList.add("fb-wrong"); // REDESIGN
         }
@@ -5535,12 +5611,14 @@ function processInput(e) {
     document.getElementById("lives").classList.remove("blink");
     document.getElementById("answer").innerText = "";
     var LetterFound = 0;
+    var mysteryHit = false; // REDESIGN v52: set when this guess hits the Mystery Letter — its reward message outranks the correct-guess message below
     if ("KeyA" <= e.code && e.code <= "KeyZ") {
         if (Number(localStorage.clguesscnt) === 7) {
             if (localStorage.clMysteryActive === "true") {
                 const MysteryLetter = localStorage.clMysteryLetter;
                 removeQuestionFromTile(MysteryLetter);
                 if (e.code[3] === MysteryLetter) {
+                    mysteryHit = true; // REDESIGN v52 (see declaration)
                     // Player hit the Mystery tile
                     // const lives = 5 - Number(localStorage.cllivescnt);
                     // if (lives < 5) {
@@ -5749,7 +5827,7 @@ function processInput(e) {
                 document.getElementById("KeyU").classList.add("key-tile-enabled");				
                 document.getElementById("answer").style.color = "lightgray";
                 // document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
-                updateAnswer("ONLY VOWELS LEFT!");
+                updateAnswer("That's every consonant — vowels are now unlocked!");
 				triggerVibration(); // single pulse
                 setTimeout(FinalClue, 1500);
                 // }, 1000);
@@ -5782,22 +5860,22 @@ function processInput(e) {
 				case 1:
 					localStorage.cllives = "♥♥♥♥";
 					// document.getElementById("answer").innerText = "FIRST LIFE LOST!"
-					updateAnswer("First Life Lost!");
+					updateAnswer(e.code[3] + " isn't in the chain — life lost. 4 lives left.");
 					break;
 				case 2:
 					localStorage.cllives = "♥♥♥";
 					// document.getElementById("answer").innerText = "SECOND LIFE LOST!"
-					updateAnswer("Second Life Lost!");
+					updateAnswer(e.code[3] + " isn't in the chain — life lost. 3 lives left.");
 					break;
 				case 3:
 					localStorage.cllives = "♥♥";
 					// document.getElementById("answer").innerText = "THIRD LIFE LOST!"
-					updateAnswer("Third Life Lost!");
+					updateAnswer(e.code[3] + " isn't in the chain — life lost. 2 lives left.");
 					break;
 				case 4:
 					localStorage.cllives = "♥";
 					// document.getElementById("answer").innerText = "FOURTH LIFE LOST - LAST LIFE ALERT!"
-					updateAnswer("FOURTH LIFE LOST - LAST LIFE ALERT!");
+					updateAnswer(e.code[3] + " isn't in the chain — life lost. 1 life left.");
 					setTimeout(FinalClue, 1500);
 
 					// Offer star-for-life trade when only 1 life remains
@@ -5835,6 +5913,20 @@ function processInput(e) {
 			updateHintProgress(0, false);							
 		}	
     }
+
+	if (LetterFound != 0 && !mysteryHit) {
+		// REDESIGN v52: the mockup's correct-guess message (his game showed none).
+		// The guess that completes the consonants keeps the unlock message posted
+		// above instead: it is a consonant guess landing exactly on the count.
+		// A game-winning guess is overwritten by the win message later in this
+		// same call, before anything paints.
+		var justUnlocked = (Number(localStorage.consocount) == solveword.length - Number(localStorage.vowelcount)) && "AEIOU".indexOf(e.code[3]) < 0;
+		if (!justUnlocked) {
+			var guessedLetter = e.code[3];
+			var letterCount = solveword.split(guessedLetter).length - 1;
+			updateAnswer("Correct — " + guessedLetter + " appears " + letterCount + (letterCount === 1 ? " time." : " times."));
+		}
+	}
 
 	if (Number(localStorage.clguesscnt) === 6) {
 
@@ -5926,7 +6018,7 @@ function processInput(e) {
         localStorage.clgamecnt = 6;
         document.getElementById("answer").style.color = "lightgray";
         // document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
-        updateAnswer("Game Over! Out Of Lives.");
+        updateAnswer("Out of lives — game over.");
         localStorage.setItem(('gameovercl' + days), 1);
         if (localStorage.getItem('gameovercl' + days) == "1") {
             document.querySelectorAll('span[id*="-"].disabled').forEach(tile => {
