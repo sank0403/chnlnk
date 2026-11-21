@@ -6285,3 +6285,22 @@ input:checked + .slider:before { transform: translateX(20px); }
    edge. Both margins live INSIDE the fit budget: tiles absorb
    the few pixels and the one-screen fit still holds. --- */
 #game { padding-top: clamp(12px, 1.8dvh, 20px); }
+
+/* ============================================================
+   CHN LNK REDESIGN — v55 (2026-11-21, from Sankar's v54 test)
+   ============================================================
+   1. Dead space below the legend goes to the tile area: the
+      connector strips inside the board panel absorb the
+      --spread custom property that fitBoardTiles() sets (the
+      leftover column height divided across the 6 strips, after
+      the tiles have grown to the width limit). The chevron
+      stays centred in its strip, so its air above and below
+      only grows from the v54 4px — clearance and the uniform
+      tile-to-tile rhythm are preserved (every strip grows by
+      the same --spread). With no leftover, --spread is 0 and
+      the geometry is exactly v54's.
+   2-4. Timer button: no CSS change needed — the countdown
+      number reuses .nav-label, the inert/locked states reuse
+      the v54 classes; the JS owns the label/fill housekeeping
+      (renderTimedButtonChrome in chnlnk.js). --- */
+#game #board .connector.vertical-glow { height: calc(var(--tile) * 0.2017 + 5px + var(--spread, 0px)); }

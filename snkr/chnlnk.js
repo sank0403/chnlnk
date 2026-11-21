@@ -4720,10 +4720,15 @@ function revealSlotMachineRow(rowId, finalWord, delayStart = 0) {
 //               coordinates) and shrink the tile until the whole
 //               column — header, nav, status, board, feedback strip,
 //               keyboard, legend — fits inside the viewport height
-//               with no scrolling. Each 1px of tile removes 7px of
-//               column (7 word rows), so this converges in a pass or
-//               two. Timed Mode may sit below the fold: the measure
-//               deliberately stops at the legend.
+//               with no scrolling. Timed Mode may sit below the fold:
+//               the measure deliberately stops at the legend.
+// REDESIGN v55: the shrink sensitivity is the true ~8.21px of column
+// per 1px of tile (7 rows + 6 connector strips), not 7 — the old
+// divisor over-shrank and stranded dead space under the legend. Any
+// height still left over (width-bound boards, e.g. 11-letter days)
+// is given back to the tile area: tiles grow toward the width limit,
+// then the rest is spread across the connector strips (--spread) so
+// the legend ends at the 12px bottom margin at every size.
 function fitBoardTiles() {
     var board = document.getElementById("board");
     var row = document.getElementById("boardfirst");
@@ -4735,24 +4740,58 @@ function fitBoardTiles() {
     var gap = parseFloat(rowStyle.columnGap) || 5;
     var vw = window.innerWidth || document.documentElement.clientWidth || 390;
     var cap = 54.6 * vw / 390;
-    var size = Math.min(cap, (inner - (maxLen - 1) * gap) / maxLen);
+    var widthFit = (inner - (maxLen - 1) * gap) / maxLen;
+    var size = Math.min(cap, widthFit);
     size = Math.floor(size * 100) / 100;
     board.style.setProperty("--tile", size + "px");
+    board.style.setProperty("--spread", "0px");
     var header = document.querySelector(".header-row");
     var legend = document.getElementById("vowel-legend");
     if (header && legend) {
-        for (var pass = 0; pass < 3; pass++) {
-            // REDESIGN v54: the fit budget now reserves a 12px safety
-            // margin below the legend (edge clipping on scaled/overscan
-            // displays) — tiles absorb it like any other overflow.
-            var over = (legend.getBoundingClientRect().bottom + window.scrollY) - (window.innerHeight - 12);
+        // REDESIGN v54: the fit budget reserves a 12px safety margin
+        // below the legend (edge clipping on scaled/overscan displays).
+        var target = window.innerHeight - 12;
+        var legendBottom = function() { return legend.getBoundingClientRect().bottom + window.scrollY; };
+        // REDESIGN v55: the column's true sensitivity to tile size is
+        // ~8.21px per 1px of tile (7 word rows + 6 connector strips at
+        // 0.2017 x tile). The v53/v54 shrink divided the overflow by 7,
+        // so it systematically over-shrank and left dead column below
+        // the legend (measured: 29px at 320x568, 19px at 360x740-6L).
+        var SENS = 8.21;
+        for (var pass = 0; pass < 4; pass++) {
+            var over = legendBottom() - target;
             if (!(over > 0)) { break; }
-            var next = size - over / 7 - 0.05;
+            var next = size - over / SENS - 0.02;
             if (next < 6) { next = 6; }
             if (next >= size) { break; }
             size = Math.floor(next * 100) / 100;
             board.style.setProperty("--tile", size + "px");
             if (next === 6) { break; }
+        }
+        // REDESIGN v55 (Sankar): the space the bottom Timed Mode row
+        // used to occupy is no longer dead — leftover height goes to
+        // the tile area. First grow the tiles toward the width limit;
+        // if the width limit binds first, spread what remains across
+        // the 6 connector strips inside the board panel (--spread in
+        // CSS) so the panel fills the column and the legend ends at
+        // the bottom margin. Tiles stay square and uniform; chevron
+        // clearance only grows (never below the v54 4px).
+        var slack = target - legendBottom();
+        for (var g = 0; g < 3 && slack > 2 && size < widthFit; g++) {
+            var add = Math.min(widthFit - size, slack / SENS);
+            if (!(add > 0.01)) { break; }
+            size = Math.floor((size + add) * 100) / 100;
+            board.style.setProperty("--tile", size + "px");
+            slack = target - legendBottom();
+        }
+        if (slack > 2) {
+            var spread = Math.floor((slack / 6) * 100) / 100;
+            board.style.setProperty("--spread", spread + "px");
+            var resid = target - legendBottom();
+            if (Math.abs(resid) > 0.5) {
+                spread = Math.floor(Math.max(0, spread + resid / 6) * 100) / 100;
+                board.style.setProperty("--spread", spread + "px");
+            }
         }
     }
 }
@@ -4762,7 +4801,7 @@ if (document.fonts && document.fonts.ready) { document.fonts.ready.then(function
 // =========================
 // REDESIGN v54: the nav TIMER button. Timed Mode moved from the bottom
 // toggle row into the middle of the nav (Help · Email · Timer · Support ·
-// Stats). Arming/disarming writes the SAME state his toggle wrote
+// Stats). Arming writes the SAME state his toggle wrote
 // (localStorage.clhardmode) and reloads exactly like his change handler
 // did, so initialize()/restoreMomentumTimer() and every downstream timed
 // behaviour (time-up life loss, timed bonuses, dynamite awards) run
@@ -4771,30 +4810,68 @@ if (document.fonts && document.fonts.ready) { document.fonts.ready.then(function
 // (paintTimedButton below), from the same percent his momentum bar used,
 // with his own stage thresholds (>40% green, >20% yellow, else red) in
 // the game's theme colours.
+// REDESIGN v55: while armed, the button's label is the live countdown
+// (his momentumTime, 60 -> 0, reset by his own rules) beside the clock
+// icon; once enabled the button takes no clicks at all (it mimics the
+// momentum bar — the v54 disable-offer popup path is removed); and at
+// game end the button reverts to the plain "Timer" label with the fill
+// cleared, grey and locked for the day.
 function timedGameFinished() {
     return localStorage.getItem('gameovercl' + days) == "1";
 }
 
+// REDESIGN v55: one place owns the button's label + fill housekeeping.
+//   finished (in-page gameOver, or today's gameovercl flag on restore)
+//       -> label back to "Timer", fill cleared, grey locked look
+//   armed, game running or not -> label is the live countdown: his
+//       momentumTime seconds, the same value updateMomentumBar paints
+//   otherwise -> plain "Timer" label
+function renderTimedButtonChrome(btn) {
+    var label = btn.querySelector(".nav-label");
+    var fill = btn.querySelector(".timed-fill");
+    if (gameOver || timedGameFinished()) {
+        if (label) label.textContent = "Timer";
+        if (fill) { fill.style.width = "0%"; fill.style.backgroundColor = "transparent"; }
+        return true;
+    }
+    if (label && localStorage.clhardmode == 1) {
+        label.textContent = String(Math.max(0, momentumTime));
+    }
+    return false;
+}
+
 // The button's state, from his existing state only:
 //   fresh day, not armed            -> normal nav button (tap opens the popup)
-//   armed, game not started         -> ON look; taps reopen the popup (disable offer)
+//   armed, game not started         -> ON look + countdown; taps do NOTHING
+//                                      (v55: it mimics the momentum bar,
+//                                      which takes no clicks — no disable offer)
 //   started, not armed              -> locked for the day (dimmed, dead)
 //   started, armed                  -> live timer display; taps do nothing
-//   today's game finished           -> locked for the day (final state)
+//   today's game finished           -> "Timer" label, fill cleared, locked
 function syncTimedButton() {
     var btn = document.getElementById("timedbutton");
     if (!btn) return;
     var armed = localStorage.clhardmode == 1;
     var started = localStorage.clgamestarted == 1;
-    var over = timedGameFinished();
+    var over = timedGameFinished() || gameOver;
     btn.classList.toggle("timed-armed", armed && !over);
     btn.classList.toggle("timed-live", armed && started && !over);
     btn.classList.toggle("timed-locked", over || (started && !armed));
+    renderTimedButtonChrome(btn);
 }
 
 function paintTimedButton(percent) {
     var btn = document.getElementById("timedbutton");
     if (!btn) return;
+    // REDESIGN v55: game end reverts the button — "Timer", no fill, no
+    // number, locked grey — instead of v54's frozen final fill. (His
+    // end paths call updateMomentumBar() after gameOver is set, with
+    // momentumTime reset to 60, so this guard is what they land on.)
+    if (renderTimedButtonChrome(btn)) {
+        btn.classList.add("timed-locked");
+        btn.classList.remove("timed-armed", "timed-live");
+        return;
+    }
     var fill = btn.querySelector(".timed-fill");
     if (fill) {
         var color;
@@ -4804,7 +4881,6 @@ function paintTimedButton(percent) {
         fill.style.width = percent + "%";
         fill.style.backgroundColor = color;
     }
-    if (gameOver) btn.classList.add("timed-locked"); // game over: freeze in the final state, locked for the day
 }
 
 function flashTimedButton() {
@@ -4817,9 +4893,9 @@ function flashTimedButton() {
 function openTimedPopup() {
     var popup = document.getElementById("timedmodal");
     if (!popup) return;
-    document.getElementById("timed-question").innerText = (localStorage.clhardmode == 1)
-        ? "Do you want to disable the timed mode?"
-        : "Do you want to enable the timed mode?";
+    // REDESIGN v55: the popup only ever asks to ENABLE. Once enabled
+    // there is no disable offer — the button takes no clicks at all.
+    document.getElementById("timed-question").innerText = "Do you want to enable the timed mode?";
     openModal(popup);
     pauseMomentumTimer(); // his modal rule: opening a modal pauses the momentum timer
     modalhide();
@@ -4851,28 +4927,24 @@ function shakeBoard() {
     if (btn) {
         btn.addEventListener("click", function() {
             if (btn.classList.contains("timed-locked")) return; // disabled for the day
-            if (localStorage.clgamestarted == 1) return;        // game started: live timer (armed) — taps can't change the mode
+            // REDESIGN v55 (Sankar): once timed mode is ENABLED the
+            // button mimics the momentum bar — it is a display, and a
+            // display takes no clicks. No popup, no disable, nothing.
+            if (localStorage.clhardmode == 1) return;
+            if (localStorage.clgamestarted == 1) return;        // game started unarmed — locked for the day
             openTimedPopup();
         });
     }
     var yes = document.getElementById("timed-yes");
     if (yes) {
         yes.addEventListener("click", function() {
-            if (localStorage.clhardmode == 1) {
-                // Disarm: his toggle's unchecked path (clhardmode = 0 + reload),
-                // plus the saved-timer cleanup his own hardmode-off paths run
-                // at game end (momentumStart/momentumRemaining removed).
-                localStorage.clhardmode = 0;
-                localStorage.removeItem("momentumStart");
-                localStorage.removeItem("momentumRemaining");
-            } else {
-                // Arm: his toggle's checked path (clhardmode = 1 + reload).
-                // clgamestarted is deliberately NOT set here (his toggle set
-                // it): processInput sets it on the first letter, and the
-                // button keys its started state off that, so it stays
-                // tappable — the disable offer — until the game truly starts.
-                localStorage.clhardmode = 1;
-            }
+            // Arm: his toggle's checked path (clhardmode = 1 + reload).
+            // (v55: this is the only Yes outcome — the popup is only
+            // reachable while unarmed, and there is no disarm path.)
+            // clgamestarted is deliberately NOT set here (his toggle set
+            // it): processInput sets it on the first letter, and the
+            // button keys its started state off that.
+            localStorage.clhardmode = 1;
             setTimeout(() => location.reload(), 150); // his handler's reload, same delay
         });
     }
