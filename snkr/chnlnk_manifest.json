@@ -1,0 +1,16 @@
+{
+  "short_name": "CHN LNK",
+  "name": "CHN LNK",
+  "icons": [
+    {
+      "src": "https://thechnlnk.com/icon.jpg",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": "https://thechnlnk.com/",
+  "background_color": "#000000",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "description": "The Daily Word Chain Game"
+}
