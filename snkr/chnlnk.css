@@ -3599,8 +3599,8 @@ div.scroll {
     --rd-lost: #9C3A2B;
     /* One fluid tile system: .tilesmall is the same system at a 0.76 scale.
        Flex shrink on board rows guarantees fit (see board rules below). */
-    --tile: clamp(40px, 14vw, 58px);
-    --tile-small: clamp(30px, 10.6vw, 44px);
+    --tile: max(18px, min(14vw, 7dvh));
+    --tile-small: max(14px, min(10.6vw, 5.3dvh));
     --tile-font: clamp(15px, 5vw, 24px);
     --tile-small-font: clamp(12px, 3.9vw, 19px);
     --key-h: 54px;
@@ -4646,8 +4646,8 @@ input:checked + .slider:before {
     --mx-red: #FF5A5A;
     --mx-key: #3A3A40;
     --mx-wrong: #232326;
-    --tile: clamp(40px, min(6.6dvh, 14vw), 60px);
-    --tile-small: clamp(20px, 7vw, 36px);
+    --tile: max(18px, min(14vw, 7dvh));
+    --tile-small: max(14px, min(10.6vw, 5.3dvh));
     --keyh: clamp(33px, 4.65dvh, 46px);
     --key-h: clamp(33px, 4.65dvh, 46px);
     --kgap: 4px;
@@ -5232,7 +5232,9 @@ h1.title-scale .title-link {
     position: absolute;
     bottom: 1px;
     right: 2px;
-    font-size: 8px;
+    /* REDESIGN v53: lock scales with the tile — 25% of --tile
+       (was a fixed 8px, barely visible). */
+    font-size: calc(var(--tile) * 0.25);
     line-height: 1;
     color: var(--mx-amber);
     font-weight: 900;
@@ -5428,7 +5430,9 @@ h1.title-scale .title-link {
     position: absolute;
     bottom: 2px;
     right: 4px;
-    font-size: 7.5px;
+    /* REDESIGN v53: lock scales with the key — 28% of --keyh
+       (was a fixed 7.5px, barely visible). */
+    font-size: calc(var(--keyh) * 0.28);
     line-height: 1;
     color: var(--mx-amber);
     font-weight: 900;
@@ -5689,7 +5693,7 @@ input:checked + .slider:before { transform: translateX(20px); }
    ============================================================ */
 @media (max-height: 760px) {
     :root {
-        --tile: clamp(36px, min(5.2dvh, 14vw), 47px);
+        --tile: max(16px, min(14vw, 6dvh));
         --keyh: clamp(31px, 4.4dvh, 39px);
         --key-h: clamp(31px, 4.4dvh, 39px);
         --kgap: 3px;
@@ -5952,16 +5956,23 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 /* Mystery Letter tile (user fixes): the mystery letter is always a
-   consonant, so the tile takes the GREY consonant border and the
-   normal hidden-tile face (v51 had given it the amber vowel-style
-   border/tint). The ❓ plus a CONTINUOUS flash identify it: his own
-   flash keyframes run infinitely while the .mystery class is present,
-   and his removeQuestionFromTile() clears the classes on the next
+   consonant, so the tile takes the GREY consonant border (v51 had
+   given it the amber vowel-style border/tint). The ❓ plus a
+   CONTINUOUS flash identify it: his own flash keyframes run
+   infinitely while the .mystery class is present, and his
+   removeQuestionFromTile() clears the classes on the next
    guess — so the flashing stays evident until the next letter is hit,
-   exactly as long as the feature itself stays open. */
+   exactly as long as the feature itself stays open.
+   v53: the FACE is his original game's WHITE — his own .mystery rule
+   (original chnlnk.css line 2156) is `background: white`, and the
+   redesign's dark face was wrong. White tile, grey border, ❓, and
+   his opacity flash (which pulses the whole tile against the dark
+   board, so it stays unmistakable on white). */
 #game #board .tile.mystery,
-#game #board .tilesmall.mystery {
-    background: #26262B;
+#game #board .tilesmall.mystery,
+#game #board .voweltile.mystery,
+#game #board .voweltilesmall.mystery {
+    background: white;
     /* finishing-pass correction: the border is now LITERALLY the normal
        hidden consonant tile's border (2px solid #55555E, the base tile
        rule) — the first v52 draft used 1px #3A3A41, a different grey. */
@@ -6037,3 +6048,104 @@ input:checked + .slider:before { transform: translateX(20px); }
 .timed-slot:has(#momentum-bar-container[style*="display: block"]) {
     min-height: 39px;
 }
+
+/* ============================================================
+   CHN LNK REDESIGN — v53 PROPORTIONAL SIZING + CHEVRON CLEARANCE
+   (2026-11-20, from Sankar's phone testing of v52)
+   ============================================================
+   Sizing lives in fitBoardTiles() (chnlnk.js): tile = min(cap,
+   widthFit, columnFit), all measured live — see the v53 section
+   of CHANGELOG.md. This layer covers the two geometry pieces CSS
+   owns: the connector strip and the row padding around it.
+
+   Sankar: "the chevron is still touching tiles above and below."
+   He was right — in v52 the 18×11 chevron sat in a 9px strip
+   (6px under the short-screen media layer) with 1–1.5px of row
+   padding, leaving +0.5px of clearance on tall screens and a
+   −1.5px OVERLAP on short ones. The strip is now 16px at EVERY
+   size (the short-screen squeeze layer no longer shrinks it) and
+   the rows' vertical padding is pinned at 1.5px, so the centred
+   chevron clears the tile above and the tile below by
+   1.5 + (16 − 11) / 2 = 4px on both sides, everywhere. The
+   tile-to-tile rhythm stays uniform — every one of the 6 gaps
+   measures the same 1.5 + 16 + 1.5 = 19px from tile face to tile
+   face — and the chevron itself is unchanged (white, 18×11,
+   same SVG). The
+   taller strips are absorbed by fitBoardTiles()' column fit,
+   which shrinks tiles on short screens so header → legend still
+   fits the viewport with no scrolling. Scoped to #game: the
+   archive keeps its v51 geometry. */
+#game #board .connector.vertical-glow {
+    height: 16px;
+}
+
+#game #board > div[id^="board"] {
+    padding-top: 1.5px;
+    padding-bottom: 1.5px;
+}
+
+/* --- v53: calendar months exactly one scroller wide — with the
+   matching updateMonthPosition() percentage shift in chnlnk.js, no
+   part of an adjacent month can peek in at any viewport. --- */
+#pastmodal #archiveboard .month { width: 100%; min-width: 100%; }
+
+/* --- v53: Stats footer — Play Past Chains becomes the Submit item's
+   identical twin. In the original both footer items read on the
+   modal background (Submit transparent, the button black-on-black);
+   the redesign's charcoal modal exposed the button's box, so it now
+   carries NO background or border of its own, with the shared rule's
+   typography restored (11px / .4px / radius 6). Footer gaps stay the
+   original 12px / 12px. --- */
+#summary #Archivebutton {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    border-radius: 6px;
+}
+#summary #Archivebutton:hover { background: transparent; }
+
+/* --- v53: nav icons in the theme green — the buttons themselves
+   keep the v52 grey theme (backgrounds, borders, white labels
+   unchanged). Refines the v52 grey-buttons rule above, which had
+   muted the icon strokes/fills along with everything else. --- */
+#game #stats .stats-item svg path,
+#game #stats .stats-item svg circle,
+#game #stats .stats-item svg rect,
+#game #stats .stats-item svg line,
+#game #stats .stats-item svg polyline { stroke: #3DDC68; }
+#game #stats .stats-item svg [fill="#3DDC68"] { fill: #3DDC68; }
+
+/* --- v53: key font scales with the viewport width — 15px (the v52
+   size) at 375px wide and up, shrinking proportionally below that,
+   so the keyboard stays inside the one-screen budget on narrow
+   phones. Key widths were already exact fractions of the row and
+   key height already dvh-clamped (--keyh). --- */
+.key-tile { font-size: clamp(12.5px, 4vw, 15px); }
+
+/* --- v53: header scales with viewport width. The fixed 23px
+   wordmark + 12.5px nowrap "Daily CHN LNK #316" label overflowed
+   the header row by ~25px at 320px wide (measured). All three
+   clamps reach their v52 values at ~377-390px wide, so the
+   approved sizes are unchanged; below that they shrink
+   proportionally (6.1vw / 6.9vw / 3.2vw). --- */
+#game .header-row .title-scale { font-size: clamp(20px, 6.1vw, 23px); }
+#game .header-row .logo-mark { width: clamp(22px, 6.9vw, 27px); height: clamp(22px, 6.9vw, 27px); }
+#game .header-row .waviy1 { font-size: clamp(10.5px, 3.2vw, 12.5px); }
+
+/* --- v53: feedback popup greens match the main page. The submit
+   button and the selected rating star had been overridden to the
+   darker tile green (--mx-green-tile #1F9D4D); both now use the
+   theme green #3DDC68, with the dark text colour the redesign
+   pairs with that green (--rd layer's #0B2E17). The thank-you
+   toast already computes to --rd-green #3DDC68. Nothing else in
+   the popup changes. --- */
+#feedbackPopup .fb-submit { background: #3DDC68; color: #0B2E17; }
+#feedbackPopup .fb-rating button.selected { background: #3DDC68; color: #0B2E17; }
+
+/* --- v53: tile corner radius scales with the tile — 16.5% of
+   --tile (the mockup's 9px on a 54.6px tile). The fixed 9px/7px
+   radii turned sub-20px tiles into circles on small screens. --- */
+#board .tile, #board .voweltile,
+#board .tilesmall, #board .voweltilesmall { border-radius: calc(var(--tile) * 0.165); }

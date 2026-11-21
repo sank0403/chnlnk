@@ -4250,10 +4250,12 @@ function updateMonthPosition() {
     const months = board.querySelectorAll(".month");
     if (!months.length) return;
 
-    const monthWidth = months[0].offsetWidth; // ⭐ actual width
-    const offset = currentMonthIndex * monthWidth;
-
-    board.style.transform = `translateX(-${offset}px)`;
+    // REDESIGN v53 (presentation only): shift by whole board widths —
+    // months are pinned to exactly 100% of the board, so a percentage
+    // transform lands each month exactly. The old pixel math used
+    // offsetWidth, whose integer rounding drifted ~0.4px per month and
+    // left a sliver of the neighbouring month visible.
+    board.style.transform = `translateX(-${currentMonthIndex * 100}%)`;
 }
 
 
@@ -4746,6 +4748,25 @@ function pinTimedSlot() {
     if (th > 0) slot.style.height = th + "px";
 }
 
+// REDESIGN v53 (presentation only): fully proportional tile sizing —
+// the v52 formula anchored the cap to one fixed 54.6px, so on other
+// phones the mockup's proportions broke (tiles dominated and the
+// playing column overflowed the screen). Now:
+//   tile = min( cap, widthFit, columnFit )
+//   cap       = 54.6px scaled by viewport width (54.6 × vw/390): the
+//               mockup's tile proportion (≈14% of width for a
+//               6-letter board) on any phone, never a fixed 54.6px.
+//   widthFit  = (board inner width − (maxLen − 1) × gap) / maxLen,
+//               measured live, as v52.
+//   columnFit = with that size applied, measure the live playing
+//               column (header top → legend bottom, in document
+//               coordinates) and shrink the tile until the whole
+//               column — header, nav, status, board, feedback strip,
+//               keyboard, legend — fits inside the viewport height
+//               with no scrolling. Each 1px of tile removes 7px of
+//               column (7 word rows), so this converges in a pass or
+//               two. Timed Mode may sit below the fold: the measure
+//               deliberately stops at the legend.
 function fitBoardTiles() {
     var board = document.getElementById("board");
     var row = document.getElementById("boardfirst");
@@ -4755,13 +4776,30 @@ function fitBoardTiles() {
     var inner = row.clientWidth - (parseFloat(rowStyle.paddingLeft) || 0) - (parseFloat(rowStyle.paddingRight) || 0);
     if (!(maxLen > 0) || !(inner > 0)) { return; }
     var gap = parseFloat(rowStyle.columnGap) || 5;
-    var size = Math.min(54.6, (inner - (maxLen - 1) * gap) / maxLen);
+    var vw = window.innerWidth || document.documentElement.clientWidth || 390;
+    var cap = 54.6 * vw / 390;
+    var size = Math.min(cap, (inner - (maxLen - 1) * gap) / maxLen);
     size = Math.floor(size * 100) / 100;
     board.style.setProperty("--tile", size + "px");
+    var header = document.querySelector(".header-row");
+    var legend = document.getElementById("vowel-legend");
+    if (header && legend) {
+        for (var pass = 0; pass < 3; pass++) {
+            var over = (legend.getBoundingClientRect().bottom + window.scrollY) - window.innerHeight;
+            if (!(over > 0)) { break; }
+            var next = size - over / 7 - 0.05;
+            if (next < 6) { next = 6; }
+            if (next >= size) { break; }
+            size = Math.floor(next * 100) / 100;
+            board.style.setProperty("--tile", size + "px");
+            if (next === 6) { break; }
+        }
+    }
     pinTimedSlot();
 }
 window.addEventListener("resize", fitBoardTiles);
 window.addEventListener("orientationchange", fitBoardTiles);
+if (document.fonts && document.fonts.ready) { document.fonts.ready.then(function() { fitBoardTiles(); }); }
 
 window.onload = function() {
     initMonthlyStats();
@@ -5590,6 +5628,15 @@ function initialize() {
                     currTile.classList.add("correct");
                 }
             }
+        }
+        // REDESIGN v53 (Sankar's wording; presentation only — restore logic
+        // untouched): an IN-PROGRESS restore (guesses made, game not over;
+        // finished games take the game-over branch above, fresh loads have
+        // clguesscnt 0 and keep the intro flow) posts this to the strip.
+        // updateAnswer's classifier puts it in the yellow fb-info family
+        // with the unified pulse.
+        if (Number(localStorage.clguesscnt) > 0) {
+            updateAnswer("Right where you left off — keep building the chain.");
         }
     }
 
