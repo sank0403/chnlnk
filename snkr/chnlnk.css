@@ -4617,3 +4617,1110 @@ input:checked + .slider:before {
         font-size: 10.5px;
     }
 }
+
+/* ============================================================
+   CHN LNK REDESIGN — v51 EXACT-MATCH PASS (2026-11-20)
+   Written directly from the approved mockup's stylesheet
+   (ts-spaces/chn-lnk-redesign-mockup/index.html). Every value
+   below is the mockup's own: palette, Archivo type, sizes,
+   gaps, radii. Mockup selectors are translated to the real
+   game's DOM (#game column, #stats nav, #top-resources status,
+   #board rows, #answer strip, .keyboard-row/.key-tile,
+   #vowel-legend, #toggle-row). Desktop values are the base;
+   the mockup's own max-width:900px values follow, then its
+   max-height:760px squeeze. Rules the mockup has no counterpart
+   for keep the v50 layer, re-harmonized via the --rd-* remap.
+   ============================================================ */
+
+:root {
+    /* Mockup design tokens */
+    --mx-bg: #121214;
+    --mx-card: #1E1E22;
+    --mx-edge: #2C2C31;
+    --mx-ink: #FFFFFF;
+    --mx-muted: #B9B9C0;
+    --mx-faint: #8A8A93;
+    --mx-green: #3DDC68;
+    --mx-green-tile: #1F9D4D;
+    --mx-amber: #F5B83D;
+    --mx-red: #FF5A5A;
+    --mx-key: #3A3A40;
+    --mx-wrong: #232326;
+    --tile: clamp(40px, min(6.6dvh, 14vw), 60px);
+    --tile-small: clamp(20px, 7vw, 36px);
+    --keyh: clamp(33px, 4.65dvh, 46px);
+    --key-h: clamp(33px, 4.65dvh, 46px);
+    --kgap: 4px;
+    /* Harmonize the v50 layer (modals, popups, summary) to the
+       mockup palette — same variables, mockup values. */
+    --rd-panel: #1E1E22;
+    --rd-panel2: #2A2A30;
+    --rd-chip: #2A2A30;
+    --rd-line: #2C2C31;
+    --rd-text: #FFFFFF;
+    --rd-muted: #B9B9C0;
+    --rd-red: #FF5A5A;
+    --rd-green-deep: #1F9D4D;
+}
+
+body {
+    background: var(--mx-bg);
+    color: var(--mx-ink);
+    font-family: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+button, input, textarea, select { font-family: inherit; }
+
+/* ---------- Page column (mockup .page > .game-col) ---------- */
+#game {
+    max-width: 460px; /* mockup desktop: the game column is a 460px grid track, children full-bleed */
+    margin: 0 auto;
+    padding: 10px 0 0; /* bottom 0: the keyboard rows live outside #game, so bottom padding would push them off the mockup rhythm */
+    position: relative;
+}
+
+#game > br { display: none; }
+
+/* ---------- Header (mockup .topbar / .logo / .daily-header) ---------- */
+.header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 11px;
+    padding: 4px 2px 7px;
+    border-bottom: 1px solid var(--mx-edge);
+}
+
+.header-row .logo-mark {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    margin-right: -1px;
+}
+
+h1.title-scale {
+    font-family: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    line-height: 1.1;
+    margin: 0;
+    margin-right: auto;
+    text-align: left;
+    color: var(--mx-ink);
+    white-space: nowrap;
+}
+
+h1.title-scale strong { font-weight: inherit; }
+
+h1.title-scale .title-link {
+    font-weight: 900;
+    margin-left: .26em; /* mockup: logo flex gap (8px) + LINK's own .15em margin ≈ 11.5px between CHAIN and LINK */
+}
+
+.waviy1 {
+    font-size: 13px;
+    color: var(--mx-faint);
+    font-weight: 600;
+    white-space: nowrap;
+    text-align: right;
+    line-height: 1.2;
+    padding: 0;
+}
+
+.waviy1 strong {
+    color: var(--mx-muted);
+    font-weight: 800;
+}
+
+/* The legacy .waviy1 span rules styled the old animated letter
+   spans (Alfa Slab One, 10px); the only span left inside .waviy1
+   is #daycount, which must inherit the label's Archivo styling
+   exactly like the mockup's number inside <strong>. */
+.waviy1 span {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    text-transform: none;
+    letter-spacing: inherit;
+    position: static;
+    display: inline;
+    animation: none;
+}
+
+/* ---------- Nav row (mockup .actionbar / .navbtn) ---------- */
+#stats {
+    position: static;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 5px 0 1px;
+    top: auto;
+    left: auto;
+    right: auto;
+    letter-spacing: 0;
+}
+
+#stats #stats-item {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    align-items: stretch;
+    justify-content: space-between;
+}
+
+#stats .stats-item { display: contents; }
+
+#stats .stats-item > * {
+    flex: 1 1 0;
+    min-width: 0;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 44px;
+    padding: 9px 7px;
+    background: rgba(61, 220, 104, .13);
+    border: 1px solid rgba(61, 220, 104, .55);
+    border-radius: 10px;
+    color: var(--mx-ink);
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: .01em;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+#stats .stats-item > *:hover {
+    background: rgba(61, 220, 104, .22);
+    border-color: var(--mx-green);
+}
+
+#stats .stats-item > *:active { transform: scale(.97); }
+
+#stats .stats-item svg {
+    flex: 0 0 auto;
+    display: block;
+    width: 18px;
+    height: 18px;
+}
+
+.nav-label {
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-transform: none;
+    line-height: 1;
+}
+
+/* ---------- Status card (mockup .statusbar) ---------- */
+#top-resources {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex-wrap: nowrap;
+    background: var(--mx-card);
+    border: 1px solid var(--mx-edge);
+    border-radius: 12px;
+    padding: 0;
+    margin: 3px 0 0;
+    font-size: 12.5px;
+    overflow: hidden;
+    width: 100%;
+}
+
+/* ROW 1 — Lives (mockup .lives-row) */
+.status-row-lives {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 12px 6px;
+    background: linear-gradient(180deg, rgba(61, 220, 104, .09), rgba(61, 220, 104, .02));
+    border-bottom: 1px solid var(--mx-edge);
+    width: 100%;
+}
+
+.status-row-lives:has(#lives.lives-stars) {
+    background: linear-gradient(180deg, rgba(245, 184, 61, .14), rgba(245, 184, 61, .03));
+}
+
+#lives-label {
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: .09em;
+    color: var(--mx-ink);
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.status-row-lives:has(#lives.lives-stars) #lives-label { color: var(--mx-amber); }
+
+/* Lives (mockup .lives / .life): each life is an SVG heart —
+   the mockup's exact path — and a won life is its gold SVG star.
+   The game renders lives as a ♥/★ glyph string; at any readable
+   size those text glyphs are far smaller than the mockup's 28px
+   hearts, so the string is hidden (font-size:0) and the row is
+   drawn with the mockup's SVG paths as repeating backgrounds.
+   ::before = remaining lives, ::after = lost slots (the mockup's
+   dark heart with red outline and ✕); widths come from the
+   JS-synced data-left count (see chnlnk.js REDESIGN v51 lines). */
+#lives {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: auto;
+    margin: 0;
+    font-size: 0;
+    line-height: 1;
+    color: transparent;
+    text-shadow: none;
+}
+
+#lives::before {
+    content: "";
+    display: none;
+    height: 28px;
+    flex: 0 0 auto;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' preserveAspectRatio='xMidYMid meet'%3E%3Cpath d='M12 21s-7.5-4.9-10-9.3C.3 8.6 2.2 4.5 6.1 4.5c2.2 0 3.7 1.2 4.6 2.7.4.7 1 .7 1.4 0 .9-1.5 2.4-2.7 4.6-2.7 3.9 0 5.8 4.1 4.1 7.2C19.5 16.1 12 21 12 21z' fill='%233DDC68'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 35px 28px;
+    background-position: left center;
+    filter: drop-shadow(0 0 6px rgba(61, 220, 104, .45));
+}
+
+#lives[data-left="1"]::before { display: block; width: 35px; }
+#lives[data-left="2"]::before { display: block; width: 70px; }
+#lives[data-left="3"]::before { display: block; width: 105px; }
+#lives[data-left="4"]::before { display: block; width: 140px; }
+#lives[data-left="5"]::before { display: block; width: 175px; }
+
+/* Won: remaining lives are the mockup's gold stars */
+#lives.lives-stars::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' preserveAspectRatio='xMidYMid meet'%3E%3Cpath d='M12 2.4l3 6.1 6.7 1-4.9 4.7 1.2 6.7L12 17.7l-6 3.2 1.2-6.7L2.3 9.5l6.7-1L12 2.4z' fill='%23F5B83D' stroke='%23FFD97A' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
+    filter: drop-shadow(0 0 7px rgba(245, 184, 61, .65));
+}
+
+#lives::after {
+    content: "";
+    display: none;
+    height: 28px;
+    flex: 0 0 auto;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' preserveAspectRatio='xMidYMid meet'%3E%3Cpath d='M12 21s-7.5-4.9-10-9.3C.3 8.6 2.2 4.5 6.1 4.5c2.2 0 3.7 1.2 4.6 2.7.4.7 1 .7 1.4 0 .9-1.5 2.4-2.7 4.6-2.7 3.9 0 5.8 4.1 4.1 7.2C19.5 16.1 12 21 12 21z' fill='%232A1517' stroke='%23FF5A5A' stroke-width='1.8'/%3E%3Cpath d='M8.2 9.4l7.6 7.6M15.8 9.4l-7.6 7.6' stroke='%23FF5A5A' stroke-width='2.1' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 35px 28px;
+    background-position: left center;
+}
+
+#lives[data-left="4"]::after { display: block; width: 35px; }
+#lives[data-left="3"]::after { display: block; width: 70px; }
+#lives[data-left="2"]::after { display: block; width: 105px; }
+#lives[data-left="1"]::after { display: block; width: 140px; }
+#lives[data-left="0"]::after { display: block; width: 175px; }
+
+/* All lives lost: the stored string is five glyphs again and the
+   game adds .lives-depleted — show five lost hearts instead. */
+#lives.lives-depleted::before { display: none; }
+#lives.lives-depleted::after { display: block; width: 175px; }
+
+#lives.lives-stars {
+    color: transparent;
+    text-shadow: none;
+}
+
+#lives.blink { animation: none; }
+
+#lives-count {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: var(--mx-ink);
+}
+
+#lives-count small {
+    font-size: 11px;
+    color: var(--mx-faint);
+    font-weight: 700;
+}
+
+#lives-count.low { color: var(--mx-red); }
+.status-row-lives:has(#lives.lives-stars) #lives-count { color: var(--mx-amber); }
+
+/* ROW 2 — Safety Net + Dynamites (mockup .tools-row) */
+.status-row-tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+    padding: 5px 10px 6px;
+    min-height: 44px;
+    width: 100%;
+}
+
+.tool-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+    min-height: 36px; /* mockup: the Safety Net wrap is a button (min-height 36px), which sets the row's height */
+}
+
+.tool-label {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--mx-muted);
+    white-space: nowrap;
+    line-height: 1;
+}
+
+/* Dynamites: mockup order is label first, then the pill */
+.status-row-tools .tool-item:last-child .tool-label { order: -1; }
+
+/* Safety Net ring badge (mockup .net-ring): the game paints the
+   progress arc onto #hint-circle inline (conic-gradient) — kept;
+   the badge geometry, border and inner disc are the mockup's. */
+#hint-progress {
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#hint-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid #8A8A96;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08), 0 1px 4px rgba(0, 0, 0, .45);
+}
+
+#hint-circle::before {
+    content: "";
+    position: absolute;
+    inset: 3.5px;
+    border-radius: 50%;
+    background: #2A2A2E;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06);
+}
+
+#hint-bulb {
+    position: relative;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    display: block;
+    line-height: 0;
+    font-size: 0;
+    cursor: pointer;
+}
+
+#hint-bulb svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+    overflow: visible;
+}
+
+/* Dynamites pill (mockup .dyna-pill): JS writes only "xN"; the
+   bomb is the mockup's exact SVG, drawn by ::before. */
+#dynamite-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px 0 9px;
+    background: #34343B;
+    border: 1px solid #6E6E78;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: .01em;
+    line-height: 1;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+    margin: 0;
+    flex: 0 0 auto;
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+}
+
+#dynamite-btn::before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Ccircle cx='10.5' cy='14.5' r='6.2' fill='%230E0E11' stroke='%23C9C9D2' stroke-width='1.5'/%3E%3Ccircle cx='8.2' cy='12.2' r='1.7' fill='%23fff' opacity='.4'/%3E%3Crect x='13.2' y='6.8' width='3.2' height='2.6' rx='1' fill='%2355555E' stroke='%23C9C9D2' stroke-width='1'/%3E%3Cpath d='M14.8 6.8c.2-1.6 1.1-2.5 2.7-2.9' stroke='%23E8E8EE' stroke-width='1.4' stroke-linecap='round'/%3E%3Cpath d='M19.6.7l.7 1.7 1.7.7-1.7.7-.7 1.7-.7-1.7-1.7-.7 1.7-.7.7-1.7Z' fill='%23FFB020' stroke='%23FF8A3D' stroke-width='.7' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+#dynamite-btn:hover { background: #3E3E46; border-color: #7E7E88; }
+#dynamite-btn:active { transform: scale(.97); }
+
+/* ---------- Momentum bar (no mockup counterpart — harmonized) ---------- */
+.top-stack {
+    height: auto;
+    margin: 0;
+}
+
+#momentum-bar-container {
+    max-width: none;
+    height: 10px;
+    background-color: #2A2A2E;
+    border: 1px solid var(--mx-edge);
+    border-radius: 999px;
+    margin-top: 3px;
+}
+
+#momentum-bar { border-radius: 999px; }
+#momentum-counter { font-size: 10px; }
+
+/* ---------- Board (mockup .board / .wordrow / .tile) ---------- */
+#board {
+    width: 100%;
+    max-width: none;
+    margin: 3px 0 0;
+    background: var(--mx-card);
+    border: 1px solid var(--mx-edge);
+    border-radius: 14px;
+    padding: 10px;
+}
+
+#board > div[id^="board"] {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 2px 2px;
+    margin: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+/* Connectors (mockup .connector): the mockup's exact chevron
+   SVG, 18x11, centred in a 9px row. */
+#board .connector.vertical-glow {
+    position: relative;
+    width: 100%;
+    height: 9px;
+    margin: 0;
+}
+
+#board .connector.vertical-glow::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 18px;
+    height: 11px;
+    transform: translate(-50%, -50%);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='11' viewBox='0 0 18 11'%3E%3Cpath d='M2 2l7 7 7-7' fill='none' stroke='%233DDC68' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+    border: none;
+    border-radius: 0;
+}
+
+/* Tiles — flat, no sheen (the original ::after bottom-fill is
+   switched off inside the board; loader tiles keep theirs). */
+#board .tile::after,
+#board .tilesmall::after { content: none; }
+
+#board .tile,
+#board .voweltile {
+    width: var(--tile);
+    height: var(--tile);
+    aspect-ratio: auto;
+    flex: 0 1 auto;
+    min-width: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: 9px;
+    font-size: calc(var(--tile) * .5);
+    font-weight: 800;
+    border: 2px solid #55555E;
+    color: var(--mx-ink);
+    background: transparent;
+    text-transform: uppercase;
+}
+
+/* .tilesmall: no mockup counterpart (mockup demo has no 10-11
+   letter words) — same system, scaled so the longest row fits. */
+#board .tilesmall,
+#board .voweltilesmall {
+    width: var(--tile-small);
+    height: var(--tile-small);
+    aspect-ratio: auto;
+    flex: 0 1 auto;
+    min-width: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: 7px;
+    font-size: calc(var(--tile-small) * .5);
+    font-weight: 800;
+    border: 2px solid #55555E;
+    color: var(--mx-ink);
+    background: transparent;
+    text-transform: uppercase;
+}
+
+/* Given words (mockup .tile.given). The !important beats the
+   inline backgroundColor ("#555") the game's slot-machine intro
+   leaves on these tiles when it settles, so given rows hold the
+   mockup colour on first visits too. */
+#board .starting {
+    background-color: #2E4636 !important;
+    border-color: #3F6B4F;
+    color: #DFF5E4;
+    font-size: calc(var(--tile) * .46);
+}
+
+#board .tilesmall.starting,
+#board .voweltilesmall.starting { font-size: calc(var(--tile-small) * .46); }
+
+/* Found letters (mockup .tile.found) */
+#board .correct {
+    background: var(--mx-green-tile);
+    border-color: var(--mx-green-tile);
+    color: #fff;
+}
+
+/* Lose reveal (mockup .tile.revealed) */
+#board .failed {
+    background: #7A2020;
+    border-color: #933232;
+    color: #fff;
+}
+
+/* Hidden vowel tiles (mockup .tile.vowel): dashed amber border
+   and the lock cue. The game marks them .voweltile.disabled and
+   removes .disabled at unlock — the two states map 1:1. */
+#board .voweltile,
+#board .voweltilesmall {
+    border-color: var(--mx-amber);
+    color: var(--mx-amber);
+    opacity: 1;
+}
+
+#board .voweltile.disabled,
+#board .voweltilesmall.disabled { border-style: dashed; }
+
+#board .voweltile:not(.disabled),
+#board .voweltilesmall:not(.disabled) { border-style: solid; }
+
+#board .voweltile::after,
+#board .voweltilesmall::after {
+    content: "🔒";
+    position: absolute;
+    bottom: 1px;
+    right: 2px;
+    font-size: 8px;
+    line-height: 1;
+    color: var(--mx-amber);
+    font-weight: 900;
+    background: none;
+    width: auto;
+    height: auto;
+    left: auto;
+    top: auto;
+}
+
+#board .voweltile:not(.disabled)::after,
+#board .voweltilesmall:not(.disabled)::after,
+#board .voweltile.correct::after,
+#board .voweltilesmall.correct::after,
+#board .voweltile.failed::after,
+#board .voweltilesmall.failed::after { content: none; }
+
+/* Found/failed vowel tiles land on the found/revealed colours */
+#board .voweltile.correct,
+#board .voweltilesmall.correct {
+    background: var(--mx-green-tile);
+    border-color: var(--mx-green-tile);
+    border-style: solid;
+    color: #fff;
+}
+
+#board .voweltile.failed,
+#board .voweltilesmall.failed {
+    background: #7A2020;
+    border-color: #933232;
+    border-style: solid;
+    color: #fff;
+}
+
+/* Mystery-letter tile (no mockup counterpart — harmonized) */
+#board .mystery {
+    background: rgba(245, 184, 61, .16);
+    border-color: var(--mx-amber);
+}
+
+/* ---------- Feedback strip (mockup .feedback) ---------- */
+#answer[hidden] { display: none !important; }
+
+#answer {
+    width: 100%;
+    max-width: none;
+    height: 61px;
+    min-height: 61px;
+    margin: 3px 0 0;
+    padding: 4px 10px;
+    background: #17171A;
+    border: none;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--mx-muted);
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+#answer .border-seg { display: none; }
+
+/* The game's own pop animation scales the strip; the mockup's
+   strip never scales — the unified pulse below replaces it. */
+#answer.popanswer { animation: none; }
+
+/* Kind colours (the JS classifier's fb-* classes map to the
+   mockup's feedback kinds). !important beats the game's inline
+   style.color writes, exactly as in v50. */
+#answer.fb-correct { color: var(--mx-green) !important; }
+#answer.fb-wrong { color: var(--mx-red) !important; }
+#answer.fb-locked { color: var(--mx-amber) !important; font-weight: 700; }
+#answer.fb-win { color: var(--mx-amber) !important; font-weight: 700; }
+#answer.fb-info { color: var(--mx-muted) !important; }
+
+/* Unified 0.65s soft pulse — the mockup's keyframes verbatim. */
+#answer.run-border.fb-correct { animation: mxFbGood .65s ease-out; }
+#answer.run-border.fb-wrong { animation: mxFbBad .65s ease-out; }
+#answer.run-border.fb-locked { animation: mxFbWarn .65s ease-out; }
+#answer.run-border.fb-win { animation: mxFbWin .65s ease-out; }
+#answer.run-border.fb-info { animation: mxFbNeutral .55s ease-out; }
+
+@keyframes mxFbGood {
+    0% { background: #17171A; color: var(--mx-green); box-shadow: 0 0 0 0 rgba(61, 220, 104, 0), inset 0 0 0 1px rgba(61, 220, 104, 0); }
+    40% { background: #1E4D2E; color: #E9FFF0; box-shadow: 0 0 12px 2px rgba(61, 220, 104, .32), inset 0 0 0 1px rgba(61, 220, 104, .55); }
+    100% { background: #17171A; color: var(--mx-green); box-shadow: 0 0 0 0 rgba(61, 220, 104, 0), inset 0 0 0 1px rgba(61, 220, 104, 0); }
+}
+
+@keyframes mxFbBad {
+    0% { background: #17171A; color: var(--mx-red); box-shadow: 0 0 0 0 rgba(255, 90, 90, 0), inset 0 0 0 1px rgba(255, 90, 90, 0); }
+    40% { background: #4D2323; color: #FFEDED; box-shadow: 0 0 12px 2px rgba(255, 90, 90, .32), inset 0 0 0 1px rgba(255, 90, 90, .55); }
+    100% { background: #17171A; color: var(--mx-red); box-shadow: 0 0 0 0 rgba(255, 90, 90, 0), inset 0 0 0 1px rgba(255, 90, 90, 0); }
+}
+
+@keyframes mxFbWarn {
+    0% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 12px 2px rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
+    100% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+}
+
+@keyframes mxFbWin {
+    0% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 12px 2px rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
+    100% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+}
+
+@keyframes mxFbNeutral {
+    0% { background: #2A2A30; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
+    100% { background: #17171A; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0); }
+}
+
+/* ---------- Keyboard (mockup .keyboard / .key) ----------
+   Rows are body-level siblings of #game (the game appends them
+   to document.body), so they carry the column width themselves:
+   460px content + the page's side padding, centred. */
+.keyboard-row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: var(--kgap);
+    width: calc(100% - 20px);
+    max-width: 460px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.keyboard-row + .keyboard-row { margin-top: var(--kgap); }
+
+#game + .keyboard-row { margin-top: 3px; }
+
+.key-tile {
+    flex: 0 0 calc((100% - 9 * var(--kgap)) / 10);
+    width: calc((100% - 9 * var(--kgap)) / 10);
+    height: var(--keyh);
+    min-height: 36px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: var(--mx-key);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.key-tile:hover { background: var(--mx-key); box-shadow: none; }
+.key-tile:active { background: var(--mx-key); box-shadow: none; transform: scale(.95); }
+
+/* Unlocked vowels (mockup .key.vowelready) */
+.key-tile.key-tile-enabled {
+    box-shadow: inset 0 0 0 2px var(--mx-amber);
+}
+
+/* Wrong / eliminated / auto-struck (mockup .key.wrong):
+   struck through, full opacity, silent (pointer-events:none
+   comes from the game's own .disabled rule). */
+.key-tile.disabled {
+    background: var(--mx-wrong);
+    border: none;
+    color: #6E6E76;
+    opacity: 1;
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    box-shadow: none;
+}
+
+/* Locked vowels (mockup .key.locked) — after .disabled in
+   source at higher specificity, so a locked vowel never takes
+   the struck look; its lock cue sits in the corner. */
+.key-tile.key-tile-disabled {
+    background: #2A2620;
+    border: none;
+    color: #9A7B34;
+    opacity: 1;
+    text-decoration: none;
+    box-shadow: none;
+}
+
+.key-tile.key-tile-disabled::after {
+    content: "🔒";
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    font-size: 7.5px;
+    line-height: 1;
+    color: var(--mx-amber);
+    font-weight: 900;
+}
+
+/* Correct keys (mockup .key.correct) — last, so green wins over
+   struck / locked / ready-ring alike (REDESIGN P1 preserved). */
+.key-tile.key-correct {
+    background: var(--mx-green-tile);
+    border: none;
+    color: #fff;
+    opacity: 1;
+    text-decoration: none;
+    box-shadow: none;
+}
+
+.enter-key-tile {
+    height: var(--keyh);
+    min-height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: var(--mx-key);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    box-shadow: none;
+    margin: 0;
+}
+
+/* ---------- Legend (mockup .legend) ---------- */
+#vowel-legend {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    width: calc(100% - 20px);
+    max-width: 460px;
+    margin: 3px auto 0;
+    padding: 1px 2px;
+    font-size: 9.5px;
+    color: var(--mx-faint);
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: visible;
+}
+
+#vowel-legend .legend-icon {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    flex: 0 0 auto;
+    border: 2px dashed var(--mx-amber);
+    border-radius: 2px;
+    background: transparent;
+    vertical-align: -1px;
+    margin-right: -2px;
+}
+
+#vowel-legend .legend-label {
+    color: var(--mx-faint);
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+#vowel-legend .legend-text {
+    color: var(--mx-amber);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ---------- Timed Mode (mockup .timed / .switch) ---------- */
+#toggle-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 10px;
+    width: calc(100% - 20px);
+    max-width: 460px;
+    margin: 3px auto 22px;
+    padding: 4px 12px;
+    background: var(--mx-card);
+    border: 1px solid var(--mx-edge);
+    border-radius: 10px;
+    font-size: 12.5px;
+}
+
+.toggle-label {
+    order: 1;
+    font-weight: 800;
+    letter-spacing: .03em;
+    white-space: nowrap;
+    font-size: 12.5px;
+    color: var(--mx-ink);
+}
+
+.timed-caption {
+    order: 2;
+    flex: 1;
+    color: var(--mx-faint);
+    font-size: 11.5px;
+    line-height: 1.25;
+    text-align: left;
+}
+
+.toggle {
+    order: 3;
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 26px;
+    flex: 0 0 auto;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--mx-key);
+    border: none;
+    border-radius: 999px;
+    transition: background .2s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: left .2s, transform .2s;
+}
+
+input:checked + .slider { background-color: var(--mx-green-tile); }
+input:checked + .slider:before { transform: translateX(20px); }
+
+/* ---------- Modals & popups: mockup design language ---------- */
+.modal, .summary, .hintmodal, .addmodal, .timemodal, .pastmodal {
+    background-color: var(--mx-card);
+    border: 1px solid var(--mx-edge);
+    border-radius: 12px;
+}
+
+.modal-body, .addmodal-body, .timemodal-body, .pastmodal-body, .hintmodal-body {
+    color: var(--mx-muted);
+}
+
+.collapsible {
+    background-color: #2A2A30;
+    border: 1px solid var(--mx-edge);
+    border-radius: 8px;
+}
+
+.collapsible:hover { background-color: #32323A; }
+.collapsible.active { background-color: #32323A; }
+
+.close-button {
+    background: #2A2A30;
+    border: 1px solid var(--mx-edge);
+    border-radius: 8px;
+}
+
+.buttonmode {
+    background: #2A2A30;
+    border: 1px solid var(--mx-edge);
+    color: var(--mx-ink);
+}
+
+.buttonmode:hover { background: #32323A; }
+
+#coffeeFullWidthButton { background-color: var(--mx-green-tile); }
+
+.popup-box button, .fb-submit {
+    background: var(--mx-green-tile);
+    color: #fff;
+}
+
+.fb-rating button.selected {
+    background: var(--mx-green-tile);
+    color: #fff;
+}
+
+.thankyou-toast {
+    background: var(--mx-green-tile);
+    color: #fff;
+}
+
+/* ============================================================
+   Mockup mobile values — @media (max-width:900px)
+   ============================================================ */
+@media (max-width: 900px) {
+    #game { padding: 6px 10px 0; } /* mockup .game-col mobile padding */
+
+    .header-row { gap: 9px; }
+
+    .header-row .logo-mark { width: 27px; height: 27px; }
+
+    h1.title-scale { font-size: 23px; letter-spacing: .045em; }
+
+    .waviy1 { font-size: 12.5px; }
+
+    #stats { padding-top: 5px; }
+    #stats #stats-item { gap: 5px; }
+
+    #stats .stats-item > * {
+        min-height: 42px;
+        padding: 8px 5px;
+        font-size: 14px;
+        gap: 6px;
+        border-radius: 9px;
+    }
+
+    #stats .stats-item svg { width: 17px; height: 17px; }
+
+    .status-row-lives { padding: 6px 10px 5px; gap: 8px; }
+    #lives-label { font-size: 12px; }
+
+    #lives::before { height: 26px; background-size: 32px 26px; }
+    #lives[data-left="1"]::before { width: 32px; }
+    #lives[data-left="2"]::before { width: 64px; }
+    #lives[data-left="3"]::before { width: 96px; }
+    #lives[data-left="4"]::before { width: 128px; }
+    #lives[data-left="5"]::before { width: 160px; }
+    #lives::after { height: 26px; background-size: 32px 26px; }
+    #lives[data-left="4"]::after { width: 32px; }
+    #lives[data-left="3"]::after { width: 64px; }
+    #lives[data-left="2"]::after { width: 96px; }
+    #lives[data-left="1"]::after { width: 128px; }
+    #lives[data-left="0"]::after { width: 160px; }
+    #lives.lives-depleted::after { width: 160px; }
+
+    #lives-count { font-size: 18px; }
+
+    .status-row-tools { padding: 4px 8px 5px; gap: 6px; min-height: 42px; }
+    .tool-label { font-size: 11px; }
+
+    #hint-progress, #hint-circle { width: 34px; height: 34px; }
+    #hint-bulb, #hint-bulb svg { width: 22px; height: 22px; }
+
+    #dynamite-btn { height: 29px; padding: 0 11px 0 8px; font-size: 13.5px; }
+    #dynamite-btn::before { width: 18px; height: 18px; }
+
+    #board { padding: 8px 6px; border-radius: 13px; }
+    #board > div[id^="board"] { padding: 1.5px 0; gap: 4px; }
+
+    #vowel-legend { font-size: 9px; }
+    #vowel-legend .legend-text { letter-spacing: -.01em; }
+}
+
+/* ============================================================
+   Mockup short-screen squeeze — @media (max-height:760px)
+   ============================================================ */
+@media (max-height: 760px) {
+    :root {
+        --tile: clamp(36px, min(5.2dvh, 14vw), 47px);
+        --keyh: clamp(31px, 4.4dvh, 39px);
+        --key-h: clamp(31px, 4.4dvh, 39px);
+        --kgap: 3px;
+    }
+
+    #board { padding: 7px 8px; }
+    #board > div[id^="board"] { padding: 1px 2px; }
+    #board .connector.vertical-glow { height: 6px; }
+
+    #answer { height: 57px; min-height: 57px; font-size: 11.5px; }
+
+    .header-row { padding-bottom: 3px; }
+
+    .status-row-lives { padding: 5px 10px 4px; }
+
+    #lives::before { height: 24px; background-size: 30px 24px; }
+    #lives[data-left="1"]::before { width: 30px; }
+    #lives[data-left="2"]::before { width: 60px; }
+    #lives[data-left="3"]::before { width: 90px; }
+    #lives[data-left="4"]::before { width: 120px; }
+    #lives[data-left="5"]::before { width: 150px; }
+    #lives::after { height: 24px; background-size: 30px 24px; }
+    #lives[data-left="4"]::after { width: 30px; }
+    #lives[data-left="3"]::after { width: 60px; }
+    #lives[data-left="2"]::after { width: 90px; }
+    #lives[data-left="1"]::after { width: 120px; }
+    #lives[data-left="0"]::after { width: 150px; }
+    #lives.lives-depleted::after { width: 150px; }
+
+    .status-row-tools { padding: 3px 8px 4px; min-height: 38px; }
+    #hint-progress, #hint-circle { width: 30px; height: 30px; }
+    #hint-bulb, #hint-bulb svg { width: 19px; height: 19px; }
+    #dynamite-btn { height: 27px; min-height: 27px; }
+}

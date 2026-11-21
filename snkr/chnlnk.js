@@ -887,7 +887,7 @@ document.getElementById("fbSubmit").addEventListener("click", async () => {
         localStorage.lastFeedbackDate = new Date().toLocaleDateString('en-CA');
 		localStorage.cldynamite = Number(localStorage.cldynamite || 0) + 5;
 		const dyn = Number(localStorage.cldynamite || 0);
-		document.getElementById("dynamite-btn").innerText = "💣 x" + dyn;
+		document.getElementById("dynamite-btn").innerText = "x" + dyn;
         // ⭐ Show thank-you toast
         showThankYouToast();
     } catch (err) {
@@ -1712,7 +1712,7 @@ async function loaddynamites() {
 				if (serverDynamite1 > localDynamite1) {
 					localStorage.cldynamite = serverDynamite1;
 					const dyn1 = Number(localStorage.cldynamite || 0);
-					document.getElementById("dynamite-btn").innerText = "💣 x" + dyn1;					
+					document.getElementById("dynamite-btn").innerText = "x" + dyn1;					
 					// return;
 				}				
 			}
@@ -1801,7 +1801,7 @@ function showDynamitePopup(amountGained) {
     document.getElementById("closeDynamitePopup").onclick = () => {
         popup.remove();
         const dyn = Number(localStorage.cldynamite || 0);
-        document.getElementById("dynamite-btn").innerText = "💣 x" + dyn;
+        document.getElementById("dynamite-btn").innerText = "x" + dyn;
     };
 }
 
@@ -2628,7 +2628,9 @@ function applyLifeTrade() {
     // Update life display
     const livesLeft = 5 - Number(localStorage.cllivescnt);
     localStorage.cllives = "♥".repeat(livesLeft);
+    localStorage.cllives = (localStorage.cllives || "").replace(/⚪/g, "♥").replace(/⭐/g, "★"); // REDESIGN FIX: migrate legacy lives glyphs saved by the old game (⚪/⭐) to the new ♥/★ so hearts/stars render for returning players
     document.getElementById("lives").innerText = localStorage.cllives;
+    var _lv = document.getElementById("lives"); var _ln = ((_lv.innerText.match(/♥/g) || []).length) + ((_lv.innerText.match(/★/g) || []).length); if (Number(localStorage.cllivescnt) == 5 && _lv.innerText.indexOf("★") < 0) { _ln = 0; } _lv.dataset.left = _ln; var _lc = document.getElementById("lives-count"); if (_lc) { var _st = _lv.innerText.indexOf("★") >= 0; _lc.innerHTML = _ln + "<small>" + (_st ? " ★" : " / 5") + "</small>"; _lc.classList.toggle("low", !_st && _ln <= 1); } // REDESIGN v51 (presentation only): mockup lives-count text + remaining count for CSS lost-heart slots
     if ((localStorage.cllives || "").includes("★")) { document.getElementById("lives-label").textContent = "STARS"; } // REDESIGN P2 (approved by Sankar): label syncs when a stored stars state renders
     document.getElementById("answer").innerText = "";
     // Animation
@@ -2783,7 +2785,7 @@ function showPerfectSolve() {
 
 function updateDynamiteUI() {
     const dyn = Number(localStorage.cldynamite || 0);
-    document.getElementById("dynamite-btn").innerText = "💣 x" + dyn;
+    document.getElementById("dynamite-btn").innerText = "x" + dyn;
 }
 updateDynamiteUI();
 
@@ -4468,7 +4470,9 @@ function updateLivesDisplay() {
             break;
     }
 
+    localStorage.cllives = (localStorage.cllives || "").replace(/⚪/g, "♥").replace(/⭐/g, "★"); // REDESIGN FIX: migrate legacy lives glyphs saved by the old game (⚪/⭐) to the new ♥/★ so hearts/stars render for returning players
     document.getElementById("lives").innerText = localStorage.cllives;
+    var _lv = document.getElementById("lives"); var _ln = ((_lv.innerText.match(/♥/g) || []).length) + ((_lv.innerText.match(/★/g) || []).length); if (Number(localStorage.cllivescnt) == 5 && _lv.innerText.indexOf("★") < 0) { _ln = 0; } _lv.dataset.left = _ln; var _lc = document.getElementById("lives-count"); if (_lc) { var _st = _lv.innerText.indexOf("★") >= 0; _lc.innerHTML = _ln + "<small>" + (_st ? " ★" : " / 5") + "</small>"; _lc.classList.toggle("low", !_st && _ln <= 1); } // REDESIGN v51 (presentation only): mockup lives-count text + remaining count for CSS lost-heart slots
     if ((localStorage.cllives || "").includes("★")) { document.getElementById("lives-label").textContent = "STARS"; } // REDESIGN P2 (approved by Sankar): label syncs when a stored stars state renders
     document.getElementById("lives").classList.toggle("lives-depleted", Number(localStorage.cllivescnt) == 5); // REDESIGN: lives glyph state class (CSS colours the all-lost hearts)
     document.getElementById("lives").classList.add("blink");
@@ -4904,7 +4908,9 @@ function initialize() {
     /* document.getElementById("WAButton").style.display = "none"; */
     // document.getElementById("ffhdr").style.display = "none";
     // document.getElementById("ffdtl").style.display = "none";
+    localStorage.cllives = (localStorage.cllives || "").replace(/⚪/g, "♥").replace(/⭐/g, "★"); // REDESIGN FIX: migrate legacy lives glyphs saved by the old game (⚪/⭐) to the new ♥/★ so hearts/stars render for returning players
     document.getElementById("lives").innerText = localStorage.cllives;
+    var _lv = document.getElementById("lives"); var _ln = ((_lv.innerText.match(/♥/g) || []).length) + ((_lv.innerText.match(/★/g) || []).length); if (Number(localStorage.cllivescnt) == 5 && _lv.innerText.indexOf("★") < 0) { _ln = 0; } _lv.dataset.left = _ln; var _lc = document.getElementById("lives-count"); if (_lc) { var _st = _lv.innerText.indexOf("★") >= 0; _lc.innerHTML = _ln + "<small>" + (_st ? " ★" : " / 5") + "</small>"; _lc.classList.toggle("low", !_st && _ln <= 1); } // REDESIGN v51 (presentation only): mockup lives-count text + remaining count for CSS lost-heart slots
     if ((localStorage.cllives || "").includes("★")) { document.getElementById("lives-label").textContent = "STARS"; } // REDESIGN P2 (approved by Sankar): label syncs when a stored stars state renders
     document.getElementById("lives").classList.toggle("lives-depleted", Number(localStorage.cllivescnt) == 5); // REDESIGN: lives glyph state class (CSS colours the all-lost hearts)
     // Create the game board
@@ -5270,7 +5276,9 @@ function initialize() {
                 for (i = 0; i < 5; i++) {
                     templives = templives.replace("♥", "★");
                 }
+                templives = templives.replace(/⚪/g, "★"); // REDESIGN FIX: convert any legacy ⚪ directly in case the stored string predates the redesign
                 document.getElementById("lives").innerText = templives;
+                var _lv = document.getElementById("lives"); var _ln = ((_lv.innerText.match(/♥/g) || []).length) + ((_lv.innerText.match(/★/g) || []).length); if (Number(localStorage.cllivescnt) == 5 && _lv.innerText.indexOf("★") < 0) { _ln = 0; } _lv.dataset.left = _ln; var _lc = document.getElementById("lives-count"); if (_lc) { var _st = _lv.innerText.indexOf("★") >= 0; _lc.innerHTML = _ln + "<small>" + (_st ? " ★" : " / 5") + "</small>"; _lc.classList.toggle("low", !_st && _ln <= 1); } // REDESIGN v51 (presentation only): mockup lives-count text + remaining count for CSS lost-heart slots
                 document.getElementById("lives").classList.add("lives-stars"); // REDESIGN: CSS colours the converted ★ glyphs gold
                 document.getElementById("lives-label").textContent = "STARS"; // REDESIGN P2 (approved by Sankar): label follows the stars conversion
                 if (Number(localStorage.clstarscnt) != 0) {
@@ -5811,7 +5819,9 @@ function processInput(e) {
 					break;
 			}
 
+			localStorage.cllives = (localStorage.cllives || "").replace(/⚪/g, "♥").replace(/⭐/g, "★"); // REDESIGN FIX: migrate legacy lives glyphs saved by the old game (⚪/⭐) to the new ♥/★ so hearts/stars render for returning players
 			document.getElementById("lives").innerText = localStorage.cllives;
+			var _lv = document.getElementById("lives"); var _ln = ((_lv.innerText.match(/♥/g) || []).length) + ((_lv.innerText.match(/★/g) || []).length); if (Number(localStorage.cllivescnt) == 5 && _lv.innerText.indexOf("★") < 0) { _ln = 0; } _lv.dataset.left = _ln; var _lc = document.getElementById("lives-count"); if (_lc) { var _st = _lv.innerText.indexOf("★") >= 0; _lc.innerHTML = _ln + "<small>" + (_st ? " ★" : " / 5") + "</small>"; _lc.classList.toggle("low", !_st && _ln <= 1); } // REDESIGN v51 (presentation only): mockup lives-count text + remaining count for CSS lost-heart slots
 			if ((localStorage.cllives || "").includes("★")) { document.getElementById("lives-label").textContent = "STARS"; } // REDESIGN P2 (approved by Sankar): label syncs when a stored stars state renders
 			document.getElementById("lives").classList.toggle("lives-depleted", Number(localStorage.cllivescnt) == 5); // REDESIGN: lives glyph state class (CSS colours the all-lost hearts)
 			document.getElementById("lives").classList.add("blink");
@@ -6090,7 +6100,9 @@ function processInput(e) {
         if (bonusApplied) {
             msg += "<br> (INCLUDING +1 TIMED MODE BONUS!)";
             localStorage.cllives = "♥".repeat(localStorage.clstarscnt);
+            localStorage.cllives = (localStorage.cllives || "").replace(/⚪/g, "♥").replace(/⭐/g, "★"); // REDESIGN FIX: migrate legacy lives glyphs saved by the old game (⚪/⭐) to the new ♥/★ so hearts/stars render for returning players
             document.getElementById("lives").innerText = localStorage.cllives;
+            var _lv = document.getElementById("lives"); var _ln = ((_lv.innerText.match(/♥/g) || []).length) + ((_lv.innerText.match(/★/g) || []).length); if (Number(localStorage.cllivescnt) == 5 && _lv.innerText.indexOf("★") < 0) { _ln = 0; } _lv.dataset.left = _ln; var _lc = document.getElementById("lives-count"); if (_lc) { var _st = _lv.innerText.indexOf("★") >= 0; _lc.innerHTML = _ln + "<small>" + (_st ? " ★" : " / 5") + "</small>"; _lc.classList.toggle("low", !_st && _ln <= 1); } // REDESIGN v51 (presentation only): mockup lives-count text + remaining count for CSS lost-heart slots
             if ((localStorage.cllives || "").includes("★")) { document.getElementById("lives-label").textContent = "STARS"; } // REDESIGN P2 (approved by Sankar): label syncs when a stored stars state renders
 
 
@@ -6107,7 +6119,9 @@ function processInput(e) {
         for (i = 0; i < 5; i++) {
             templives = templives.replace("♥", "★");
         }
+        templives = templives.replace(/⚪/g, "★"); // REDESIGN FIX: convert any legacy ⚪ directly in case the stored string predates the redesign
         document.getElementById("lives").innerText = templives;
+        var _lv = document.getElementById("lives"); var _ln = ((_lv.innerText.match(/♥/g) || []).length) + ((_lv.innerText.match(/★/g) || []).length); if (Number(localStorage.cllivescnt) == 5 && _lv.innerText.indexOf("★") < 0) { _ln = 0; } _lv.dataset.left = _ln; var _lc = document.getElementById("lives-count"); if (_lc) { var _st = _lv.innerText.indexOf("★") >= 0; _lc.innerHTML = _ln + "<small>" + (_st ? " ★" : " / 5") + "</small>"; _lc.classList.toggle("low", !_st && _ln <= 1); } // REDESIGN v51 (presentation only): mockup lives-count text + remaining count for CSS lost-heart slots
         document.getElementById("lives").classList.add("lives-stars"); // REDESIGN: CSS colours the converted ★ glyphs gold
         document.getElementById("lives-label").textContent = "STARS"; // REDESIGN P2 (approved by Sankar): label follows the stars conversion
         if (Number(localStorage.clstarscnt) != 0) {
