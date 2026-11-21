@@ -6149,3 +6149,139 @@ input:checked + .slider:before { transform: translateX(20px); }
    radii turned sub-20px tiles into circles on small screens. --- */
 #board .tile, #board .voweltile,
 #board .tilesmall, #board .voweltilesmall { border-radius: calc(var(--tile) * 0.165); }
+
+/* ============================================================
+   CHN LNK REDESIGN — v54 (2026-11-21, from Sankar's v53 test)
+   ============================================================
+   1. LOADING blocks take the given words' fill.
+   2. Timed Mode is the nav TIMER button (middle of five): the
+      bottom toggle row is gone, the momentum bar is never
+      displayed — the button's own fill mirrors the bar (driven
+      by paintTimedButton() in chnlnk.js from updateMomentumBar's
+      percent, his thresholds, theme colours).
+   3. The nav row is minimized scalably (--navh, like --keyh).
+   4. The chevron scales with the tile.
+   5. Stats modal: SHARE and INVITE buttons equal width; the
+      WhatsApp icon blends with the modal surface.
+   6. The board shakes on a wrong guess (mockup keyframes).
+   Scoped to #game where the archive shares class names. */
+
+/* --- 1. LOADING blocks: same fill as the starting/ending words
+   (#board .starting computes to #2E4636 — measured). Fill only;
+   the loader's layout, timing and gloss are untouched. --- */
+.loading-correct { background-color: #2E4636; }
+
+/* --- 2a. The momentum bar/banner is never displayed. The
+   elements stay in the DOM because his timer code reads them
+   (updateMomentumBar/flashBarRed); the nav Timer button is the
+   display now. --- */
+.momentum-wrapper, #momentum-bar-container { display: none !important; }
+
+/* --- 3. Minimized nav row. Height is a dvh-driven var like
+   --keyh: 4.27dvh is 36px at the 390x844 reference, 30px floor
+   on short screens, so the saved vertical space flows into
+   fitBoardTiles()' tile budget. Five equal buttons span the
+   column; icons ~14px; the label font is vw-clamped so the
+   longest label ("Support") fits inside its button with no
+   truncation or wrapping down to 320px wide. --- */
+:root { --navh: clamp(30px, 4.27dvh, 42px); }
+#stats #stats-item { gap: 6px; }
+#stats .stats-item > * {
+    height: var(--navh);
+    min-height: 0;
+    padding: 0 2px;
+    gap: 3px;
+    font-size: clamp(8.5px, 2.6vw, 12.5px);
+}
+#stats .stats-item svg { width: clamp(11px, 3.6vw, 14px); height: clamp(11px, 3.6vw, 14px); }
+
+/* --- 2b. The Timer button: fill layer, armed and locked states.
+   The fill's width/colour are set from updateMomentumBar() via
+   paintTimedButton(); its 1s linear width transition is the
+   bar's own (#momentum-bar had transition: width 1s linear),
+   so the button drains exactly like the bar did. --- */
+#timedbutton { position: relative; overflow: hidden; }
+#timedbutton .timed-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 0;
+    background-color: transparent;
+    transition: width 1s linear;
+    pointer-events: none;
+}
+#timedbutton svg, #timedbutton .nav-label { position: relative; z-index: 1; }
+#game #timedbutton.timed-armed { border-color: var(--mx-green); }
+#game #timedbutton.timed-locked { opacity: .45; filter: saturate(.35); pointer-events: none; }
+
+/* --- 2c. Timed Mode confirmation popup (his .modal shell). --- */
+.timed-modal .modal-body { overflow-y: auto; }
+.timed-caption-line { text-align: center; color: #C9C9CF; font-size: 12.5px; margin: 12px 0 0; }
+.timed-question { color: var(--rd-text); font-size: 14.5px; font-weight: 800; text-align: center; margin: 16px 0 12px; }
+.timed-actions { display: flex; gap: 10px; justify-content: center; padding-bottom: 6px; }
+.timed-actions button { flex: 1 1 0; max-width: 150px; padding: 10px 0; border-radius: 8px; font-size: 14px; font-weight: 800; cursor: pointer; }
+#timed-yes { background: #3DDC68; border: 1px solid #3DDC68; color: #0B2E17; }
+#timed-no { background: var(--rd-chip); border: 1px solid var(--rd-line); color: var(--rd-text); }
+
+/* --- 4. Scalable chevron: width is 33% of the tile (18px on
+   the mockup's 54.6px tile), height keeps the 18:11 aspect.
+   The strip grows with the chevron and keeps the v53 clearance
+   structure: 1.5px row padding + (strip - chevron)/2 = 4px of
+   air above and below at every size. White SVG, centred,
+   uniform rhythm — all unchanged. --- */
+#game #board .connector.vertical-glow { height: calc(var(--tile) * 0.2017 + 5px); }
+#game #board .connector.vertical-glow::after {
+    width: calc(var(--tile) * 0.33);
+    height: calc(var(--tile) * 0.2017);
+}
+
+/* --- 5a. Stats modal: SHARE and INVITE the same length. The
+   row becomes three equal 1fr columns and each button fills
+   its column — the fixed 90px/160px widths that made INVITE
+   shorter than SHARE no longer apply in the row. (Equal flex
+   alone did NOT equalize them: as a flex item the SHARE
+   <button>'s base size came out as padding+border = 26px
+   instead of its 0 basis — measured 122 vs 96px — so the row
+   uses grid, whose 1fr tracks are exact: measured 104.66px
+   each at 390 wide.) --- */
+#summary .button-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); }
+#summary .button-row .buttonmode { width: 100%; }
+@media (max-width: 400px) {
+    /* the INVITE label+gift emoji needs ~3px more than the
+       smallest column offers; narrower padding frees it
+       without touching the label size */
+    #summary .button-row .buttonmode { padding-left: 6px; padding-right: 6px; }
+}
+
+/* --- 5b. WhatsApp icon blends with the modal. The PNG has a
+   black background baked in (corners measure rgb(0,0,0)); the
+   wrapper takes the summary surface's own colour (measured
+   rgb(30,30,34) = #1E1E22) and the icon itself is screen-
+   blended, so the black becomes the modal colour and only
+   the green glyph shows. Icon and share behaviour unchanged. --- */
+#summary .wa-wrapper { background: #1E1E22; border-radius: 8px; justify-content: center; }
+#wabutton { mix-blend-mode: screen; }
+
+/* --- 6. Board shake on a wrong guess — the mockup's exact
+   motion (.board.shake: shake .45s ease; ±8px decaying to
+   ±6px), under a new keyframe name so his two existing
+   @keyframes shake definitions (dynamite button / .shaketile)
+   are untouched. Triggered from processInput's wrong-guess
+   branch via shakeBoard() in chnlnk.js. --- */
+#board.board-shake { animation: boardShake .45s ease; }
+@keyframes boardShake {
+    0%, 100% { transform: translateX(0); }
+    15% { transform: translateX(-8px); }
+    35% { transform: translateX(8px); }
+    55% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
+
+/* --- 7. Edge safety margins (desktop-mode / overscan displays):
+   the game column gets a guaranteed breathing room — a top
+   margin above the header of clamp(12px, 1.8dvh, 20px)
+   (replacing the incidental 6px phone / 10px desktop padding),
+   and fitBoardTiles() now fits the column to viewport − 12px
+   so the legend always ends at least 12px above the bottom
+   edge. Both margins live INSIDE the fit budget: tiles absorb
+   the few pixels and the one-screen fit still holds. --- */
+#game { padding-top: clamp(12px, 1.8dvh, 20px); }

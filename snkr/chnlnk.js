@@ -2910,19 +2910,9 @@ function shakeDynamiteButton() {
 }
 
 
-document.getElementById("hardmodetoggle").addEventListener("change", function() {
-    if (this.checked) {
-        // console.log("Timed Mode Enabled");
-        localStorage.clhardmode = 1;
-        localStorage.clgamestarted = 1;
-        // enable timed mode logic here
-    } else {
-        // console.log("Timed Mode Disabled");
-        localStorage.clhardmode = 0;
-        // disable timed mode logic here
-    }
-    setTimeout(() => location.reload(), 150);
-});
+/* REDESIGN v54: the #hardmodetoggle checkbox no longer exists. Timed Mode is armed/disarmed
+   from the nav Timer button (see the v54 block below: openTimedPopup and the timed-yes handler),
+   which writes the same localStorage.clhardmode state and reloads, exactly as this handler did. */
 
 //Clipboard Code
 async function myFunction() {
@@ -4268,9 +4258,8 @@ function modalhide() {
     document.getElementById("boardfifth").style.visibility = "hidden";
     document.getElementById("boardsixth").style.visibility = "hidden";
     document.getElementById("boardlast").style.visibility = "hidden";
-    // if(localStorage.clhardmode == 1){
-    document.getElementById("momentum-bar-container").style.display = "none";
-    // }
+    // REDESIGN v54: the momentum bar is never displayed (the nav Timer button mirrors it)
+    // and the toggle row no longer exists — nothing to hide here.
     const rows = document.getElementsByClassName("keyboard-row");
     for (let row of rows) {
         row.style.visibility = "hidden";
@@ -4279,7 +4268,6 @@ function modalhide() {
     for (let row of connector) {
         row.style.visibility = "hidden";
     }
-    document.getElementById("toggle-row").style.visibility = "hidden";
     document.getElementById("answer").style.visibility = "hidden";
 	document.getElementById("top-resources").style.visibility = "hidden";
 }
@@ -4297,7 +4285,7 @@ function modalshow() {
         if (localStorage.getItem('gameovercl' + days) == "1") {
             document.getElementById("momentum-counter").innerText = "60";
         }
-        document.getElementById("momentum-bar-container").style.display = "block";
+        // REDESIGN v54: the momentum bar stays hidden — the nav Timer button mirrors it.
     }
     const rows = document.getElementsByClassName("keyboard-row");
     for (let row of rows) {
@@ -4307,7 +4295,6 @@ function modalshow() {
     for (let row of connector) {
         row.style.visibility = "visible";
     }
-    document.getElementById("toggle-row").style.visibility = "visible";
     document.getElementById("answer").style.visibility = "visible";
 	document.getElementById("top-resources").style.visibility = "visible";
 }
@@ -4398,6 +4385,7 @@ function updateMomentumBar() {
         bar.style.backgroundColor = "#f44336";
         // }
     }
+    paintTimedButton(percent); // REDESIGN v54: the nav Timer button mirrors this bar (same percent, same thresholds)
 }
 
 function handleMomentumFailure() {
@@ -4421,6 +4409,7 @@ function handleMomentumFailure() {
 function flashBarRed() {
     const bar = document.getElementById("momentum-bar");
     bar.style.backgroundColor = "#ff0000";
+    flashTimedButton(); // REDESIGN v54: the same flash on the nav Timer button
     setTimeout(() => updateMomentumBar(), 500);
 }
 
@@ -4529,7 +4518,7 @@ function updateLivesDisplay() {
             // currTile.classList.add("failed", "animated");
         }
         gameOver = true;
-        document.getElementById("toggle-row").style.display = "none";
+        syncTimedButton(); // REDESIGN v54: was "hide the toggle row" — the nav Timer button takes its locked/live state instead
         disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
         disableKeys(["A", "E", "I", "O", "U"]); // vowels
         // if (localStorage.clhardmode == 1){
@@ -4713,40 +4702,8 @@ function revealSlotMachineRow(rowId, finalWord, delayStart = 0) {
 // in CSS, so all tiles on a board are identical squares and no row is ever
 // flex-squeezed into rectangles. Writes nothing but the CSS property; reads
 // only the word strings the builder already uses and layout metrics.
-// REDESIGN v52 (presentation only): the momentum bar must occupy the
-// Timed Mode toggle's exact place. The toggle row is relocated below
-// the keyboard at load (visual-order block in restoreGameState), while
-// the bar's wrapper sits in .top-stack up by the status card — so when
-// a timed game starts and the toggle hides, the bar appeared up there
-// instead. Wrap the toggle and the bar's wrapper in one .timed-slot
-// grid cell: whichever of the two is visible occupies the same box,
-// and the block's height never changes. All game code keeps reaching
-// both elements by id; only their DOM parent changes.
-function slotTimedBar() {
-    var toggle = document.getElementById("toggle-row");
-    var wrap = document.querySelector(".momentum-wrapper");
-    if (!toggle || !wrap || toggle.closest(".timed-slot")) return;
-    var slot = document.createElement("div");
-    slot.className = "timed-slot";
-    toggle.parentNode.insertBefore(slot, toggle);
-    slot.appendChild(wrap);
-    slot.appendChild(toggle);
-    pinTimedSlot();
-}
-
-// Pin the slot's height to the toggle's own height (measured while the
-// toggle is visible) so the block keeps that height when the toggle
-// hides and the bar shows. Called again from fitBoardTiles() because
-// at wrap time #game may still be hidden (loader), when the toggle
-// measures 0.
-function pinTimedSlot() {
-    var toggle = document.getElementById("toggle-row");
-    if (!toggle) return;
-    var slot = toggle.closest(".timed-slot");
-    if (!slot) return;
-    var th = toggle.offsetHeight;
-    if (th > 0) slot.style.height = th + "px";
-}
+// REDESIGN v54: slotTimedBar()/pinTimedSlot() removed with the toggle row —
+// the momentum bar is never displayed now; the nav Timer button mirrors it.
 
 // REDESIGN v53 (presentation only): fully proportional tile sizing —
 // the v52 formula anchored the cap to one fixed 54.6px, so on other
@@ -4785,7 +4742,10 @@ function fitBoardTiles() {
     var legend = document.getElementById("vowel-legend");
     if (header && legend) {
         for (var pass = 0; pass < 3; pass++) {
-            var over = (legend.getBoundingClientRect().bottom + window.scrollY) - window.innerHeight;
+            // REDESIGN v54: the fit budget now reserves a 12px safety
+            // margin below the legend (edge clipping on scaled/overscan
+            // displays) — tiles absorb it like any other overflow.
+            var over = (legend.getBoundingClientRect().bottom + window.scrollY) - (window.innerHeight - 12);
             if (!(over > 0)) { break; }
             var next = size - over / 7 - 0.05;
             if (next < 6) { next = 6; }
@@ -4795,11 +4755,131 @@ function fitBoardTiles() {
             if (next === 6) { break; }
         }
     }
-    pinTimedSlot();
 }
 window.addEventListener("resize", fitBoardTiles);
 window.addEventListener("orientationchange", fitBoardTiles);
 if (document.fonts && document.fonts.ready) { document.fonts.ready.then(function() { fitBoardTiles(); }); }
+// =========================
+// REDESIGN v54: the nav TIMER button. Timed Mode moved from the bottom
+// toggle row into the middle of the nav (Help · Email · Timer · Support ·
+// Stats). Arming/disarming writes the SAME state his toggle wrote
+// (localStorage.clhardmode) and reloads exactly like his change handler
+// did, so initialize()/restoreMomentumTimer() and every downstream timed
+// behaviour (time-up life loss, timed bonuses, dynamite awards) run
+// through his original code paths — no parallel state, no parallel timer.
+// The button's fill is painted by updateMomentumBar() itself
+// (paintTimedButton below), from the same percent his momentum bar used,
+// with his own stage thresholds (>40% green, >20% yellow, else red) in
+// the game's theme colours.
+function timedGameFinished() {
+    return localStorage.getItem('gameovercl' + days) == "1";
+}
+
+// The button's state, from his existing state only:
+//   fresh day, not armed            -> normal nav button (tap opens the popup)
+//   armed, game not started         -> ON look; taps reopen the popup (disable offer)
+//   started, not armed              -> locked for the day (dimmed, dead)
+//   started, armed                  -> live timer display; taps do nothing
+//   today's game finished           -> locked for the day (final state)
+function syncTimedButton() {
+    var btn = document.getElementById("timedbutton");
+    if (!btn) return;
+    var armed = localStorage.clhardmode == 1;
+    var started = localStorage.clgamestarted == 1;
+    var over = timedGameFinished();
+    btn.classList.toggle("timed-armed", armed && !over);
+    btn.classList.toggle("timed-live", armed && started && !over);
+    btn.classList.toggle("timed-locked", over || (started && !armed));
+}
+
+function paintTimedButton(percent) {
+    var btn = document.getElementById("timedbutton");
+    if (!btn) return;
+    var fill = btn.querySelector(".timed-fill");
+    if (fill) {
+        var color;
+        if (percent > 40) color = "rgba(61,220,104,0.45)";      // his bar: >40% -> green (theme #3DDC68)
+        else if (percent > 20) color = "rgba(245,184,61,0.50)"; // his bar: >20% -> yellow (theme #F5B83D)
+        else color = "rgba(255,90,90,0.55)";                    // his bar: else -> red (theme wrong red #FF5A5A)
+        fill.style.width = percent + "%";
+        fill.style.backgroundColor = color;
+    }
+    if (gameOver) btn.classList.add("timed-locked"); // game over: freeze in the final state, locked for the day
+}
+
+function flashTimedButton() {
+    var btn = document.getElementById("timedbutton");
+    if (!btn) return;
+    var fill = btn.querySelector(".timed-fill");
+    if (fill) fill.style.backgroundColor = "#ff0000"; // same #ff0000 flash as flashBarRed; updateMomentumBar repaints 500ms later
+}
+
+function openTimedPopup() {
+    var popup = document.getElementById("timedmodal");
+    if (!popup) return;
+    document.getElementById("timed-question").innerText = (localStorage.clhardmode == 1)
+        ? "Do you want to disable the timed mode?"
+        : "Do you want to enable the timed mode?";
+    openModal(popup);
+    pauseMomentumTimer(); // his modal rule: opening a modal pauses the momentum timer
+    modalhide();
+}
+
+function closeTimedPopup() {
+    var popup = document.getElementById("timedmodal");
+    if (!popup) return;
+    closeModal(popup);
+    resumeMomentumTimer();
+    modalshow();
+}
+
+// REDESIGN v54: the mockup's board shake on a wrong guess (.board.shake:
+// shake .45s ease, ±8px decaying). Re-triggered the mockup's own way —
+// remove the class, force reflow, re-add — so consecutive wrong guesses
+// shake every time. His game only ever shook the dynamite button and an
+// unused .shaketile class; the board itself never shook.
+function shakeBoard() {
+    var board = document.getElementById("board");
+    if (!board) return;
+    board.classList.remove("board-shake");
+    void board.offsetWidth;
+    board.classList.add("board-shake");
+}
+
+(function() {
+    var btn = document.getElementById("timedbutton");
+    if (btn) {
+        btn.addEventListener("click", function() {
+            if (btn.classList.contains("timed-locked")) return; // disabled for the day
+            if (localStorage.clgamestarted == 1) return;        // game started: live timer (armed) — taps can't change the mode
+            openTimedPopup();
+        });
+    }
+    var yes = document.getElementById("timed-yes");
+    if (yes) {
+        yes.addEventListener("click", function() {
+            if (localStorage.clhardmode == 1) {
+                // Disarm: his toggle's unchecked path (clhardmode = 0 + reload),
+                // plus the saved-timer cleanup his own hardmode-off paths run
+                // at game end (momentumStart/momentumRemaining removed).
+                localStorage.clhardmode = 0;
+                localStorage.removeItem("momentumStart");
+                localStorage.removeItem("momentumRemaining");
+            } else {
+                // Arm: his toggle's checked path (clhardmode = 1 + reload).
+                // clgamestarted is deliberately NOT set here (his toggle set
+                // it): processInput sets it on the first letter, and the
+                // button keys its started state off that, so it stays
+                // tappable — the disable offer — until the game truly starts.
+                localStorage.clhardmode = 1;
+            }
+            setTimeout(() => location.reload(), 150); // his handler's reload, same delay
+        });
+    }
+    var no = document.getElementById("timed-no");
+    if (no) no.addEventListener("click", closeTimedPopup);
+})();
+
 
 window.onload = function() {
     initMonthlyStats();
@@ -4918,16 +4998,7 @@ function refreshArchiveModal() {
 
 
 window.addEventListener("DOMContentLoaded", () => {
-    const toggle = document.getElementById("hardmodetoggle");
-    const saved = localStorage.getItem("clhardmode");
-
-    if (saved === "1") {
-        toggle.checked = true;
-        // enable timed mode logic here
-    } else {
-        toggle.checked = false;
-        // disable timed mode logic here
-    }
+    syncTimedButton(); // REDESIGN v54: reflect localStorage.clhardmode on the nav Timer button (was: restore the toggle checkbox)
 });
 
 function onGameLoad() {
@@ -4954,15 +5025,10 @@ function onGameLoad() {
 
 
 function initialize() {
-    if (localStorage.clgamestarted == 1) {
-        // if (localStorage.clhardmode ==1){	
-        document.getElementById("toggle-row").style.display = "none";
-    }
-    document.getElementById("momentum-bar-container").style.display = "none";
-    // if ((localStorage.clhardmode == 1) && (!localStorage.getItem('gameovercl' + days))){
+    syncTimedButton(); // REDESIGN v54: nav Timer button takes its locked/live state (was: hide the toggle row once started)
+    // REDESIGN v54: the momentum bar is never displayed — the nav Timer button mirrors it (paintTimedButton).
     if (localStorage.clhardmode == 1) {
         restoreMomentumTimer();
-        document.getElementById("momentum-bar-container").style.display = "block";
     }
     if (Number(localStorage.clcorrect) == 0) {
         localStorage.clcorrect = wordonewidth + wordlastwidth;
@@ -5259,18 +5325,17 @@ function initialize() {
         document.getElementById("KeyO").classList.add("disabled", "key-tile-disabled");
         document.getElementById("KeyU").classList.add("disabled", "key-tile-disabled");
     }
-	// REDESIGN (visual order only): place the vowel legend and the Timed Mode toggle
-	// directly below the on-screen keyboard. Every game function references these
-	// elements by id, so relocating the nodes changes no behaviour.
+	// REDESIGN (visual order only): place the vowel legend directly below the
+	// on-screen keyboard — it is now the last element of the page (the Timed Mode
+	// toggle row that used to follow it was removed in v54; Timed Mode lives in
+	// the nav as the Timer button). Every game function references the legend by
+	// id, so relocating the node changes no behaviour.
 	var kbRows = document.querySelectorAll(".keyboard-row");
 	var legendEl = document.getElementById("vowel-legend");
-	var toggleEl = document.getElementById("toggle-row");
-	if (kbRows.length && legendEl && toggleEl) {
+	if (kbRows.length && legendEl) {
 	    var kbAnchor = kbRows[kbRows.length - 1];
 	    kbAnchor.after(legendEl);
-	    legendEl.after(toggleEl);
 	}
-	slotTimedBar(); // REDESIGN v52 (presentation only): bar shares the toggle's box
 
 	showGame();
 	fitBoardTiles(); // REDESIGN v52 (presentation only): size the board's tiles now that #game is visible and measurable
@@ -5450,7 +5515,7 @@ function initialize() {
             document.getElementById("answer").classList.add("fb-wrong"); // REDESIGN
         }
         gameOver = true;
-        document.getElementById("toggle-row").style.display = "none";
+        syncTimedButton(); // REDESIGN v54: was "hide the toggle row" — the nav Timer button takes its locked/live state instead
         document.getElementById("KeyA").classList.add("key-tile-disabled");
         document.getElementById("KeyE").classList.add("key-tile-disabled");
         document.getElementById("KeyI").classList.add("key-tile-disabled");
@@ -5478,7 +5543,7 @@ function initialize() {
     // Default Path
     else {
         if (localStorage.clgamestarted == 1) {
-            document.getElementById("toggle-row").style.display = "none";
+            syncTimedButton(); // REDESIGN v54: was "hide the toggle row" — the nav Timer button takes its locked/live state instead
         }
         if (localStorage.vowelactive == 1) {
             disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
@@ -5653,7 +5718,7 @@ function processKey() {
 function processInput(e) {
     if (gameOver) return;
     localStorage.clgamestarted = 1;
-    document.getElementById("toggle-row").style.display = "none";
+    syncTimedButton(); // REDESIGN v54: was "hide the toggle row" — the nav Timer button takes its locked/live state instead
     localStorage.clguesscnt = Number(localStorage.clguesscnt) + 1;	
     document.getElementById("lives").classList.remove("blink");
     document.getElementById("answer").innerText = "";
@@ -5897,6 +5962,7 @@ function processInput(e) {
     }
 	const { hintAvailable } = getHintState();
     if (LetterFound == 0) {
+		shakeBoard(); // REDESIGN v54: the mockup's board shake on a wrong guess (his Safety Net branch below included, as in the mockup)
 		if (!hintAvailable) {
 			localStorage.cllivescnt = Number(localStorage.cllivescnt) + 1;
 			document.getElementById("answer").style.color = "lightgray";
@@ -6044,7 +6110,7 @@ function processInput(e) {
             // currTile.classList.add("failed", "animated");
         }
         gameOver = true;
-        document.getElementById("toggle-row").style.display = "none";
+        syncTimedButton(); // REDESIGN v54: was "hide the toggle row" — the nav Timer button takes its locked/live state instead
         disableKeys(["A", "E", "I", "O", "U"]); // vowels
         disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
         // if (localStorage.clhardmode == 1){
@@ -6135,7 +6201,7 @@ function processInput(e) {
             // currTile.classList.add("animated");
         }
         gameOver = true;
-        document.getElementById("toggle-row").style.display = "none";
+        syncTimedButton(); // REDESIGN v54: was "hide the toggle row" — the nav Timer button takes its locked/live state instead
         disableKeys(["A", "E", "I", "O", "U"]); // vowels
         // if (localStorage.clhardmode == 1){
         // NEW: delete saved timer so refresh cannot restore it
