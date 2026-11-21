@@ -6926,16 +6926,24 @@ body.archive-page #board .connector.vertical-glow {
 body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
 
 /* --- Item 4: while Timed Mode is live and counting, the Timer
-   button draws the eye with a flashing white border. Keyed on
-   .timed-live — the class syncTimedButton() already toggles
-   for exactly the armed + started + not-over state — so the
-   flash starts with the first guess, stops the moment the
-   game ends (the button reverts to .timed-locked), and never
-   shows on the unarmed or armed-but-not-started button. The
-   pulse is border-colour + box-shadow only: the button's box
-   never changes size, so the nav row cannot shift. The fill
-   layer inside keeps its own green/yellow/red painting. --- */
-#game #timedbutton.timed-live { animation: rdTimerBorderFlash 1.2s ease-in-out infinite; }
+   button draws the eye with a flashing white border.
+   REDESIGN v62: re-keyed from .timed-live to .timed-armed.
+   .timed-live (armed + started + not over) only turns on with
+   the first guess, but the countdown itself runs from the
+   moment the timed game loads — the button already shows the
+   live number and fill before any guess (v61 defect, reported
+   from the user's phone: no flash until the first letter).
+   .timed-armed is syncTimedButton()'s armed + not-over class —
+   exactly the phase in which the countdown number/fill are
+   shown — so the flash now covers the entry phase too. It
+   still stops the moment the game ends (syncTimedButton() and
+   paintTimedButton()'s end path both remove .timed-armed as
+   the button reverts to .timed-locked), and never shows on
+   the unarmed button. The pulse is border-colour + box-shadow
+   only: the button's box never changes size, so the nav row
+   cannot shift. The fill layer inside keeps its own
+   green/yellow/red painting. --- */
+#game #timedbutton.timed-armed { animation: rdTimerBorderFlash 1.2s ease-in-out infinite; }
 @keyframes rdTimerBorderFlash {
     0%, 100% { border-color: var(--mx-green); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
     50% { border-color: #ffffff; box-shadow: 0 0 0 2px rgba(255, 255, 255, .95), 0 0 14px 3px rgba(255, 255, 255, .35); }
