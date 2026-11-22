@@ -2071,7 +2071,7 @@ async function loadLeaderboard() {
             console.warn("Could not load current player doc:", e);
         }
 
-        // --- 1. Read TOP 5 (fetch 6 to compensate for admin removal) ---
+        // --- 1. Read TOP 10 (fetch 11 to compensate for admin removal) ---
         const topQ = query(
             collection(db, "leaderboard"),
             where("month", "==", monthKey),
@@ -2079,28 +2079,28 @@ async function loadLeaderboard() {
             orderBy("wins", "desc"),
             orderBy("winpct", "desc"),
             orderBy("updated", "asc"),
-            limit(6)
+            limit(11)
         );
 
         const topSnap = await getDocs(topQ);
         leaderboardBody.innerHTML = "";
 
         // Filter out admin by name
-        let top5 = [];
+        let top10 = [];
         topSnap.forEach(docSnap => {
             const d = { id: docSnap.id, ...docSnap.data() };
-            if (d.name !== ADMIN_NAME) top5.push(d);
+            if (d.name !== ADMIN_NAME) top10.push(d);
         });
 
-        // Always keep exactly 5 rows
-        top5 = top5.slice(0, 5);
+        // Always keep exactly 10 rows
+        top10 = top10.slice(0, 10);
 
-        // --- 2. Render top 5 with tie-aware ranks ---
+        // --- 2. Render top 10 with tie-aware ranks ---
         let displayRank = 1;
-        for (let i = 0; i < top5.length; i++) {
+        for (let i = 0; i < top10.length; i++) {
             if (i > 0) {
-                const prev = top5[i - 1];
-                const curr = top5[i];
+                const prev = top10[i - 1];
+                const curr = top10[i];
 
                 const tied =
                     prev.stars === curr.stars &&
@@ -2110,7 +2110,7 @@ async function loadLeaderboard() {
                 if (!tied) displayRank = i + 1;
             }
 
-            const p = top5[i];
+            const p = top10[i];
             const row = document.createElement("tr");
 
             row.innerHTML = `
@@ -2135,10 +2135,10 @@ async function loadLeaderboard() {
             leaderboardBody.appendChild(row);
         }
 
-        // --- 3. If player is in top 5, stop here ---
-        const inTop5 = top5.some(p => p.id === currentUID);
+        // --- 3. If player is in top 10, stop here ---
+        const inTop10 = top10.some(p => p.id === currentUID);
         document.getElementById("nrNote").style.display = "none";
-        if (inTop5) return;
+        if (inTop10) return;
 
         // --- 4. Read TOP 250 (fetch 251 to compensate for admin removal) ---
         const top250Q = query(
@@ -2228,7 +2228,7 @@ async function loadLeaderboard() {
         const d = top250[idx];
 
         // --- 7. Render user row as extra entry ---
-        if (rank >= 7) {
+        if (rank >= 12) {
             const spacer = document.createElement("tr");
             spacer.innerHTML = `
                 <td style="text-align:center;">⋮</td>
@@ -4915,7 +4915,7 @@ function fitBoardTiles() {
     if (!board || !row) { return; }
     // REDESIGN v71: the tile fit below must never see a strip that a
     // previous rdStripPoolPass grew — reset it to its CSS height first,
-    // so every run starts from the same fixed 32px box.
+    // so every run starts from the same fixed CSS box (40px since v72).
     var ansReset = document.getElementById("answer");
     if (ansReset) { ansReset.style.height = ""; ansReset.style.minHeight = ""; }
     var maxLen = Math.max(wordone.length, wordtwo.length, wordthree.length, wordfour.length, wordfive.length, wordsix.length, wordlast.length);
