@@ -865,7 +865,23 @@ document.getElementById("fbCancel").addEventListener("click", () => {
     OpenStats();
 });
 
+// REDESIGN v79: in-flight guard for the feedback submit below. The handler
+// writes a Firestore document and pays an award per run, and the popup
+// stays open until the write resolves — so extra taps in that window used
+// to submit duplicate feedback entries (and pay the award again). The
+// first tap wins; repeats while a submission is in flight are ignored.
+// The guard clears as the handler finishes — the popup always closes at
+// that point, as before — and the star-click handler above re-enables the
+// button if the popup is shown again in the same session.
+let feedbackSubmitInFlight = false;
+
 document.getElementById("fbSubmit").addEventListener("click", async () => {
+    if (feedbackSubmitInFlight) return;
+    feedbackSubmitInFlight = true;
+    const submitBtn = document.getElementById("fbSubmit");
+    submitBtn.disabled = true;
+    submitBtn.classList.add("disabled");
+
     const text = document.getElementById("fbText").value;
 
     const feedbackData = {
@@ -882,9 +898,16 @@ document.getElementById("fbSubmit").addEventListener("click", async () => {
 
         // ⭐ Save last feedback date for 50‑day cooldown
         localStorage.lastFeedbackDate = new Date().toLocaleDateString('en-CA');
-		localStorage.cldynamite = Number(localStorage.cldynamite || 0) + 5;
+		// REDESIGN v79: the feedback award is now conditional — 1 dynamite
+		// for a rating alone, 3 dynamites when text feedback is included
+		// (the flat +5 it replaces was also paid per tap by duplicate
+		// submits; the in-flight guard above makes this run exactly
+		// once). The toast states the amount actually earned.
+		const dynEarned = text.trim() ? 3 : 1;
+		localStorage.cldynamite = Number(localStorage.cldynamite || 0) + dynEarned;
 		const dyn = Number(localStorage.cldynamite || 0);
 		document.getElementById("dynamite-btn").innerText = "x" + dyn;
+		document.getElementById("thankYouToast").textContent = "Your feedback fuels CHN LNK. Enjoy +" + dynEarned + (dynEarned === 1 ? " Dynamite" : " Dynamites") + " on us!";
         // ⭐ Show thank-you toast
         showThankYouToast();
     } catch (err) {
@@ -895,6 +918,8 @@ document.getElementById("fbSubmit").addEventListener("click", async () => {
 
     // Delay stats opening slightly so toast is visible
     setTimeout(OpenStats, 1500);
+
+    feedbackSubmitInFlight = false;
 });
 
 
@@ -982,7 +1007,19 @@ function showPollThankYouToast() {
     }, 3500);
 }
 
+// REDESIGN v79: same in-flight guard as the feedback submit — the first
+// tap (Yes or No) wins and any further vote call is ignored, so a fast
+// Yes→No double-tap can't write two vote documents. The poll is shown at
+// most once ever (stamped at show time), so this guard never needs to
+// clear.
+let dynamiteVoteSubmitted = false;
+
 async function submitDynamiteVote(answerLabel) {
+    if (dynamiteVoteSubmitted) return;
+    dynamiteVoteSubmitted = true;
+    document.getElementById("pollYes").disabled = true;
+    document.getElementById("pollNo").disabled = true;
+
     const voteData = {
         uid: auth.currentUser?.uid || null,
         playerName: localStorage.playerName || null,
