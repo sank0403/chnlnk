@@ -7162,3 +7162,88 @@ body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
    ============================================================ */
 #game { padding-bottom: 14px; }
 #game + .keyboard-row { margin-top: 0; }
+
+/* ============================================================
+   CHN LNK REDESIGN — v72 (2026-11-21, from Sankar's live test)
+   ============================================================
+   The strip rebalance: a taller strip with EQUAL air both sides.
+   1. Strip height 32px -> 40px, #game-scoped — the archive's
+      own 50px two-line box is untouched (it has no #game).
+   2. Equal gaps: board -> strip and strip -> keyboard are both
+      16px. The pulse glow at its 40% peak is box-shadow
+      0 0 12px 2px in every colour — a 14px reach past the
+      strip's border box — so 16px keeps the glow off both
+      neighbours with 2px to spare, at every size.
+      Above: the strip's margin-top, declared here scoped to
+      #game (two IDs), so the unscoped base #answer margin (3px)
+      can never win it back — the same structural treatment v71
+      gave the below gap. Below: v71's #game padding-bottom,
+      raised 14px -> 16px; the keyboard row's margin-top stays
+      zeroed. Neither gap is an adjacency margin any more.
+   3. The +23px column cost (above +13, strip +8, below +2) is
+      funded by fitBoardTiles() from the tiles / spread, as
+      usual. rdStripPoolPass() is unchanged in logic: it resets
+      the strip's inline height before measuring, so its base
+      is whatever the CSS says — now 40px — and any pool growth
+      stacks on that base while both gaps stay 16px.
+   ============================================================ */
+#game { padding-bottom: 16px; }
+#game #answer { height: 40px; min-height: 40px; margin-top: 16px; }
+
+/* ============================================================
+   CHN LNK REDESIGN — v73 (2026-11-21, from Sankar's live test)
+   ============================================================
+   The strip gaps tightened: at 16px they still read as "a lot
+   of gap on both sides", so both go 16px -> 12px, kept exactly
+   equal, through the same structural mechanisms v72 used —
+   above: the #game-scoped #answer margin-top; below: #game's
+   padding-bottom. Neither is an adjacency margin.
+   Why 12px is safe: v72's empirical pixel scan at the pulse
+   peak put the glow's VISIBLE tint at ~9px (the nominal shadow
+   reach is 14px — blur 12 + spread 2 — but the tint decays to
+   background level well inside that), so 12px keeps the visible
+   glow clear of the board panel and the keyboard with ~3px to
+   spare. The strip itself is unchanged (40px, v72), and
+   rdStripPoolPass() still grows it from that 40px base — the
+   gaps hold at 12/12 while it grows.
+   The freed 8px returns to the tiles via fitBoardTiles().
+   ============================================================ */
+#game { padding-bottom: 12px; }
+#game #answer { margin-top: 12px; }
+
+/* ============================================================
+   CHN LNK REDESIGN — v74 (2026-11-21, Sankar's scaling rule)
+   ============================================================
+   The strip and its gaps SCALE with viewport height — fixed
+   40px/12px (v72/v73) taxed smaller devices twice: the same
+   pixels out of a shorter column, squeezing the tiles harder.
+   Sankar's standing rule is that everything is proportional,
+   so both are now dvh clamps anchored on the approved values:
+   - Strip: clamp(30px, 5.13dvh, 40px) — exactly 40px at 780px
+     tall and above (5.13dvh = 40.01 at 780, capped), shrinking
+     proportionally below, floored at 30px so the message never
+     gets cramped. At 568 tall it sits on the 30px floor.
+   - Gaps: clamp(10px, 1.54dvh, 12px) — exactly 12px at 780 and
+     above, proportional below, floored at 10px. The floor is
+     deliberate: the pulse glow's VISIBLE tint reaches ~9px
+     (v72/v73 pixel scans), so 10px keeps it clear of the board
+     panel and the keyboard even on the smallest screens. Both
+     gaps use the identical expression, so they stay exactly
+     equal at every height, through the same structural
+     mechanisms — above: the #game-scoped #answer margin-top;
+     below: #game's padding-bottom. Neither is an adjacency
+     margin.
+   fitBoardTiles() measures the live column, so it absorbs the
+   CSS-driven sizes automatically and hands the freed height
+   to the tiles on smaller screens. rdStripPoolPass() is
+   unchanged: it clears the strip's inline height and reads
+   the computed box as its base, so pool growth now stacks on
+   the size-dependent clamp base and a fresh fit restores
+   exactly that base — no JS edit needed.
+   ============================================================ */
+#game { padding-bottom: clamp(10px, 1.54dvh, 12px); }
+#game #answer {
+    height: clamp(30px, 5.13dvh, 40px);
+    min-height: clamp(30px, 5.13dvh, 40px);
+    margin-top: clamp(10px, 1.54dvh, 12px);
+}
