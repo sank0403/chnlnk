@@ -1527,7 +1527,7 @@ input:checked+.slider:before {
     min-height: 35px;
     /* ← keeps keyboard stable */
     margin: 0 auto 0px auto;
-    margin padding: 4px 6px;
+    padding: 4px 6px;
     position: relative;
     display: flex;
     justify-content: center;
@@ -3371,13 +3371,18 @@ div.scroll {
 /* 100% { opacity: 1; transform: translateY(0); } */
 /* } */
 
-/* Keyboard slides up from bottom */
+/* Keyboard entrance animation — commented out 2026-11-21; uncomment this rule to re-enable.
+   The JS keeps adding .keyboard-slide to every keyboard row, harmlessly,
+   while this rule is off, and the keyboardUp keyframes below stay in place.
+   REDESIGN v63: this commented rule is the single switch — the v52
+   neutralizing override that sat in the redesign layer has been removed.
 .keyboard-slide {
     opacity: 0;
     transform: translateY(40px);
     animation: keyboardUp 0.6s ease-out forwards;
     animation-delay: 0.6s;
 }
+*/
 
 @keyframes keyboardUp {
     0% {
@@ -3568,4 +3573,3848 @@ div.scroll {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* ============================================================
+   CHN LNK REDESIGN — v50 (2026-11-20)
+   A theme layer appended AFTER the original stylesheet.
+   Every rule below overrides an original rule of equal or lower
+   specificity purely by source order + specificity discipline.
+   No original selector was renamed or removed, so the archive
+   game (archive.html + chnlnkarch.js), which shares this file,
+   is skinned by the same layer and keeps working.
+   Palette: charcoal #121214 · green #3DDC68 · amber/gold #F5B83D
+            wrong red #E5484D · lose-reveal deep red #7A2020
+   ============================================================ */
+
+:root {
+    --rd-bg: #121214;
+    --rd-panel: #1A1A1E;
+    --rd-panel2: #222228;
+    --rd-chip: #26262C;
+    --rd-line: #2C2C33;
+    --rd-line2: #3A3A42;
+    --rd-text: #F2F2F4;
+    --rd-muted: #9A9AA3;
+    --rd-green: #3DDC68;
+    --rd-green-deep: #1F9D4D;
+    --rd-amber: #F5B83D;
+    --rd-red: #E5484D;
+    --rd-red-deep: #7A2020;
+    --rd-lost: #9C3A2B;
+    /* One fluid tile system: .tilesmall is the same system at a 0.76 scale.
+       Flex shrink on board rows guarantees fit (see board rules below). */
+    --tile: max(18px, min(14vw, 7dvh));
+    --tile-small: max(14px, min(10.6vw, 5.3dvh));
+    --tile-font: clamp(15px, 5vw, 24px);
+    --tile-small-font: clamp(12px, 3.9vw, 19px);
+    --key-h: 54px;
+}
+
+html {
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+body {
+    background-color: var(--rd-bg);
+    color: var(--rd-text);
+    overflow-x: hidden;
+}
+
+#game {
+    max-width: 430px;
+    margin: 0 auto;
+    padding: 0 10px 18px;
+    position: relative;
+}
+
+#game > hr {
+    display: none;
+}
+
+hr {
+    width: 100%;
+    border: none;
+    border-top: 1px solid var(--rd-line);
+}
+
+/* ---------- Header: logo left, daily label right ---------- */
+.header-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 12px;
+}
+
+h1.title-scale {
+    font-size: clamp(24px, 7.2vw, 36px);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    line-height: 1.05;
+    margin: 0;
+    text-align: left;
+    color: #FFFFFF;
+    white-space: nowrap;
+}
+
+.title-link {
+    font-weight: 900;
+}
+
+.waviy1 {
+    text-align: right;
+    padding-bottom: 3px;
+    white-space: nowrap;
+}
+
+.waviy1 span {
+    font-size: clamp(10px, 3vw, 12.5px);
+    color: var(--rd-muted);
+}
+
+#submitter {
+    display: block;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--rd-muted);
+    margin-top: 3px;
+}
+
+#submitter:empty {
+    display: none;
+}
+
+/* ---------- Nav row: 4 labelled filled buttons ---------- */
+#stats {
+    position: static;
+    width: 100%;
+    max-width: 430px;
+    margin: 10px auto 0;
+    top: auto;
+    left: auto;
+    right: auto;
+    letter-spacing: 0;
+}
+
+#stats #stats-item {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+#stats .stats-item {
+    display: flex;
+    gap: 6px;
+    flex: 1 1 0;
+    align-items: stretch;
+}
+
+#stats .stats-item > * {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-height: 47px;
+    padding: 6px 2px;
+    background: rgba(61, 220, 104, 0.10);
+    border: 1px solid rgba(61, 220, 104, 0.38);
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--rd-text);
+}
+
+#stats .stats-item > *:hover {
+    background: rgba(61, 220, 104, 0.20);
+}
+
+#stats .stats-item img {
+    width: 19px !important;
+    height: 19px !important;
+    object-fit: contain;
+}
+
+.nav-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+/* ---------- Status rows ---------- */
+#top-resources {
+    flex-direction: column;
+    gap: 7px;
+    padding: 10px 2px 2px;
+    margin: 0;
+}
+
+.status-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.status-label {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--rd-muted);
+}
+
+#lives {
+    height: auto;
+    font-size: clamp(25px, 7.5vw, 30px);
+    letter-spacing: 5px;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--rd-green);
+    text-shadow: 0 0 10px rgba(61, 220, 104, 0.55);
+}
+
+#lives.lives-depleted {
+    color: var(--rd-lost);
+    text-shadow: none;
+}
+
+#lives.lives-stars {
+    color: var(--rd-amber);
+    text-shadow: 0 0 10px rgba(245, 184, 61, 0.60);
+}
+
+.status-row-tools {
+    gap: 24px;
+}
+
+.tool-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tool-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--rd-muted);
+}
+
+#hint-progress {
+    width: 36px;
+    height: 36px;
+    margin: 0;
+}
+
+#hint-circle {
+    width: 36px;
+    height: 36px;
+}
+
+#hint-circle::before {
+    inset: 4px;
+    background: var(--rd-panel);
+}
+
+#hint-bulb {
+    font-size: 19px;
+}
+
+#dynamite-btn {
+    background: var(--rd-chip);
+    border: 1px solid var(--rd-line2);
+    border-radius: 999px;
+    padding: 5px 13px;
+    font-size: 15px;
+    margin: 0;
+    color: var(--rd-text);
+}
+
+/* ---------- Momentum bar + Timed Mode toggle ---------- */
+.top-stack {
+    height: 24px;
+    margin-bottom: 8px;
+}
+
+#momentum-bar-container {
+    max-width: 340px;
+    height: 14px;
+    background-color: var(--rd-chip);
+    border: 1px solid var(--rd-line);
+    border-radius: 999px;
+}
+
+#momentum-bar {
+    border-radius: 999px;
+}
+
+#momentum-counter {
+    font-size: 11px;
+}
+
+#toggle-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px 10px;
+    width: 100%;
+    max-width: 430px;
+    margin: 4px auto 16px;
+    padding: 0 10px;
+}
+
+.toggle-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--rd-text);
+}
+
+.timed-caption {
+    flex: 0 0 100%;
+    text-align: center;
+    font-size: 11px;
+    color: var(--rd-muted);
+}
+
+.toggle {
+    width: 46px;
+    height: 24px;
+}
+
+.slider {
+    background-color: #33333A;
+    border: 1px solid #44444E;
+    border-radius: 999px;
+}
+
+.slider:before {
+    height: 17px;
+    width: 17px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #FFFFFF;
+}
+
+input:checked + .slider {
+    background-color: var(--rd-green);
+}
+
+input:checked + .slider:before {
+    transform: translateX(21px);
+}
+
+/* ---------- Board: one unified panel ---------- */
+#board {
+    width: 100%;
+    max-width: 430px;
+    margin: 4px auto 0;
+    background: var(--rd-panel);
+    border: 1px solid var(--rd-line);
+    border-radius: 14px;
+    padding: 10px;
+}
+
+#board > div[id^="board"] {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    margin: 2px 0;
+}
+
+#boardfirst,
+#boardsecond,
+#boardthird,
+#boardforth,
+#boardfifth,
+#boardsixth,
+#boardlast {
+    flex-wrap: nowrap;
+}
+
+.connector.vertical-glow::after {
+    border-left-color: #565661;
+    border-bottom-color: #565661;
+}
+
+/* ---------- Tiles: one fluid sizing system ----------
+   .tile / .voweltile use --tile; .tilesmall / .voweltilesmall use
+   --tile-small (0.76 scale of the same system). Rows are flex with
+   shrink enabled, so the widest rows always fit the panel:
+   .tile worst case = 9 letters, .tilesmall worst case = 11 letters
+   (longest word in masterwordlist is 11; tiles go "small" when any
+   word in the chain exceeds 9 letters). */
+.tile,
+.voweltile {
+    width: var(--tile);
+    height: auto;
+    aspect-ratio: 1 / 1;
+    flex: 0 1 auto;
+    min-width: 0;
+    margin: 2.5px;
+    border-radius: 8px;
+    font-size: var(--tile-font);
+    background: #202025;
+    border: 2px solid var(--rd-line2);
+    color: var(--rd-text);
+}
+
+.tilesmall,
+.voweltilesmall {
+    width: var(--tile-small);
+    height: auto;
+    aspect-ratio: 1 / 1;
+    flex: 0 1 auto;
+    min-width: 0;
+    margin: 1.5px;
+    border-radius: 6px;
+    font-size: var(--tile-small-font);
+    background: #202025;
+    border: 2px solid var(--rd-line2);
+    color: var(--rd-text);
+    align-items: center;
+}
+
+.voweltile,
+.voweltilesmall {
+    border-color: var(--rd-amber);
+    background: rgba(245, 184, 61, 0.08);
+}
+
+.tile::after,
+.tilesmall::after,
+.voweltile::after,
+.voweltilesmall::after,
+.correct::after,
+.starting::after,
+.failed::after {
+    background: linear-gradient(to top, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05));
+}
+
+.correct {
+    background-color: var(--rd-green);
+    color: #0B2E17;
+    border-color: var(--rd-green);
+}
+
+.failed {
+    background-color: var(--rd-red-deep);
+    color: #FFFFFF;
+    border-color: #9C3A3A;
+}
+
+.starting {
+    background-color: #34343B;
+    color: #FFFFFF;
+    border-color: #45454E;
+}
+
+.present {
+    background-color: var(--rd-amber);
+    color: #2E2000;
+    border-color: var(--rd-amber);
+}
+
+.absent {
+    background-color: #33333A;
+    color: #C9C9CF;
+    border-color: #33333A;
+}
+
+.mystery {
+    background: rgba(245, 184, 61, 0.16);
+    border-color: var(--rd-amber);
+}
+
+/* Loader keeps its own compact tiles */
+#loadingRow .tile {
+    width: 34px;
+    height: 34px;
+    aspect-ratio: auto;
+    flex: none;
+    font-size: 16px;
+}
+
+/* ---------- Feedback strip ---------- */
+#answer {
+    width: 100%;
+    max-width: 430px;
+    height: 60px;
+    min-height: 60px;
+    margin: 8px auto 0;
+    padding: 6px 12px;
+    background: var(--rd-panel);
+    border: 1px solid var(--rd-line);
+    border-radius: 12px;
+    font-size: clamp(11.5px, 3.4vw, 13.5px);
+    line-height: 1.3;
+    color: var(--rd-text);
+    overflow: hidden;
+    text-align: center;
+}
+
+#answer .border-seg {
+    display: none;
+}
+
+@keyframes fbPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+        background-color: var(--rd-panel);
+    }
+
+    35% {
+        box-shadow: 0 0 16px 1px var(--fb-glow);
+        background-color: var(--fb-fill);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+        background-color: var(--rd-panel);
+    }
+}
+
+#answer.fb-correct {
+    --fb-glow: rgba(61, 220, 104, 0.45);
+    --fb-fill: rgba(61, 220, 104, 0.12);
+    color: var(--rd-green) !important;
+    border-color: rgba(61, 220, 104, 0.50);
+}
+
+#answer.fb-wrong {
+    --fb-glow: rgba(229, 72, 77, 0.45);
+    --fb-fill: rgba(229, 72, 77, 0.12);
+    color: var(--rd-red) !important;
+    border-color: rgba(229, 72, 77, 0.50);
+}
+
+#answer.fb-locked {
+    --fb-glow: rgba(245, 184, 61, 0.45);
+    --fb-fill: rgba(245, 184, 61, 0.12);
+    color: var(--rd-amber) !important;
+    border-color: rgba(245, 184, 61, 0.50);
+}
+
+#answer.fb-win {
+    --fb-glow: rgba(245, 184, 61, 0.55);
+    --fb-fill: rgba(245, 184, 61, 0.16);
+    color: var(--rd-amber) !important;
+    border-color: rgba(245, 184, 61, 0.65);
+}
+
+#answer.fb-info {
+    --fb-glow: rgba(154, 154, 163, 0.35);
+    --fb-fill: rgba(154, 154, 163, 0.10);
+    color: var(--rd-text) !important;
+    border-color: var(--rd-line2);
+}
+
+#answer.run-border.fb-correct,
+#answer.run-border.fb-wrong,
+#answer.run-border.fb-locked,
+#answer.run-border.fb-win,
+#answer.run-border.fb-info {
+    animation: fbPulse 0.65s ease-out 1;
+}
+
+/* ---------- Vowel legend (one line) ---------- */
+#vowel-legend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    max-width: 430px;
+    margin: 8px auto 0;
+    padding: 0 4px;
+    font-size: clamp(8.5px, 2.6vw, 10.5px);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.legend-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    flex: none;
+    border: 1.5px solid var(--rd-amber);
+    border-radius: 4px;
+    background: rgba(245, 184, 61, 0.10);
+    color: var(--rd-amber);
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.legend-label {
+    color: var(--rd-muted);
+    font-weight: 600;
+}
+
+.legend-text {
+    color: var(--rd-amber);
+}
+
+/* ---------- Keyboard: dark, uniform keys ----------
+   Every letter key takes a 1/10-row flex basis, so all keys share
+   one size and shape; shorter rows centre on the same grid.
+   Widest row (10 keys) at 320px: (300 - 18 gap) / 10 = 28.2px. */
+.keyboard-row {
+    width: 100%;
+    max-width: 430px;
+    margin: 2px auto;
+    padding: 0 10px;
+    flex-wrap: nowrap;
+    gap: 2px;
+}
+
+.key-tile {
+    flex: 0 1 calc((100% - 18px) / 10);
+    min-width: 0;
+    height: var(--key-h);
+    margin: 0;
+    border-radius: 8px;
+    background: var(--rd-chip);
+    border: 1px solid var(--rd-line2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    color: var(--rd-text);
+    font-size: clamp(15px, 4.6vw, 20px);
+}
+
+.key-tile:hover {
+    background: #2E2E35;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.key-tile:active {
+    background: #33333B;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+/* Used / eliminated / swept keys: disabled + struck (per Sankar's rule).
+   .disabled also carries pointer-events:none from the base sheet,
+   so a struck key can never be tapped again. */
+.key-tile.disabled {
+    background: #1B1B1F;
+    border-color: var(--rd-line);
+    color: #8A8A93;
+    opacity: 0.45;
+    text-decoration: line-through;
+}
+
+/* Correct-key green (REDESIGN P1, approved by Sankar and applied in
+   chnlnk.js: processInput adds .key-correct when a guess is found, and
+   the restore loop re-applies it for found letters). This rule follows
+   .key-tile.disabled above with equal specificity, so on a correct key
+   (which carries both classes) the green wins and the strike clears. */
+.key-tile.key-correct {
+    background: var(--rd-green);
+    border-color: var(--rd-green);
+    color: #0B2E17;
+    opacity: 1;
+    text-decoration: none;
+}
+
+/* Vowel keys: amber family instead of the old red outline */
+.key-tile-disabled {
+    border: 1px solid var(--rd-amber);
+    box-shadow: 0 0 0 1px var(--rd-amber) inset;
+    opacity: 0.55;
+}
+
+.key-tile-enabled {
+    border: 1px solid var(--rd-amber);
+    box-shadow: 0 0 0 1px var(--rd-amber) inset, 0 0 8px rgba(245, 184, 61, 0.35);
+}
+
+.enter-key-tile {
+    flex: 0 1 calc((100% - 18px) / 10 * 1.5);
+    min-width: 0;
+    height: var(--key-h);
+    margin: 0;
+    border-radius: 8px;
+    background: var(--rd-chip);
+    border: 1px solid var(--rd-line2);
+    color: var(--rd-text);
+    font-size: clamp(15px, 4.6vw, 20px);
+}
+
+/* ---------- Modals & popups: re-skin only ---------- */
+.modal,
+.summary,
+.hintmodal,
+.addmodal,
+.timemodal,
+.pastmodal {
+    background-color: var(--rd-panel);
+    border: 1px solid var(--rd-line);
+    border-radius: 14px;
+    width: min(400px, calc(100vw - 24px));
+    max-width: calc(100vw - 24px);
+    color: var(--rd-text);
+}
+
+.modal {
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-body {
+    min-height: 0;
+    color: #C9C9CF;
+    font-size: 12.5px;
+}
+
+.summary {
+    max-height: 94vh;
+}
+
+.modal-header,
+.summary-header,
+.hintmodal-header,
+.addmodal-header,
+.timemodal-header,
+.pastmodal-header {
+    border-bottom: 1px solid var(--rd-line);
+    color: var(--rd-text);
+}
+
+.close-button {
+    background: var(--rd-chip);
+    border: 1px solid var(--rd-line);
+    border-radius: 8px;
+    color: var(--rd-text);
+    width: 30px;
+    height: 30px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.addmodal-body,
+.timemodal-body,
+.pastmodal-body,
+.hintmodal-body {
+    color: #C9C9CF;
+    font-size: 12.5px;
+}
+
+.collapsible {
+    background-color: var(--rd-panel2);
+    border: 1px solid var(--rd-line);
+    border-radius: 8px;
+    color: var(--rd-text);
+}
+
+.collapsible:hover {
+    background-color: #2A2A31;
+}
+
+.collapsible.active {
+    background-color: #2E2E36;
+}
+
+#overlay,
+#overlay1,
+#overlay2,
+#overlay3,
+#overlay4,
+#overlay5 {
+    background-color: rgba(8, 8, 10, 0.72);
+}
+
+/* Summary internals */
+.summary-body {
+    color: var(--rd-text);
+}
+
+#leaderboardTable,
+#ffTable {
+    font-size: 12px;
+    color: var(--rd-text);
+}
+
+#leaderboardTable th,
+#ffTable th {
+    background: var(--rd-chip);
+}
+
+#leaderboardTable th,
+#leaderboardTable td,
+#ffTable th,
+#ffTable td {
+    padding: 5px 4px;
+    border-bottom: 1px solid var(--rd-line);
+    overflow-wrap: anywhere;
+}
+
+.current-player-row,
+.ff-current-player-row {
+    background: rgba(245, 184, 61, 0.18);
+}
+
+.current-player-cell,
+.ff-current-player-cell {
+    color: var(--rd-green);
+}
+
+.lb-header,
+#leaderboardHeader,
+#ffHeader {
+    background: var(--rd-panel2);
+    border-radius: 8px;
+}
+
+.lb-header:hover,
+#leaderboardHeader:hover,
+#ffHeader:hover {
+    background: #2A2A31;
+}
+
+#myChart {
+    max-width: 100% !important;
+}
+
+.buttonmode {
+    background: var(--rd-panel2);
+    border: 1px solid var(--rd-line2);
+    color: var(--rd-text);
+}
+
+.buttonmode:hover {
+    background: #2E2E36;
+    border-color: var(--rd-line2);
+}
+
+.buttonmode:active {
+    background: #26262C;
+    border-color: var(--rd-line2);
+}
+
+#coffeeFullWidthButton {
+    background-color: var(--rd-green-deep);
+    max-width: 100%;
+}
+
+#coffeeFullWidthButton:hover,
+#coffeeFullWidthButton:active {
+    background: #24AC55;
+}
+
+.button-row,
+.button-bottom a {
+    max-width: 100%;
+}
+
+.cp-note,
+.nr-note,
+.prev-winner-title {
+    white-space: normal;
+}
+
+#footer {
+    flex-wrap: wrap;
+}
+
+#bb {
+    color: var(--rd-green);
+}
+
+.prev-winners-row {
+    background: var(--rd-panel2);
+    border-color: var(--rd-line);
+}
+
+.prev-winner {
+    background: var(--rd-chip);
+}
+
+.prev-winner-title {
+    color: var(--rd-amber);
+}
+
+/* Popups, toasts and JS-generated dialogs */
+.popup-content {
+    background: var(--rd-panel2);
+    border: 1px solid var(--rd-line);
+    border-radius: 12px;
+    width: min(350px, calc(100vw - 32px));
+    max-width: calc(100vw - 32px);
+}
+
+.popup-btn {
+    background: var(--rd-chip);
+    border: 1px solid var(--rd-line2);
+    color: var(--rd-text);
+}
+
+.popup-btn:hover {
+    background: #2E2E35;
+}
+
+.popup-box {
+    background: var(--rd-panel);
+    border: 1px solid var(--rd-line);
+    border-radius: 12px;
+    width: min(300px, calc(100vw - 32px));
+    max-width: calc(100vw - 32px);
+}
+
+.popup-box input {
+    width: 100%;
+    background: var(--rd-chip);
+    border: 1px solid var(--rd-line2);
+    color: var(--rd-text);
+}
+
+.popup-box button {
+    background: var(--rd-green);
+    color: #0B2E17;
+    font-weight: 700;
+}
+
+.feedback-box {
+    background: var(--rd-panel);
+    border: 1px solid var(--rd-line);
+    width: min(350px, calc(100vw - 24px));
+    max-width: calc(100vw - 24px);
+}
+
+.fb-rating button {
+    background: var(--rd-chip);
+    color: var(--rd-text);
+}
+
+.fb-rating button.selected {
+    background: var(--rd-green);
+    color: #0B2E17;
+}
+
+.fb-text {
+    background: var(--rd-chip);
+    border: 1px solid var(--rd-line2);
+    color: var(--rd-text);
+}
+
+.fb-cancel {
+    background: #33333A;
+    color: var(--rd-text);
+}
+
+.fb-submit {
+    background: var(--rd-green);
+    color: #0B2E17;
+    font-weight: 700;
+}
+
+.thankyou-toast {
+    background: var(--rd-green);
+    color: #0B2E17;
+    font-weight: 700;
+    max-width: calc(100vw - 24px);
+    text-align: center;
+}
+
+.error-popup {
+    background: rgba(122, 32, 32, 0.95);
+    max-width: calc(100vw - 24px);
+    text-align: center;
+}
+
+.dynamite-popup-inner {
+    background: var(--rd-panel);
+    border: 2px solid var(--rd-red-deep);
+    max-width: calc(100vw - 32px);
+}
+
+#closeDynamitePopup {
+    background: var(--rd-red-deep);
+}
+
+.life-trade-box {
+    background: var(--rd-panel);
+    border: 1px solid var(--rd-line);
+    width: min(320px, calc(100vw - 32px));
+    max-width: calc(100vw - 32px);
+}
+
+.life-trade-title {
+    color: var(--rd-amber);
+}
+
+#life-restored {
+    background: rgba(10, 10, 12, 0.88);
+    border: 1px solid var(--rd-line);
+    color: var(--rd-amber);
+    padding: 14px 22px;
+    font-size: clamp(18px, 6vw, 28px);
+    max-width: calc(100vw - 24px);
+    text-align: center;
+}
+
+#timed-bonus .bonus-text {
+    font-size: clamp(18px, 6vw, 26px);
+    max-width: calc(100vw - 32px);
+}
+
+#perfect-solve .perfect-text {
+    font-size: clamp(20px, 6.5vw, 30px);
+    max-width: calc(100vw - 32px);
+}
+
+/* Archive calendar inside the past modal: let the scroller flex
+   so wrapper + nav buttons always fit the modal width. */
+#archive-scroller {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+/* ---------- Small-width tightening ---------- */
+@media screen and (max-width: 480px) {
+    .rules-wrapper {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .rules-image {
+        margin: 0 auto;
+    }
+}
+
+@media screen and (max-width: 360px) {
+    h1.title-scale {
+        font-size: 22.5px;
+    }
+
+    .waviy1 span {
+        font-size: 9.5px;
+    }
+
+    .nav-label {
+        font-size: 9.5px;
+    }
+
+    #lives {
+        letter-spacing: 4px;
+    }
+
+    .status-row-tools {
+        gap: 14px;
+    }
+
+    .tool-label {
+        font-size: 10.5px;
+    }
+}
+
+/* ============================================================
+   CHN LNK REDESIGN — v51 EXACT-MATCH PASS (2026-11-20)
+   Written directly from the approved mockup's stylesheet
+   (ts-spaces/chn-lnk-redesign-mockup/index.html). Every value
+   below is the mockup's own: palette, Archivo type, sizes,
+   gaps, radii. Mockup selectors are translated to the real
+   game's DOM (#game column, #stats nav, #top-resources status,
+   #board rows, #answer strip, .keyboard-row/.key-tile,
+   #vowel-legend, #toggle-row). Desktop values are the base;
+   the mockup's own max-width:900px values follow, then its
+   max-height:760px squeeze. Rules the mockup has no counterpart
+   for keep the v50 layer, re-harmonized via the --rd-* remap.
+   ============================================================ */
+
+:root {
+    /* Mockup design tokens */
+    --mx-bg: #121214;
+    --mx-card: #1E1E22;
+    --mx-edge: #2C2C31;
+    --mx-ink: #FFFFFF;
+    --mx-muted: #B9B9C0;
+    --mx-faint: #8A8A93;
+    --mx-green: #3DDC68;
+    --mx-green-tile: #1F9D4D;
+    --mx-amber: #F5B83D;
+    --mx-red: #FF5A5A;
+    --mx-key: #3A3A40;
+    --mx-wrong: #232326;
+    --tile: max(18px, min(14vw, 7dvh));
+    --tile-small: max(14px, min(10.6vw, 5.3dvh));
+    --keyh: clamp(33px, 4.65dvh, 46px);
+    --key-h: clamp(33px, 4.65dvh, 46px);
+    --kgap: 4px;
+    /* Harmonize the v50 layer (modals, popups, summary) to the
+       mockup palette — same variables, mockup values. */
+    --rd-panel: #1E1E22;
+    --rd-panel2: #2A2A30;
+    --rd-chip: #2A2A30;
+    --rd-line: #2C2C31;
+    --rd-text: #FFFFFF;
+    --rd-muted: #B9B9C0;
+    --rd-red: #FF5A5A;
+    --rd-green-deep: #1F9D4D;
+}
+
+body {
+    background: var(--mx-bg);
+    color: var(--mx-ink);
+    font-family: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+button, input, textarea, select { font-family: inherit; }
+
+/* ---------- Page column (mockup .page > .game-col) ---------- */
+#game {
+    max-width: 460px; /* mockup desktop: the game column is a 460px grid track, children full-bleed */
+    margin: 0 auto;
+    padding: 10px 0 0; /* bottom 0: the keyboard rows live outside #game, so bottom padding would push them off the mockup rhythm */
+    position: relative;
+}
+
+#game > br { display: none; }
+
+/* ---------- Header (mockup .topbar / .logo / .daily-header) ---------- */
+.header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 11px;
+    padding: 4px 2px 7px;
+    border-bottom: 1px solid var(--mx-edge);
+}
+
+.header-row .logo-mark {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    margin-right: -1px;
+}
+
+h1.title-scale {
+    font-family: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    line-height: 1.1;
+    margin: 0;
+    margin-right: auto;
+    text-align: left;
+    color: var(--mx-ink);
+    white-space: nowrap;
+}
+
+h1.title-scale strong { font-weight: inherit; }
+
+h1.title-scale .title-link {
+    font-weight: 900;
+    margin-left: .26em; /* mockup: logo flex gap (8px) + LINK's own .15em margin ≈ 11.5px between CHAIN and LINK */
+}
+
+.waviy1 {
+    font-size: 13px;
+    color: var(--mx-faint);
+    font-weight: 600;
+    white-space: nowrap;
+    text-align: right;
+    line-height: 1.2;
+    padding: 0;
+}
+
+.waviy1 strong {
+    color: var(--mx-muted);
+    font-weight: 800;
+}
+
+/* The legacy .waviy1 span rules styled the old animated letter
+   spans (Alfa Slab One, 10px); the only span left inside .waviy1
+   is #daycount, which must inherit the label's Archivo styling
+   exactly like the mockup's number inside <strong>. */
+.waviy1 span {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    text-transform: none;
+    letter-spacing: inherit;
+    position: static;
+    display: inline;
+    animation: none;
+}
+
+/* ---------- Nav row (mockup .actionbar / .navbtn) ---------- */
+#stats {
+    position: static;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 5px 0 1px;
+    top: auto;
+    left: auto;
+    right: auto;
+    letter-spacing: 0;
+}
+
+#stats #stats-item {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    align-items: stretch;
+    justify-content: space-between;
+}
+
+#stats .stats-item { display: contents; }
+
+#stats .stats-item > * {
+    flex: 1 1 0;
+    min-width: 0;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 44px;
+    padding: 9px 7px;
+    background: rgba(61, 220, 104, .13);
+    border: 1px solid rgba(61, 220, 104, .55);
+    border-radius: 10px;
+    color: var(--mx-ink);
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: .01em;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+#stats .stats-item > *:hover {
+    background: rgba(61, 220, 104, .22);
+    border-color: var(--mx-green);
+}
+
+#stats .stats-item > *:active { transform: scale(.97); }
+
+#stats .stats-item svg {
+    flex: 0 0 auto;
+    display: block;
+    width: 18px;
+    height: 18px;
+}
+
+.nav-label {
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-transform: none;
+    line-height: 1;
+}
+
+/* ---------- Status card (mockup .statusbar) ---------- */
+#top-resources {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex-wrap: nowrap;
+    background: var(--mx-card);
+    border: 1px solid var(--mx-edge);
+    border-radius: 12px;
+    padding: 0;
+    margin: 3px 0 0;
+    font-size: 12.5px;
+    overflow: hidden;
+    width: 100%;
+}
+
+/* ROW 1 — Lives (mockup .lives-row) */
+.status-row-lives {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 12px 6px;
+    background: linear-gradient(180deg, rgba(61, 220, 104, .09), rgba(61, 220, 104, .02));
+    border-bottom: 1px solid var(--mx-edge);
+    width: 100%;
+}
+
+.status-row-lives:has(#lives.lives-stars) {
+    background: linear-gradient(180deg, rgba(245, 184, 61, .14), rgba(245, 184, 61, .03));
+}
+
+#lives-label {
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: .09em;
+    color: var(--mx-ink);
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.status-row-lives:has(#lives.lives-stars) #lives-label { color: var(--mx-amber); }
+
+/* Lives (mockup .lives / .life): each life is an SVG heart —
+   the mockup's exact path — and a won life is its gold SVG star.
+   The game renders lives as a ♥/★ glyph string; at any readable
+   size those text glyphs are far smaller than the mockup's 28px
+   hearts, so the string is hidden (font-size:0) and the row is
+   drawn with the mockup's SVG paths as repeating backgrounds.
+   ::before = remaining lives, ::after = lost slots (the mockup's
+   dark heart with red outline and ✕); widths come from the
+   JS-synced data-left count (see chnlnk.js REDESIGN v51 lines). */
+#lives {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: auto;
+    margin: 0;
+    font-size: 0;
+    line-height: 1;
+    color: transparent;
+    text-shadow: none;
+}
+
+#lives::before {
+    content: "";
+    display: none;
+    height: 28px;
+    flex: 0 0 auto;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' preserveAspectRatio='xMidYMid meet'%3E%3Cpath d='M12 21s-7.5-4.9-10-9.3C.3 8.6 2.2 4.5 6.1 4.5c2.2 0 3.7 1.2 4.6 2.7.4.7 1 .7 1.4 0 .9-1.5 2.4-2.7 4.6-2.7 3.9 0 5.8 4.1 4.1 7.2C19.5 16.1 12 21 12 21z' fill='%233DDC68'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 35px 28px;
+    background-position: left center;
+    filter: drop-shadow(0 0 6px rgba(61, 220, 104, .45));
+}
+
+#lives[data-left="1"]::before { display: block; width: 35px; }
+#lives[data-left="2"]::before { display: block; width: 70px; }
+#lives[data-left="3"]::before { display: block; width: 105px; }
+#lives[data-left="4"]::before { display: block; width: 140px; }
+#lives[data-left="5"]::before { display: block; width: 175px; }
+
+/* Won: remaining lives are the mockup's gold stars */
+#lives.lives-stars::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' preserveAspectRatio='xMidYMid meet'%3E%3Cpath d='M12 2.4l3 6.1 6.7 1-4.9 4.7 1.2 6.7L12 17.7l-6 3.2 1.2-6.7L2.3 9.5l6.7-1L12 2.4z' fill='%23F5B83D' stroke='%23FFD97A' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E");
+    filter: drop-shadow(0 0 7px rgba(245, 184, 61, .65));
+}
+
+#lives::after {
+    content: "";
+    display: none;
+    height: 28px;
+    flex: 0 0 auto;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' preserveAspectRatio='xMidYMid meet'%3E%3Cpath d='M12 21s-7.5-4.9-10-9.3C.3 8.6 2.2 4.5 6.1 4.5c2.2 0 3.7 1.2 4.6 2.7.4.7 1 .7 1.4 0 .9-1.5 2.4-2.7 4.6-2.7 3.9 0 5.8 4.1 4.1 7.2C19.5 16.1 12 21 12 21z' fill='%232A1517' stroke='%23FF5A5A' stroke-width='1.8'/%3E%3Cpath d='M8.2 9.4l7.6 7.6M15.8 9.4l-7.6 7.6' stroke='%23FF5A5A' stroke-width='2.1' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 35px 28px;
+    background-position: left center;
+}
+
+#lives[data-left="4"]::after { display: block; width: 35px; }
+#lives[data-left="3"]::after { display: block; width: 70px; }
+#lives[data-left="2"]::after { display: block; width: 105px; }
+#lives[data-left="1"]::after { display: block; width: 140px; }
+#lives[data-left="0"]::after { display: block; width: 175px; }
+
+/* All lives lost: the stored string is five glyphs again and the
+   game adds .lives-depleted — show five lost hearts instead. */
+#lives.lives-depleted::before { display: none; }
+#lives.lives-depleted::after { display: block; width: 175px; }
+
+#lives.lives-stars {
+    color: transparent;
+    text-shadow: none;
+}
+
+#lives.blink { animation: none; }
+
+#lives-count {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: var(--mx-ink);
+}
+
+#lives-count small {
+    font-size: 11px;
+    color: var(--mx-faint);
+    font-weight: 700;
+}
+
+#lives-count.low { color: var(--mx-red); }
+.status-row-lives:has(#lives.lives-stars) #lives-count { color: var(--mx-amber); }
+
+/* ROW 2 — Safety Net + Dynamites (mockup .tools-row) */
+.status-row-tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+    padding: 5px 10px 6px;
+    min-height: 44px;
+    width: 100%;
+}
+
+.tool-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+    min-height: 36px; /* mockup: the Safety Net wrap is a button (min-height 36px), which sets the row's height */
+}
+
+.tool-label {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--mx-muted);
+    white-space: nowrap;
+    line-height: 1;
+}
+
+/* Dynamites: mockup order is label first, then the pill */
+.status-row-tools .tool-item:last-child .tool-label { order: -1; }
+
+/* Safety Net ring badge (mockup .net-ring): the game paints the
+   progress arc onto #hint-circle inline (conic-gradient) — kept;
+   the badge geometry, border and inner disc are the mockup's. */
+#hint-progress {
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#hint-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid #8A8A96;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08), 0 1px 4px rgba(0, 0, 0, .45);
+}
+
+#hint-circle::before {
+    content: "";
+    position: absolute;
+    inset: 3.5px;
+    border-radius: 50%;
+    background: #2A2A2E;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06);
+}
+
+#hint-bulb {
+    position: relative;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    display: block;
+    line-height: 0;
+    font-size: 0;
+    cursor: pointer;
+}
+
+#hint-bulb svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+    overflow: visible;
+}
+
+/* Dynamites pill (mockup .dyna-pill): JS writes only "xN"; the
+   bomb is the mockup's exact SVG, drawn by ::before. */
+#dynamite-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px 0 9px;
+    background: #34343B;
+    border: 1px solid #6E6E78;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: .01em;
+    line-height: 1;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+    margin: 0;
+    flex: 0 0 auto;
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+}
+
+#dynamite-btn::before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Ccircle cx='10.5' cy='14.5' r='6.2' fill='%230E0E11' stroke='%23C9C9D2' stroke-width='1.5'/%3E%3Ccircle cx='8.2' cy='12.2' r='1.7' fill='%23fff' opacity='.4'/%3E%3Crect x='13.2' y='6.8' width='3.2' height='2.6' rx='1' fill='%2355555E' stroke='%23C9C9D2' stroke-width='1'/%3E%3Cpath d='M14.8 6.8c.2-1.6 1.1-2.5 2.7-2.9' stroke='%23E8E8EE' stroke-width='1.4' stroke-linecap='round'/%3E%3Cpath d='M19.6.7l.7 1.7 1.7.7-1.7.7-.7 1.7-.7-1.7-1.7-.7 1.7-.7.7-1.7Z' fill='%23FFB020' stroke='%23FF8A3D' stroke-width='.7' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+#dynamite-btn:hover { background: #3E3E46; border-color: #7E7E88; }
+#dynamite-btn:active { transform: scale(.97); }
+
+/* ---------- Momentum bar (no mockup counterpart — harmonized) ---------- */
+.top-stack {
+    height: auto;
+    margin: 0;
+}
+
+#momentum-bar-container {
+    max-width: none;
+    height: 10px;
+    background-color: #2A2A2E;
+    border: 1px solid var(--mx-edge);
+    border-radius: 999px;
+    margin-top: 3px;
+}
+
+#momentum-bar { border-radius: 999px; }
+#momentum-counter { font-size: 10px; }
+
+/* ---------- Board (mockup .board / .wordrow / .tile) ---------- */
+#board {
+    width: 100%;
+    max-width: none;
+    margin: 3px 0 0;
+    background: var(--mx-card);
+    border: 1px solid var(--mx-edge);
+    border-radius: 14px;
+    padding: 10px;
+}
+
+#board > div[id^="board"] {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 2px 2px;
+    margin: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+/* Connectors (mockup .connector): the mockup's exact chevron
+   SVG, 18x11, centred in a 9px row. */
+#board .connector.vertical-glow {
+    position: relative;
+    width: 100%;
+    height: 9px;
+    margin: 0;
+}
+
+#board .connector.vertical-glow::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 18px;
+    height: 11px;
+    transform: translate(-50%, -50%);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='11' viewBox='0 0 18 11'%3E%3Cpath d='M2 2l7 7 7-7' fill='none' stroke='%233DDC68' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+    border: none;
+    border-radius: 0;
+}
+
+/* Tiles — flat, no sheen (the original ::after bottom-fill is
+   switched off inside the board; loader tiles keep theirs). */
+#board .tile::after,
+#board .tilesmall::after { content: none; }
+
+#board .tile,
+#board .voweltile {
+    width: var(--tile);
+    height: var(--tile);
+    aspect-ratio: auto;
+    flex: 0 1 auto;
+    min-width: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: 9px;
+    font-size: calc(var(--tile) * .5);
+    font-weight: 800;
+    border: 2px solid #55555E;
+    color: var(--mx-ink);
+    background: transparent;
+    text-transform: uppercase;
+}
+
+/* .tilesmall: no mockup counterpart (mockup demo has no 10-11
+   letter words) — same system, scaled so the longest row fits. */
+#board .tilesmall,
+#board .voweltilesmall {
+    width: var(--tile-small);
+    height: var(--tile-small);
+    aspect-ratio: auto;
+    flex: 0 1 auto;
+    min-width: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: 7px;
+    font-size: calc(var(--tile-small) * .5);
+    font-weight: 800;
+    border: 2px solid #55555E;
+    color: var(--mx-ink);
+    background: transparent;
+    text-transform: uppercase;
+}
+
+/* Given words (mockup .tile.given). The !important beats the
+   inline backgroundColor ("#555") the game's slot-machine intro
+   leaves on these tiles when it settles, so given rows hold the
+   mockup colour on first visits too. */
+#board .starting {
+    background-color: #2E4636 !important;
+    border-color: #3F6B4F;
+    color: #DFF5E4;
+    font-size: calc(var(--tile) * .46);
+}
+
+#board .tilesmall.starting,
+#board .voweltilesmall.starting { font-size: calc(var(--tile-small) * .46); }
+
+/* Found letters (mockup .tile.found) */
+#board .correct {
+    background: var(--mx-green-tile);
+    border-color: var(--mx-green-tile);
+    color: #fff;
+}
+
+/* Lose reveal (mockup .tile.revealed) */
+#board .failed {
+    background: #7A2020;
+    border-color: #933232;
+    color: #fff;
+}
+
+/* Hidden vowel tiles (mockup .tile.vowel): dashed amber border
+   and the lock cue. The game marks them .voweltile.disabled and
+   removes .disabled at unlock — the two states map 1:1. */
+#board .voweltile,
+#board .voweltilesmall {
+    border-color: var(--mx-amber);
+    color: var(--mx-amber);
+    opacity: 1;
+}
+
+#board .voweltile.disabled,
+#board .voweltilesmall.disabled { border-style: dashed; }
+
+#board .voweltile:not(.disabled),
+#board .voweltilesmall:not(.disabled) { border-style: solid; }
+
+#board .voweltile::after,
+#board .voweltilesmall::after {
+    content: "🔒";
+    position: absolute;
+    bottom: 1px;
+    right: 2px;
+    /* REDESIGN v53: lock scales with the tile — 25% of --tile
+       (was a fixed 8px, barely visible). */
+    font-size: calc(var(--tile) * 0.25);
+    line-height: 1;
+    color: var(--mx-amber);
+    font-weight: 900;
+    background: none;
+    width: auto;
+    height: auto;
+    left: auto;
+    top: auto;
+}
+
+#board .voweltile:not(.disabled)::after,
+#board .voweltilesmall:not(.disabled)::after,
+#board .voweltile.correct::after,
+#board .voweltilesmall.correct::after,
+#board .voweltile.failed::after,
+#board .voweltilesmall.failed::after { content: none; }
+
+/* Found/failed vowel tiles land on the found/revealed colours */
+#board .voweltile.correct,
+#board .voweltilesmall.correct {
+    background: var(--mx-green-tile);
+    border-color: var(--mx-green-tile);
+    border-style: solid;
+    color: #fff;
+}
+
+#board .voweltile.failed,
+#board .voweltilesmall.failed {
+    background: #7A2020;
+    border-color: #933232;
+    border-style: solid;
+    color: #fff;
+}
+
+/* Mystery-letter tile (no mockup counterpart — harmonized) */
+#board .mystery {
+    background: rgba(245, 184, 61, .16);
+    border-color: var(--mx-amber);
+}
+
+/* ---------- Feedback strip (mockup .feedback) ---------- */
+#answer[hidden] { display: none !important; }
+
+#answer {
+    width: 100%;
+    max-width: none;
+    height: 61px;
+    min-height: 61px;
+    margin: 3px 0 0;
+    padding: 4px 10px;
+    background: #17171A;
+    border: none;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--mx-muted);
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+#answer .border-seg { display: none; }
+
+/* The game's own pop animation scales the strip; the mockup's
+   strip never scales — the unified pulse below replaces it. */
+#answer.popanswer { animation: none; }
+
+/* Kind colours (the JS classifier's fb-* classes map to the
+   mockup's feedback kinds). !important beats the game's inline
+   style.color writes, exactly as in v50. */
+#answer.fb-correct { color: var(--mx-green) !important; }
+#answer.fb-wrong { color: var(--mx-red) !important; }
+#answer.fb-locked { color: var(--mx-amber) !important; font-weight: 700; }
+#answer.fb-win { color: var(--mx-amber) !important; font-weight: 700; }
+#answer.fb-info { color: var(--mx-muted) !important; }
+
+/* Unified 0.65s soft pulse — the mockup's keyframes verbatim. */
+#answer.run-border.fb-correct { animation: mxFbGood .65s ease-out; }
+#answer.run-border.fb-wrong { animation: mxFbBad .65s ease-out; }
+#answer.run-border.fb-locked { animation: mxFbWarn .65s ease-out; }
+#answer.run-border.fb-win { animation: mxFbWin .65s ease-out; }
+#answer.run-border.fb-info { animation: mxFbNeutral .55s ease-out; }
+
+@keyframes mxFbGood {
+    0% { background: #17171A; color: var(--mx-green); box-shadow: 0 0 0 0 rgba(61, 220, 104, 0), inset 0 0 0 1px rgba(61, 220, 104, 0); }
+    40% { background: #1E4D2E; color: #E9FFF0; box-shadow: 0 0 12px 2px rgba(61, 220, 104, .32), inset 0 0 0 1px rgba(61, 220, 104, .55); }
+    100% { background: #17171A; color: var(--mx-green); box-shadow: 0 0 0 0 rgba(61, 220, 104, 0), inset 0 0 0 1px rgba(61, 220, 104, 0); }
+}
+
+@keyframes mxFbBad {
+    0% { background: #17171A; color: var(--mx-red); box-shadow: 0 0 0 0 rgba(255, 90, 90, 0), inset 0 0 0 1px rgba(255, 90, 90, 0); }
+    40% { background: #4D2323; color: #FFEDED; box-shadow: 0 0 12px 2px rgba(255, 90, 90, .32), inset 0 0 0 1px rgba(255, 90, 90, .55); }
+    100% { background: #17171A; color: var(--mx-red); box-shadow: 0 0 0 0 rgba(255, 90, 90, 0), inset 0 0 0 1px rgba(255, 90, 90, 0); }
+}
+
+@keyframes mxFbWarn {
+    0% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 12px 2px rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
+    100% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+}
+
+@keyframes mxFbWin {
+    0% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 12px 2px rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
+    100% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+}
+
+@keyframes mxFbNeutral {
+    0% { background: #2A2A30; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
+    100% { background: #17171A; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0); }
+}
+
+/* ---------- Keyboard (mockup .keyboard / .key) ----------
+   Rows are body-level siblings of #game (the game appends them
+   to document.body), so they carry the column width themselves:
+   460px content + the page's side padding, centred. */
+.keyboard-row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: var(--kgap);
+    width: calc(100% - 20px);
+    max-width: 460px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.keyboard-row + .keyboard-row { margin-top: var(--kgap); }
+
+#game + .keyboard-row { margin-top: 3px; }
+
+.key-tile {
+    flex: 0 0 calc((100% - 9 * var(--kgap)) / 10);
+    width: calc((100% - 9 * var(--kgap)) / 10);
+    height: var(--keyh);
+    min-height: 36px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: var(--mx-key);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.key-tile:hover { background: var(--mx-key); box-shadow: none; }
+.key-tile:active { background: var(--mx-key); box-shadow: none; transform: scale(.95); }
+
+/* Unlocked vowels (mockup .key.vowelready) */
+.key-tile.key-tile-enabled {
+    box-shadow: inset 0 0 0 2px var(--mx-amber);
+}
+
+/* Wrong / eliminated / auto-struck (mockup .key.wrong):
+   struck through, full opacity, silent (pointer-events:none
+   comes from the game's own .disabled rule). */
+.key-tile.disabled {
+    background: var(--mx-wrong);
+    border: none;
+    color: #6E6E76;
+    opacity: 1;
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    box-shadow: none;
+}
+
+/* Locked vowels (mockup .key.locked) — after .disabled in
+   source at higher specificity, so a locked vowel never takes
+   the struck look; its lock cue sits in the corner. */
+.key-tile.key-tile-disabled {
+    background: #2A2620;
+    border: none;
+    color: #9A7B34;
+    opacity: 1;
+    text-decoration: none;
+    box-shadow: none;
+}
+
+.key-tile.key-tile-disabled::after {
+    content: "🔒";
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    /* REDESIGN v53: lock scales with the key — 28% of --keyh
+       (was a fixed 7.5px, barely visible). */
+    font-size: calc(var(--keyh) * 0.28);
+    line-height: 1;
+    color: var(--mx-amber);
+    font-weight: 900;
+}
+
+/* Correct keys (mockup .key.correct) — last, so green wins over
+   struck / locked / ready-ring alike (REDESIGN P1 preserved). */
+.key-tile.key-correct {
+    background: var(--mx-green-tile);
+    border: none;
+    color: #fff;
+    opacity: 1;
+    text-decoration: none;
+    box-shadow: none;
+}
+
+.enter-key-tile {
+    height: var(--keyh);
+    min-height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: var(--mx-key);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    box-shadow: none;
+    margin: 0;
+}
+
+/* ---------- Legend (mockup .legend) ---------- */
+#vowel-legend {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    width: calc(100% - 20px);
+    max-width: 460px;
+    margin: 3px auto 0;
+    padding: 1px 2px;
+    font-size: 9.5px;
+    color: var(--mx-faint);
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: visible;
+}
+
+#vowel-legend .legend-icon {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    flex: 0 0 auto;
+    border: 2px dashed var(--mx-amber);
+    border-radius: 2px;
+    background: transparent;
+    vertical-align: -1px;
+    margin-right: -2px;
+}
+
+#vowel-legend .legend-label {
+    color: var(--mx-faint);
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+#vowel-legend .legend-text {
+    color: var(--mx-amber);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ---------- Timed Mode (mockup .timed / .switch) ---------- */
+#toggle-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 10px;
+    width: calc(100% - 20px);
+    max-width: 460px;
+    margin: 3px auto 22px;
+    padding: 4px 12px;
+    background: var(--mx-card);
+    border: 1px solid var(--mx-edge);
+    border-radius: 10px;
+    font-size: 12.5px;
+}
+
+.toggle-label {
+    order: 1;
+    font-weight: 800;
+    letter-spacing: .03em;
+    white-space: nowrap;
+    font-size: 12.5px;
+    color: var(--mx-ink);
+}
+
+.timed-caption {
+    order: 2;
+    flex: 1;
+    color: var(--mx-faint);
+    font-size: 11.5px;
+    line-height: 1.25;
+    text-align: left;
+}
+
+.toggle {
+    order: 3;
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 26px;
+    flex: 0 0 auto;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--mx-key);
+    border: none;
+    border-radius: 999px;
+    transition: background .2s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: left .2s, transform .2s;
+}
+
+input:checked + .slider { background-color: var(--mx-green-tile); }
+input:checked + .slider:before { transform: translateX(20px); }
+
+/* ---------- Modals & popups: mockup design language ---------- */
+.modal, .summary, .hintmodal, .addmodal, .timemodal, .pastmodal {
+    background-color: var(--mx-card);
+    border: 1px solid var(--mx-edge);
+    border-radius: 12px;
+}
+
+.modal-body, .addmodal-body, .timemodal-body, .pastmodal-body, .hintmodal-body {
+    color: var(--mx-muted);
+}
+
+.collapsible {
+    background-color: #2A2A30;
+    border: 1px solid var(--mx-edge);
+    border-radius: 8px;
+}
+
+.collapsible:hover { background-color: #32323A; }
+.collapsible.active { background-color: #32323A; }
+
+.close-button {
+    background: #2A2A30;
+    border: 1px solid var(--mx-edge);
+    border-radius: 8px;
+}
+
+.buttonmode {
+    background: #2A2A30;
+    border: 1px solid var(--mx-edge);
+    color: var(--mx-ink);
+}
+
+.buttonmode:hover { background: #32323A; }
+
+#coffeeFullWidthButton { background-color: var(--mx-green-tile); }
+
+.popup-box button, .fb-submit {
+    background: var(--mx-green-tile);
+    color: #fff;
+}
+
+.fb-rating button.selected {
+    background: var(--mx-green-tile);
+    color: #fff;
+}
+
+.thankyou-toast {
+    background: var(--mx-green-tile);
+    color: #fff;
+}
+
+/* ============================================================
+   Mockup mobile values — @media (max-width:900px)
+   ============================================================ */
+@media (max-width: 900px) {
+    #game { padding: 6px 10px 0; } /* mockup .game-col mobile padding */
+
+    .header-row { gap: 9px; }
+
+    .header-row .logo-mark { width: 27px; height: 27px; }
+
+    h1.title-scale { font-size: 23px; letter-spacing: .045em; }
+
+    .waviy1 { font-size: 12.5px; }
+
+    #stats { padding-top: 5px; }
+    #stats #stats-item { gap: 5px; }
+
+    #stats .stats-item > * {
+        min-height: 42px;
+        padding: 8px 5px;
+        font-size: 14px;
+        gap: 6px;
+        border-radius: 9px;
+    }
+
+    #stats .stats-item svg { width: 17px; height: 17px; }
+
+    .status-row-lives { padding: 6px 10px 5px; gap: 8px; }
+    #lives-label { font-size: 12px; }
+
+    #lives::before { height: 26px; background-size: 32px 26px; }
+    #lives[data-left="1"]::before { width: 32px; }
+    #lives[data-left="2"]::before { width: 64px; }
+    #lives[data-left="3"]::before { width: 96px; }
+    #lives[data-left="4"]::before { width: 128px; }
+    #lives[data-left="5"]::before { width: 160px; }
+    #lives::after { height: 26px; background-size: 32px 26px; }
+    #lives[data-left="4"]::after { width: 32px; }
+    #lives[data-left="3"]::after { width: 64px; }
+    #lives[data-left="2"]::after { width: 96px; }
+    #lives[data-left="1"]::after { width: 128px; }
+    #lives[data-left="0"]::after { width: 160px; }
+    #lives.lives-depleted::after { width: 160px; }
+
+    #lives-count { font-size: 18px; }
+
+    .status-row-tools { padding: 4px 8px 5px; gap: 6px; min-height: 42px; }
+    .tool-label { font-size: 11px; }
+
+    #hint-progress, #hint-circle { width: 34px; height: 34px; }
+    #hint-bulb, #hint-bulb svg { width: 22px; height: 22px; }
+
+    #dynamite-btn { height: 29px; padding: 0 11px 0 8px; font-size: 13.5px; }
+    #dynamite-btn::before { width: 18px; height: 18px; }
+
+    #board { padding: 8px 6px; border-radius: 13px; }
+    #board > div[id^="board"] { padding: 1.5px 0; gap: 4px; }
+
+    #vowel-legend { font-size: 9px; }
+    #vowel-legend .legend-text { letter-spacing: -.01em; }
+}
+
+/* ============================================================
+   Mockup short-screen squeeze — @media (max-height:760px)
+   ============================================================ */
+@media (max-height: 760px) {
+    :root {
+        --tile: max(16px, min(14vw, 6dvh));
+        --keyh: clamp(31px, 4.4dvh, 39px);
+        --key-h: clamp(31px, 4.4dvh, 39px);
+        --kgap: 3px;
+    }
+
+    #board { padding: 7px 8px; }
+    #board > div[id^="board"] { padding: 1px 2px; }
+    #board .connector.vertical-glow { height: 6px; }
+
+    #answer { height: 57px; min-height: 57px; font-size: 11.5px; }
+
+    .header-row { padding-bottom: 3px; }
+
+    .status-row-lives { padding: 5px 10px 4px; }
+
+    #lives::before { height: 24px; background-size: 30px 24px; }
+    #lives[data-left="1"]::before { width: 30px; }
+    #lives[data-left="2"]::before { width: 60px; }
+    #lives[data-left="3"]::before { width: 90px; }
+    #lives[data-left="4"]::before { width: 120px; }
+    #lives[data-left="5"]::before { width: 150px; }
+    #lives::after { height: 24px; background-size: 30px 24px; }
+    #lives[data-left="4"]::after { width: 30px; }
+    #lives[data-left="3"]::after { width: 60px; }
+    #lives[data-left="2"]::after { width: 90px; }
+    #lives[data-left="1"]::after { width: 120px; }
+    #lives[data-left="0"]::after { width: 150px; }
+    #lives.lives-depleted::after { width: 150px; }
+
+    .status-row-tools { padding: 3px 8px 4px; min-height: 38px; }
+    #hint-progress, #hint-circle { width: 30px; height: 30px; }
+    #hint-bulb, #hint-bulb svg { width: 19px; height: 19px; }
+    #dynamite-btn { height: 27px; min-height: 27px; }
+}
+
+/* ============================================================
+   CHN LNK REDESIGN — v52 UNIFORM SQUARE TILES (2026-11-20)
+   Sankar's rule: every tile on the board is a perfect square
+   and ALL tiles share ONE size per board. The size is computed
+   by fitBoardTiles() in chnlnk.js from the longest word of the
+   day's puzzle and the board's live inner width, and set as an
+   inline --tile on #board:
+     tile = min(54.6px, (inner − (maxLen − 1) × gap) / maxLen)
+   Until JS runs (or if it cannot measure), --tile keeps the
+   v51 :root formula as the fallback. Everything here is scoped
+   to #game: archive.html has no #game wrapper and no
+   fitBoardTiles(), so the archive is untouched by this layer.
+   ============================================================ */
+
+/* Tiles never flex-shrink. The computed size fits the longest
+   row by construction, so a tile's width can never again be
+   squeezed away from its height (the v51 7-letter-row defect). */
+#game #board .tile,
+#game #board .voweltile,
+#game #board .tilesmall,
+#game #board .voweltilesmall { flex: 0 0 auto; }
+
+/* .tilesmall / .voweltilesmall (the game's long-word classes)
+   no longer carry a size of their own: same square and same
+   font scale as every other tile on the board. The classes
+   themselves are kept (the JS still adds them); their other
+   styling (7px radius, the vowel lock cue) is unchanged. */
+#game #board .tilesmall,
+#game #board .voweltilesmall {
+    width: var(--tile);
+    height: var(--tile);
+    font-size: calc(var(--tile) * .5);
+}
+
+#game #board .tilesmall.starting,
+#game #board .voweltilesmall.starting { font-size: calc(var(--tile) * .46); }
+
+/* ============================================================
+   v52 FOLLOW-UPS (2026-11-20) — Sankar's live-test fixes
+   ============================================================ */
+
+/* --- Lives: five FIXED slots. The hidden ♥/★ glyph string is a
+   flex item inside #lives; the letter-spacing it inherits from
+   the original/v50 layers (4–5px per glyph) gave that invisible
+   item a real width (~20px) sitting BETWEEN the green strip
+   (::before) and the lost strip (::after) — so a lost heart
+   rendered ~20px to the RIGHT of the slot its green heart had
+   occupied. Zeroing the spacing makes the item 0-wide: the two
+   strips meet exactly, the group is a constant 160px, and a lost
+   life turns its own slot's heart dark-red in place. --- */
+#game #lives { letter-spacing: 0; }
+
+/* --- Connectors: WHITE chevrons (Sankar's override of the
+   mockup's green). Same 18×11 chevron, same strip. --- */
+#game #board .connector.vertical-glow::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='11' viewBox='0 0 18 11'%3E%3Cpath d='M2 2l7 7 7-7' fill='none' stroke='%23FFFFFF' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* --- Feedback strip: ALWAYS its fixed size. The strip starts
+   with the `hidden` attribute and updateAnswer() removes it when
+   a message posts — but the mid-game restore path posts nothing,
+   so on refresh the strip stayed display:none (v51 rule) and the
+   keyboard jumped up. The mockup's strip is always present:
+   force the box (the game's own message, or blank, shows as his
+   code intends). Scoped to #game; the archive keeps v51. --- */
+#game #answer[hidden] { display: flex !important; }
+
+/* --- Colour rule (Sankar): green = correct, red = wrong,
+   EVERYTHING else yellow. fb-info was the last grey: it now uses
+   the amber text colour and the same unified 0.65s pulse as the
+   other kinds (mxFbWarn keyframes). This is also what makes the
+   inactive-Safety-Net tap yellow + animated instead of grey and
+   static. --- */
+#game #answer.fb-info { color: var(--mx-amber) !important; }
+#game #answer.run-border.fb-info { animation: mxFbWarn .65s ease-out; }
+
+/* --- Nav buttons: plain GREY theme (Sankar's override of the
+   mockup's green). Same boxes, icons, labels and behaviour; the
+   fill becomes the theme's button grey, the border the theme's
+   panel edge, and the icons' hard-coded green stroke/fill is
+   recoloured to muted grey via CSS (presentation properties beat
+   the SVG attributes). --- */
+#game #stats .stats-item > * {
+    background: #2A2A30;
+    border-color: var(--mx-edge);
+}
+#game #stats .stats-item > *:hover {
+    background: #32323A;
+    border-color: var(--mx-edge);
+}
+#game #stats .stats-item svg path,
+#game #stats .stats-item svg circle,
+#game #stats .stats-item svg rect,
+#game #stats .stats-item svg line,
+#game #stats .stats-item svg polyline { stroke: var(--mx-muted); }
+#game #stats .stats-item svg [fill="#3DDC68"] { fill: var(--mx-muted); }
+
+/* --- Legend: the grid/keyboard's amber lock instead of the
+   dashed swatch, and a slightly larger font (9px → 10.5px at
+   ≤900px widths; 9.5px → 10.5px above). The row's height is held
+   at its v51 size so nothing below it moves. --- */
+#vowel-legend {
+    font-size: 10.5px;
+    height: 14px;
+    padding-top: 0;
+    padding-bottom: 0;
+    line-height: 1.2;
+}
+#vowel-legend .legend-icon {
+    width: auto;
+    height: auto;
+    border: none;
+    border-radius: 0;
+    background: none;
+    margin-right: 0;
+}
+#vowel-legend .legend-icon::after {
+    content: "🔒";
+    font-size: 10px;
+    line-height: 1;
+    color: var(--mx-amber);
+}
+
+/* --- Summary modal: PLAY PAST CHAINS matches its sibling
+   .buttonmode buttons. Its .buttonmodetext class carried a
+   literal black background/border — the last black box in the
+   modal. Fill, border, radius and typography now mirror the
+   v51-effective .buttonmode values; the link behaviour
+   (playArchive()) is untouched. --- */
+#summary #Archivebutton {
+    background: #2A2A30;
+    border: 1px solid var(--mx-edge);
+    color: var(--mx-ink);
+    border-radius: 5px;
+    font-size: 12px;
+    letter-spacing: .6px;
+}
+#summary #Archivebutton:hover { background: #32323A; }
+
+/* --- Calendar modal (Play Past Chains): day states in the main
+   the mockup's exact message green/red (Sankar: "make the green
+   and red messages consistent with the mock up — not what i had
+   originally") — won days #3DDC68, failed days #FF5A5A, dark text
+   on the bright fills — replacing the old #6AAA64 / pure #FF0000
+   (an earlier tile-family choice, #1F9D4D/#7A2020, was superseded).
+   Scoped to #pastmodal: the shared classes keep their old values
+   for the separate archive page (phase 2). The modal's other
+   leftovers (near-black day cells, #222 nav buttons, #888 day
+   names) are harmonized to the modal palette. --- */
+#pastmodal .correctarch {
+    background-color: #3DDC68 !important;
+    border-color: #3DDC68 !important;
+    color: #101216 !important;
+}
+#pastmodal .failedarch {
+    background-color: #FF5A5A !important;
+    border-color: #FF5A5A !important;
+    color: #101216 !important;
+}
+#pastmodal .day.clickable {
+    background: #2A2A30;
+    border-color: var(--mx-edge);
+}
+#pastmodal .day.clickable:hover { background: #32323A; }
+#pastmodal .day.disabled { background: rgba(255, 255, 255, .04); }
+#pastmodal .day-name { color: var(--mx-faint); }
+#pastmodal .nav-btn {
+    background: #2A2A30;
+    color: var(--mx-ink);
+}
+
+/* Lose reveal — SEQUENTIAL cascade (user: "when we lose a game the
+   reveal should have been in an animation sequentially"). His JS adds
+   .failed.animated to every missed tile in one synchronous pass, so
+   the base .animated flip (flip .5s, scaleY) ran on all rows at once.
+   Here the SAME flip is staggered per tile in row-major order — row
+   base delay --rb (rows 2-6: 0/.3/.6/.9/1.2s) plus a per-position
+   --pb in 60ms steps, mirroring the mockup's cascade — and each tile
+   holds its pre-loss face until the flip midpoint, where it swaps to
+   the failed face (#7A2020/#933232/#fff, v51 values). The win flip
+   (.correct.animated) and all lose logic are untouched. */
+#game #boardsecond { --rb: 0s; }
+#game #boardthird { --rb: .3s; }
+#game #boardforth { --rb: .6s; }
+#game #boardfifth { --rb: .9s; }
+#game #boardsixth { --rb: 1.2s; }
+#game #board .failed.animated {
+    --pb: 0s;
+    animation: flip .5s ease backwards, mxLoseSwap .5s linear backwards;
+    animation-delay: calc(var(--rb, 0s) + var(--pb, 0s));
+}
+#game #board .voweltile.failed.animated,
+#game #board .voweltilesmall.failed.animated {
+    animation: flip .5s ease backwards, mxLoseSwapVowel .5s linear backwards;
+    animation-delay: calc(var(--rb, 0s) + var(--pb, 0s));
+}
+#game #board .failed.animated:nth-child(2) { --pb: .06s; }
+#game #board .failed.animated:nth-child(3) { --pb: .12s; }
+#game #board .failed.animated:nth-child(4) { --pb: .18s; }
+#game #board .failed.animated:nth-child(5) { --pb: .24s; }
+#game #board .failed.animated:nth-child(6) { --pb: .3s; }
+#game #board .failed.animated:nth-child(7) { --pb: .36s; }
+#game #board .failed.animated:nth-child(8) { --pb: .42s; }
+#game #board .failed.animated:nth-child(9) { --pb: .48s; }
+#game #board .failed.animated:nth-child(10) { --pb: .54s; }
+#game #board .failed.animated:nth-child(11) { --pb: .6s; }
+@keyframes mxLoseSwap {
+    0%, 49% { background-color: #26262B; border-color: #3A3A41; color: transparent; }
+    50%, 100% { background-color: #7A2020; border-color: #933232; color: #fff; }
+}
+@keyframes mxLoseSwapVowel {
+    0%, 49% { background-color: rgba(245, 184, 61, .08); border-color: #F5B83D; color: transparent; }
+    50%, 100% { background-color: #7A2020; border-color: #933232; color: #fff; }
+}
+/* A missed vowel tile keeps its lock until its own flip midpoint.
+   REDESIGN v61: the fill is now `both`, not `backwards` — with
+   `backwards` the end keyframe (opacity 0) was not retained, so
+   the moment the hide animation finished the lock snapped back
+   to full opacity and stayed on the flipped red tiles for good
+   (Sankar's screenshot). `both` keeps the pre-delay state during
+   the stagger (unchanged) AND holds opacity 0 after the flip, so
+   no tile shows a lock once the game has ended. The rule keys on
+   .failed.animated — a state only the end-of-game reveal (live
+   or restored) produces — so mid-game locks are untouched. */
+#game #board .voweltile.failed.animated::after,
+#game #board .voweltilesmall.failed.animated::after {
+    content: "🔒";
+    animation: mxLoseLockHide .5s linear both;
+    animation-delay: calc(var(--rb, 0s) + var(--pb, 0s));
+}
+@keyframes mxLoseLockHide {
+    0%, 49% { opacity: .85; }
+    50%, 100% { opacity: 0; }
+}
+
+/* Mystery Letter tile (user fixes): the mystery letter is always a
+   consonant, so the tile takes the GREY consonant border (v51 had
+   given it the amber vowel-style border/tint). The ❓ plus a
+   CONTINUOUS flash identify it: his own flash keyframes run
+   infinitely while the .mystery class is present, and his
+   removeQuestionFromTile() clears the classes on the next
+   guess — so the flashing stays evident until the next letter is hit,
+   exactly as long as the feature itself stays open.
+   v53: the FACE is his original game's WHITE — his own .mystery rule
+   (original chnlnk.css line 2156) is `background: white`, and the
+   redesign's dark face was wrong. White tile, grey border, ❓, and
+   his opacity flash (which pulses the whole tile against the dark
+   board, so it stays unmistakable on white). */
+#game #board .tile.mystery,
+#game #board .tilesmall.mystery,
+#game #board .voweltile.mystery,
+#game #board .voweltilesmall.mystery {
+    background: white;
+    /* finishing-pass correction: the border is now LITERALLY the normal
+       hidden consonant tile's border (2px solid #55555E, the base tile
+       rule) — the first v52 draft used 1px #3A3A41, a different grey. */
+    border: 2px solid #55555E;
+}
+#game #board .mystery {
+    animation: flash 1.4s ease-in-out infinite;
+}
+
+/* --- Timed Mode: the momentum bar shares the toggle's box. The
+   .timed-slot wrapper (created by slotTimedBar() in chnlnk.js) is a
+   one-cell grid holding both the bar's wrapper and the toggle row:
+   whichever is visible occupies the same place, and the block height
+   is the toggle's in both states, so nothing below moves when a
+   timed game starts. The slot takes the toggle row's own footprint
+   (centred column, same as the legend above it). --- */
+.timed-slot {
+    display: grid;
+    width: calc(100% - 20px);
+    max-width: 460px;
+    margin: 3px auto 0;
+}
+.timed-slot > * { grid-area: 1 / 1; }
+.timed-slot #toggle-row {
+    margin: 0;
+    width: 100%;
+    max-width: none;
+}
+.timed-slot .momentum-wrapper {
+    position: static;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.timed-slot #momentum-bar-container { width: 100%; }
+
+/* Legend at very small widths: 10.5px overflows 320px screens by
+   ~17px, so the row steps down a notch there only (360px and up
+   keep 10.5px). */
+@media (max-width: 340px) {
+    #vowel-legend { font-size: 9.6px; gap: 3px; }
+    #vowel-legend .legend-text { letter-spacing: -.02em; }
+}
+
+/* Timed slot height hold (finishing pass): while the momentum bar is
+   actually running (his JS sets #momentum-bar-container's inline
+   display to "block"), the .timed-slot keeps the toggle row's height
+   (39px as rendered) so the toggle->bar swap moves nothing below it
+   and the bar sits centred in the toggle's exact place. When the bar
+   is hidden (pre-game, non-timed games, game over) the slot sizes to
+   the toggle or collapses exactly as his game always has. */
+.timed-slot:has(#momentum-bar-container[style*="display: block"]) {
+    min-height: 39px;
+}
+
+/* ============================================================
+   CHN LNK REDESIGN — v53 PROPORTIONAL SIZING + CHEVRON CLEARANCE
+   (2026-11-20, from Sankar's phone testing of v52)
+   ============================================================
+   Sizing lives in fitBoardTiles() (chnlnk.js): tile = min(cap,
+   widthFit, columnFit), all measured live — see the v53 section
+   of CHANGELOG.md. This layer covers the two geometry pieces CSS
+   owns: the connector strip and the row padding around it.
+
+   Sankar: "the chevron is still touching tiles above and below."
+   He was right — in v52 the 18×11 chevron sat in a 9px strip
+   (6px under the short-screen media layer) with 1–1.5px of row
+   padding, leaving +0.5px of clearance on tall screens and a
+   −1.5px OVERLAP on short ones. The strip is now 16px at EVERY
+   size (the short-screen squeeze layer no longer shrinks it) and
+   the rows' vertical padding is pinned at 1.5px, so the centred
+   chevron clears the tile above and the tile below by
+   1.5 + (16 − 11) / 2 = 4px on both sides, everywhere. The
+   tile-to-tile rhythm stays uniform — every one of the 6 gaps
+   measures the same 1.5 + 16 + 1.5 = 19px from tile face to tile
+   face — and the chevron itself is unchanged (white, 18×11,
+   same SVG). The
+   taller strips are absorbed by fitBoardTiles()' column fit,
+   which shrinks tiles on short screens so header → legend still
+   fits the viewport with no scrolling. Scoped to #game: the
+   archive keeps its v51 geometry. */
+#game #board .connector.vertical-glow {
+    height: 16px;
+}
+
+#game #board > div[id^="board"] {
+    padding-top: 1.5px;
+    padding-bottom: 1.5px;
+}
+
+/* --- v53: calendar months exactly one scroller wide — with the
+   matching updateMonthPosition() percentage shift in chnlnk.js, no
+   part of an adjacent month can peek in at any viewport. --- */
+#pastmodal #archiveboard .month { width: 100%; min-width: 100%; }
+
+/* --- v53: Stats footer — Play Past Chains becomes the Submit item's
+   identical twin. In the original both footer items read on the
+   modal background (Submit transparent, the button black-on-black);
+   the redesign's charcoal modal exposed the button's box, so it now
+   carries NO background or border of its own, with the shared rule's
+   typography restored (11px / .4px / radius 6). Footer gaps stay the
+   original 12px / 12px. --- */
+#summary #Archivebutton {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    border-radius: 6px;
+}
+#summary #Archivebutton:hover { background: transparent; }
+
+/* --- v53: nav icons in the theme green — the buttons themselves
+   keep the v52 grey theme (backgrounds, borders, white labels
+   unchanged). Refines the v52 grey-buttons rule above, which had
+   muted the icon strokes/fills along with everything else. --- */
+#game #stats .stats-item svg path,
+#game #stats .stats-item svg circle,
+#game #stats .stats-item svg rect,
+#game #stats .stats-item svg line,
+#game #stats .stats-item svg polyline { stroke: #3DDC68; }
+#game #stats .stats-item svg [fill="#3DDC68"] { fill: #3DDC68; }
+
+/* --- v53: key font scales with the viewport width — 15px (the v52
+   size) at 375px wide and up, shrinking proportionally below that,
+   so the keyboard stays inside the one-screen budget on narrow
+   phones. Key widths were already exact fractions of the row and
+   key height already dvh-clamped (--keyh). --- */
+.key-tile { font-size: clamp(12.5px, 4vw, 15px); }
+
+/* --- v53: header scales with viewport width. The fixed 23px
+   wordmark + 12.5px nowrap "Daily CHN LNK #316" label overflowed
+   the header row by ~25px at 320px wide (measured). All three
+   clamps reach their v52 values at ~377-390px wide, so the
+   approved sizes are unchanged; below that they shrink
+   proportionally (6.1vw / 6.9vw / 3.2vw). --- */
+#game .header-row .title-scale { font-size: clamp(20px, 6.1vw, 23px); }
+#game .header-row .logo-mark { width: clamp(22px, 6.9vw, 27px); height: clamp(22px, 6.9vw, 27px); }
+#game .header-row .waviy1 { font-size: clamp(10.5px, 3.2vw, 12.5px); }
+
+/* --- v53: feedback popup greens match the main page. The submit
+   button and the selected rating star had been overridden to the
+   darker tile green (--mx-green-tile #1F9D4D); both now use the
+   theme green #3DDC68, with the dark text colour the redesign
+   pairs with that green (--rd layer's #0B2E17). The thank-you
+   toast already computes to --rd-green #3DDC68. Nothing else in
+   the popup changes. --- */
+#feedbackPopup .fb-submit { background: #3DDC68; color: #0B2E17; }
+#feedbackPopup .fb-rating button.selected { background: #3DDC68; color: #0B2E17; }
+
+/* --- v53: tile corner radius scales with the tile — 16.5% of
+   --tile (the mockup's 9px on a 54.6px tile). The fixed 9px/7px
+   radii turned sub-20px tiles into circles on small screens. --- */
+#board .tile, #board .voweltile,
+#board .tilesmall, #board .voweltilesmall { border-radius: calc(var(--tile) * 0.165); }
+
+/* ============================================================
+   CHN LNK REDESIGN — v54 (2026-11-21, from Sankar's v53 test)
+   ============================================================
+   1. LOADING blocks take the given words' fill.
+   2. Timed Mode is the nav TIMER button (middle of five): the
+      bottom toggle row is gone, the momentum bar is never
+      displayed — the button's own fill mirrors the bar (driven
+      by paintTimedButton() in chnlnk.js from updateMomentumBar's
+      percent, his thresholds, theme colours).
+   3. The nav row is minimized scalably (--navh, like --keyh).
+   4. The chevron scales with the tile.
+   5. Stats modal: SHARE and INVITE buttons equal width; the
+      WhatsApp icon blends with the modal surface.
+   6. The board shakes on a wrong guess (mockup keyframes).
+   Scoped to #game where the archive shares class names. */
+
+/* --- 1. LOADING blocks: same fill as the starting/ending words
+   (#board .starting computes to #2E4636 — measured). Fill only;
+   the loader's layout, timing and gloss are untouched. --- */
+.loading-correct { background-color: #2E4636; }
+
+/* --- 2a. The momentum bar/banner is never displayed. The
+   elements stay in the DOM because his timer code reads them
+   (updateMomentumBar/flashBarRed); the nav Timer button is the
+   display now. --- */
+.momentum-wrapper, #momentum-bar-container { display: none !important; }
+
+/* --- 3. Minimized nav row. Height is a dvh-driven var like
+   --keyh: 4.27dvh is 36px at the 390x844 reference, 30px floor
+   on short screens, so the saved vertical space flows into
+   fitBoardTiles()' tile budget. Five equal buttons span the
+   column; icons ~14px; the label font is vw-clamped so the
+   longest label ("Support") fits inside its button with no
+   truncation or wrapping down to 320px wide. --- */
+:root { --navh: clamp(30px, 4.27dvh, 42px); }
+#stats #stats-item { gap: 6px; }
+#stats .stats-item > * {
+    height: var(--navh);
+    min-height: 0;
+    padding: 0 2px;
+    gap: 3px;
+    font-size: clamp(8.5px, 2.6vw, 12.5px);
+}
+#stats .stats-item svg { width: clamp(11px, 3.6vw, 14px); height: clamp(11px, 3.6vw, 14px); }
+
+/* --- 2b. The Timer button: fill layer, armed and locked states.
+   The fill's width/colour are set from updateMomentumBar() via
+   paintTimedButton(); its 1s linear width transition is the
+   bar's own (#momentum-bar had transition: width 1s linear),
+   so the button drains exactly like the bar did. --- */
+#timedbutton { position: relative; overflow: hidden; }
+#timedbutton .timed-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 0;
+    background-color: transparent;
+    transition: width 1s linear;
+    pointer-events: none;
+}
+#timedbutton svg, #timedbutton .nav-label { position: relative; z-index: 1; }
+#game #timedbutton.timed-armed { border-color: var(--mx-green); }
+#game #timedbutton.timed-locked { opacity: .45; filter: saturate(.35); pointer-events: none; }
+
+/* --- 2c. Timed Mode confirmation popup (his .modal shell). --- */
+.timed-modal .modal-body { overflow-y: auto; }
+.timed-caption-line { text-align: center; color: #C9C9CF; font-size: 12.5px; margin: 12px 0 0; }
+.timed-question { color: var(--rd-text); font-size: 14.5px; font-weight: 800; text-align: center; margin: 16px 0 12px; }
+.timed-actions { display: flex; gap: 10px; justify-content: center; padding-bottom: 6px; }
+.timed-actions button { flex: 1 1 0; max-width: 150px; padding: 10px 0; border-radius: 8px; font-size: 14px; font-weight: 800; cursor: pointer; }
+#timed-yes { background: #3DDC68; border: 1px solid #3DDC68; color: #0B2E17; }
+#timed-no { background: var(--rd-chip); border: 1px solid var(--rd-line); color: var(--rd-text); }
+
+/* --- 4. Scalable chevron: width is 33% of the tile (18px on
+   the mockup's 54.6px tile), height keeps the 18:11 aspect.
+   The strip grows with the chevron and keeps the v53 clearance
+   structure: 1.5px row padding + (strip - chevron)/2 = 4px of
+   air above and below at every size. White SVG, centred,
+   uniform rhythm — all unchanged. --- */
+#game #board .connector.vertical-glow { height: calc(var(--tile) * 0.2017 + 5px); }
+#game #board .connector.vertical-glow::after {
+    width: calc(var(--tile) * 0.33);
+    height: calc(var(--tile) * 0.2017);
+}
+
+/* --- 5a. Stats modal: SHARE and INVITE the same length. The
+   row becomes three equal 1fr columns and each button fills
+   its column — the fixed 90px/160px widths that made INVITE
+   shorter than SHARE no longer apply in the row. (Equal flex
+   alone did NOT equalize them: as a flex item the SHARE
+   <button>'s base size came out as padding+border = 26px
+   instead of its 0 basis — measured 122 vs 96px — so the row
+   uses grid, whose 1fr tracks are exact: measured 104.66px
+   each at 390 wide.) --- */
+#summary .button-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); }
+#summary .button-row .buttonmode { width: 100%; }
+@media (max-width: 400px) {
+    /* the INVITE label+gift emoji needs ~3px more than the
+       smallest column offers; narrower padding frees it
+       without touching the label size */
+    #summary .button-row .buttonmode { padding-left: 6px; padding-right: 6px; }
+}
+
+/* --- 5b. WhatsApp icon blends with the modal. The PNG has a
+   black background baked in (corners measure rgb(0,0,0)); the
+   wrapper takes the summary surface's own colour (measured
+   rgb(30,30,34) = #1E1E22) and the icon itself is screen-
+   blended, so the black becomes the modal colour and only
+   the green glyph shows. Icon and share behaviour unchanged. --- */
+#summary .wa-wrapper { background: #1E1E22; border-radius: 8px; justify-content: center; }
+#wabutton { mix-blend-mode: screen; }
+
+/* --- 6. Board shake on a wrong guess — the mockup's exact
+   motion (.board.shake: shake .45s ease; ±8px decaying to
+   ±6px), under a new keyframe name so his two existing
+   @keyframes shake definitions (dynamite button / .shaketile)
+   are untouched. Triggered from processInput's wrong-guess
+   branch via shakeBoard() in chnlnk.js. --- */
+#board.board-shake { animation: boardShake .45s ease; }
+@keyframes boardShake {
+    0%, 100% { transform: translateX(0); }
+    15% { transform: translateX(-8px); }
+    35% { transform: translateX(8px); }
+    55% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
+
+/* --- 7. Edge safety margins (desktop-mode / overscan displays):
+   the game column gets a guaranteed breathing room — a top
+   margin above the header of clamp(12px, 1.8dvh, 20px)
+   (replacing the incidental 6px phone / 10px desktop padding),
+   and fitBoardTiles() now fits the column to viewport − 12px
+   so the legend always ends at least 12px above the bottom
+   edge. Both margins live INSIDE the fit budget: tiles absorb
+   the few pixels and the one-screen fit still holds. --- */
+#game { padding-top: clamp(12px, 1.8dvh, 20px); }
+
+/* ============================================================
+   CHN LNK REDESIGN — v55 (2026-11-21, from Sankar's v54 test)
+   ============================================================
+   1. Dead space below the legend goes to the tile area: the
+      connector strips inside the board panel absorb the
+      --spread custom property that fitBoardTiles() sets (the
+      leftover column height divided across the 6 strips, after
+      the tiles have grown to the width limit). The chevron
+      stays centred in its strip, so its air above and below
+      only grows from the v54 4px — clearance and the uniform
+      tile-to-tile rhythm are preserved (every strip grows by
+      the same --spread). With no leftover, --spread is 0 and
+      the geometry is exactly v54's.
+   2-4. Timer button: no CSS change needed — the countdown
+      number reuses .nav-label, the inert/locked states reuse
+      the v54 classes; the JS owns the label/fill housekeeping
+      (renderTimedButtonChrome in chnlnk.js). --- */
+#game #board .connector.vertical-glow { height: calc(var(--tile) * 0.2017 + 5px + var(--spread, 0px)); }
+
+/* ============================================================
+   CHN LNK REDESIGN — v56 (2026-11-21, from Sankar's v55 test)
+   ============================================================
+   Part A (main game):
+   1. Thank-you toast green: the mx layer's late .thankyou-toast
+      rule (--mx-green-tile #1F9D4D, white text) outranked the
+      redesign layer's theme green. The toast now computes to
+      #3DDC68 with the dark text #0B2E17 — the same pairing as
+      the feedback Submit button.
+   2. Leaderboard name-EDIT popup: presentation rebuilt in the
+      modal family (.name-edit-* below, matching #namePopup's
+      .popup-box treatment: surface #1E1E22, 1px border #2C2C31,
+      radius 12px). Was an inline-styled black box with a 2px
+      yellow border. Construction is in chnlnk.js; the SAVE
+      handler is byte-identical to the original.
+   3. First-time name popup: its Save (.popup-box button — the
+      popup-box's only user is #namePopup) takes the same theme
+      green; the mx layer had left it at #1F9D4D.
+   4. (JS only) restore-message gate — see chnlnk.js.
+   Part B (archive): the body.archive-page section at the end.
+   ============================================================ */
+
+.thankyou-toast { background: var(--rd-green); color: #0B2E17; }
+
+.popup-box button { background: var(--rd-green); color: #0B2E17; font-weight: 700; }
+
+/* --- A2: name-EDIT popup, modal family --- */
+.name-edit-popup {
+    position: fixed;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999999;
+    background: var(--rd-panel);
+    border: 1px solid var(--rd-line);
+    border-radius: 12px;
+    width: min(300px, calc(100vw - 32px));
+    max-width: calc(100vw - 32px);
+    padding: 20px 25px;
+    text-align: center;
+    color: var(--rd-text);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+}
+
+.name-edit-popup h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.name-edit-popup input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    background: var(--rd-chip);
+    border: 1px solid var(--rd-line2);
+    color: var(--rd-text);
+}
+
+.name-edit-save {
+    padding: 8px 16px;
+    background: var(--rd-green);
+    color: #0B2E17;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.name-edit-close {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--rd-muted);
+    font-size: 1.25rem;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.name-edit-error {
+    color: var(--rd-red);
+    font-size: 14px;
+    margin: 10px 0 0;
+    text-align: left;
+}
+
+/* ============================================================
+   v56 Part B — ARCHIVE page reskin (user-authorized phase 2).
+   LOOK ONLY: chnlnkarch.js is byte-identical to the original,
+   and every rule below is scoped to body.archive-page (a class
+   added to archive.html's <body>) so the main game cannot be
+   affected. The archive already inherited the shared layers'
+   board panel, tile system, keyboard and modal family; this
+   section fixes what diverged: the wordmark (red vowels, Arial),
+   the daily label, the green-tinted top buttons, the per-row
+   bands inside the board, the GREEN chevron SVG (the main game
+   overrides it to white under #game), the full-bleed board, and
+   — critically — the lives row: the shared #lives rule hides
+   the element's text (font-size: 0) because the main game draws
+   its hearts as an SVG ::before keyed to a data-left attribute
+   the archive never sets, which left the archive's ⚪ lives
+   completely invisible. Here the glyph row is shown again in a
+   panel with a LIVES label, in the main game's lives-bar
+   placement. The archive has no legend element, no Timer /
+   Safety Net / dynamites — none are added.
+   ============================================================ */
+
+body.archive-page {
+    --tile: max(18px, min(14vw, 6.15dvh));
+    --tile-small: max(14px, min(10.6vw, 4.7dvh));
+    --keyh: clamp(30px, 4.2dvh, 42px);
+    --key-h: clamp(30px, 4.2dvh, 42px);
+}
+
+/* Shorter screens: the archive's chrome (top buttons, wordmark,
+   lives panel, message line) is mostly fixed height, so the
+   tiles absorb the difference — the same fit-first policy as
+   the main game, in pure CSS bands. */
+@media (max-height: 800px) {
+    body.archive-page {
+        --tile: max(17px, min(13.5vw, 5.8dvh));
+        --tile-small: max(13px, min(10.2vw, 4.4dvh));
+    }
+}
+
+@media (max-height: 700px) {
+    body.archive-page {
+        --tile: max(16px, min(13vw, 4.9dvh));
+        --tile-small: max(13px, min(9.9vw, 3.8dvh));
+    }
+}
+
+@media (max-height: 600px) {
+    body.archive-page {
+        --tile: max(15px, min(12.5vw, 4dvh));
+        --tile-small: max(12px, min(9.5vw, 3.1dvh));
+    }
+}
+
+/* The archive markup separates its blocks with <br> tags; each
+   costs a full line of height. Suppressing the STRUCTURAL ones
+   (direct children of <body>) is pure spacing — <br>s inside
+   content (the game-over message's break, the modal copy) are
+   not body children and keep rendering. */
+body.archive-page > br { display: none; }
+
+/* Wordmark: Archivo, theme-green vowels (the two inline
+   color:red styles in archive.html are now #3DDC68). */
+body.archive-page h1 {
+    font-family: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: clamp(22px, 6.7vw, 28px);
+    font-weight: 800;
+    letter-spacing: .01em;
+    text-align: center;
+    margin: 4px 0 0;
+}
+
+/* Daily label: the main game's muted "Daily CHN LNK #N" treatment */
+body.archive-page .waviy1 {
+    display: block;
+    text-align: right;
+    font-size: 12.5px;
+    letter-spacing: .14em;
+    color: var(--rd-muted);
+    margin: 2px 14px 0 0;
+}
+
+body.archive-page hr {
+    border: none;
+    border-top: 1px solid var(--rd-line);
+    margin: 8px 10px;
+}
+
+/* Top buttons: grey nav family (were green-tinted chips) */
+body.archive-page #stats { padding: 6px 10px 0; }
+
+body.archive-page #stats .stats-item > * {
+    background: var(--rd-chip);
+    border: 1px solid var(--rd-line);
+    color: var(--rd-text);
+    min-height: 36px;
+    padding: 6px 7px;
+    font-size: 12.5px;
+    border-radius: 9px;
+}
+
+body.archive-page #stats .stats-item > *:hover {
+    background: #2E2E35;
+    border-color: var(--rd-line);
+}
+
+/* Lives: panel + label + the game's own glyphs, visible again */
+body.archive-page #lives {
+    font-size: 19px;
+    line-height: 1.25;
+    color: #fff;
+    letter-spacing: 7px;
+    background: var(--rd-panel);
+    border: 1px solid var(--rd-line);
+    border-radius: 12px;
+    margin: 8px 10px;
+    padding: 5px 12px;
+    min-height: 28px;
+    justify-content: center;
+}
+
+body.archive-page #lives::before {
+    content: "LIVES";
+    display: block;
+    height: auto;
+    flex: 0 0 auto;
+    background: none;
+    filter: none;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    color: var(--rd-muted);
+    margin-right: 4px;
+}
+
+/* Board: inset like the main game's column; one clean panel —
+   the per-section bands (#111 fill + #222 border) are removed */
+body.archive-page #board { margin: 0 10px; width: auto; }
+
+body.archive-page #board > div[id^="board"] {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    margin: 0;
+}
+
+/* Connectors: WHITE chevrons, sized like the main game's
+   (33% of the tile, strip = chevron height + 5px) */
+body.archive-page #board .connector.vertical-glow {
+    height: calc(var(--tile) * 0.2017 + 5px);
+}
+
+body.archive-page #board .connector.vertical-glow::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='11' viewBox='0 0 18 11'%3E%3Cpath d='M2 2l7 7 7-7' fill='none' stroke='%23FFFFFF' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    width: calc(var(--tile) * 0.33);
+    height: calc(var(--tile) * 0.2017);
+}
+
+/* Feedback/message line: closer to the main strip's presence */
+body.archive-page #answer {
+    font-size: 14.5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    /* The shared #answer rule fixes a 61px height for the main
+       game's strip; the archive's messages are shorter (its
+       longest is the two-line game-over text), so it sizes to
+       content with a one-line minimum. */
+    height: auto;
+    min-height: 44px;
+}
+
+/* ============================================================
+   CHN LNK REDESIGN — v57 (2026-11-21, from Sankar's v56 test)
+   ============================================================ */
+
+/* --- Item 1: Help sample chain as a miniature board ---------
+   The five sample words as small letter tiles in the board's own
+   styling values (plain tile: transparent, 2px #55555E border;
+   given tile: #2E4636 fill, #3F6B4F border, #DFF5E4 letters),
+   stacked with the board's white chevrons between rows. Pure
+   presentation inside the Help modal; no pairings line. */
+#modal .sample-board {
+    margin: 10px auto 4px;
+    width: max-content;
+    max-width: 100%;
+}
+#modal .sb-row {
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+}
+#modal .sb-tile {
+    width: 27px;
+    height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #55555E;
+    border-radius: 5px; /* ~16.5% of the tile, like the board */
+    background: transparent;
+    color: #FFFFFF;
+    font-weight: 800;
+    font-size: 13px;
+    line-height: 1;
+}
+#modal .sb-tile.given {
+    background: #2E4636;
+    border-color: #3F6B4F;
+    color: #DFF5E4;
+}
+#modal .sb-chev {
+    height: 10px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='11' viewBox='0 0 18 11'%3E%3Cpath d='M2 2l7 7 7-7' fill='none' stroke='%23FFFFFF' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 9px 6px no-repeat;
+}
+
+/* --- Item 2: the feedback strip is ONE line tall -------------
+   Completes v56's parked A6 per Sankar's decisions: the win
+   bonus suffix is dropped in JS, the hard <br>s are out, and the
+   strip becomes a fixed one-line box at a uniform 10px (the
+   audit's binding case at 320px — "Safety Net Inactive — play 4
+   consecutive days to activate!" — measures 279.5px at 10px
+   against a 288px inner width once the horizontal padding is
+   recovered from 10px to 6px a side). Same fixed-size discipline
+   as before: identical box for every message, no wrap, no
+   ellipsis, centred; colours and the unified pulse unchanged.
+   The height this frees (61px -> 32px, 57px -> 32px under the
+   short-screen squeezes) flows to the tiles through
+   fitBoardTiles(), which measures the real layout. */
+#answer {
+    height: 32px;
+    min-height: 32px;
+    padding: 4px 6px;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+/* Archive guard: the archive page shares this stylesheet but
+   keeps its v56 message-line state exactly (content-sized,
+   wrapping allowed, original padding). Its own rule above
+   already overrides height/min-height/font-size; these two
+   restore the remaining properties this section changes. */
+body.archive-page #answer {
+    white-space: normal;
+    padding: 4px 10px;
+}
+
+/* ============================================================
+   CHN LNK REDESIGN — v58 (2026-11-21, from Sankar's v57 test)
+   ============================================================ */
+
+/* --- Lives hearts centred on the PANEL, exactly -------------
+   The lives row was a flex row: label | #lives (flex:1) |
+   counter. #lives centred its hearts inside its own box, but
+   the box is squeezed between a 39.52px label and a 27.13px
+   counter, so the hearts landed (39.52 − 27.13) / 2 = 6.2px
+   RIGHT of the panel's true centre — at every size and in
+   every state (fresh, partial, depleted, stars), measured.
+   The row is now a 1fr | auto | 1fr grid: the two side columns
+   are always equal width, so the middle column — and the
+   hearts centred inside #lives — sit on the panel centre no
+   matter what the label (LIVES / STARS) or the counter say.
+   Nothing else changes: the row's padding, gap, height, the
+   hearts' sizes and spacing, and the label/counter styling
+   all come from the existing rules; #lives keeps its internal
+   centring and its JS data-left sync is untouched. */
+.status-row-lives {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+}
+
+.status-row-lives #lives-label { justify-self: start; }
+.status-row-lives #lives { justify-self: center; }
+.status-row-lives #lives-count { justify-self: end; }
+
+/* Archive lives: the same defect by the same mechanism. The
+   archive's "LIVES" ::before was a flex item inside the
+   centred row, so the row centred label + glyphs as one unit
+   and the ⚪ glyphs sat ~23.5px right of the panel centre
+   (layout box; ~19.3px by rendered ink). The label is taken
+   out of the flow — absolutely positioned at the panel's left
+   edge, vertically centred, exactly where the main game's
+   label sits — and the glyph row centres on the panel alone.
+   The 7px of extra left padding (12px → 19px) cancels the
+   trailing letter-spacing the layout counts after the last
+   glyph (letter-spacing is 7px, so the layout box extends
+   3.5px past the visible glyphs on the right; the asymmetric
+   padding moves the centred box 3.5px right so the VISIBLE
+   glyphs, not just their box, sit on the centre). Scoped to
+   body.archive-page; the main game is unaffected. */
+body.archive-page #lives {
+    position: relative;
+    padding-left: 19px;
+}
+
+body.archive-page #lives::before {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 0;
+}
+
+/* ============================================================
+   CHN LNK REDESIGN — v59 (2026-11-21, from Sankar's v58 test)
+   ============================================================
+   Main game:
+   1. Timer button under modals (Sankar, phone-verified): the
+      button's label/icon carry z-index: 1 (to sit above the
+      countdown fill), but neither the button nor #game formed a
+      stacking context, so that z-index escaped to the root and
+      painted the button ABOVE the z-auto modal scrims — bright
+      and clickable while every other nav button sat dimmed
+      under its modal, its popup opening in front of the modal.
+      z-index: 0 on the (already positioned) button makes it a
+      stacking context: the z-index: 1 now competes only inside
+      the button, and the button itself paints in DOM order —
+      under every scrim, exactly like its neighbours. The click
+      handler is also guarded in chnlnk.js (anyModalOpen).
+   2. Strip font scales with width (Sankar: 10px read too small
+      on his phone): 10px at 320px wide, growing linearly to
+      12.5px at 390px, capped above. v57's fixed 10px was the
+      320px ceiling for the longest message; larger phones now
+      get the larger font. Still one line everywhere (audit
+      re-run), still the fixed 32px box.
+   3. Keyboard nudge (Sankar): the strip's pulse glow overlays
+      the keyboard's top edge. Measured at pulse peak, the
+      glow's visible tint reaches ~8px below the strip box; the
+      old gap was 3px, so the keys' top ~5px sat inside the
+      glow. The first keyboard row's margin-top goes 3px ->
+      14px: ~6px of clear air beyond the glow's reach.
+      fitBoardTiles() measures the real column, so the tiles /
+      connector spread absorb the 11px and the page still ends
+      at the 12px bottom margin.
+   4. Tile flip on correct reveals (Sankar: the mockup has it,
+      the game doesn't): processInput pairs .correct with
+      .poptile on exactly the tiles a guess newly reveals (the
+      restore path adds .correct alone; given words and the
+      end-of-game paths never pair them), so that pair is the
+      reveal signature. Those tiles now play the mockup's flip
+      (.45s ease, rotateX 0 -> 90 -> 0) instead of the old
+      dropIn. The Mystery Letter reveals through the same
+      processInput path, so it flips too. Wrong guesses keep
+      the board shake; the .animated end sequences are
+      untouched (the lose path strips .poptile before adding
+      .animated, and this rule never matches .failed tiles).
+   ============================================================ */
+
+#timedbutton { z-index: 0; }
+
+#answer { font-size: clamp(10px, calc(3.5714vw - 1.43px), 12.5px); }
+
+#game + .keyboard-row { margin-top: 14px; }
+
+#game #board .correct.poptile { animation: rdTileFlip .45s ease; }
+
+@keyframes rdTileFlip {
+    0% { transform: rotateX(0deg); }
+    50% { transform: rotateX(90deg); }
+    100% { transform: rotateX(0deg); }
+}
+
+/* ============================================================
+   v59 — ARCHIVE parity (Sankar: "the archive should look and
+   feel exactly the same as the main page"). Scoped to
+   body.archive-page throughout. The header markup in
+   archive.html is now the main game's own (header row, logo,
+   wordmark, "Daily CHN LNK #N" — the number is the archive
+   chain's own, written by the game into #daycount as before),
+   the lives row is the main game's status-row markup, the
+   strip takes the main game's text discipline, and the legend
+   line is added. The GAME RULES / DAILY CHAIN buttons are
+   removed from archive.html (route note in the CHANGELOG).
+   chnlnkarch.js logic is untouched; its v59 block only paints.
+   ============================================================ */
+
+/* --- Header: the main game's row, inset like the main column.
+   The h1/.waviy1 copies below exist only to outrank the v56
+   archive rules (which styled the old centred wordmark); their
+   values are the main game's own computed values. --- */
+body.archive-page { padding-top: clamp(12px, 1.8dvh, 20px); }
+body.archive-page .header-row { margin: 0 10px; }
+
+body.archive-page h1.title-scale {
+    font-family: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: clamp(20px, 6.1vw, 23px);
+    font-weight: 700;
+    letter-spacing: .06em;
+    line-height: 1.1;
+    margin: 0;
+    margin-right: auto;
+    text-align: left;
+    color: var(--mx-ink);
+    white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+    body.archive-page h1.title-scale { letter-spacing: .045em; }
+}
+
+body.archive-page .header-row .logo-mark { width: clamp(22px, 6.9vw, 27px); height: clamp(22px, 6.9vw, 27px); }
+
+body.archive-page .waviy1 {
+    display: block;
+    font-size: clamp(10.5px, 3.2vw, 12.5px);
+    letter-spacing: normal;
+    color: var(--mx-faint);
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0;
+    padding: 0;
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* --- Lives: the main game's panel. The element reset undoes
+   the v56/v58 glyph-row styling (panel bg, 19px glyphs, the
+   "LIVES" ::before label, the centring padding); the row now
+   carries the panel, the label is the row's own span, and the
+   shared #lives machinery (SVG hearts keyed to data-left)
+   draws the slots. The ::before reset restates the shared
+   heart strip (the v56 rule had replaced it with the label);
+   the data-left copies keep display/width ahead of that
+   reset, exactly as the shared rules do unscoped. Archive
+   rule preserved: no stars state exists here. --- */
+body.archive-page #top-resources { margin: 3px 10px 0; width: auto; }
+
+body.archive-page #lives {
+    font-size: 0;
+    letter-spacing: 0;
+    line-height: 1;
+    color: transparent;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+    min-height: 0;
+    position: relative;
+    justify-content: center;
+}
+
+body.archive-page #lives::before {
+    content: "";
+    position: static;
+    left: auto;
+    top: auto;
+    transform: none;
+    display: none;
+    height: 26px;
+    flex: 0 0 auto;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' preserveAspectRatio='xMidYMid meet'%3E%3Cpath d='M12 21s-7.5-4.9-10-9.3C.3 8.6 2.2 4.5 6.1 4.5c2.2 0 3.7 1.2 4.6 2.7.4.7 1 .7 1.4 0 .9-1.5 2.4-2.7 4.6-2.7 3.9 0 5.8 4.1 4.1 7.2C19.5 16.1 12 21 12 21z' fill='%233DDC68'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 32px 26px;
+    background-position: left center;
+    filter: drop-shadow(0 0 6px rgba(61, 220, 104, .45));
+    font-size: 0;
+    letter-spacing: normal;
+    color: transparent;
+    margin-right: 0;
+}
+
+body.archive-page #lives[data-left="1"]::before { display: block; width: 32px; }
+body.archive-page #lives[data-left="2"]::before { display: block; width: 64px; }
+body.archive-page #lives[data-left="3"]::before { display: block; width: 96px; }
+body.archive-page #lives[data-left="4"]::before { display: block; width: 128px; }
+body.archive-page #lives[data-left="5"]::before { display: block; width: 160px; }
+body.archive-page #lives.lives-depleted::before { display: none; }
+
+/* --- Strip: the main game's discipline, two lines allowed.
+   A fixed 50px box (two lines at the largest scaled font,
+   plus the main strip's own padding/border/slack) that never
+   changes size; the font is the main game's new scaled size;
+   colours come from the ported fb-* classifier in
+   chnlnkarch.js — the fb-info pair below mirrors the main
+   game's #game-scoped yellow (the unscoped fb-info is the old
+   muted grey, which the main game also overrides). No white
+   or grey strip text remains: the game's inline lightgray
+   writes lose to the fb-* !important colours, as in the main
+   game. --- */
+body.archive-page #answer {
+    width: auto;
+    height: 50px;
+    min-height: 50px;
+    margin: 3px 10px 0;
+    padding: 4px 6px;
+    font-size: clamp(10px, calc(3.5714vw - 1.43px), 12.5px);
+    white-space: normal;
+}
+
+body.archive-page #answer.fb-info { color: var(--mx-amber) !important; }
+body.archive-page #answer.run-border.fb-info { animation: mxFbWarn .65s ease-out; }
+
+/* --- Board: leftover height spreads across the connector
+   strips, as in the main game (fitArchiveTiles in
+   chnlnkarch.js sets --spread on #board). --- */
+body.archive-page #board .connector.vertical-glow {
+    height: calc(var(--tile) * 0.2017 + 5px + var(--spread, 0px));
+}
+
+/* ============================================================
+   REDESIGN v61
+   Item 1 (no locks on tiles at game end) lives with the lose
+   reveal rules above — see the mxLoseLockHide note.
+   ============================================================ */
+
+/* --- Item 3: the archive gets the main game's correct-reveal
+   flip. The archive's tiles carry the same .correct.poptile
+   pair at reveal, but the board is not inside #game, so the
+   v59 flip rule never reached it and the tiles kept the old
+   dropIn from the generic .poptile rule. Same keyframes, same
+   .45s ease — presentation only; the archive's .animated end
+   sequences are untouched. --- */
+body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
+
+/* --- Item 4: while Timed Mode is live and counting, the Timer
+   button draws the eye with a flashing white border.
+   REDESIGN v62: re-keyed from .timed-live to .timed-armed.
+   .timed-live (armed + started + not over) only turns on with
+   the first guess, but the countdown itself runs from the
+   moment the timed game loads — the button already shows the
+   live number and fill before any guess (v61 defect, reported
+   from the user's phone: no flash until the first letter).
+   .timed-armed is syncTimedButton()'s armed + not-over class —
+   exactly the phase in which the countdown number/fill are
+   shown — so the flash now covers the entry phase too. It
+   still stops the moment the game ends (syncTimedButton() and
+   paintTimedButton()'s end path both remove .timed-armed as
+   the button reverts to .timed-locked), and never shows on
+   the unarmed button. The pulse is border-colour + box-shadow
+   only: the button's box never changes size, so the nav row
+   cannot shift. The fill layer inside keeps its own
+   green/yellow/red painting. --- */
+#game #timedbutton.timed-armed { animation: rdTimerBorderFlash 1.2s ease-in-out infinite; }
+@keyframes rdTimerBorderFlash {
+    0%, 100% { border-color: var(--mx-green); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+    50% { border-color: #ffffff; box-shadow: 0 0 0 2px rgba(255, 255, 255, .95), 0 0 14px 3px rgba(255, 255, 255, .35); }
+}
+
+/* ============================================================
+   REDESIGN v63 — Dynamite Poll popup (Item B). A sibling of the
+   feedback popup: it reuses .feedback-popup / .feedback-box for
+   the overlay and box, so it inherits the family surface, border
+   and width. The × mirrors .name-edit-close.
+   The poll thank-you toast reuses .thankyou-toast unchanged.
+   REDESIGN v64: both answer buttons get IDENTICAL neutral styling
+   (medium grey #45454E, border #55555E, white text) — a green Yes
+   could bias the vote. Scoped to .poll-yes / .poll-no only; the
+   Timed popup's green Yes and the feedback Submit are untouched.
+   Labels carry explicit <br>s so both wrap symmetrically
+   ("Yes, reset / them!" and "No, don't touch / them!").
+   ============================================================ */
+.poll-box { position: relative; }
+.poll-close {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--rd-muted);
+    font-size: 1.25rem;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+}
+.poll-question { font-size: 16px; line-height: 1.45; margin: 8px 0 2px; }
+.poll-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+.poll-buttons button { flex: 1 1 0; max-width: 160px; padding: 10px 4px; border-radius: 8px; font-size: 14px; font-weight: 800; cursor: pointer; }
+.poll-yes, .poll-no { background: #45454E; border: 1px solid #55555E; color: #FFFFFF; line-height: 1.3; }
+
+/* ============================================================
+   REDESIGN v66 — Safety Net Saver popup. A third sibling in the
+   feedback/poll family: it reuses .feedback-popup / .feedback-box
+   for the overlay and box, .poll-close for the ×, .poll-question
+   for the text and .poll-buttons for the button row.
+   The badge replicates the board's OWN Safety Net ring badge at
+   100% — the same geometry, border, inner disc and angel SVG as
+   #hint-progress / #hint-circle / #hint-bulb in the redesign
+   layer above, class-scoped (no duplicated IDs), with the ring
+   painted full exactly as updateHintProgress paints an active
+   net inline: conic-gradient(white 360deg, #444 360deg). The
+   bulb needs no .ready class: it simply never takes the dimmed
+   opacity the board's unready bulb carries.
+   "Keep it active" takes the family's primary treatment (the
+   Timed popup's Yes / feedback Submit: #3DDC68, dark text);
+   "Let it reset" is the grey chip family.
+   ============================================================ */
+.netsaver-box { position: relative; }
+.netsaver-badge {
+    width: 36px;
+    height: 36px;
+    margin: 4px auto 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.netsaver-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid #8A8A96;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08), 0 1px 4px rgba(0, 0, 0, .45);
+    background: conic-gradient(white 360deg, #444 360deg);
+}
+.netsaver-circle::before {
+    content: "";
+    position: absolute;
+    inset: 3.5px;
+    border-radius: 50%;
+    background: #2A2A2E;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06);
+}
+.netsaver-bulb {
+    position: relative;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    display: block;
+    line-height: 0;
+    font-size: 0;
+}
+.netsaver-bulb svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+    overflow: visible;
+}
+.netsaver-keep { background: #3DDC68; border: 1px solid #3DDC68; color: #0B2E17; line-height: 1.3; }
+.netsaver-reset { background: #26262B; border: 1px solid #3A3A41; color: #F2F2F4; line-height: 1.3; }
+
+/* ============================================================
+   REDESIGN v67 — One-time in-stats prompts (archive + Friends &
+   Family) and their button highlights. The strips live in the
+   Summary modal: #ffPrompt directly above the Share / Invite
+   row, #archivePrompt directly above the footer row (Submit a
+   Chain Link / Play Past Chains). Both are hidden by default
+   and shown once per player lifetime by maybeShowStatsPrompts()
+   in chnlnk.js (archive: first completed game; F&F: the fifth
+   completed game exactly). Styling per the approved mockups:
+   amber-tinted panel; the archive strip's count phrase in amber
+   bold; the target button takes a 2px green border, a soft ring
+   and the given-word fill.
+   ============================================================ */
+#summary .stats-prompt {
+    background: rgba(245, 184, 61, .08);
+    border: 1px solid rgba(245, 184, 61, .45);
+    border-radius: 10px;
+    color: #F2F2F4;
+    font-size: 13px;
+    line-height: 1.45;
+    padding: 11px 12px;
+    margin-bottom: 12px;
+    text-align: left;
+}
+#summary .stats-prompt.hidden { display: none; }
+#summary .stats-prompt .prompt-count { color: #F5B83D; font-weight: 700; }
+#summary #archivePrompt { margin: 8px 15px 12px; }
+#summary #Archivebutton.prompt-highlight,
+#summary #Rafflebutton.prompt-highlight {
+    background: #2E4636;
+    border: 2px solid #3DDC68;
+    box-shadow: 0 0 0 3px rgba(61, 220, 104, .18);
+}
+
+/* ============================================================
+   REDESIGN v68 — Thank-you toast muted (Sankar, from v67 test).
+   The v56 pairing (bright #3DDC68 slab, dark text #0B2E17)
+   read too bright after a feedback submit and after a
+   Dynamite Poll vote. Variant A, chosen from a mockup: the
+   .thankyou-toast family (#thankYouToast + #pollThankYouToast
+   — the only two elements carrying the class) now takes the
+   given-word fill #2E4636 with white text: the muted
+   counterpart of the bright green, exactly as the error toast
+   is the muted counterpart of red. Colour only — position,
+   size, fade timing and shadow are untouched, and nothing
+   else that uses #3DDC68 changes.
+   ============================================================ */
+.thankyou-toast { background: #2E4636; color: #fff; }
+
+/* ============================================================
+   REDESIGN v69 — Generic dynamite-popup frame restyled
+   (Sankar, from his live-site announcement screenshot).
+   Every popup built on .dynamite-popup — showPopupToUser
+   (announcement / warning / reward / default), showDynamitePopup
+   (leaderboard Top-3 and invite +2), statsRetreival, rankReset
+   and the day-100 bonus in initialize() — wore the old frame:
+   a 2px deep-red border, 10px corners, no shadow, and OK
+   buttons in deep red (#closeDynamitePopup) or plain browser
+   grey (#closeGenericPopup had no rule at all). The frame now
+   takes the approved mockup skin: panel #1E1E22, 1px solid
+   #2C2C31 border, 14px radius, soft shadow; title white,
+   20px, weight 800, icon and wording unchanged; body #E8E8EA
+   at 14.5px; the single OK button in the family green
+   (#3DDC68, dark #0E2416 text, bold, 10px radius, min-width
+   132px). Every builder has exactly one OK button, so no
+   secondary/grey treatment was needed. Presentation only —
+   the overlay mechanics (fixed, rgba(0,0,0,.6) dim, z-index
+   9999, flex centring), texts, icons, triggers and close
+   behaviour are untouched.
+   ============================================================ */
+.dynamite-popup-inner {
+    background: #1E1E22;
+    border: 1px solid #2C2C31;
+    border-radius: 14px;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, .6);
+}
+.dynamite-popup-inner h2 {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 800;
+}
+.dynamite-popup-inner p {
+    color: #E8E8EA;
+    font-size: 14.5px;
+}
+.dynamite-popup-inner button,
+#closeDynamitePopup,
+#closeGenericPopup {
+    background: #3DDC68;
+    color: #0E2416;
+    border: none;
+    border-radius: 10px;
+    min-width: 132px;
+    padding: 11px 22px;
+    font-size: 14.5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+#closeDynamitePopup:hover,
+#closeGenericPopup:hover {
+    background: #3DDC68;
+}
+
+/* ============================================================
+   CHN LNK REDESIGN — v71 (2026-11-21, from Sankar's Dolphin test)
+   ============================================================
+   The strip -> keyboard gap and the end-of-column distribution:
+   1. The 14px gap moves OFF the first keyboard row's margin-top
+      (an adjacency selector, #game + .keyboard-row, with two
+      competing declarations in this file — 3px in the v53 layer,
+      14px in v59; on Sankar's phone the 3px won and the strip's
+      bottom border sat on the keys) and ONTO #game's own
+      padding-bottom, where no sibling relationship or cascade
+      accident can take it away. The row's margin-top is zeroed:
+      the visible gap is the padding, exactly 14px, always.
+      fitBoardTiles() measures the live column, so the tiles /
+      connector spread absorb the swap and the column still ends
+      at the 12px bottom margin — geometry at healthy sizes is
+      unchanged (the gap was already 14px there, just fragile).
+   2. The pooled-space-to-strip rule lives in chnlnk.js
+      (rdStripPoolPass, at the end of fitBoardTiles): any height
+      still pooled below the legend after the tile fit is given
+      to the strip instead. Nothing here sizes the strip — its
+      CSS height stays the fixed 32px; the JS grows the box only
+      by a measured residual, only where a pool exists.
+   ============================================================ */
+#game { padding-bottom: 14px; }
+#game + .keyboard-row { margin-top: 0; }
+
+/* ============================================================
+   CHN LNK REDESIGN — v72 (2026-11-21, from Sankar's live test)
+   ============================================================
+   The strip rebalance: a taller strip with EQUAL air both sides.
+   1. Strip height 32px -> 40px, #game-scoped — the archive's
+      own 50px two-line box is untouched (it has no #game).
+   2. Equal gaps: board -> strip and strip -> keyboard are both
+      16px. The pulse glow at its 40% peak is box-shadow
+      0 0 12px 2px in every colour — a 14px reach past the
+      strip's border box — so 16px keeps the glow off both
+      neighbours with 2px to spare, at every size.
+      Above: the strip's margin-top, declared here scoped to
+      #game (two IDs), so the unscoped base #answer margin (3px)
+      can never win it back — the same structural treatment v71
+      gave the below gap. Below: v71's #game padding-bottom,
+      raised 14px -> 16px; the keyboard row's margin-top stays
+      zeroed. Neither gap is an adjacency margin any more.
+   3. The +23px column cost (above +13, strip +8, below +2) is
+      funded by fitBoardTiles() from the tiles / spread, as
+      usual. rdStripPoolPass() is unchanged in logic: it resets
+      the strip's inline height before measuring, so its base
+      is whatever the CSS says — now 40px — and any pool growth
+      stacks on that base while both gaps stay 16px.
+   ============================================================ */
+#game { padding-bottom: 16px; }
+#game #answer { height: 40px; min-height: 40px; margin-top: 16px; }
+
+/* ============================================================
+   CHN LNK REDESIGN — v73 (2026-11-21, from Sankar's live test)
+   ============================================================
+   The strip gaps tightened: at 16px they still read as "a lot
+   of gap on both sides", so both go 16px -> 12px, kept exactly
+   equal, through the same structural mechanisms v72 used —
+   above: the #game-scoped #answer margin-top; below: #game's
+   padding-bottom. Neither is an adjacency margin.
+   Why 12px is safe: v72's empirical pixel scan at the pulse
+   peak put the glow's VISIBLE tint at ~9px (the nominal shadow
+   reach is 14px — blur 12 + spread 2 — but the tint decays to
+   background level well inside that), so 12px keeps the visible
+   glow clear of the board panel and the keyboard with ~3px to
+   spare. The strip itself is unchanged (40px, v72), and
+   rdStripPoolPass() still grows it from that 40px base — the
+   gaps hold at 12/12 while it grows.
+   The freed 8px returns to the tiles via fitBoardTiles().
+   ============================================================ */
+#game { padding-bottom: 12px; }
+#game #answer { margin-top: 12px; }
+
+/* ============================================================
+   CHN LNK REDESIGN — v74 (2026-11-21, Sankar's scaling rule)
+   ============================================================
+   The strip and its gaps SCALE with viewport height — fixed
+   40px/12px (v72/v73) taxed smaller devices twice: the same
+   pixels out of a shorter column, squeezing the tiles harder.
+   Sankar's standing rule is that everything is proportional,
+   so both are now dvh clamps anchored on the approved values:
+   - Strip: clamp(30px, 5.13dvh, 40px) — exactly 40px at 780px
+     tall and above (5.13dvh = 40.01 at 780, capped), shrinking
+     proportionally below, floored at 30px so the message never
+     gets cramped. At 568 tall it sits on the 30px floor.
+   - Gaps: clamp(10px, 1.54dvh, 12px) — exactly 12px at 780 and
+     above, proportional below, floored at 10px. The floor is
+     deliberate: the pulse glow's VISIBLE tint reaches ~9px
+     (v72/v73 pixel scans), so 10px keeps it clear of the board
+     panel and the keyboard even on the smallest screens. Both
+     gaps use the identical expression, so they stay exactly
+     equal at every height, through the same structural
+     mechanisms — above: the #game-scoped #answer margin-top;
+     below: #game's padding-bottom. Neither is an adjacency
+     margin.
+   fitBoardTiles() measures the live column, so it absorbs the
+   CSS-driven sizes automatically and hands the freed height
+   to the tiles on smaller screens. rdStripPoolPass() is
+   unchanged: it clears the strip's inline height and reads
+   the computed box as its base, so pool growth now stacks on
+   the size-dependent clamp base and a fresh fit restores
+   exactly that base — no JS edit needed.
+   ============================================================ */
+#game { padding-bottom: clamp(10px, 1.54dvh, 12px); }
+#game #answer {
+    height: clamp(30px, 5.13dvh, 40px);
+    min-height: clamp(30px, 5.13dvh, 40px);
+    margin-top: clamp(10px, 1.54dvh, 12px);
+}
+
+/* ============================================================
+   REDESIGN v76 — Summary stats header as a deliberate 2×2 grid
+   (2026-11-22, from a live user's screenshot)
+   ============================================================
+   The four Summary stats (#11 PLAYED, #12 WIN %, #13 STREAK,
+   #14 STARS) inherited a wrapping flex row: at real number
+   sizes the first three filled line 1 and STARS wrapped alone
+   onto line 2, left-aligned and lopsided — worse as the numbers
+   grow. They are now an explicit two-column grid in the Summary
+   modal only: row 1 PLAYED | WIN %, row 2 STARS | STREAK (the
+   💎 tier icon stays with STREAK, whose span is placed in the
+   second row by grid position — the DOM order and the JS stat
+   assignments are untouched). Every cell is single-line
+   (nowrap, min-width 0) and the font steps down slightly on
+   narrow screens instead of wrapping, so no cell can wrap
+   internally or overflow at any phone size. First-column cells
+   align left, second-column cells align right, matching the
+   spread of the old single row. Scoped to #summary so the
+   identically-id'd nav stats block is untouched.
+   ============================================================ */
+#summary #stats-item {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(22px, auto));
+    column-gap: 16px;
+    row-gap: 4px;
+    align-items: stretch;
+    margin-bottom: 8px;
+}
+#summary #stats-item .summary-item {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    white-space: nowrap;
+    font-size: clamp(11px, 3.4vw, 12px);
+    line-height: 1.25;
+}
+#summary #stats-item > [id="11"] { grid-column: 1; grid-row: 1; justify-content: flex-start; text-align: left; }
+#summary #stats-item > [id="12"] { grid-column: 2; grid-row: 1; justify-content: flex-end; text-align: right; }
+#summary #stats-item > [id="14"] { grid-column: 1; grid-row: 2; justify-content: flex-start; text-align: left; }
+#summary #stats-item > [id="13"] { grid-column: 2; grid-row: 2; justify-content: flex-end; text-align: right; }
+
+/* ============================================================
+   REDESIGN v77 — Keyboard key states: three clear families
+   (2026-11-22, player feedback: "The keyboard enabled and
+   disabled tiles are tough to distinguish")
+   ============================================================
+   Up to v76 a wrong / auto-struck key differed from a live key
+   only by a thin strikethrough: face #232326 vs the live
+   #3A3A40 (face luminance 0.0170 vs 0.0430, barely 2.5x) and
+   a dimmed letter, both at full opacity — at a glance the
+   keyboard read as one block, worst right after the vowel
+   unlock strikes half the consonants at once. The states now
+   separate decisively, in the same source order the keyboard
+   layer has always used (disabled -> locked -> correct last,
+   so green keeps winning on keys that carry both classes):
+
+   - LIVE keys: untouched (bright white letter on #3A3A40).
+   - DISABLED family (wrong guesses, consonants auto-struck
+     at vowel unlock, every non-green key at game end): the
+     face drops to #141416 — over 6x darker than live, a flat
+     recess just above the page background — and the letter
+     settles to mid-grey #7E7E87 (letter contrast 4.5:1, down
+     from the live key's 11.3:1 but still plainly readable:
+     players must see WHICH letters are dead). The
+     strikethrough stays.
+   - LOCKED vowels: the face joins the same recessed family
+     (warm-tinted #171410) while the letter stays clearly
+     amber (#B98F35, 6.1:1 on the new face) and the lock cue
+     (the ::after rule above, untouched) stays full amber —
+     amber + lock reads "locked", grey + strike reads "dead".
+     When the vowels unlock, the JS swaps the classes and the
+     keys come back bright: the brightening IS the signal.
+   - CORRECT keys: re-asserted with declarations identical to
+     the rule above, because this layer's .disabled would
+     otherwise override it by source order at equal
+     specificity. Computed values are unchanged.
+
+   One shared layer for both games: the archive's keyboard
+   uses the same classes, and v77 also adds the one-line
+   key-correct hook to chnlnkarch.js (its processInput never
+   applied the class, so archive correct keys rendered struck
+   like wrong ones — measured, not assumed).
+   ============================================================ */
+.key-tile.disabled {
+    background: #141416;
+    border: none;
+    color: #7E7E87;
+    opacity: 1;
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    box-shadow: none;
+}
+
+.key-tile.key-tile-disabled {
+    background: #171410;
+    border: none;
+    color: #B98F35;
+    opacity: 1;
+    text-decoration: none;
+    box-shadow: none;
+}
+
+.key-tile.key-correct {
+    background: var(--mx-green-tile);
+    border: none;
+    color: #fff;
+    opacity: 1;
+    text-decoration: none;
+    box-shadow: none;
+}
+/* ============================================================
+   REDESIGN v78 — Summary stats header back to ONE single line
+   (2026-11-22, user direction; supersedes the v76 2x2 grid)
+   ============================================================
+   The v76 grid was rejected outright ("it shud be same line
+   for sure"): the four Summary stats (#11 PLAYED, #12 WIN %,
+   #13 STREAK, #14 STARS) sit on ONE row again, in DOM order,
+   spread space-between across the modal exactly as the
+   original row spread them — the wrap is what was broken,
+   not the line. This layer fully supersedes the v76 layer
+   above for these selectors: the container's computed display
+   is flex (no longer grid), the grid templates and the
+   per-item grid placements are reset, the second-column
+   right alignment is gone, and the grid's 16px column-gap
+   is zeroed — column-gap applies to flex rows too, and left
+   in place it would eat a fixed 48px of the row's fit
+   budget at every width.
+
+   The fit mechanism is scaling, never wrapping: the row is
+   nowrap and the items are inflexible (flex: 0 0 auto), and
+   the font steps down with viewport width —
+   clamp(10.5px, 3.28vw, 13px): 13px on large phones, 10.5px
+   at 320px — with letter-spacing tightening in step
+   (-0.13vw, clamped to [-0.5px, -0.35px]). Calibrated in the
+   harness (probe v78-verify.js) against the widest texts the
+   game can print (PLAYED: 1250 / WIN %: 100 / STREAK: 1250
+   / STARS: 12345): at 320px the four texts total ~257px in
+   a 264px row, so even the extreme case keeps ~7px of air;
+   every narrower text or wider screen has more. JS stat
+   assignments and element IDs are untouched, and the layer
+   is scoped to #summary so the identically-id'd nav stats
+   block is untouched.
+   ============================================================ */
+#summary #stats-item {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: stretch;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    column-gap: 0;
+    row-gap: 0;
+    margin-bottom: 8px;
+}
+#summary #stats-item .summary-item {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    min-width: auto;
+    white-space: nowrap;
+    grid-column: auto;
+    grid-row: auto;
+    justify-content: flex-start;
+    text-align: left;
+    font-size: clamp(10.5px, 3.28vw, 13px);
+    letter-spacing: clamp(-0.5px, -0.13vw, -0.35px);
+    line-height: 1.25;
 }

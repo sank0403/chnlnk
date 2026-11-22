@@ -21,7 +21,10 @@
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Expires" content="0">	
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="chnlnk.css?v=49" rel="stylesheet">
+    <link href="chnlnk.css?v=74" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
     <!-- add icon link for all standard browsers -->
     <script type="module">
@@ -132,31 +135,10 @@
 <div id="game" style="display:none;">
     <button id="btnParty" type="button" hidden></button>
     <div id="tsparticles"></div>
-    <div id="stats">
-        <div id="stats-item">
-            <span class="stats-item">
-                <span data-modal-target="#modal" id="rulesbutton">
-                    <img src="rulesicon.png" style="width:22px;height:22px;">
-                </span>
-
-                <a href="mailto: info@thechnlnk.com" target="_">
-                    <img src="mail.png" style="width:22px;height:17px" alt="EMAIL">
-                </a>
-            </span>
-
-            <span class="stats-item">
-                <a href="https://www.buymeacoffee.com/sank0403/" target="_">
-                    <img src="hearticon.png" style="width:28px;height:22px" alt="Buy Me A Coffee">
-                </a>
-
-                <span data-summary-target="#summary" id="statsbutton">
-                    <img src="statsicon.png" style="width:22px;height:22px;">
-                </span>
-            </span>
-        </div>
-    </div>
     <!-- <img class="headerimage" src="bg.png"> -->
-    <h1 class = "title-scale"> CH<strong style="color:red">AI</strong>N L<strong style="color:red">I</strong>NK</h1>
+    <div class="header-row">
+    <svg class="logo-mark" width="27" height="27" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 13.5a4.5 4.5 0 0 0 6.4 0l3-3a4.54 4.54 0 1 0-6.4-6.4l-1.5 1.5" stroke="#3DDC68" stroke-width="2.4" stroke-linecap="round"/><path d="M13.5 10.5a4.5 4.5 0 0 0-6.4 0l-3 3a4.54 4.54 0 1 0 6.4 6.4l1.5-1.5" stroke="#3DDC68" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <h1 class="title-scale">CH<strong style="color:#3DDC68">AI</strong>N <span class="title-link">L<strong style="color:#3DDC68">I</strong>NK</span></h1>
     <!-- <div id="title">
 		<div class="waviy">
 			<span style="--i:1">G</span>
@@ -168,26 +150,44 @@
 			<span style="--i:7">E</span>
 		</div>
 	</div> -->
-    <div class="waviy1">
-        <span style="--i:1">d</span>
-        <span style="--i:2">a</span>
-        <span style="--i:3">i</span>
-        <span style="--i:4">l</span>
-        <span style="--i:5">y</span>
-        <span style="--i:6"> </span>
-        <span style="--i:7">c</span>
-        <span style="--i:8">h</span>
-        <span style="--i:9">n</span>
-        <span style="--i:10"> </span>
-        <span style="--i:11">l</span>
-        <span style="--i:12">n</span>
-        <span style="--i:13">k</span>
-        <span style="--i:14"> </span>
-        <span style="--i:15">#</span>
-        <span style="--i:16"></span>
-        <span style="--i:17" id="daycount"></span>
-    </div>
+    <div class="waviy1">Daily CHN LNK <strong>#<span id="daycount"></span></strong></div>
+    </div><!-- /.header-row -->
     <span style="--i:18" id="submitter"></span>
+    <div id="stats">
+        <div id="stats-item">
+            <span class="stats-item">
+                <span data-modal-target="#modal" id="rulesbutton">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="#3DDC68" stroke-width="2"/><path d="M9.6 9.6a2.5 2.5 0 1 1 2.5 2.5c-.8.25-1.1.7-1.1 1.5" stroke="#3DDC68" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.9" r="1.25" fill="#3DDC68"/></svg>
+                    <span class="nav-label">Help</span>
+                </span>
+
+                <a href="mailto: info@thechnlnk.com" target="_">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2" stroke="#3DDC68" stroke-width="2"/><path d="M4 7.5l8 6 8-6" stroke="#3DDC68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span class="nav-label">Email</span>
+                </a>
+            </span>
+
+            <span class="stats-item">
+                <span id="timedbutton">
+                    <span class="timed-fill" aria-hidden="true"></span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 2.5h4" stroke="#3DDC68" stroke-width="2" stroke-linecap="round"/><path d="M12 2.5v3.2" stroke="#3DDC68" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="13.5" r="7" stroke="#3DDC68" stroke-width="2"/><path d="M12 10.2v3.3l2.4 1.6" stroke="#3DDC68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span class="nav-label">Timer</span>
+                </span>
+            </span>
+
+            <span class="stats-item">
+                <a href="https://www.buymeacoffee.com/sank0403/" target="_">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20.5s-7.2-4.6-9.3-9C1.2 8 3.1 4.6 6.6 4.6c2 0 3.5 1.1 4.4 2.6.2.4.4.6 1 .6s.8-.2 1-.6c.9-1.5 2.4-2.6 4.4-2.6 3.5 0 5.4 3.4 3.9 6.9-2.1 4.4-9.3 9-9.3 9Z" stroke="#3DDC68" stroke-width="2" stroke-linejoin="round"/></svg>
+                    <span class="nav-label">Support</span>
+                </a>
+
+                <span data-summary-target="#summary" id="statsbutton">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5.6" y="12" width="3.4" height="6.5" rx="1" fill="#3DDC68"/><rect x="10.3" y="8" width="3.4" height="10.5" rx="1" fill="#3DDC68"/><rect x="15" y="4.5" width="3.4" height="14" rx="1" fill="#3DDC68"/></svg>
+                    <span class="nav-label">Stats</span>
+                </span>
+            </span>
+        </div>
+    </div>
     <!--<br>	
 	<a href="https://www.buymeacoffee.com/sank0403" target="_"><center><img src="1000.png"></center></a>-->
     <br>
@@ -211,33 +211,40 @@
         <div class="modal-body">
             <br>
 
-            The objective of <strong style="color:white;">CHN LNK</strong> is to identify all the words in the <strong style="color:white;">CHAIN - One letter at a time</strong>. Every word on the chain <strong style="color:white;">LINKS</strong> logically, with the word below it.
+            <strong style="color:white; font-size:14px;">Find every word in the chain — one letter at a time.</strong>
             <br>
 
             <div class="rules-wrapper">
 
                 <ul class="rules-list">
                     <li>
-                        <strong style="color:white;">CLICK to guess a letter. </strong>If the letter you selected is in<strong style="color:white;"> ANY WORD </strong>of the chain,
-                        the corresponding tiles will be highlighted in
-                        <strong style="color:lightgreen;">Green</strong>.
+                        <strong style="color:white;">The trick:</strong> each word pairs with the one below it to form a common phrase. That link is your best clue.
+                        <!-- REDESIGN v57 (Sankar chose option B): the sample chain as a
+                             miniature of the board itself — real tile styling, given
+                             words first/last, white chevrons, NO pairings line. -->
+                        <div class="sample-board" aria-hidden="true">
+                            <div class="sb-row"><span class="sb-tile given">F</span><span class="sb-tile given">I</span><span class="sb-tile given">R</span><span class="sb-tile given">E</span></div>
+                            <div class="sb-chev"></div>
+                            <div class="sb-row"><span class="sb-tile">T</span><span class="sb-tile">R</span><span class="sb-tile">U</span><span class="sb-tile">C</span><span class="sb-tile">K</span></div>
+                            <div class="sb-chev"></div>
+                            <div class="sb-row"><span class="sb-tile">S</span><span class="sb-tile">T</span><span class="sb-tile">O</span><span class="sb-tile">P</span></div>
+                            <div class="sb-chev"></div>
+                            <div class="sb-row"><span class="sb-tile">S</span><span class="sb-tile">I</span><span class="sb-tile">G</span><span class="sb-tile">N</span></div>
+                            <div class="sb-chev"></div>
+                            <div class="sb-row"><span class="sb-tile given">P</span><span class="sb-tile given">O</span><span class="sb-tile given">S</span><span class="sb-tile given">T</span></div>
+                        </div>
                     </li>
                     <br>
 
                     <li>
-                        <strong style="color:white;">VOWELS</strong> (<strong style="color:red;">Red</strong> on grid)</strong><strong style="color:white;"> are Disabled</strong> till you figure out all the
-                        <strong style="color:white;">OTHER LETTERS</strong> in the chain.
-
+                        <strong style="color:white;">Tap a consonant to guess.</strong> If it's anywhere in the chain, its tiles light up in <strong style="color:#3DDC68;">Green</strong>.
                     </li>
                     <br>
 
                     <li>
-                        See the <strong style="color:white;">TUTORIAL</strong> of solving a chain.
-                        Notice how vowels are disabled initially, and how each word meaningfully
-                        links with the next one : FOREST TRAIL → TRAIL MIX → MIX TAPE → TAPE MEASURE → MEASURE STEP → STEP LADDER.
+                        <strong style="color:white;">Vowels stay locked</strong> (<strong style="color:#F5B83D;">Yellow</strong> on the grid) until you've found every consonant.
                     </li>
                 </ul>
-                <img class="rules-image" src="tutorial.gif" alt="Example Chain">
             </div>
             <!-- MASTER COLLAPSIBLE -->
             <div class="collapsible-section">
@@ -257,10 +264,10 @@
                     </div>
                     <!-- COLLAPSIBLE: SAFETY NET-->
                     <div class="collapsible-section">
-                        <button class="collapsible">😇 Safety Net</button>
+                        <button class="collapsible"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" style="width:1.25em;height:1.25em;vertical-align:-0.22em;margin-right:7px"><path d="M12 2.8 4.5 5.4v5.4c0 4.8 3.2 8.4 7.5 10.4 4.3-2 7.5-5.6 7.5-10.4V5.4Z" fill="#F5B83D"/><path d="M8.8 11.6 11 13.8l4.2-4.6" stroke="#121214" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>Safety Net</button>
                         <div class="content">
                             <ul class="rules-list">
-                                <li>Play <strong style="color:white;">4 Consecutive Days</strong> to activate the Saftey Net.</li>
+                                <li>Play <strong style="color:white;">4 Consecutive Days</strong> to activate the Safety Net.</li>
                                 <li>Once Active — <strong style="color:white;">1 Incorrect Entry</strong> won’t cost a life!</li>
 								<li><strong style="color:white;">Resets </strong>once used or if you <strong style="color:white;">miss playing a day</strong>.</li>
                             </ul>
@@ -271,7 +278,7 @@
                         <button class="collapsible">⏱️ Timed Mode</button>
                         <div class="content">
                             <ul class="rules-list">
-                                <li>Timed mode can be enabled only at the start of the game. A <strong style="color:white;">1 Minute Timer</strong> is added.</li>
+                                <li>Timed mode can be enabled only at the start of the game. A <strong style="color:white;">1 Minute Timer</strong> is added for each try.</li>
                                 <li>You lose a life if you don’t make a correct guess within the minute.</li>
                                 <li>A Perfect Solve in Timed Mode awards <strong style="color:white;">3 Dynamites</strong>.</li>
                                 <li>Finishing the game in Timed Mode without using dynamites grants <strong style="color:white;">1 Extra Star</strong>.</li>
@@ -511,6 +518,8 @@
 
 				<!-- SHARE / INVITE / COFFEE BUTTONS -->
 				<div class="button-container">
+					<!-- REDESIGN v67: one-time Friends & Family invite prompt — shown once, at the stats load of a player's 5th completed game (maybeShowStatsPrompts in chnlnk.js). -->
+					<div id="ffPrompt" class="stats-prompt hidden">Invite family and friends to play — once they join, add them and compete on your Friends &amp; Family board.</div>
 					<div class="button-row">
 
 						<button id="HTMLButton" class="buttonmode" onclick="myFunction(); this.blur();" title="Share Stats!">
@@ -555,6 +564,9 @@
 			</div> <!-- END summary-body -->
 
 			<hr class="bottom-hr">
+
+			<!-- REDESIGN v67: one-time archive prompt — shown once, at the stats load of a player's first completed game (maybeShowStatsPrompts in chnlnk.js). -->
+			<div id="archivePrompt" class="stats-prompt hidden"><strong>Hooked already?</strong> <span class="prompt-count">100s of past chains</span> are waiting in the archives!</div>
 
 			<div id="footer">
 				<div id="submission">
@@ -723,15 +735,26 @@
     <div id="overlay4"></div>
     <div id="overlay5"></div>
     <hr>
-	<div id="top-resources">
-		<div id="hint-progress">
-			<div id="hint-circle">
-				<div id="hint-bulb">😇</div>
+		<div id="top-resources">
+		<div class="status-row status-row-lives">
+			<span class="status-label" id="lives-label">LIVES</span>
+			<div id="lives"></div>
+			<span id="lives-count">5<small> / 5</small></span>
+		</div>
+		<div class="status-row status-row-tools">
+			<div class="tool-item">
+				<div id="hint-progress">
+							<div id="hint-circle">
+								<div id="hint-bulb" style="color:#9A9AA3"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><g transform="translate(12 12) scale(1) translate(-12 -12)"><path d="M12 2.8 4.5 5.4v5.4c0 4.8 3.2 8.4 7.5 10.4 4.3-2 7.5-5.6 7.5-10.4V5.4Z" fill="currentColor"/><path class="shield-tick" d="M8.8 11.6 11 13.8l4.2-4.6" stroke="#121214" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g></svg></div>
+							</div>
+						</div>
+				<span class="tool-label">Safety Net</span>
+			</div>
+			<div class="tool-item">
+				<div id="dynamite-btn">x0</div>
+				<span class="tool-label">Dynamites</span>
 			</div>
 		</div>
-
-		<div id="lives"></div>
-		<div id="dynamite-btn">💣 x0</div>
 	</div>
 
     <!-- Momentum Timer Bar -->
@@ -743,15 +766,8 @@
                 </div>
             </div>
         </div>
-        <div class="top-row" >
-            <div class="toggle-wrapper" id="toggle-row">
-                <span class="toggle-label">ENABLE TIMED MODE</span>
-                <label class="toggle">
-                    <input type="checkbox" id="hardmodetoggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
+        <!-- REDESIGN v54: the Timed Mode toggle row is gone — Timed Mode is the nav Timer button now.
+             The momentum elements stay in the DOM (never displayed) because his timer code reads them. -->
     </div>
     <!-- <br> -->
     <!-- <div id="board"> -->
@@ -816,6 +832,7 @@
     <!-- <br> -->
     <!-- <hr> --><br>
     <div id="answer" hidden></div>
+    <div id="vowel-legend"><span class="legend-icon"></span><span class="legend-label">Locked vowel</span><span class="legend-text">Vowels unlock when you find all the consonants</span></div>
     <!-- <br><br> -->
     <br>
     <div id="streakPopup" class="popup hidden">
@@ -840,6 +857,34 @@
             <p style="font-size: 16px; line-height: 1.4; margin-bottom: 24px;"> If you are an existing user, your stats will be carried over. </p> <button id="migrationOkBtn" style=" background: #f7d354; color: #000; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 50%; "> OK </button><br><br><br>Please remember to bookmark the new URL.<br> <span style="font-size: 14px; color: #f7d354;">https://thechnlnk.com</span>
         </div>
     </div>
+    <!-- REDESIGN v54: Timed Mode confirmation popup. The rules list is the Help modal's
+         Timed Mode section, verbatim. Shown by openTimedPopup() in chnlnk.js. -->
+    <div class="modal timed-modal" id="timedmodal">
+        <div class="modal-header">
+            <div class="title"><strong>TIMED MODE</strong></div>
+            <button data-close-button class="close-button">&times;</button>
+        </div>
+        <div class="modal-body">
+            <ul class="rules-list">
+                                <li>Timed mode can be enabled only at the start of the game. A <strong style="color:white;">1 Minute Timer</strong> is added for each try.</li>
+                                <li>You lose a life if you don’t make a correct guess within the minute.</li>
+                                <li>Identifying the Mystery Letter in the Timed Mode awards <strong style="color:white;">2 Dynamites</strong>.</li>
+                                <li>A Perfect Solve in Timed Mode awards <strong style="color:white;">3 Dynamites</strong>.</li>
+                                <li>Finishing the game in Timed Mode without using dynamites grants <strong style="color:white;">1 Extra Star</strong>.</li>
+                            </ul>
+            <!-- REDESIGN v57 (Sankar): the "extra perks" caption line is removed
+                 (he added it in v54 and now takes it out). Content only — the
+                 popup's sizing is untouched. The rules list above also gains a
+                 Mystery Letter bullet (3rd) that Help does NOT get: the popup
+                 list now intentionally differs from Help's Timed Mode section. -->
+            <p class="timed-question" id="timed-question">Do you want to enable the timed mode?</p>
+            <div class="timed-actions">
+                <button id="timed-yes">Yes</button>
+                <button id="timed-no">No</button>
+            </div>
+        </div>
+    </div>
+
 	<div id="feedbackPopup" class="feedback-popup hidden">
 		<div class="feedback-box">
 			<h3>WE’D LOVE YOUR FEEDBACK!</h3>
@@ -862,10 +907,48 @@
 			</div>
 		</div>
 	</div>
+	<!-- REDESIGN v63: one-time Dynamite Poll popup — sibling of the feedback
+	     popup (same overlay/box family). Shown at most once, Nov 2026 only,
+	     to players with >25 dynamites, on a day the feedback popup is
+	     neither due nor shown. Logic: shouldShowDynamitePoll() in chnlnk.js. -->
+	<div id="dynamitePollPopup" class="feedback-popup hidden">
+		<div class="feedback-box poll-box">
+			<button id="pollClose" class="poll-close" aria-label="Close">&times;</button>
+			<h3 class="poll-question">Level the playing field — should Dynamites reset every month?</h3>
+			<div class="poll-buttons">
+				<button id="pollYes" class="poll-yes">Yes, reset<br>them!</button>
+				<button id="pollNo" class="poll-no">No, don't touch<br>them!</button>
+			</div>
+		</div>
+	</div>
+	<!-- REDESIGN v66: Safety Net Saver popup — same overlay/box family as
+	     the feedback and poll popups. Shown once per missed-day return
+	     when an ACTIVE Safety Net would reset and the player has 10+
+	     dynamites. The badge replicates the board's own Safety Net
+	     ring at 100% (same structure and shield SVG, class-scoped so no
+	     element IDs are duplicated). Logic: onGameLoad() in chnlnk.js. -->
+	<div id="netSaverPopup" class="feedback-popup hidden">
+		<div class="feedback-box netsaver-box">
+			<button id="netSaverClose" class="poll-close" aria-label="Close">&times;</button>
+			<div class="netsaver-badge">
+				<div class="netsaver-circle">
+					<div class="netsaver-bulb"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><g transform="translate(12 12) scale(1) translate(-12 -12)"><path d="M12 2.8 4.5 5.4v5.4c0 4.8 3.2 8.4 7.5 10.4 4.3-2 7.5-5.6 7.5-10.4V5.4Z" fill="#F5B83D"/><path d="M8.8 11.6 11 13.8l4.2-4.6" stroke="#121214" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g></svg></div>
+				</div>
+			</div>
+			<h3 class="poll-question">Your Safety Net resets when you miss a day. Keep yours active for 10 dynamites?</h3>
+			<div class="poll-buttons">
+				<button id="netSaverKeep" class="netsaver-keep">Keep it active</button>
+				<button id="netSaverReset" class="netsaver-reset">Let it reset</button>
+			</div>
+		</div>
+	</div>
 	<div id="thankYouToast" class="thankyou-toast hidden">
     Your feedback fuels CHN LNK. Enjoy +5 Dynamites on us!
 	</div>
-    <script src="chnlnk.js?v=49"></script>
+	<div id="pollThankYouToast" class="thankyou-toast hidden">
+    Thanks for voting! Your voice helps shape CHN LNK.
+	</div>
+    <script src="chnlnk.js?v=74"></script>
 </div>
 </body>
 </html>

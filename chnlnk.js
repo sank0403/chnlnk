@@ -691,46 +691,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const overlay = document.getElementById("globalOverlay");
 
+        // REDESIGN v56: presentation rebuilt in the redesign modal family —
+        // all styling now lives in chnlnk.css (.name-edit-* classes, matching
+        // #namePopup's .popup-box treatment). Was: inline styles from the old
+        // design (black box, 2px yellow border, yellow-on-black x button).
         const container = document.createElement("div");
         container.id = "nameEditContainer";
-        container.style.position = "fixed";
-        container.style.top = "120px";
-        container.style.left = "50%";
-        container.style.transform = "translateX(-50%)";
-        container.style.zIndex = "9999999";
-        container.style.background = "black";
-        container.style.padding = "10px";
-        container.style.border = "2px solid yellow";
-        container.style.position = "fixed";
-        //  Close button
+        container.className = "name-edit-popup";
+
+        // REDESIGN v56 (Sankar's spec): a header, in the family's style
+        const header = document.createElement("h2");
+        header.textContent = "Enter Your New Name";
+
+        //  Close button (same remove-on-click handler below)
         const closeBtn = document.createElement("button");
-        closeBtn.textContent = "x";
-        closeBtn.style.position = "absolute";
-        closeBtn.style.top = "-10px"; // move it slightly above the container
-        closeBtn.style.right = "-10px"; // shift it outside the right edge
-        closeBtn.style.background = "black"; // match container background
-        closeBtn.style.color = "yellow";
-        closeBtn.style.border = "2px solid yellow";
-        closeBtn.style.borderRadius = "50%";
-        closeBtn.style.width = "24px";
-        closeBtn.style.height = "24px";
-        closeBtn.style.fontSize = "16px";
-        closeBtn.style.lineHeight = "20px";
-        closeBtn.style.cursor = "pointer";
-        closeBtn.style.zIndex = "10000000"; // ensure it's above everything
+        closeBtn.textContent = "×";
+        closeBtn.className = "name-edit-close";
+
         const input = document.createElement("input");
         input.type = "text";
         input.maxLength = 20;
         input.placeholder = "Enter New Name";
+        // REDESIGN v56 (Sankar's spec): the box opens showing the CURRENT
+        // name, fully selected (see focus+select below), so typing simply
+        // overwrites it. Was: an empty box.
+        input.value = localStorage.playerName || "";
 
         const saveBtn = document.createElement("button");
         saveBtn.textContent = "SAVE";
-        saveBtn.className = "buttonmode1";
+        saveBtn.className = "name-edit-save";
 
         const error = document.createElement("p");
-        error.style.color = "red";
+        error.className = "name-edit-error";
         error.style.display = "none";
 
+        container.appendChild(header);
         container.appendChild(closeBtn);
         container.appendChild(input);
         container.appendChild(saveBtn);
@@ -738,8 +733,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         overlay.appendChild(container);
 
-        // ⭐ Autofocus
+        // ⭐ Autofocus — v56: also select the current name so it can be
+        // overwritten by typing (Sankar's spec)
         input.focus();
+        input.select();
 
         // ⭐ Close handler
         closeBtn.addEventListener("click", () => {
@@ -868,7 +865,23 @@ document.getElementById("fbCancel").addEventListener("click", () => {
     OpenStats();
 });
 
+// REDESIGN v79: in-flight guard for the feedback submit below. The handler
+// writes a Firestore document and pays an award per run, and the popup
+// stays open until the write resolves — so extra taps in that window used
+// to submit duplicate feedback entries (and pay the award again). The
+// first tap wins; repeats while a submission is in flight are ignored.
+// The guard clears as the handler finishes — the popup always closes at
+// that point, as before — and the star-click handler above re-enables the
+// button if the popup is shown again in the same session.
+let feedbackSubmitInFlight = false;
+
 document.getElementById("fbSubmit").addEventListener("click", async () => {
+    if (feedbackSubmitInFlight) return;
+    feedbackSubmitInFlight = true;
+    const submitBtn = document.getElementById("fbSubmit");
+    submitBtn.disabled = true;
+    submitBtn.classList.add("disabled");
+
     const text = document.getElementById("fbText").value;
 
     const feedbackData = {
@@ -885,9 +898,16 @@ document.getElementById("fbSubmit").addEventListener("click", async () => {
 
         // ⭐ Save last feedback date for 50‑day cooldown
         localStorage.lastFeedbackDate = new Date().toLocaleDateString('en-CA');
-		localStorage.cldynamite = Number(localStorage.cldynamite || 0) + 5;
+		// REDESIGN v79: the feedback award is now conditional — 1 dynamite
+		// for a rating alone, 3 dynamites when text feedback is included
+		// (the flat +5 it replaces was also paid per tap by duplicate
+		// submits; the in-flight guard above makes this run exactly
+		// once). The toast states the amount actually earned.
+		const dynEarned = text.trim() ? 3 : 1;
+		localStorage.cldynamite = Number(localStorage.cldynamite || 0) + dynEarned;
 		const dyn = Number(localStorage.cldynamite || 0);
-		document.getElementById("dynamite-btn").innerText = "💣 x" + dyn;
+		document.getElementById("dynamite-btn").innerText = "x" + dyn;
+		document.getElementById("thankYouToast").textContent = "Your feedback fuels CHN LNK. Enjoy +" + dynEarned + (dynEarned === 1 ? " Dynamite" : " Dynamites") + " on us!";
         // ⭐ Show thank-you toast
         showThankYouToast();
     } catch (err) {
@@ -898,6 +918,8 @@ document.getElementById("fbSubmit").addEventListener("click", async () => {
 
     // Delay stats opening slightly so toast is visible
     setTimeout(OpenStats, 1500);
+
+    feedbackSubmitInFlight = false;
 });
 
 
@@ -930,6 +952,152 @@ function showThankYouToast() {
         setTimeout(() => toast.classList.add("hidden"), 400);
     }, 3500);
 }
+
+// REDESIGN v63: one-time Dynamite Poll popup — a sibling of the feedback
+// popup above, taking the same post-game slot (INSTEAD of OpenStats). Shown
+// at most once per player, only in November 2026, only with more than 25
+// dynamites banked, and only on a day the feedback popup is neither due nor
+// already shown (the feedback popup's own logic is untouched and always
+// wins the slot). A vote is written to the SAME Firestore "feedback"
+// collection as regular feedback, with rating fixed at 1 and the answer
+// carried in text. Voting shows a thank-you toast in the feedback toast's
+// family — but awards NO dynamites and mentions none. Closing with the
+// × records nothing.
+const DYNAMITE_POLL_QUESTION = "Level the playing field — should Dynamites reset every month?";
+
+function shouldShowDynamitePoll() {
+    // November 2026 only (player's local date) — never after.
+    const now = new Date();
+    if (now.getFullYear() !== 2026 || now.getMonth() !== 10) return false;
+    // One time only: the stamp is set the moment the popup is shown.
+    if (localStorage.clDynPollDate) return false;
+    // More than 25 dynamites banked.
+    if (!(Number(localStorage.cldynamite || 0) > 25)) return false;
+    // Not on a feedback-popup day: neither due nor already shown today.
+    if (shouldShowFeedbackPopup()) return false;
+    if (localStorage.lastFeedbackDate === now.toLocaleDateString('en-CA')) return false;
+    return true;
+}
+
+function showDynamitePoll() {
+    // Stamp at SHOW time — vote or ×, it never shows again.
+    localStorage.clDynPollDate = new Date().toLocaleDateString('en-CA');
+    document.getElementById("dynamitePollPopup").classList.remove("hidden");
+    pauseMomentumTimer(); // modal rule: an open popup pauses the momentum timer
+}
+
+function hideDynamitePoll() {
+    document.getElementById("dynamitePollPopup").classList.add("hidden");
+    resumeMomentumTimer();
+}
+
+function showPollThankYouToast() {
+    const toast = document.getElementById("pollThankYouToast");
+    toast.classList.remove("hidden");
+
+    // fade in
+    setTimeout(() => toast.classList.add("show"), 10);
+
+    // fade out after 3.5 seconds
+    setTimeout(() => {
+        toast.classList.remove("show");
+
+        // fully hide after fade-out
+        setTimeout(() => toast.classList.add("hidden"), 400);
+    }, 3500);
+}
+
+// REDESIGN v79: same in-flight guard as the feedback submit — the first
+// tap (Yes or No) wins and any further vote call is ignored, so a fast
+// Yes→No double-tap can't write two vote documents. The poll is shown at
+// most once ever (stamped at show time), so this guard never needs to
+// clear.
+let dynamiteVoteSubmitted = false;
+
+async function submitDynamiteVote(answerLabel) {
+    if (dynamiteVoteSubmitted) return;
+    dynamiteVoteSubmitted = true;
+    document.getElementById("pollYes").disabled = true;
+    document.getElementById("pollNo").disabled = true;
+
+    const voteData = {
+        uid: auth.currentUser?.uid || null,
+        playerName: localStorage.playerName || null,
+        rating: 1,
+        text: DYNAMITE_POLL_QUESTION + " — " + answerLabel,
+        updated: serverTimestamp()
+    };
+
+    try {
+        await addDoc(collection(db, "feedback"), voteData);
+
+        // Thank-you toast — no dynamites awarded, none mentioned.
+        showPollThankYouToast();
+    } catch (err) {
+        console.error("Dynamite poll save error:", err);
+    }
+
+    hideDynamitePoll();
+
+    // Delay stats opening slightly so toast is visible (mirrors fbSubmit)
+    setTimeout(OpenStats, 1500);
+}
+
+document.getElementById("pollYes").addEventListener("click", () => submitDynamiteVote("Yes, reset them!"));
+document.getElementById("pollNo").addEventListener("click", () => submitDynamiteVote("No, don't touch them!"));
+document.getElementById("pollClose").addEventListener("click", () => {
+    // Close without answering: nothing is recorded (mirrors fbCancel's flow).
+    hideDynamitePoll();
+    OpenStats();
+});
+
+// REDESIGN v66: Safety Net Saver — a second use for dynamites, in the
+// feedback/poll popup family. When onGameLoad finds an ACTIVE Safety
+// Net whose owner missed a day (the reset branch), the reset is
+// deferred instead of executed IF the player has 10+ dynamites:
+// netSaverPending carries the pre-reset state, and showGame() pops
+// the offer over the revealed game. "Keep it active" charges exactly
+// 10 dynamites and bridges lastPlayed to yesterday so the same gap
+// can never re-offer. "Let it reset" (and the ×) runs the original
+// reset lines verbatim. Under 10 dynamites — and for partial
+// progress (net not active) — nothing here ever runs: the original
+// reset happens in onGameLoad exactly as before.
+let netSaverPending = null;
+
+function showNetSaverPopup() {
+    document.getElementById("netSaverPopup").classList.remove("hidden");
+    pauseMomentumTimer(); // modal rule: an open popup pauses the momentum timer
+}
+
+function hideNetSaverPopup() {
+    document.getElementById("netSaverPopup").classList.add("hidden");
+    resumeMomentumTimer();
+}
+
+function keepNetSaver() {
+    if (!netSaverPending) return;
+    localStorage.cldynamite = Number(localStorage.cldynamite || 0) - 10;
+    updateDynamiteUI();
+    // The reset never runs: the net stays active with its stored day
+    // count; lastPlayed bridges to yesterday so this gap can't re-offer.
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    saveHintState(netSaverPending.consecutiveDays, true, yesterday);
+    netSaverPending = null;
+    hideNetSaverPopup();
+}
+
+function resetNetSaver() {
+    if (!netSaverPending) return;
+    // The original onGameLoad reset, verbatim.
+    saveHintState(0, false, netSaverPending.lastPlayed);
+    updateHintProgress(0, false);
+    netSaverPending = null;
+    hideNetSaverPopup();
+}
+
+document.getElementById("netSaverKeep").addEventListener("click", keepNetSaver);
+document.getElementById("netSaverReset").addEventListener("click", resetNetSaver);
+document.getElementById("netSaverClose").addEventListener("click", resetNetSaver);
 
 function showError(message) {
     const popup = document.getElementById("errorPopup");
@@ -1712,7 +1880,7 @@ async function loaddynamites() {
 				if (serverDynamite1 > localDynamite1) {
 					localStorage.cldynamite = serverDynamite1;
 					const dyn1 = Number(localStorage.cldynamite || 0);
-					document.getElementById("dynamite-btn").innerText = "💣 x" + dyn1;					
+					document.getElementById("dynamite-btn").innerText = "x" + dyn1;					
 					// return;
 				}				
 			}
@@ -1801,7 +1969,7 @@ function showDynamitePopup(amountGained) {
     document.getElementById("closeDynamitePopup").onclick = () => {
         popup.remove();
         const dyn = Number(localStorage.cldynamite || 0);
-        document.getElementById("dynamite-btn").innerText = "💣 x" + dyn;
+        document.getElementById("dynamite-btn").innerText = "x" + dyn;
     };
 }
 
@@ -1940,7 +2108,7 @@ async function loadLeaderboard() {
             console.warn("Could not load current player doc:", e);
         }
 
-        // --- 1. Read TOP 5 (fetch 6 to compensate for admin removal) ---
+        // --- 1. Read TOP 10 (fetch 11 to compensate for admin removal) ---
         const topQ = query(
             collection(db, "leaderboard"),
             where("month", "==", monthKey),
@@ -1948,28 +2116,28 @@ async function loadLeaderboard() {
             orderBy("wins", "desc"),
             orderBy("winpct", "desc"),
             orderBy("updated", "asc"),
-            limit(6)
+            limit(11)
         );
 
         const topSnap = await getDocs(topQ);
         leaderboardBody.innerHTML = "";
 
         // Filter out admin by name
-        let top5 = [];
+        let top10 = [];
         topSnap.forEach(docSnap => {
             const d = { id: docSnap.id, ...docSnap.data() };
-            if (d.name !== ADMIN_NAME) top5.push(d);
+            if (d.name !== ADMIN_NAME) top10.push(d);
         });
 
-        // Always keep exactly 5 rows
-        top5 = top5.slice(0, 5);
+        // Always keep exactly 10 rows
+        top10 = top10.slice(0, 10);
 
-        // --- 2. Render top 5 with tie-aware ranks ---
+        // --- 2. Render top 10 with tie-aware ranks ---
         let displayRank = 1;
-        for (let i = 0; i < top5.length; i++) {
+        for (let i = 0; i < top10.length; i++) {
             if (i > 0) {
-                const prev = top5[i - 1];
-                const curr = top5[i];
+                const prev = top10[i - 1];
+                const curr = top10[i];
 
                 const tied =
                     prev.stars === curr.stars &&
@@ -1979,7 +2147,7 @@ async function loadLeaderboard() {
                 if (!tied) displayRank = i + 1;
             }
 
-            const p = top5[i];
+            const p = top10[i];
             const row = document.createElement("tr");
 
             row.innerHTML = `
@@ -2004,10 +2172,10 @@ async function loadLeaderboard() {
             leaderboardBody.appendChild(row);
         }
 
-        // --- 3. If player is in top 5, stop here ---
-        const inTop5 = top5.some(p => p.id === currentUID);
+        // --- 3. If player is in top 10, stop here ---
+        const inTop10 = top10.some(p => p.id === currentUID);
         document.getElementById("nrNote").style.display = "none";
-        if (inTop5) return;
+        if (inTop10) return;
 
         // --- 4. Read TOP 250 (fetch 251 to compensate for admin removal) ---
         const top250Q = query(
@@ -2097,7 +2265,7 @@ async function loadLeaderboard() {
         const d = top250[idx];
 
         // --- 7. Render user row as extra entry ---
-        if (rank >= 7) {
+        if (rank >= 12) {
             const spacer = document.createElement("tr");
             spacer.innerHTML = `
                 <td style="text-align:center;">⋮</td>
@@ -2136,6 +2304,9 @@ async function loadLeaderboard() {
 function showGame() {
   document.getElementById("loader").style.display = "none";
   document.getElementById("game").style.display = "block";
+  // REDESIGN v66: a deferred Safety Net Saver offer (set in onGameLoad)
+  // appears over the revealed game.
+  if (netSaverPending) showNetSaverPopup();
 }
 
 
@@ -2213,6 +2384,60 @@ function updateAnswer(text) {
     el.classList.remove("run-border");
     void el.offsetWidth;
     el.classList.add("run-border");
+    // REDESIGN: tag the strip with a feedback-kind class so CSS owns its colours + pulse.
+    // Three modes only (Sankar's rule): green = correct, red = wrong / life lost /
+    // game over, yellow = everything else (win gold is the yellow family).
+    // Texts per the final v52 rule: mockup wording for green/red cases and for the
+    // agreed yellow messages; the game's own original wording for all other messages.
+    const fbText = text.replace(/<[^>]*>/g, " ").toLowerCase();
+    let fbKind = "fb-info";
+    if (/great going|you won/.test(fbText)) fbKind = "fb-win";
+    else if (/isn't in the chain|out of lives|life lost|last life alert/.test(fbText)) fbKind = "fb-wrong";
+    else if (/^correct/.test(fbText)) fbKind = "fb-correct";
+    else if (/vowels are now unlocked|vowels stay locked/.test(fbText)) fbKind = "fb-locked";
+    el.classList.remove("fb-correct", "fb-wrong", "fb-locked", "fb-win", "fb-info");
+    el.classList.add(fbKind);
+}
+
+// REDESIGN v67: two one-time prompts inside the Summary modal. Both
+// key off stats actually loading — OpenStats/OpenStatsGO call
+// maybeShowStatsPrompts() last, so when the feedback popup or the
+// Dynamite Poll takes the post-win slot, the prompt appears when the
+// stats open afterwards. Each prompt carries a lifetime stamp set at
+// show time, so it can never appear twice; the two are mutually
+// exclusive by construction (played == 1 vs played == 5). Closing
+// the Summary clears both strips and highlights (closeSummary calls
+// hideStatsPrompts), so a later manual reopen never resurrects one.
+function hideStatsPrompts() {
+    var ap = document.getElementById("archivePrompt");
+    var fp = document.getElementById("ffPrompt");
+    if (ap) ap.classList.add("hidden");
+    if (fp) fp.classList.add("hidden");
+    var past = document.getElementById("Archivebutton");
+    var invite = document.getElementById("Rafflebutton");
+    if (past) past.classList.remove("prompt-highlight");
+    if (invite) invite.classList.remove("prompt-highlight");
+}
+
+function maybeShowStatsPrompts() {
+    hideStatsPrompts();
+    var played = Number(localStorage.totalclplayed) || 0;
+    if (played === 1 && !localStorage.clArchivePromptSeen) {
+        // First completed game ever: point at the archive.
+        localStorage.clArchivePromptSeen = 1;
+        var ap = document.getElementById("archivePrompt");
+        if (ap) ap.classList.remove("hidden");
+        var past = document.getElementById("Archivebutton");
+        if (past) past.classList.add("prompt-highlight");
+    } else if (played === 5 && !localStorage.clFFPromptSeen) {
+        // Fifth completed game exactly — new players only, so a
+        // player already past 5 never sees it: point at Invite.
+        localStorage.clFFPromptSeen = 1;
+        var fp = document.getElementById("ffPrompt");
+        if (fp) fp.classList.remove("hidden");
+        var invite = document.getElementById("Rafflebutton");
+        if (invite) invite.classList.add("prompt-highlight");
+    }
 }
 
 //Open Stats at end of game
@@ -2229,6 +2454,8 @@ async function OpenStats() {
     document.getElementById("leaderboardCollapsible").style.display = "block";
 	document.getElementById("ffCollapsible").style.display = "block";
 
+    // REDESIGN v67: one-time in-stats prompts, keyed off stats loading
+    maybeShowStatsPrompts();
 }
 
 async function OpenStatsGO() {
@@ -2243,6 +2470,8 @@ async function OpenStatsGO() {
     document.getElementById("leaderboardCollapsible").style.display = "block";
 	document.getElementById("ffCollapsible").style.display = "block";
 
+    // REDESIGN v67: one-time in-stats prompts, keyed off stats loading
+    maybeShowStatsPrompts();
 }
 
 
@@ -2374,7 +2603,7 @@ const days = toLocalDayNumber(today) - toLocalDayNumber(start);
 if (localStorage.getItem('gameovercl' + days) != 0 && localStorage.getItem('gameovercl' + days) != 1) {
     localStorage['gameovercl' + days] = 0;
     localStorage['gamestatcl' + days] = 0;
-    localStorage.setItem("cllives", "⚪⚪⚪⚪⚪");
+    localStorage.setItem("cllives", "♥♥♥♥♥");
     localStorage.setItem("clcorrect", " ");
     localStorage.setItem("vowelcount", 0);
     localStorage.setItem("consocount", 0);
@@ -2617,8 +2846,11 @@ function applyLifeTrade() {
 
     // Update life display
     const livesLeft = 5 - Number(localStorage.cllivescnt);
-    localStorage.cllives = "⚪".repeat(livesLeft);
+    localStorage.cllives = "♥".repeat(livesLeft);
+    localStorage.cllives = (localStorage.cllives || "").replace(/⚪/g, "♥").replace(/⭐/g, "★"); // REDESIGN FIX: migrate legacy lives glyphs saved by the old game (⚪/⭐) to the new ♥/★ so hearts/stars render for returning players
     document.getElementById("lives").innerText = localStorage.cllives;
+    var _lv = document.getElementById("lives"); var _ln = ((_lv.innerText.match(/♥/g) || []).length) + ((_lv.innerText.match(/★/g) || []).length); if (Number(localStorage.cllivescnt) == 5 && _lv.innerText.indexOf("★") < 0) { _ln = 0; } _lv.dataset.left = _ln; var _lc = document.getElementById("lives-count"); if (_lc) { var _st = _lv.innerText.indexOf("★") >= 0; _lc.innerHTML = _ln + "<small>" + (_st ? " ★" : " / 5") + "</small>"; _lc.classList.toggle("low", !_st && _ln <= 1); } // REDESIGN v51 (presentation only): mockup lives-count text + remaining count for CSS lost-heart slots
+    if ((localStorage.cllives || "").includes("★")) { document.getElementById("lives-label").textContent = "STARS"; } // REDESIGN P2 (approved by Sankar): label syncs when a stored stars state renders
     document.getElementById("answer").innerText = "";
     // Animation
     showLifeRestored();
@@ -2674,10 +2906,40 @@ function showMysteryAdded() {
 function showSafetyNetPopup() {
     const pop = document.createElement("div");
     pop.id = "life-restored"; // reuse same styling
-    pop.innerText = "😇 SAFETY NET ACTIVE — NO LIFE LOST!";
+    pop.innerText = "SAFETY NET ACTIVE — NO LIFE LOST!";
     document.body.appendChild(pop);
 
     setTimeout(() => pop.remove(), 2000);
+}
+
+// REDESIGN v80: Safety Net shield state colours -- the single swap points
+// for the badge icon tone. The bulb holds the shield SVG (index.html)
+// whose body fills with currentColor; updateHintProgress drives its
+// colour from these two values. (The #hint-bulb element in index.html
+// carries a mirrored inline default of the building tone for first
+// paint.) The ring colours live in the two conic-gradient values
+// inside updateHintProgress (white arc over a black #000 track).
+// v81 (final): the building shield matches the approved mockup's
+// RENDERED grey #9A9AA3, with a near-white tick. That grey is
+// unreachable under the bulb's standing CSS dimming (opacity 0.4
+// while not ready): even a pure-white shield renders at ~#7F7F82
+// through it, and the v80 mid-grey #6E6E77 rendered almost black
+// (~#2E2E33) on the user's phone. So paintShield exempts the shield
+// from the dimming (inline opacity 1 in every state; the stylesheet
+// is untouched) and paints the target grey directly. The tick is
+// state-driven too: near-white while building, the long-standing
+// dark #121214 on the active gold. (A disabled-yellow building tone
+// was tried first in v81 and dropped at Sankar's direction.)
+const SHIELD_COLOUR_ACTIVE = "#F5B83D";
+const SHIELD_COLOUR_BUILDING = "#9A9AA3";
+const SHIELD_TICK_ACTIVE = "#121214";
+const SHIELD_TICK_BUILDING = "#F5F5F7";
+
+function paintShield(bulb, bodyColour, tickColour) {
+    bulb.style.color = bodyColour;
+    bulb.style.opacity = "1";
+    const tick = bulb.querySelector(".shield-tick");
+    if (tick) tick.style.stroke = tickColour;
 }
 
 function updateHintProgress(consecutiveDays, hintAvailable) {
@@ -2686,8 +2948,9 @@ function updateHintProgress(consecutiveDays, hintAvailable) {
 
     // If hint is already earned, freeze at 100%
     if (hintAvailable) {
-        circle.style.background = `conic-gradient(white 360deg, #444 360deg)`; 
+        circle.style.background = `conic-gradient(white 360deg, #000 360deg)`; 
         bulb.classList.add("ready");
+        paintShield(bulb, SHIELD_COLOUR_ACTIVE, SHIELD_TICK_ACTIVE);
         return;
     }
 
@@ -2697,13 +2960,15 @@ function updateHintProgress(consecutiveDays, hintAvailable) {
 
     circle.style.background = `conic-gradient(
         white ${degrees}deg,   /* CHANGED from yellow → white */
-        #444 ${degrees}deg
+        #000 ${degrees}deg
     )`;
 
     if (percent === 100) {
         bulb.classList.add("ready");
+        paintShield(bulb, SHIELD_COLOUR_ACTIVE, SHIELD_TICK_ACTIVE);
     } else {
         bulb.classList.remove("ready");
+        paintShield(bulb, SHIELD_COLOUR_BUILDING, SHIELD_TICK_BUILDING);
     }
 }
 
@@ -2772,7 +3037,7 @@ function showPerfectSolve() {
 
 function updateDynamiteUI() {
     const dyn = Number(localStorage.cldynamite || 0);
-    document.getElementById("dynamite-btn").innerText = "💣 x" + dyn;
+    document.getElementById("dynamite-btn").innerText = "x" + dyn;
 }
 updateDynamiteUI();
 
@@ -2782,7 +3047,7 @@ document.getElementById("dynamite-btn").onclick = () => {
         let dyn = Number(localStorage.cldynamite || 0);
 
         if (dyn <= 0) {
-            shakeDynamiteButton();
+            shakeDynamiteButton(); // posts the empty-bank message (mockup text, see shakeDynamiteButton)
             return;
         }
 
@@ -2887,26 +3152,16 @@ function showDynamiteBlast() {
 function shakeDynamiteButton() {
     const btn = document.getElementById("dynamite-btn");
     if ((!localStorage.cldynamite) || (Number(localStorage.cldynamite) === 0)) {
-        showMessage("NO DYNAMITES AVAILABLE. <br>CHECK ? TO LEARN MORE.");
+        showMessage("NO DYNAMITES AVAILABLE. CHECK ? TO LEARN MORE."); // REDESIGN v57: hard <br> removed — the strip is one line now (words unchanged)
     }
     btn.classList.add("shake");
     setTimeout(() => btn.classList.remove("shake"), 400);
 }
 
 
-document.getElementById("hardmodetoggle").addEventListener("change", function() {
-    if (this.checked) {
-        // console.log("Timed Mode Enabled");
-        localStorage.clhardmode = 1;
-        localStorage.clgamestarted = 1;
-        // enable timed mode logic here
-    } else {
-        // console.log("Timed Mode Disabled");
-        localStorage.clhardmode = 0;
-        // disable timed mode logic here
-    }
-    setTimeout(() => location.reload(), 150);
-});
+/* REDESIGN v54: the #hardmodetoggle checkbox no longer exists. Timed Mode is armed/disarmed
+   from the nav Timer button (see the v54 block below: openTimedPopup and the timed-yes handler),
+   which writes the same localStorage.clhardmode state and reloads, exactly as this handler did. */
 
 //Clipboard Code
 async function myFunction() {
@@ -3792,9 +4047,9 @@ var disabledkeyarr = [];
 if (localStorage.vowelactive != 1) {
     document.getElementById("answer").style.color = "lightgray";
     // document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND.";
-	if (localStorage.getItem("slotmachine") !=1){
-		updateAnswer("Vowels are disabled till all other letters are found!");
-	} 
+	// REDESIGN v52: the opening message is no longer posted here at load —
+	// it is posted when the slot-machine intro settles (see the wheel
+	// trigger in initialize()), so its pulse is not spent behind the wheel.
 }
 const openModalButtons = document.querySelectorAll('[data-modal-target]')
 const closeModalButtons = document.querySelectorAll('[data-close-button]')
@@ -3931,6 +4186,7 @@ function closeSummary(summary) {
     if (summary == null) return
     summary.classList.remove('active')
     overlay1.classList.remove('active')
+    hideStatsPrompts(); // REDESIGN v67: a shown one-time prompt never survives a close
 }
 
 const openaddmodalButtons = document.querySelectorAll('[data-addmodal-target]')
@@ -4234,10 +4490,12 @@ function updateMonthPosition() {
     const months = board.querySelectorAll(".month");
     if (!months.length) return;
 
-    const monthWidth = months[0].offsetWidth; // ⭐ actual width
-    const offset = currentMonthIndex * monthWidth;
-
-    board.style.transform = `translateX(-${offset}px)`;
+    // REDESIGN v53 (presentation only): shift by whole board widths —
+    // months are pinned to exactly 100% of the board, so a percentage
+    // transform lands each month exactly. The old pixel math used
+    // offsetWidth, whose integer rounding drifted ~0.4px per month and
+    // left a sliver of the neighbouring month visible.
+    board.style.transform = `translateX(-${currentMonthIndex * 100}%)`;
 }
 
 
@@ -4250,9 +4508,8 @@ function modalhide() {
     document.getElementById("boardfifth").style.visibility = "hidden";
     document.getElementById("boardsixth").style.visibility = "hidden";
     document.getElementById("boardlast").style.visibility = "hidden";
-    // if(localStorage.clhardmode == 1){
-    document.getElementById("momentum-bar-container").style.display = "none";
-    // }
+    // REDESIGN v54: the momentum bar is never displayed (the nav Timer button mirrors it)
+    // and the toggle row no longer exists — nothing to hide here.
     const rows = document.getElementsByClassName("keyboard-row");
     for (let row of rows) {
         row.style.visibility = "hidden";
@@ -4261,7 +4518,6 @@ function modalhide() {
     for (let row of connector) {
         row.style.visibility = "hidden";
     }
-    document.getElementById("toggle-row").style.visibility = "hidden";
     document.getElementById("answer").style.visibility = "hidden";
 	document.getElementById("top-resources").style.visibility = "hidden";
 }
@@ -4279,7 +4535,7 @@ function modalshow() {
         if (localStorage.getItem('gameovercl' + days) == "1") {
             document.getElementById("momentum-counter").innerText = "60";
         }
-        document.getElementById("momentum-bar-container").style.display = "block";
+        // REDESIGN v54: the momentum bar stays hidden — the nav Timer button mirrors it.
     }
     const rows = document.getElementsByClassName("keyboard-row");
     for (let row of rows) {
@@ -4289,7 +4545,6 @@ function modalshow() {
     for (let row of connector) {
         row.style.visibility = "visible";
     }
-    document.getElementById("toggle-row").style.visibility = "visible";
     document.getElementById("answer").style.visibility = "visible";
 	document.getElementById("top-resources").style.visibility = "visible";
 }
@@ -4380,6 +4635,7 @@ function updateMomentumBar() {
         bar.style.backgroundColor = "#f44336";
         // }
     }
+    paintTimedButton(percent); // REDESIGN v54: the nav Timer button mirrors this bar (same percent, same thresholds)
 }
 
 function handleMomentumFailure() {
@@ -4403,6 +4659,7 @@ function handleMomentumFailure() {
 function flashBarRed() {
     const bar = document.getElementById("momentum-bar");
     bar.style.backgroundColor = "#ff0000";
+    flashTimedButton(); // REDESIGN v54: the same flash on the nav Timer button
     setTimeout(() => updateMomentumBar(), 500);
 }
 
@@ -4417,25 +4674,25 @@ function updateLivesDisplay() {
     }
     switch (Number(localStorage.cllivescnt)) {
         case 0:
-            localStorage.cllives = "⚪⚪⚪⚪⚪";
+            localStorage.cllives = "♥♥♥♥♥";
             break;
         case 1:
-            localStorage.cllives = "⚪⚪⚪⚪";
+            localStorage.cllives = "♥♥♥♥";
             // document.getElementById("answer").innerText = "TIME UP - FIRST LIFE LOST!"
             updateAnswer("Time Up - First Life Lost!");
             break;
         case 2:
-            localStorage.cllives = "⚪⚪⚪";
+            localStorage.cllives = "♥♥♥";
             // document.getElementById("answer").innerText = "TIME UP - SECOND LIFE LOST!"
             updateAnswer("Time Up - Second Life Lost!");
             break;
         case 3:
-            localStorage.cllives = "⚪⚪";
+            localStorage.cllives = "♥♥";
             // document.getElementById("answer").innerText = "TIME UP - THIRD LIFE LOST!"
             updateAnswer("Time Up - Third Life Lost!");
             break;
         case 4:
-            localStorage.cllives = "⚪";
+            localStorage.cllives = "♥";
             // document.getElementById("answer").innerText = "TIME UP - LAST LIFE ALERT!"
             updateAnswer("TIME UP - LAST LIFE ALERT!");
             setTimeout(FinalClue, 1500);
@@ -4453,11 +4710,15 @@ function updateLivesDisplay() {
             // 	setTimeout(FinalClue, 500);	
             // 	break;
         case 5:
-            localStorage.cllives = "❌❌❌❌❌";
+            localStorage.cllives = "♥♥♥♥♥";
             break;
     }
 
+    localStorage.cllives = (localStorage.cllives || "").replace(/⚪/g, "♥").replace(/⭐/g, "★"); // REDESIGN FIX: migrate legacy lives glyphs saved by the old game (⚪/⭐) to the new ♥/★ so hearts/stars render for returning players
     document.getElementById("lives").innerText = localStorage.cllives;
+    var _lv = document.getElementById("lives"); var _ln = ((_lv.innerText.match(/♥/g) || []).length) + ((_lv.innerText.match(/★/g) || []).length); if (Number(localStorage.cllivescnt) == 5 && _lv.innerText.indexOf("★") < 0) { _ln = 0; } _lv.dataset.left = _ln; var _lc = document.getElementById("lives-count"); if (_lc) { var _st = _lv.innerText.indexOf("★") >= 0; _lc.innerHTML = _ln + "<small>" + (_st ? " ★" : " / 5") + "</small>"; _lc.classList.toggle("low", !_st && _ln <= 1); } // REDESIGN v51 (presentation only): mockup lives-count text + remaining count for CSS lost-heart slots
+    if ((localStorage.cllives || "").includes("★")) { document.getElementById("lives-label").textContent = "STARS"; } // REDESIGN P2 (approved by Sankar): label syncs when a stored stars state renders
+    document.getElementById("lives").classList.toggle("lives-depleted", Number(localStorage.cllivescnt) == 5); // REDESIGN: lives glyph state class (CSS colours the all-lost hearts)
     document.getElementById("lives").classList.add("blink");
     setTimeout(removeblink, 3000);
 
@@ -4507,7 +4768,7 @@ function updateLivesDisplay() {
             // currTile.classList.add("failed", "animated");
         }
         gameOver = true;
-        document.getElementById("toggle-row").style.display = "none";
+        syncTimedButton(); // REDESIGN v54: was "hide the toggle row" — the nav Timer button takes its locked/live state instead
         disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
         disableKeys(["A", "E", "I", "O", "U"]); // vowels
         // if (localStorage.clhardmode == 1){
@@ -4526,7 +4787,7 @@ function updateLivesDisplay() {
         colorx = "green";
         localStorage.clgamecnt = 6;
         document.getElementById("answer").style.color = "lightgray";
-        updateAnswer("Game Over! Out Of Lives.");
+        updateAnswer("Out of lives — GAME OVER!");
         localStorage.setItem(('gameovercl' + days), 1);
         localStorage.setItem(('gamestatcl' + days), 0);
         if (localStorage.getItem('gameovercl' + days) == "1") {
@@ -4683,6 +4944,355 @@ function revealSlotMachineRow(rowId, finalWord, delayStart = 0) {
 // END SLOT MACHINE FX
 // =========================
 
+// REDESIGN v52 (presentation only): uniform square tiles. Computes ONE tile
+// size for the whole board from the longest word in today's puzzle and the
+// board row's live inner width, and exposes it as the --tile custom property
+// on #board:  size = min(54.6, (inner - (maxLen - 1) x gap) / maxLen).
+// Every tile (including .tilesmall / .voweltilesmall) is sized from that var
+// in CSS, so all tiles on a board are identical squares and no row is ever
+// flex-squeezed into rectangles. Writes nothing but the CSS property; reads
+// only the word strings the builder already uses and layout metrics.
+// REDESIGN v54: slotTimedBar()/pinTimedSlot() removed with the toggle row —
+// the momentum bar is never displayed now; the nav Timer button mirrors it.
+
+// REDESIGN v53 (presentation only): fully proportional tile sizing —
+// the v52 formula anchored the cap to one fixed 54.6px, so on other
+// phones the mockup's proportions broke (tiles dominated and the
+// playing column overflowed the screen). Now:
+//   tile = min( cap, widthFit, columnFit )
+//   cap       = 54.6px scaled by viewport width (54.6 × vw/390): the
+//               mockup's tile proportion (≈14% of width for a
+//               6-letter board) on any phone, never a fixed 54.6px.
+//   widthFit  = (board inner width − (maxLen − 1) × gap) / maxLen,
+//               measured live, as v52.
+//   columnFit = with that size applied, measure the live playing
+//               column (header top → legend bottom, in document
+//               coordinates) and shrink the tile until the whole
+//               column — header, nav, status, board, feedback strip,
+//               keyboard, legend — fits inside the viewport height
+//               with no scrolling. Timed Mode may sit below the fold:
+//               the measure deliberately stops at the legend.
+// REDESIGN v55: the shrink sensitivity is the true ~8.21px of column
+// per 1px of tile (7 rows + 6 connector strips), not 7 — the old
+// divisor over-shrank and stranded dead space under the legend. Any
+// height still left over (width-bound boards, e.g. 11-letter days)
+// is given back to the tile area: tiles grow toward the width limit,
+// then the rest is spread across the connector strips (--spread) so
+// the legend ends at the 12px bottom margin at every size.
+function fitBoardTiles() {
+    var board = document.getElementById("board");
+    var row = document.getElementById("boardfirst");
+    if (!board || !row) { return; }
+    // REDESIGN v71: the tile fit below must never see a strip that a
+    // previous rdStripPoolPass grew — reset it to its CSS height first,
+    // so every run starts from the same fixed CSS box (40px since v72).
+    var ansReset = document.getElementById("answer");
+    if (ansReset) { ansReset.style.height = ""; ansReset.style.minHeight = ""; }
+    var maxLen = Math.max(wordone.length, wordtwo.length, wordthree.length, wordfour.length, wordfive.length, wordsix.length, wordlast.length);
+    var rowStyle = getComputedStyle(row);
+    var inner = row.clientWidth - (parseFloat(rowStyle.paddingLeft) || 0) - (parseFloat(rowStyle.paddingRight) || 0);
+    if (!(maxLen > 0) || !(inner > 0)) { return; }
+    var gap = parseFloat(rowStyle.columnGap) || 5;
+    var vw = window.innerWidth || document.documentElement.clientWidth || 390;
+    var cap = 54.6 * vw / 390;
+    var widthFit = (inner - (maxLen - 1) * gap) / maxLen;
+    var size = Math.min(cap, widthFit);
+    size = Math.floor(size * 100) / 100;
+    board.style.setProperty("--tile", size + "px");
+    board.style.setProperty("--spread", "0px");
+    var header = document.querySelector(".header-row");
+    var legend = document.getElementById("vowel-legend");
+    if (header && legend) {
+        // REDESIGN v54: the fit budget reserves a 12px safety margin
+        // below the legend (edge clipping on scaled/overscan displays).
+        var target = window.innerHeight - 12;
+        var legendBottom = function() { return legend.getBoundingClientRect().bottom + window.scrollY; };
+        // REDESIGN v55: the column's true sensitivity to tile size is
+        // ~8.21px per 1px of tile (7 word rows + 6 connector strips at
+        // 0.2017 x tile). The v53/v54 shrink divided the overflow by 7,
+        // so it systematically over-shrank and left dead column below
+        // the legend (measured: 29px at 320x568, 19px at 360x740-6L).
+        var SENS = 8.21;
+        for (var pass = 0; pass < 4; pass++) {
+            var over = legendBottom() - target;
+            if (!(over > 0)) { break; }
+            var next = size - over / SENS - 0.02;
+            if (next < 6) { next = 6; }
+            if (next >= size) { break; }
+            size = Math.floor(next * 100) / 100;
+            board.style.setProperty("--tile", size + "px");
+            if (next === 6) { break; }
+        }
+        // REDESIGN v55 (Sankar): the space the bottom Timed Mode row
+        // used to occupy is no longer dead — leftover height goes to
+        // the tile area. First grow the tiles toward the width limit;
+        // if the width limit binds first, spread what remains across
+        // the 6 connector strips inside the board panel (--spread in
+        // CSS) so the panel fills the column and the legend ends at
+        // the bottom margin. Tiles stay square and uniform; chevron
+        // clearance only grows (never below the v54 4px).
+        var slack = target - legendBottom();
+        for (var g = 0; g < 3 && slack > 2 && size < widthFit; g++) {
+            var add = Math.min(widthFit - size, slack / SENS);
+            if (!(add > 0.01)) { break; }
+            size = Math.floor((size + add) * 100) / 100;
+            board.style.setProperty("--tile", size + "px");
+            slack = target - legendBottom();
+        }
+        if (slack > 2) {
+            var spread = Math.floor((slack / 6) * 100) / 100;
+            board.style.setProperty("--spread", spread + "px");
+            var resid = target - legendBottom();
+            if (Math.abs(resid) > 0.5) {
+                spread = Math.floor(Math.max(0, spread + resid / 6) * 100) / 100;
+                board.style.setProperty("--spread", spread + "px");
+            }
+        }
+    }
+    rdStripPoolPass();
+}
+
+// REDESIGN v71 (Sankar): pooled space goes to the STRIP. The tile fit
+// above is the only distributor of leftover column height, and it runs
+// only on load / resize / fonts.ready — if the rendered column still
+// ends short of the fit target afterwards (a phone browser settling
+// its toolbar or font metrics after the fit's last run leaves exactly
+// that residue), the leftover pools below the legend while the strip
+// sits at its minimum height. This pass is the second claimant: it
+// measures the pool that remains below the legend (past the 12px
+// bottom margin the fit targets) and gives ALL of it to the feedback
+// strip's height. The strip is flex-centred, so its message stays
+// vertically centred in the taller box; the box is then fixed for
+// that layout — it never resizes per message. Tiles keep the size
+// the fit gave them: nothing here touches --tile or --spread, and
+// the 14px strip -> keyboard gap is #game's padding (CSS), which
+// this growth does not disturb — the keyboard and legend simply move
+// down by the grown amount and the legend ends at the target.
+// Runs at the end of every fitBoardTiles() and once more shortly
+// after load, to catch post-fit settling. In a layout with no pool
+// (the fit already ended the column at the target) it is a no-op.
+function rdStripPoolPass() {
+    var ans = document.getElementById("answer");
+    var legend = document.getElementById("vowel-legend");
+    var game = document.getElementById("game");
+    if (!ans || !legend || !game) { return; }
+    if (game.style.display === "none" || ans.hidden) { return; }
+    if (legend.getBoundingClientRect().height === 0) { return; }
+    ans.style.height = "";
+    ans.style.minHeight = "";
+    var base = ans.getBoundingClientRect().height;
+    if (!(base > 0)) { return; }
+    var target = window.innerHeight - 12;
+    var pool = target - (legend.getBoundingClientRect().bottom + window.scrollY);
+    if (pool > 1) {
+        var h = Math.floor((base + pool) * 100) / 100;
+        ans.style.height = h + "px";
+        ans.style.minHeight = h + "px";
+    }
+}
+window.addEventListener("resize", fitBoardTiles);
+window.addEventListener("orientationchange", fitBoardTiles);
+if (document.fonts && document.fonts.ready) { document.fonts.ready.then(function() { fitBoardTiles(); }); }
+// REDESIGN v71: one late strip pass after load, catching any pool a
+// browser's post-load settling (toolbar, font metrics) leaves behind.
+window.addEventListener("load", function() { setTimeout(rdStripPoolPass, 900); });
+// =========================
+// REDESIGN v54: the nav TIMER button. Timed Mode moved from the bottom
+// toggle row into the middle of the nav (Help · Email · Timer · Support ·
+// Stats). Arming writes the SAME state his toggle wrote
+// (localStorage.clhardmode) and reloads exactly like his change handler
+// did, so initialize()/restoreMomentumTimer() and every downstream timed
+// behaviour (time-up life loss, timed bonuses, dynamite awards) run
+// through his original code paths — no parallel state, no parallel timer.
+// The button's fill is painted by updateMomentumBar() itself
+// (paintTimedButton below), from the same percent his momentum bar used,
+// with his own stage thresholds (>40% green, >20% yellow, else red) in
+// the game's theme colours.
+// REDESIGN v55: while armed, the button's label is the live countdown
+// (his momentumTime, 60 -> 0, reset by his own rules) beside the clock
+// icon; once enabled the button takes no clicks at all (it mimics the
+// momentum bar — the v54 disable-offer popup path is removed); and at
+// game end the button reverts to the plain "Timer" label with the fill
+// cleared, grey and locked for the day.
+function timedGameFinished() {
+    return localStorage.getItem('gameovercl' + days) == "1";
+}
+
+// REDESIGN v55: one place owns the button's label + fill housekeeping.
+//   finished (in-page gameOver, or today's gameovercl flag on restore)
+//       -> label back to "Timer", fill cleared, grey locked look
+//   armed, game running or not -> label is the live countdown: his
+//       momentumTime seconds, the same value updateMomentumBar paints
+//   otherwise -> plain "Timer" label
+function renderTimedButtonChrome(btn) {
+    var label = btn.querySelector(".nav-label");
+    var fill = btn.querySelector(".timed-fill");
+    if (gameOver || timedGameFinished()) {
+        if (label) label.textContent = "Timer";
+        if (fill) { fill.style.width = "0%"; fill.style.backgroundColor = "transparent"; }
+        return true;
+    }
+    if (label && localStorage.clhardmode == 1) {
+        label.textContent = String(Math.max(0, momentumTime));
+    }
+    return false;
+}
+
+// The button's state, from his existing state only:
+//   fresh day, not armed            -> normal nav button (tap opens the popup)
+//   armed, game not started         -> ON look + countdown; taps do NOTHING
+//                                      (v55: it mimics the momentum bar,
+//                                      which takes no clicks — no disable offer)
+//   started, not armed              -> locked for the day (dimmed, dead)
+//   started, armed                  -> live timer display; taps do nothing
+//   today's game finished           -> "Timer" label, fill cleared, locked
+function syncTimedButton() {
+    var btn = document.getElementById("timedbutton");
+    if (!btn) return;
+    var armed = localStorage.clhardmode == 1;
+    var started = localStorage.clgamestarted == 1;
+    var over = timedGameFinished() || gameOver;
+    btn.classList.toggle("timed-armed", armed && !over);
+    btn.classList.toggle("timed-live", armed && started && !over);
+    btn.classList.toggle("timed-locked", over || (started && !armed));
+    renderTimedButtonChrome(btn);
+}
+
+function paintTimedButton(percent) {
+    var btn = document.getElementById("timedbutton");
+    if (!btn) return;
+    // REDESIGN v55: game end reverts the button — "Timer", no fill, no
+    // number, locked grey — instead of v54's frozen final fill. (His
+    // end paths call updateMomentumBar() after gameOver is set, with
+    // momentumTime reset to 60, so this guard is what they land on.)
+    if (renderTimedButtonChrome(btn)) {
+        btn.classList.add("timed-locked");
+        btn.classList.remove("timed-armed", "timed-live");
+        return;
+    }
+    var fill = btn.querySelector(".timed-fill");
+    if (fill) {
+        var color;
+        if (percent > 40) color = "rgba(61,220,104,0.45)";      // his bar: >40% -> green (theme #3DDC68)
+        else if (percent > 20) color = "rgba(245,184,61,0.50)"; // his bar: >20% -> yellow (theme #F5B83D)
+        else color = "rgba(255,90,90,0.55)";                    // his bar: else -> red (theme wrong red #FF5A5A)
+        fill.style.width = percent + "%";
+        fill.style.backgroundColor = color;
+    }
+}
+
+function flashTimedButton() {
+    var btn = document.getElementById("timedbutton");
+    if (!btn) return;
+    var fill = btn.querySelector(".timed-fill");
+    if (fill) fill.style.backgroundColor = "#ff0000"; // same #ff0000 flash as flashBarRed; updateMomentumBar repaints 500ms later
+}
+
+// REDESIGN v59: is any modal/popup open right now? The Timer button
+// must behave like every other nav button while one is — his modals
+// lay their scrim over the nav, and this guard is the second half of
+// the fix (the stacking half is the #timedbutton z-index rule in
+// chnlnk.css): a click that somehow still reaches the button while
+// a modal is up does nothing. Covers the class-based modal families
+// (Help / Summary / hint / add / time / past + the timed popup
+// itself), the full-screen popups (name, feedback, dynamite poll, net saver, streak) and the
+// dynamically built ones (name edit, life trade). Transient toasts
+// (Safety Net, dynamite, mystery) are NOT modals — the other nav
+// buttons stay live under them, so Timer does too.
+function anyModalOpen() {
+    if (document.querySelector(".modal.active, .summary.active, .hintmodal.active, .addmodal.active, .timemodal.active, .pastmodal.active")) return true;
+    var np = document.getElementById("namePopup");
+    if (np && !np.classList.contains("hidden")) return true;
+    var fp = document.getElementById("feedbackPopup");
+    if (fp && !fp.classList.contains("hidden")) return true;
+    var dp = document.getElementById("dynamitePollPopup");
+    if (dp && !dp.classList.contains("hidden")) return true;
+    var ns = document.getElementById("netSaverPopup");
+    if (ns && !ns.classList.contains("hidden")) return true;
+    var sp = document.getElementById("streakPopup");
+    if (sp && !sp.classList.contains("hidden")) return true;
+    if (document.getElementById("nameEditContainer")) return true;
+    if (document.getElementById("life-trade-modal")) return true;
+    return false;
+}
+
+function openTimedPopup() {
+    var popup = document.getElementById("timedmodal");
+    if (!popup) return;
+    // REDESIGN v55: the popup only ever asks to ENABLE. Once enabled
+    // there is no disable offer — the button takes no clicks at all.
+    document.getElementById("timed-question").innerText = "Do you want to enable the timed mode?";
+    openModal(popup);
+    pauseMomentumTimer(); // his modal rule: opening a modal pauses the momentum timer
+    modalhide();
+}
+
+function closeTimedPopup() {
+    var popup = document.getElementById("timedmodal");
+    if (!popup) return;
+    closeModal(popup);
+    resumeMomentumTimer();
+    modalshow();
+}
+
+// REDESIGN v54: the mockup's board shake on a wrong guess (.board.shake:
+// shake .45s ease, ±8px decaying). Re-triggered the mockup's own way —
+// remove the class, force reflow, re-add — so consecutive wrong guesses
+// shake every time. His game only ever shook the dynamite button and an
+// unused .shaketile class; the board itself never shook.
+function shakeBoard() {
+    var board = document.getElementById("board");
+    if (!board) return;
+    board.classList.remove("board-shake");
+    void board.offsetWidth;
+    board.classList.add("board-shake");
+}
+
+(function() {
+    var btn = document.getElementById("timedbutton");
+    if (btn) {
+        btn.addEventListener("click", function() {
+            if (anyModalOpen()) return; // REDESIGN v59: dead while any modal is open — same as the other nav buttons
+            if (btn.classList.contains("timed-locked")) return; // disabled for the day
+            // REDESIGN v55 (Sankar): once timed mode is ENABLED the
+            // button mimics the momentum bar — it is a display, and a
+            // display takes no clicks. No popup, no disable, nothing.
+            if (localStorage.clhardmode == 1) return;
+            if (localStorage.clgamestarted == 1) return;        // game started unarmed — locked for the day
+            // REDESIGN v67: the confirmation is one-time. A player who
+            // has already confirmed once (clTimedAck, set only by the
+            // Yes handler below) arms directly — the identical writes
+            // and reload as tapping Yes, with no popup at all.
+            if (localStorage.clTimedAck) {
+                localStorage.clhardmode = 1;
+                setTimeout(() => location.reload(), 150); // his handler's reload, same delay
+                return;
+            }
+            openTimedPopup();
+        });
+    }
+    var yes = document.getElementById("timed-yes");
+    if (yes) {
+        yes.addEventListener("click", function() {
+            // Arm: his toggle's checked path (clhardmode = 1 + reload).
+            // (v55: this is the only Yes outcome — the popup is only
+            // reachable while unarmed, and there is no disarm path.)
+            // clgamestarted is deliberately NOT set here (his toggle set
+            // it): processInput sets it on the first letter, and the
+            // button keys its started state off that.
+            // REDESIGN v67: remember the confirmation — the popup is
+            // shown only until a player has said Yes once (the nav
+            // button's handler above checks this flag). No never sets it.
+            localStorage.clTimedAck = 1;
+            localStorage.clhardmode = 1;
+            setTimeout(() => location.reload(), 150); // his handler's reload, same delay
+        });
+    }
+    var no = document.getElementById("timed-no");
+    if (no) no.addEventListener("click", closeTimedPopup);
+})();
+
+
 window.onload = function() {
     initMonthlyStats();
 	onGameLoad();  // ← reset streak BEFORE drawing UI
@@ -4700,8 +5310,9 @@ window.onload = function() {
     if (lastAnimate !== today) {
         // Play animation today
         document.getElementById("submitter").classList.add("submitter-fade");
-		document.getElementById("top-resources").classList.add("top-slide");
-		document.querySelector(".top-stack").classList.add("top-slide");
+		// REDESIGN v63: entrance float-in disabled 2026-11-21 — uncomment to re-enable.
+		// document.getElementById("top-resources").classList.add("top-slide");
+		// document.querySelector(".top-stack").classList.add("top-slide");
         // Store today's date so it won't play again until tomorrow
         localStorage.setItem("AnimationDate", today);
     }
@@ -4729,6 +5340,21 @@ window.onload = function() {
 			setTimeout(() => {
 				revealSlotMachineRow("boardfirst", wordone);
 				revealSlotMachineRow("boardlast", wordlast, 200);
+				// REDESIGN v52 (timing only): post the opening message when the
+				// wheel SETTLES, not at page load. In revealSlotMachineRow a
+				// letter locks at delayStart + 350 + index*200, so the last
+				// letter of the later row (boardlast, delayStart 200) settles
+				// at 200 + 350 + (len-1)*200; +60ms lets the final lock land.
+				const settleMs = Math.max(350 + (wordone.length - 1) * 200, 200 + 350 + (wordlast.length - 1) * 200) + 60;
+				setTimeout(() => {
+					if (localStorage.vowelactive != 1 && (!localStorage.clguesscnt || localStorage.clguesscnt == "0")) {
+						// REDESIGN v56: intro copy is Sankar's own (user-directed,
+						// supersedes the mockup-agreed intro — he judged the old
+						// second half redundant with the legend). Colour (yellow
+						// fb-info) and the post-wheel timing are unchanged.
+						updateAnswer("Build the chain from Top to Bottom using active letters.");
+					}
+				}, settleMs);
 			}, 1000);
 
 			localStorage.setItem("slotmachine", 1);
@@ -4789,16 +5415,7 @@ function refreshArchiveModal() {
 
 
 window.addEventListener("DOMContentLoaded", () => {
-    const toggle = document.getElementById("hardmodetoggle");
-    const saved = localStorage.getItem("clhardmode");
-
-    if (saved === "1") {
-        toggle.checked = true;
-        // enable timed mode logic here
-    } else {
-        toggle.checked = false;
-        // disable timed mode logic here
-    }
+    syncTimedButton(); // REDESIGN v54: reflect localStorage.clhardmode on the nav Timer button (was: restore the toggle checkbox)
 });
 
 function onGameLoad() {
@@ -4809,6 +5426,14 @@ function onGameLoad() {
 
     // If Safety Net is active and the player missed a day → reset it
     if (hintAvailable && lastPlayed && lastPlayed !== today && lastPlayed !== yesterday) {
+        // REDESIGN v66: Safety Net Saver — with 10+ dynamites banked, the
+        // reset is DEFERRED and the player is offered the net for 10
+        // dynamites once the game is revealed (see showGame). Under 10,
+        // the original reset below runs unchanged.
+        if (Number(localStorage.cldynamite || 0) >= 10) {
+            netSaverPending = { consecutiveDays: consecutiveDays, lastPlayed: lastPlayed };
+            return;
+        }
         saveHintState(0, false, lastPlayed);
         updateHintProgress(0, false);
         return;
@@ -4825,15 +5450,10 @@ function onGameLoad() {
 
 
 function initialize() {
-    if (localStorage.clgamestarted == 1) {
-        // if (localStorage.clhardmode ==1){	
-        document.getElementById("toggle-row").style.display = "none";
-    }
-    document.getElementById("momentum-bar-container").style.display = "none";
-    // if ((localStorage.clhardmode == 1) && (!localStorage.getItem('gameovercl' + days))){
+    syncTimedButton(); // REDESIGN v54: nav Timer button takes its locked/live state (was: hide the toggle row once started)
+    // REDESIGN v54: the momentum bar is never displayed — the nav Timer button mirrors it (paintTimedButton).
     if (localStorage.clhardmode == 1) {
         restoreMomentumTimer();
-        document.getElementById("momentum-bar-container").style.display = "block";
     }
     if (Number(localStorage.clcorrect) == 0) {
         localStorage.clcorrect = wordonewidth + wordlastwidth;
@@ -4891,7 +5511,11 @@ function initialize() {
     /* document.getElementById("WAButton").style.display = "none"; */
     // document.getElementById("ffhdr").style.display = "none";
     // document.getElementById("ffdtl").style.display = "none";
+    localStorage.cllives = (localStorage.cllives || "").replace(/⚪/g, "♥").replace(/⭐/g, "★"); // REDESIGN FIX: migrate legacy lives glyphs saved by the old game (⚪/⭐) to the new ♥/★ so hearts/stars render for returning players
     document.getElementById("lives").innerText = localStorage.cllives;
+    var _lv = document.getElementById("lives"); var _ln = ((_lv.innerText.match(/♥/g) || []).length) + ((_lv.innerText.match(/★/g) || []).length); if (Number(localStorage.cllivescnt) == 5 && _lv.innerText.indexOf("★") < 0) { _ln = 0; } _lv.dataset.left = _ln; var _lc = document.getElementById("lives-count"); if (_lc) { var _st = _lv.innerText.indexOf("★") >= 0; _lc.innerHTML = _ln + "<small>" + (_st ? " ★" : " / 5") + "</small>"; _lc.classList.toggle("low", !_st && _ln <= 1); } // REDESIGN v51 (presentation only): mockup lives-count text + remaining count for CSS lost-heart slots
+    if ((localStorage.cllives || "").includes("★")) { document.getElementById("lives-label").textContent = "STARS"; } // REDESIGN P2 (approved by Sankar): label syncs when a stored stars state renders
+    document.getElementById("lives").classList.toggle("lives-depleted", Number(localStorage.cllivescnt) == 5); // REDESIGN: lives glyph state class (CSS colours the all-lost hearts)
     // Create the game board
     var element = document.getElementById("boardfirst");
     //element.style.width = boardWidth;
@@ -5126,7 +5750,20 @@ function initialize() {
         document.getElementById("KeyO").classList.add("disabled", "key-tile-disabled");
         document.getElementById("KeyU").classList.add("disabled", "key-tile-disabled");
     }
+	// REDESIGN (visual order only): place the vowel legend directly below the
+	// on-screen keyboard — it is now the last element of the page (the Timed Mode
+	// toggle row that used to follow it was removed in v54; Timed Mode lives in
+	// the nav as the Timer button). Every game function references the legend by
+	// id, so relocating the node changes no behaviour.
+	var kbRows = document.querySelectorAll(".keyboard-row");
+	var legendEl = document.getElementById("vowel-legend");
+	if (kbRows.length && legendEl) {
+	    var kbAnchor = kbRows[kbRows.length - 1];
+	    kbAnchor.after(legendEl);
+	}
+
 	showGame();
+	fitBoardTiles(); // REDESIGN v52 (presentation only): size the board's tiles now that #game is visible and measurable
     // Listen for Key Press
     document.addEventListener("keyup", (e) => {
         if ("KeyA" <= e.code && e.code <= "KeyZ") {
@@ -5227,11 +5864,13 @@ function initialize() {
                     msg = "GREAT GOING! YOU WON " + localStorage.clstarscnt + " STARS TODAY.";
                 }
 
-                if (bonusApplied) {
-                    msg += "<br> (INCLUDING +1 TIMED MODE BONUS!)";
-                }
+                // REDESIGN v57 (Sankar): the timed-bonus suffix is dropped — a
+                // bonus win shows the plain win text (the star count already
+                // includes the bonus). Star-count logic untouched.
 
                 document.getElementById("answer").innerHTML = msg;
+                document.getElementById("answer").classList.remove("fb-correct", "fb-wrong", "fb-locked", "fb-win", "fb-info"); // REDESIGN: feedback-kind class for CSS
+                document.getElementById("answer").classList.add("fb-win"); // REDESIGN
 
                 /* 					for (let s = 0; s < localStorage.clstarscnt; s++){
                 						document.getElementById("answerstar").innerText += "⭐";
@@ -5239,9 +5878,13 @@ function initialize() {
                 var templives = "";
                 templives = document.getElementById("lives").innerText;
                 for (i = 0; i < 5; i++) {
-                    templives = templives.replace("⚪", "⭐");
+                    templives = templives.replace("♥", "★");
                 }
+                templives = templives.replace(/⚪/g, "★"); // REDESIGN FIX: convert any legacy ⚪ directly in case the stored string predates the redesign
                 document.getElementById("lives").innerText = templives;
+                var _lv = document.getElementById("lives"); var _ln = ((_lv.innerText.match(/♥/g) || []).length) + ((_lv.innerText.match(/★/g) || []).length); if (Number(localStorage.cllivescnt) == 5 && _lv.innerText.indexOf("★") < 0) { _ln = 0; } _lv.dataset.left = _ln; var _lc = document.getElementById("lives-count"); if (_lc) { var _st = _lv.innerText.indexOf("★") >= 0; _lc.innerHTML = _ln + "<small>" + (_st ? " ★" : " / 5") + "</small>"; _lc.classList.toggle("low", !_st && _ln <= 1); } // REDESIGN v51 (presentation only): mockup lives-count text + remaining count for CSS lost-heart slots
+                document.getElementById("lives").classList.add("lives-stars"); // REDESIGN: CSS colours the converted ★ glyphs gold
+                document.getElementById("lives-label").textContent = "STARS"; // REDESIGN P2 (approved by Sankar): label follows the stars conversion
                 if (Number(localStorage.clstarscnt) != 0) {
                     // document.getElementById("lives").classList.add("animated");
                 }
@@ -5292,10 +5935,12 @@ function initialize() {
             }
 
             document.getElementById("answer").style.color = "lightgray";
-            document.getElementById("answer").innerText = "Game Over! Out Of Lives.";
+            document.getElementById("answer").innerText = "Out of lives — GAME OVER!";
+            document.getElementById("answer").classList.remove("fb-correct", "fb-wrong", "fb-locked", "fb-win", "fb-info"); // REDESIGN: feedback-kind class for CSS
+            document.getElementById("answer").classList.add("fb-wrong"); // REDESIGN
         }
         gameOver = true;
-        document.getElementById("toggle-row").style.display = "none";
+        syncTimedButton(); // REDESIGN v54: was "hide the toggle row" — the nav Timer button takes its locked/live state instead
         document.getElementById("KeyA").classList.add("key-tile-disabled");
         document.getElementById("KeyE").classList.add("key-tile-disabled");
         document.getElementById("KeyI").classList.add("key-tile-disabled");
@@ -5323,7 +5968,7 @@ function initialize() {
     // Default Path
     else {
         if (localStorage.clgamestarted == 1) {
-            document.getElementById("toggle-row").style.display = "none";
+            syncTimedButton(); // REDESIGN v54: was "hide the toggle row" — the nav Timer button takes its locked/live state instead
         }
         if (localStorage.vowelactive == 1) {
             disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
@@ -5339,6 +5984,13 @@ function initialize() {
         var disabled = JSON.parse(localStorage.getItem("cldisabledkey"));
         for (let i = 0; i < disabled.length; i++) {
             document.getElementById("Key" + disabled[i]).classList.add("disabled");
+        }
+        // REDESIGN P1 (approved by Sankar): keys whose letter was found (visible in the revealed board words) restore green
+        var revealedkeys = ((localStorage.clwordone || "") + (localStorage.clwordtwo || "") + (localStorage.clwordthree || "") + (localStorage.clwordfour || "") + (localStorage.clwordfive || "") + (localStorage.clwordsix || "") + (localStorage.clwordlast || "")).replace(/\?/g, "");
+        for (let i = 0; i < disabled.length; i++) {
+            if (revealedkeys.includes(disabled[i])) {
+                document.getElementById("Key" + disabled[i]).classList.add("key-correct");
+            }
         }
         if (localStorage.clwordone != "") {
             for (let i = 0; i < wordonewidth; i++) {
@@ -5467,6 +6119,40 @@ function initialize() {
                 }
             }
         }
+        // REDESIGN v53 (Sankar's wording; presentation only — restore logic
+        // untouched): an IN-PROGRESS restore posts this to the strip.
+        // updateAnswer's classifier puts it in the yellow fb-info family
+        // with the unified pulse.
+        // REDESIGN v56 (Sankar's rule): EVERY reload of an unfinished game
+        // gets this message, guessed or not — the v53 gate (clguesscnt > 0)
+        // left the strip BLANK on a no-guess refresh and on the Timed Mode
+        // arm reload. The reload signal is his own once-a-day wheel flag:
+        // the day-init block resets slotmachine to 0 and the load handler
+        // sets it to 1 only AFTER initialize() returns, so inside
+        // initialize() it reads 1 exactly on reloads. The day's first load
+        // (slotmachine 0) keeps the wheel + intro flow; finished games take
+        // the game-over branch above and never reach here.
+        if (localStorage.getItem("slotmachine") == 1) {
+            // REDESIGN v57 (Sankar): a timed game's ENTRY load gets its own
+            // message. Signals, all his: clhardmode == 1 (timer on),
+            // clguesscnt == 0 (play has not begun), and momentumStart ABSENT
+            // at this point of initialize() — the arm handler writes only
+            // clhardmode, and the timer's first tick (~1s after the entry
+            // load) is what creates momentumStart; nothing writes it during
+            // initialize()'s synchronous run. So "absent" identifies the
+            // entry load exactly: every later load of this game (in-progress
+            // refresh, or a no-guess refresh after entry) finds momentumStart
+            // present and takes the generic restore message below, timed or
+            // not — exactly as v56. First loads (slotmachine 0) never reach
+            // here; finished games take the game-over branch above.
+            if (localStorage.clhardmode == 1
+                && Number(localStorage.clguesscnt || 0) === 0
+                && !localStorage.getItem("momentumStart")) {
+                updateAnswer("Timer is active — every second counts!");
+            } else {
+                updateAnswer("Right where you left off — keep building the chain.");
+            }
+        }
     }
 
 }
@@ -5482,17 +6168,19 @@ function processKey() {
 function processInput(e) {
     if (gameOver) return;
     localStorage.clgamestarted = 1;
-    document.getElementById("toggle-row").style.display = "none";
+    syncTimedButton(); // REDESIGN v54: was "hide the toggle row" — the nav Timer button takes its locked/live state instead
     localStorage.clguesscnt = Number(localStorage.clguesscnt) + 1;	
     document.getElementById("lives").classList.remove("blink");
     document.getElementById("answer").innerText = "";
     var LetterFound = 0;
+    var mysteryHit = false; // REDESIGN v52: set when this guess hits the Mystery Letter — its reward message outranks the correct-guess message below
     if ("KeyA" <= e.code && e.code <= "KeyZ") {
         if (Number(localStorage.clguesscnt) === 7) {
             if (localStorage.clMysteryActive === "true") {
                 const MysteryLetter = localStorage.clMysteryLetter;
                 removeQuestionFromTile(MysteryLetter);
                 if (e.code[3] === MysteryLetter) {
+                    mysteryHit = true; // REDESIGN v52 (see declaration)
                     // Player hit the Mystery tile
                     // const lives = 5 - Number(localStorage.cllivescnt);
                     // if (lives < 5) {
@@ -5504,11 +6192,11 @@ function processInput(e) {
                     if (localStorage.clhardmode == 1) {
                         localStorage.cldynamite = dyn + 2;
                         // document.getElementById("answer").innerText = "PERFECT GUESS! \n YOU GAINED +2 DYNAMITES!";
-                        updateAnswer("Perfect Guess! <br> You Gained +2 Dynamites!");
+                        updateAnswer("Perfect Guess! You Gained +2 Dynamites!"); // REDESIGN v57: hard <br> removed — one-line strip (words unchanged)
                     } else {
                         localStorage.cldynamite = dyn + 1;
                         // document.getElementById("answer").innerText = "PERFECT GUESS! \n YOU GAINED +1 DYNAMITE!";
-                        updateAnswer("Perfect Guess! <br> You Gained +1 Dynamite!");
+                        updateAnswer("Perfect Guess! You Gained +1 Dynamite!"); // REDESIGN v57: hard <br> removed — one-line strip (words unchanged)
                     }
                     updateDynamiteUI();
                     showDynamiteAdded();
@@ -5701,7 +6389,7 @@ function processInput(e) {
                 document.getElementById("KeyU").classList.add("key-tile-enabled");				
                 document.getElementById("answer").style.color = "lightgray";
                 // document.getElementById("answer").innerText = "ONLY VOWELS LEFT!"
-                updateAnswer("ONLY VOWELS LEFT!");
+                updateAnswer("That's every consonant — vowels are now unlocked!");
 				triggerVibration(); // single pulse
                 setTimeout(FinalClue, 1500);
                 // }, 1000);
@@ -5710,6 +6398,7 @@ function processInput(e) {
 
         }
         document.getElementById(e.code).classList.add("disabled");
+        if (LetterFound != 0) { document.getElementById(e.code).classList.add("key-correct"); } // REDESIGN P1 (approved by Sankar): correct keys render green via .key-tile.key-correct
         var disabledkey = e.code[3];
         if (disabledkeyarr.length == 0) {
             var temp = JSON.parse(localStorage.getItem("cldisabledkey"));
@@ -5723,32 +6412,33 @@ function processInput(e) {
     }
 	const { hintAvailable } = getHintState();
     if (LetterFound == 0) {
+		shakeBoard(); // REDESIGN v54: the mockup's board shake on a wrong guess (his Safety Net branch below included, as in the mockup)
 		if (!hintAvailable) {
 			localStorage.cllivescnt = Number(localStorage.cllivescnt) + 1;
 			document.getElementById("answer").style.color = "lightgray";
 			switch (Number(localStorage.cllivescnt)) {
 				case 0:
-					localStorage.cllives = "⚪⚪⚪⚪⚪";
+					localStorage.cllives = "♥♥♥♥♥";
 					break;
 				case 1:
-					localStorage.cllives = "⚪⚪⚪⚪";
+					localStorage.cllives = "♥♥♥♥";
 					// document.getElementById("answer").innerText = "FIRST LIFE LOST!"
-					updateAnswer("First Life Lost!");
+					updateAnswer(e.code[3] + " isn't in the chain — life lost. 4 lives left.");
 					break;
 				case 2:
-					localStorage.cllives = "⚪⚪⚪";
+					localStorage.cllives = "♥♥♥";
 					// document.getElementById("answer").innerText = "SECOND LIFE LOST!"
-					updateAnswer("Second Life Lost!");
+					updateAnswer(e.code[3] + " isn't in the chain — life lost. 3 lives left.");
 					break;
 				case 3:
-					localStorage.cllives = "⚪⚪";
+					localStorage.cllives = "♥♥";
 					// document.getElementById("answer").innerText = "THIRD LIFE LOST!"
-					updateAnswer("Third Life Lost!");
+					updateAnswer(e.code[3] + " isn't in the chain — life lost. 2 lives left.");
 					break;
 				case 4:
-					localStorage.cllives = "⚪";
+					localStorage.cllives = "♥";
 					// document.getElementById("answer").innerText = "FOURTH LIFE LOST - LAST LIFE ALERT!"
-					updateAnswer("FOURTH LIFE LOST - LAST LIFE ALERT!");
+					updateAnswer(e.code[3] + " isn't in the chain — life lost. 1 life left.");
 					setTimeout(FinalClue, 1500);
 
 					// Offer star-for-life trade when only 1 life remains
@@ -5766,11 +6456,15 @@ function processInput(e) {
 					// 	setTimeout(FinalClue, 500);	
 					// 	break;
 				case 5:
-					localStorage.cllives = "❌❌❌❌❌";
+					localStorage.cllives = "♥♥♥♥♥";
 					break;
 			}
 
+			localStorage.cllives = (localStorage.cllives || "").replace(/⚪/g, "♥").replace(/⭐/g, "★"); // REDESIGN FIX: migrate legacy lives glyphs saved by the old game (⚪/⭐) to the new ♥/★ so hearts/stars render for returning players
 			document.getElementById("lives").innerText = localStorage.cllives;
+			var _lv = document.getElementById("lives"); var _ln = ((_lv.innerText.match(/♥/g) || []).length) + ((_lv.innerText.match(/★/g) || []).length); if (Number(localStorage.cllivescnt) == 5 && _lv.innerText.indexOf("★") < 0) { _ln = 0; } _lv.dataset.left = _ln; var _lc = document.getElementById("lives-count"); if (_lc) { var _st = _lv.innerText.indexOf("★") >= 0; _lc.innerHTML = _ln + "<small>" + (_st ? " ★" : " / 5") + "</small>"; _lc.classList.toggle("low", !_st && _ln <= 1); } // REDESIGN v51 (presentation only): mockup lives-count text + remaining count for CSS lost-heart slots
+			if ((localStorage.cllives || "").includes("★")) { document.getElementById("lives-label").textContent = "STARS"; } // REDESIGN P2 (approved by Sankar): label syncs when a stored stars state renders
+			document.getElementById("lives").classList.toggle("lives-depleted", Number(localStorage.cllivescnt) == 5); // REDESIGN: lives glyph state class (CSS colours the all-lost hearts)
 			document.getElementById("lives").classList.add("blink");
 			setTimeout(removeblink, 3000);
 		}	
@@ -5783,7 +6477,30 @@ function processInput(e) {
 		}	
     }
 
-	if (Number(localStorage.clguesscnt) === 6) {
+	if (LetterFound != 0 && !mysteryHit) {
+		// REDESIGN v52: the mockup's correct-guess message (his game showed none).
+		// The guess that completes the consonants keeps the unlock message posted
+		// above instead: it is a consonant guess landing exactly on the count.
+		// A game-winning guess is overwritten by the win message later in this
+		// same call, before anything paints.
+		var justUnlocked = (Number(localStorage.consocount) == solveword.length - Number(localStorage.vowelcount)) && "AEIOU".indexOf(e.code[3]) < 0;
+		if (!justUnlocked) {
+			var guessedLetter = e.code[3];
+			var letterCount = solveword.split(guessedLetter).length - 1;
+			updateAnswer("Correct — " + guessedLetter + " appears " + letterCount + (letterCount === 1 ? " time." : " times."));
+		}
+	}
+
+	// REDESIGN v61: the Mystery Letter is never armed on a game-ending
+	// guess. The two extra conditions are the win/lose blocks' own
+	// tests further down this same call (cllivescnt has already been
+	// incremented for a wrong guess, and clcorrect already counts
+	// this guess's reveals), so when either end state is already
+	// reached the whole block is skipped — no letter is chosen, no
+	// tile is marked, no popup, no answer overwrite — and the
+	// game-over sequence below proceeds exactly as on any other
+	// guess. When the game continues, the block runs untouched.
+	if (Number(localStorage.clguesscnt) === 6 && Number(localStorage.cllivescnt) < 5 && Number(localStorage.clcorrect) < word.length) {
 
 		// Filter out blanks BEFORE selecting
 		const availableLetters = getUnrevealedConsonants().filter(letter => {
@@ -5852,7 +6569,7 @@ function processInput(e) {
             // currTile.classList.add("failed", "animated");
         }
         gameOver = true;
-        document.getElementById("toggle-row").style.display = "none";
+        syncTimedButton(); // REDESIGN v54: was "hide the toggle row" — the nav Timer button takes its locked/live state instead
         disableKeys(["A", "E", "I", "O", "U"]); // vowels
         disableKeys("BCDFGHJKLMNPQRSTVWXYZ".split("")); // consonants
         // if (localStorage.clhardmode == 1){
@@ -5873,7 +6590,7 @@ function processInput(e) {
         localStorage.clgamecnt = 6;
         document.getElementById("answer").style.color = "lightgray";
         // document.getElementById("answer").innerText = "GAME OVER! OUT OF LIVES.";
-        updateAnswer("Game Over! Out Of Lives.");
+        updateAnswer("Out of lives — GAME OVER!");
         localStorage.setItem(('gameovercl' + days), 1);
         if (localStorage.getItem('gameovercl' + days) == "1") {
             document.querySelectorAll('span[id*="-"].disabled').forEach(tile => {
@@ -5943,7 +6660,7 @@ function processInput(e) {
             // currTile.classList.add("animated");
         }
         gameOver = true;
-        document.getElementById("toggle-row").style.display = "none";
+        syncTimedButton(); // REDESIGN v54: was "hide the toggle row" — the nav Timer button takes its locked/live state instead
         disableKeys(["A", "E", "I", "O", "U"]); // vowels
         // if (localStorage.clhardmode == 1){
         // NEW: delete saved timer so refresh cannot restore it
@@ -6045,9 +6762,14 @@ function processInput(e) {
         }
 
         if (bonusApplied) {
-            msg += "<br> (INCLUDING +1 TIMED MODE BONUS!)";
-            localStorage.cllives = "⚪".repeat(localStorage.clstarscnt);
+            // REDESIGN v57 (Sankar): bonus suffix no longer appended to the
+            // win text (count already includes it). Lives/stars logic below
+            // is untouched.
+            localStorage.cllives = "♥".repeat(localStorage.clstarscnt);
+            localStorage.cllives = (localStorage.cllives || "").replace(/⚪/g, "♥").replace(/⭐/g, "★"); // REDESIGN FIX: migrate legacy lives glyphs saved by the old game (⚪/⭐) to the new ♥/★ so hearts/stars render for returning players
             document.getElementById("lives").innerText = localStorage.cllives;
+            var _lv = document.getElementById("lives"); var _ln = ((_lv.innerText.match(/♥/g) || []).length) + ((_lv.innerText.match(/★/g) || []).length); if (Number(localStorage.cllivescnt) == 5 && _lv.innerText.indexOf("★") < 0) { _ln = 0; } _lv.dataset.left = _ln; var _lc = document.getElementById("lives-count"); if (_lc) { var _st = _lv.innerText.indexOf("★") >= 0; _lc.innerHTML = _ln + "<small>" + (_st ? " ★" : " / 5") + "</small>"; _lc.classList.toggle("low", !_st && _ln <= 1); } // REDESIGN v51 (presentation only): mockup lives-count text + remaining count for CSS lost-heart slots
+            if ((localStorage.cllives || "").includes("★")) { document.getElementById("lives-label").textContent = "STARS"; } // REDESIGN P2 (approved by Sankar): label syncs when a stored stars state renders
 
 
         }
@@ -6061,9 +6783,13 @@ function processInput(e) {
         var templives = "";
         templives = document.getElementById("lives").innerText;
         for (i = 0; i < 5; i++) {
-            templives = templives.replace("⚪", "⭐");
+            templives = templives.replace("♥", "★");
         }
+        templives = templives.replace(/⚪/g, "★"); // REDESIGN FIX: convert any legacy ⚪ directly in case the stored string predates the redesign
         document.getElementById("lives").innerText = templives;
+        var _lv = document.getElementById("lives"); var _ln = ((_lv.innerText.match(/♥/g) || []).length) + ((_lv.innerText.match(/★/g) || []).length); if (Number(localStorage.cllivescnt) == 5 && _lv.innerText.indexOf("★") < 0) { _ln = 0; } _lv.dataset.left = _ln; var _lc = document.getElementById("lives-count"); if (_lc) { var _st = _lv.innerText.indexOf("★") >= 0; _lc.innerHTML = _ln + "<small>" + (_st ? " ★" : " / 5") + "</small>"; _lc.classList.toggle("low", !_st && _ln <= 1); } // REDESIGN v51 (presentation only): mockup lives-count text + remaining count for CSS lost-heart slots
+        document.getElementById("lives").classList.add("lives-stars"); // REDESIGN: CSS colours the converted ★ glyphs gold
+        document.getElementById("lives-label").textContent = "STARS"; // REDESIGN P2 (approved by Sankar): label follows the stars conversion
         if (Number(localStorage.clstarscnt) != 0) {
             document.getElementById("lives").classList.add("animated");
         }
@@ -6126,6 +6852,8 @@ function processInput(e) {
 			// Must have a name AND must be past the 50‑day cooldown
 			if (playerName && playerName.trim() !== "" && shouldShowFeedbackPopup()) {
 				showFeedbackPopup();
+			} else if (playerName && playerName.trim() !== "" && shouldShowDynamitePoll()) {
+				showDynamitePoll();
 			} else {
 				OpenStats();
 			}
