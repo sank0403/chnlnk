@@ -6535,7 +6535,7 @@ body.archive-page #lives::before {
 
 /* Board: inset like the main game's column; one clean panel —
    the per-section bands (#111 fill + #222 border) are removed */
-body.archive-page #board { margin: 0 10px; }
+body.archive-page #board { margin: 0 10px; width: auto; }
 
 body.archive-page #board > div[id^="board"] {
     background: transparent;
