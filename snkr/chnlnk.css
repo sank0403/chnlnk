@@ -7136,3 +7136,29 @@ body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
 #closeGenericPopup:hover {
     background: #3DDC68;
 }
+
+/* ============================================================
+   CHN LNK REDESIGN — v71 (2026-11-21, from Sankar's Dolphin test)
+   ============================================================
+   The strip -> keyboard gap and the end-of-column distribution:
+   1. The 14px gap moves OFF the first keyboard row's margin-top
+      (an adjacency selector, #game + .keyboard-row, with two
+      competing declarations in this file — 3px in the v53 layer,
+      14px in v59; on Sankar's phone the 3px won and the strip's
+      bottom border sat on the keys) and ONTO #game's own
+      padding-bottom, where no sibling relationship or cascade
+      accident can take it away. The row's margin-top is zeroed:
+      the visible gap is the padding, exactly 14px, always.
+      fitBoardTiles() measures the live column, so the tiles /
+      connector spread absorb the swap and the column still ends
+      at the 12px bottom margin — geometry at healthy sizes is
+      unchanged (the gap was already 14px there, just fragile).
+   2. The pooled-space-to-strip rule lives in chnlnk.js
+      (rdStripPoolPass, at the end of fitBoardTiles): any height
+      still pooled below the legend after the tile fit is given
+      to the strip instead. Nothing here sizes the strip — its
+      CSS height stays the fixed 32px; the JS grows the box only
+      by a measured residual, only where a pool exists.
+   ============================================================ */
+#game { padding-bottom: 14px; }
+#game + .keyboard-row { margin-top: 0; }

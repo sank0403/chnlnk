@@ -4913,6 +4913,11 @@ function fitBoardTiles() {
     var board = document.getElementById("board");
     var row = document.getElementById("boardfirst");
     if (!board || !row) { return; }
+    // REDESIGN v71: the tile fit below must never see a strip that a
+    // previous rdStripPoolPass grew — reset it to its CSS height first,
+    // so every run starts from the same fixed 32px box.
+    var ansReset = document.getElementById("answer");
+    if (ansReset) { ansReset.style.height = ""; ansReset.style.minHeight = ""; }
     var maxLen = Math.max(wordone.length, wordtwo.length, wordthree.length, wordfour.length, wordfive.length, wordsix.length, wordlast.length);
     var rowStyle = getComputedStyle(row);
     var inner = row.clientWidth - (parseFloat(rowStyle.paddingLeft) || 0) - (parseFloat(rowStyle.paddingRight) || 0);
@@ -4974,10 +4979,53 @@ function fitBoardTiles() {
             }
         }
     }
+    rdStripPoolPass();
+}
+
+// REDESIGN v71 (Sankar): pooled space goes to the STRIP. The tile fit
+// above is the only distributor of leftover column height, and it runs
+// only on load / resize / fonts.ready — if the rendered column still
+// ends short of the fit target afterwards (a phone browser settling
+// its toolbar or font metrics after the fit's last run leaves exactly
+// that residue), the leftover pools below the legend while the strip
+// sits at its minimum height. This pass is the second claimant: it
+// measures the pool that remains below the legend (past the 12px
+// bottom margin the fit targets) and gives ALL of it to the feedback
+// strip's height. The strip is flex-centred, so its message stays
+// vertically centred in the taller box; the box is then fixed for
+// that layout — it never resizes per message. Tiles keep the size
+// the fit gave them: nothing here touches --tile or --spread, and
+// the 14px strip -> keyboard gap is #game's padding (CSS), which
+// this growth does not disturb — the keyboard and legend simply move
+// down by the grown amount and the legend ends at the target.
+// Runs at the end of every fitBoardTiles() and once more shortly
+// after load, to catch post-fit settling. In a layout with no pool
+// (the fit already ended the column at the target) it is a no-op.
+function rdStripPoolPass() {
+    var ans = document.getElementById("answer");
+    var legend = document.getElementById("vowel-legend");
+    var game = document.getElementById("game");
+    if (!ans || !legend || !game) { return; }
+    if (game.style.display === "none" || ans.hidden) { return; }
+    if (legend.getBoundingClientRect().height === 0) { return; }
+    ans.style.height = "";
+    ans.style.minHeight = "";
+    var base = ans.getBoundingClientRect().height;
+    if (!(base > 0)) { return; }
+    var target = window.innerHeight - 12;
+    var pool = target - (legend.getBoundingClientRect().bottom + window.scrollY);
+    if (pool > 1) {
+        var h = Math.floor((base + pool) * 100) / 100;
+        ans.style.height = h + "px";
+        ans.style.minHeight = h + "px";
+    }
 }
 window.addEventListener("resize", fitBoardTiles);
 window.addEventListener("orientationchange", fitBoardTiles);
 if (document.fonts && document.fonts.ready) { document.fonts.ready.then(function() { fitBoardTiles(); }); }
+// REDESIGN v71: one late strip pass after load, catching any pool a
+// browser's post-load settling (toolbar, font metrics) leaves behind.
+window.addEventListener("load", function() { setTimeout(rdStripPoolPass, 900); });
 // =========================
 // REDESIGN v54: the nav TIMER button. Timed Mode moved from the bottom
 // toggle row into the middle of the nav (Help · Email · Timer · Support ·
