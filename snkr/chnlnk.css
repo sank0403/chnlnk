@@ -7067,3 +7067,72 @@ body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
     border: 2px solid #3DDC68;
     box-shadow: 0 0 0 3px rgba(61, 220, 104, .18);
 }
+
+/* ============================================================
+   REDESIGN v68 — Thank-you toast muted (Sankar, from v67 test).
+   The v56 pairing (bright #3DDC68 slab, dark text #0B2E17)
+   read too bright after a feedback submit and after a
+   Dynamite Poll vote. Variant A, chosen from a mockup: the
+   .thankyou-toast family (#thankYouToast + #pollThankYouToast
+   — the only two elements carrying the class) now takes the
+   given-word fill #2E4636 with white text: the muted
+   counterpart of the bright green, exactly as the error toast
+   is the muted counterpart of red. Colour only — position,
+   size, fade timing and shadow are untouched, and nothing
+   else that uses #3DDC68 changes.
+   ============================================================ */
+.thankyou-toast { background: #2E4636; color: #fff; }
+
+/* ============================================================
+   REDESIGN v69 — Generic dynamite-popup frame restyled
+   (Sankar, from his live-site announcement screenshot).
+   Every popup built on .dynamite-popup — showPopupToUser
+   (announcement / warning / reward / default), showDynamitePopup
+   (leaderboard Top-3 and invite +2), statsRetreival, rankReset
+   and the day-100 bonus in initialize() — wore the old frame:
+   a 2px deep-red border, 10px corners, no shadow, and OK
+   buttons in deep red (#closeDynamitePopup) or plain browser
+   grey (#closeGenericPopup had no rule at all). The frame now
+   takes the approved mockup skin: panel #1E1E22, 1px solid
+   #2C2C31 border, 14px radius, soft shadow; title white,
+   20px, weight 800, icon and wording unchanged; body #E8E8EA
+   at 14.5px; the single OK button in the family green
+   (#3DDC68, dark #0E2416 text, bold, 10px radius, min-width
+   132px). Every builder has exactly one OK button, so no
+   secondary/grey treatment was needed. Presentation only —
+   the overlay mechanics (fixed, rgba(0,0,0,.6) dim, z-index
+   9999, flex centring), texts, icons, triggers and close
+   behaviour are untouched.
+   ============================================================ */
+.dynamite-popup-inner {
+    background: #1E1E22;
+    border: 1px solid #2C2C31;
+    border-radius: 14px;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, .6);
+}
+.dynamite-popup-inner h2 {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 800;
+}
+.dynamite-popup-inner p {
+    color: #E8E8EA;
+    font-size: 14.5px;
+}
+.dynamite-popup-inner button,
+#closeDynamitePopup,
+#closeGenericPopup {
+    background: #3DDC68;
+    color: #0E2416;
+    border: none;
+    border-radius: 10px;
+    min-width: 132px;
+    padding: 11px 22px;
+    font-size: 14.5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+#closeDynamitePopup:hover,
+#closeGenericPopup:hover {
+    background: #3DDC68;
+}
