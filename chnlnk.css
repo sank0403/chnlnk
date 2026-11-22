@@ -5228,7 +5228,7 @@ h1.title-scale .title-link {
    full-amber border from the rule above. */
 #board .voweltile,
 #board .voweltilesmall {
-    border-color: var(--mx-amber);
+    border-color: rgba(245, 184, 61, 0.75);
     color: var(--mx-amber);
     opacity: 1;
 }
@@ -5410,7 +5410,7 @@ h1.title-scale .title-link {
 
 /* Unlocked vowels (mockup .key.vowelready) */
 .key-tile.key-tile-enabled {
-    box-shadow: inset 0 0 0 2px var(--mx-amber);
+    box-shadow: inset 0 0 0 2px rgba(245, 184, 61, 0.75);
 }
 
 /* Wrong / eliminated / auto-struck (mockup .key.wrong):
@@ -7674,3 +7674,44 @@ body.archive-page {
   vertical-align: middle;
   margin-left: 8px;
 }
+
+/* ============================================================
+   REDESIGN v87 (2026-11-22, from Sankar): the UNLOCKED vowel
+   border tones down to 75% amber — tiles and keyboard.
+
+   Same conversation as v85: once the vowels unlock, the vowel
+   tiles and the vowel keys carried a full-strength solid amber
+   outline, and Sankar called that too bright too. It is now
+   rgba(245, 184, 61, 0.75) in the only two declarations that
+   produce it (both edited in place, as v83–v85 did):
+
+   - Board tiles: the border-color component of the
+     #board .voweltile / .voweltilesmall rule (was
+     var(--mx-amber), full strength). The same rule's letter
+     colour (color: var(--mx-amber)) is NOT toned — only the
+     border. Locked tiles never see this value: the v85
+     shorthand (2px dotted, 50%) overrides it wholesale, and
+     .correct / .failed tiles override it with their own
+     green / red. Given tiles are plain .tile.starting and
+     never matched this rule.
+   - Keyboard: the vowel keys have no CSS border in the
+     redesign (computed 0px none — the early layer's 1px
+     var(--rd-amber) border does not survive the cascade);
+     their amber outline is the inset box-shadow ring of
+     .key-tile.key-tile-enabled, now
+     inset 0 0 0 2px rgba(245, 184, 61, 0.75). Ring width and
+     placement unchanged; key faces and letters unchanged.
+     The JS only swaps the classes at unlock — no JS was
+     touched.
+
+   One shared layer for both games (the archive's unlock adds
+   the same key-tile-enabled class and removes the same tile
+   .disabled). NOT toned, deliberately: the lock glyphs
+   (full amber — the "locked" signal), the legend icon, the
+   mystery tile's border, and the mxLoseSwapVowel keyframes
+   (the quarter-second pre-flip face of a missed vowel tile
+   in the end-of-game reveal — a transient animation state,
+   not the standing unlocked border). This supersedes the
+   v85 comment's "unlocked vowel tiles keep the solid
+   full-amber border" — solid, yes; full-amber, no longer.
+   ============================================================ */
