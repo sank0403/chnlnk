@@ -1991,6 +1991,7 @@ function processInput(e) {
             });
         }
         document.getElementById(e.code).classList.add("disabled");
+        if (LetterFound != 0) { document.getElementById(e.code).classList.add("key-correct"); } // REDESIGN v77: parity with the main game (its P1 line in processInput) — correct keys render green via .key-tile.key-correct; the archive never applied the class, so its correct keys rendered struck like wrong ones
         // var disabledkey = e.code[3];
         // if (disabledkeyarr.length == 0){
         // var temp = JSON.parse(localStorage.getItem("cldisabledkey"));

@@ -7247,3 +7247,174 @@ body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
     min-height: clamp(30px, 5.13dvh, 40px);
     margin-top: clamp(10px, 1.54dvh, 12px);
 }
+
+/* ============================================================
+   REDESIGN v76 — Summary stats header as a deliberate 2×2 grid
+   (2026-11-22, from a live user's screenshot)
+   ============================================================
+   The four Summary stats (#11 PLAYED, #12 WIN %, #13 STREAK,
+   #14 STARS) inherited a wrapping flex row: at real number
+   sizes the first three filled line 1 and STARS wrapped alone
+   onto line 2, left-aligned and lopsided — worse as the numbers
+   grow. They are now an explicit two-column grid in the Summary
+   modal only: row 1 PLAYED | WIN %, row 2 STARS | STREAK (the
+   💎 tier icon stays with STREAK, whose span is placed in the
+   second row by grid position — the DOM order and the JS stat
+   assignments are untouched). Every cell is single-line
+   (nowrap, min-width 0) and the font steps down slightly on
+   narrow screens instead of wrapping, so no cell can wrap
+   internally or overflow at any phone size. First-column cells
+   align left, second-column cells align right, matching the
+   spread of the old single row. Scoped to #summary so the
+   identically-id'd nav stats block is untouched.
+   ============================================================ */
+#summary #stats-item {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(22px, auto));
+    column-gap: 16px;
+    row-gap: 4px;
+    align-items: stretch;
+    margin-bottom: 8px;
+}
+#summary #stats-item .summary-item {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    white-space: nowrap;
+    font-size: clamp(11px, 3.4vw, 12px);
+    line-height: 1.25;
+}
+#summary #stats-item > [id="11"] { grid-column: 1; grid-row: 1; justify-content: flex-start; text-align: left; }
+#summary #stats-item > [id="12"] { grid-column: 2; grid-row: 1; justify-content: flex-end; text-align: right; }
+#summary #stats-item > [id="14"] { grid-column: 1; grid-row: 2; justify-content: flex-start; text-align: left; }
+#summary #stats-item > [id="13"] { grid-column: 2; grid-row: 2; justify-content: flex-end; text-align: right; }
+
+/* ============================================================
+   REDESIGN v77 — Keyboard key states: three clear families
+   (2026-11-22, player feedback: "The keyboard enabled and
+   disabled tiles are tough to distinguish")
+   ============================================================
+   Up to v76 a wrong / auto-struck key differed from a live key
+   only by a thin strikethrough: face #232326 vs the live
+   #3A3A40 (face luminance 0.0170 vs 0.0430, barely 2.5x) and
+   a dimmed letter, both at full opacity — at a glance the
+   keyboard read as one block, worst right after the vowel
+   unlock strikes half the consonants at once. The states now
+   separate decisively, in the same source order the keyboard
+   layer has always used (disabled -> locked -> correct last,
+   so green keeps winning on keys that carry both classes):
+
+   - LIVE keys: untouched (bright white letter on #3A3A40).
+   - DISABLED family (wrong guesses, consonants auto-struck
+     at vowel unlock, every non-green key at game end): the
+     face drops to #141416 — over 6x darker than live, a flat
+     recess just above the page background — and the letter
+     settles to mid-grey #7E7E87 (letter contrast 4.5:1, down
+     from the live key's 11.3:1 but still plainly readable:
+     players must see WHICH letters are dead). The
+     strikethrough stays.
+   - LOCKED vowels: the face joins the same recessed family
+     (warm-tinted #171410) while the letter stays clearly
+     amber (#B98F35, 6.1:1 on the new face) and the lock cue
+     (the ::after rule above, untouched) stays full amber —
+     amber + lock reads "locked", grey + strike reads "dead".
+     When the vowels unlock, the JS swaps the classes and the
+     keys come back bright: the brightening IS the signal.
+   - CORRECT keys: re-asserted with declarations identical to
+     the rule above, because this layer's .disabled would
+     otherwise override it by source order at equal
+     specificity. Computed values are unchanged.
+
+   One shared layer for both games: the archive's keyboard
+   uses the same classes, and v77 also adds the one-line
+   key-correct hook to chnlnkarch.js (its processInput never
+   applied the class, so archive correct keys rendered struck
+   like wrong ones — measured, not assumed).
+   ============================================================ */
+.key-tile.disabled {
+    background: #141416;
+    border: none;
+    color: #7E7E87;
+    opacity: 1;
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    box-shadow: none;
+}
+
+.key-tile.key-tile-disabled {
+    background: #171410;
+    border: none;
+    color: #B98F35;
+    opacity: 1;
+    text-decoration: none;
+    box-shadow: none;
+}
+
+.key-tile.key-correct {
+    background: var(--mx-green-tile);
+    border: none;
+    color: #fff;
+    opacity: 1;
+    text-decoration: none;
+    box-shadow: none;
+}
+/* ============================================================
+   REDESIGN v78 — Summary stats header back to ONE single line
+   (2026-11-22, user direction; supersedes the v76 2x2 grid)
+   ============================================================
+   The v76 grid was rejected outright ("it shud be same line
+   for sure"): the four Summary stats (#11 PLAYED, #12 WIN %,
+   #13 STREAK, #14 STARS) sit on ONE row again, in DOM order,
+   spread space-between across the modal exactly as the
+   original row spread them — the wrap is what was broken,
+   not the line. This layer fully supersedes the v76 layer
+   above for these selectors: the container's computed display
+   is flex (no longer grid), the grid templates and the
+   per-item grid placements are reset, the second-column
+   right alignment is gone, and the grid's 16px column-gap
+   is zeroed — column-gap applies to flex rows too, and left
+   in place it would eat a fixed 48px of the row's fit
+   budget at every width.
+
+   The fit mechanism is scaling, never wrapping: the row is
+   nowrap and the items are inflexible (flex: 0 0 auto), and
+   the font steps down with viewport width —
+   clamp(10.5px, 3.28vw, 13px): 13px on large phones, 10.5px
+   at 320px — with letter-spacing tightening in step
+   (-0.13vw, clamped to [-0.5px, -0.35px]). Calibrated in the
+   harness (probe v78-verify.js) against the widest texts the
+   game can print (PLAYED: 1250 / WIN %: 100 / STREAK: 1250
+   / STARS: 12345): at 320px the four texts total ~257px in
+   a 264px row, so even the extreme case keeps ~7px of air;
+   every narrower text or wider screen has more. JS stat
+   assignments and element IDs are untouched, and the layer
+   is scoped to #summary so the identically-id'd nav stats
+   block is untouched.
+   ============================================================ */
+#summary #stats-item {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: stretch;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    column-gap: 0;
+    row-gap: 0;
+    margin-bottom: 8px;
+}
+#summary #stats-item .summary-item {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    min-width: auto;
+    white-space: nowrap;
+    grid-column: auto;
+    grid-row: auto;
+    justify-content: flex-start;
+    text-align: left;
+    font-size: clamp(10.5px, 3.28vw, 13px);
+    letter-spacing: clamp(-0.5px, -0.13vw, -0.35px);
+    line-height: 1.25;
+}
