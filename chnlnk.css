@@ -5215,9 +5215,17 @@ h1.title-scale .title-link {
     color: #fff;
 }
 
-/* Hidden vowel tiles (mockup .tile.vowel): dashed amber border
-   and the lock cue. The game marks them .voweltile.disabled and
-   removes .disabled at unlock — the two states map 1:1. */
+/* Hidden vowel tiles (mockup .tile.vowel): amber border and the
+   lock cue. The game marks them .voweltile.disabled and removes
+   .disabled at unlock — the two states map 1:1.
+   REDESIGN v85: while locked, the border is DOTTED at 50% amber
+   (was dashed at full strength — a player called the blocked-out
+   vowel areas distracting, and Sankar picked dotted/50% from
+   mockup rounds). The shorthand below is the one declaration
+   that sets the locked border, overriding the width/colour
+   components inherited from the base tile rules for the
+   .disabled state only; unlocked vowel tiles keep the solid
+   full-amber border from the rule above. */
 #board .voweltile,
 #board .voweltilesmall {
     border-color: var(--mx-amber);
@@ -5226,7 +5234,7 @@ h1.title-scale .title-link {
 }
 
 #board .voweltile.disabled,
-#board .voweltilesmall.disabled { border-style: dashed; }
+#board .voweltilesmall.disabled { border: 2px dotted rgba(245, 184, 61, 0.5); }
 
 #board .voweltile:not(.disabled),
 #board .voweltilesmall:not(.disabled) { border-style: solid; }
@@ -7602,3 +7610,67 @@ body.archive-page {
    directly on the canvas, the same contrast pairing as the
    legend's amber text on the same ground.
    ============================================================ */
+
+/* ============================================================
+   REDESIGN v85 (2026-11-22, from Sankar): locked-vowel tiles —
+   the border goes DOTTED at 50% amber.
+
+   A player wrote in that the blocked-out vowel areas are "a bit
+   distracting" and suggested a simple yellow line around the box
+   with the lock. Four mockup rounds (real-game renders, runtime
+   injection only) explored solid/dashed/dotted at full, 55%,
+   50% and 35% strength; Sankar picked DOTTED at 50%.
+
+   The change itself is at the source declaration (edited in
+   place, as v83/v84 did): the #board .voweltile.disabled /
+   .voweltilesmall.disabled rule — previously just
+   `border-style: dashed` over the shared full-amber colour —
+   now sets the whole border in one shorthand:
+       border: 2px dotted rgba(245, 184, 61, 0.5);
+   That one rule is the only place the locked border is set, so
+   the computed style is uniform for both tile sizes, in the
+   main game and the archive (shared stylesheet). Unlocked
+   vowel tiles are untouched (solid, full amber), as are the
+   correct/failed/mystery states, the tile interior (already
+   transparent) and the lock glyph (::after, full amber). The
+   border was already 2px, so tile geometry is pixel-identical.
+
+   (A second cosmetic item from the same conversation — the
+   Mystery popup's "?" on a white tile-like square — is NOT in
+   this build: it was rendered as a harness mockup only, pending
+   Sankar's approval.)
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v86 (2026-11-22, from Sankar): the Mystery toast's
+   ❓ rides on a white tile-like square.
+
+   Sankar noticed the board's mystery tile shows its red ❓ on
+   a white square, while the IDENTIFY MYSTERY LETTER toast
+   (showMysteryAdded(), #life-restored) showed the ❓ bare.
+   The mockup (real-game render, runtime injection only —
+   verify-shots/v42-mystery-popup-tile.png) was approved, and
+   this is that mockup built for real: showMysteryAdded() now
+   wraps the ❓ in <span class="mq-tile"> and this one rule
+   styles it to the board tile's own spec (#game #board
+   .tile.mystery: white face, 2px solid #55555E border,
+   radius calc(var(--tile)*.165) ≈ 7px at toast scale),
+   36x36px with the ❓ centred. Presentation ONLY — the
+   toast's 2s life, its trigger, and the identify flow
+   (guess the mystery letter -> +1 dynamite; any other guess
+   clears the mark) are byte-for-byte the game's own logic.
+   The selector is scoped to #life-restored .mq-tile, which
+   only this toast creates, so the archive (no mystery
+   feature) and the Safety Net toast (same #life-restored id,
+   no .mq-tile span) are untouched.
+   ============================================================ */
+#life-restored .mq-tile {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  background: white;
+  border: 2px solid #55555E;
+  border-radius: 7px;
+  font-size: 22px; line-height: 1;
+  vertical-align: middle;
+  margin-left: 8px;
+}

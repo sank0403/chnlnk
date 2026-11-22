@@ -2897,7 +2897,10 @@ function showDynamiteAdded() {
 function showMysteryAdded() {
     const pop = document.createElement("div");
     pop.id = "life-restored";
-    pop.innerText = "IDENTIFY MYSTERY LETTER ❓";
+    // REDESIGN v86: the ❓ rides on a white tile-like square (.mq-tile in
+    // chnlnk.css), matching the board's mystery tile. Presentation only —
+    // the toast, its 2s life and the identify flow are unchanged.
+    pop.innerHTML = "IDENTIFY MYSTERY LETTER <span class=\"mq-tile\">❓</span>";
     document.body.appendChild(pop);
 
     setTimeout(() => pop.remove(), 2000);
