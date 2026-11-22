@@ -5290,7 +5290,7 @@ h1.title-scale .title-link {
     min-height: 61px;
     margin: 3px 0 0;
     padding: 4px 10px;
-    background: #17171A;
+    background: transparent;
     border: none;
     border-radius: 8px;
     font-size: 12.5px;
@@ -5327,32 +5327,32 @@ h1.title-scale .title-link {
 #answer.run-border.fb-info { animation: mxFbNeutral .55s ease-out; }
 
 @keyframes mxFbGood {
-    0% { background: #17171A; color: var(--mx-green); box-shadow: 0 0 0 0 rgba(61, 220, 104, 0), inset 0 0 0 1px rgba(61, 220, 104, 0); }
-    40% { background: #1E4D2E; color: #E9FFF0; box-shadow: 0 0 8px 1px rgba(61, 220, 104, .32), inset 0 0 0 1px rgba(61, 220, 104, .55); }
-    100% { background: #17171A; color: var(--mx-green); box-shadow: 0 0 0 0 rgba(61, 220, 104, 0), inset 0 0 0 1px rgba(61, 220, 104, 0); }
+    0% { background: transparent; color: var(--mx-green); box-shadow: 0 0 0 0 rgba(61, 220, 104, 0), inset 0 0 0 1px rgba(61, 220, 104, 0); }
+    40% { background: #1E4D2E; color: #E9FFF0; box-shadow: 0 0 1px 0 rgba(61, 220, 104, .32), inset 0 0 0 1px rgba(61, 220, 104, .55); }
+    100% { background: transparent; color: var(--mx-green); box-shadow: 0 0 0 0 rgba(61, 220, 104, 0), inset 0 0 0 1px rgba(61, 220, 104, 0); }
 }
 
 @keyframes mxFbBad {
-    0% { background: #17171A; color: var(--mx-red); box-shadow: 0 0 0 0 rgba(255, 90, 90, 0), inset 0 0 0 1px rgba(255, 90, 90, 0); }
-    40% { background: #4D2323; color: #FFEDED; box-shadow: 0 0 8px 1px rgba(255, 90, 90, .32), inset 0 0 0 1px rgba(255, 90, 90, .55); }
-    100% { background: #17171A; color: var(--mx-red); box-shadow: 0 0 0 0 rgba(255, 90, 90, 0), inset 0 0 0 1px rgba(255, 90, 90, 0); }
+    0% { background: transparent; color: var(--mx-red); box-shadow: 0 0 0 0 rgba(255, 90, 90, 0), inset 0 0 0 1px rgba(255, 90, 90, 0); }
+    40% { background: #4D2323; color: #FFEDED; box-shadow: 0 0 1px 0 rgba(255, 90, 90, .32), inset 0 0 0 1px rgba(255, 90, 90, .55); }
+    100% { background: transparent; color: var(--mx-red); box-shadow: 0 0 0 0 rgba(255, 90, 90, 0), inset 0 0 0 1px rgba(255, 90, 90, 0); }
 }
 
 @keyframes mxFbWarn {
-    0% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
-    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 8px 1px rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
-    100% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+    0% { background: transparent; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 1px 0 rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
+    100% { background: transparent; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
 }
 
 @keyframes mxFbWin {
-    0% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
-    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 8px 1px rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
-    100% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+    0% { background: transparent; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 1px 0 rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
+    100% { background: transparent; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
 }
 
 @keyframes mxFbNeutral {
     0% { background: #2A2A30; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
-    100% { background: #17171A; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0); }
+    100% { background: transparent; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0); }
 }
 
 /* ---------- Keyboard (mockup .keyboard / .key) ----------
@@ -7487,3 +7487,118 @@ body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
 body.archive-page #board { margin-top: clamp(10px, 1.54dvh, 12px); }
 body.archive-page #answer { margin-top: clamp(10px, 1.54dvh, 12px); }
 body.archive-page br + .keyboard-row { margin-top: clamp(10px, 1.54dvh, 12px) !important; }
+
+/* ============================================================
+   CHN LNK REDESIGN — v83 (2026-11-22, from Sankar's installed-app test)
+   ============================================================
+   The reference gap: Sankar loves the space between the 5 nav
+   buttons and the status section — "exactly that". Measured
+   box-to-box (nav row bottom -> status card border edge) it is
+   4px at 412x915 (the card's 3px margin-top + 1px; the <hr> in
+   between is display:none). That gap is NOT touched. Instead the
+   three section gaps v82 equalised — status -> board, board ->
+   strip, strip -> keyboard — are re-anchored to it:
+
+     --gap83 = clamp(3.33px, 0.4372dvh, 4px)
+
+   The coefficient passes through R=4px at his 915px height
+   (0.4372 x 9.15 = 4.00); the cap is R itself; the floor keeps
+   the v74 family's floor-to-cap ratio (10/12 of the cap ->
+   3.33px). Per size: 3.33 @568/640/740, 3.69 @844, 4.00 @915,
+   4 @932/980. All three gaps use the one var on both games, so
+   they stay exactly equal to each other at every height, via
+   the same structural levers v82 used (board margin-top,
+   #answer margin-top, #game padding-bottom; archive-scoped
+   equivalents, its gap C still !important over the inline
+   margin fitArchiveTiles writes).
+
+   THE SAVINGS, SPLIT AS DIRECTED: at 412x915 the three gaps
+   drop 12 -> 4, freeing 24px of column. Half goes to the
+   keyboard, half to the play area:
+   - Keyboard: --kgrow83 = (oldGap - newGap) / 2 is the per-key
+     share of the keyboard's half (3 gaps freed, half to the
+     keyboard, over 3 rows = (old-new)/2 per key). It is added
+     to --keyh in every band that defines it (base, the
+     max-height:760px squeeze, the archive's body override) AND
+     to the keys' 36px min-height — below ~760px tall the
+     min-height is what actually renders, so without that the
+     growth would exist only on paper at small sizes. Keys stay
+     uniform (one var), rows keep their var(--kgap) spacing,
+     the lock glyph still scales at 28% of --keyh.
+   - Play area: nothing is written for it — fitBoardTiles() /
+     fitArchiveTiles() measure the live column, so the other
+     half of the savings lands in the tile budget and is
+     distributed by the solvers exactly as before (tiles grow
+     toward the width limit, then --spread). rdStripPoolPass()
+     is untouched and still claims only residual pool.
+   The nav -> status reference gap and the strip's height
+   system are unchanged by this layer.
+
+   GLOW RE-TIGHTENING (same pass, in the keyframes above):
+   the smaller gaps shrink the pulse glow's clear air — with
+   v82's 0 0 8px 1px peak shadow the tint again filled the
+   whole gap band (measured clearance -0.17px above the strip
+   at 320x568, 0 at 412x915). The four keyframes' 40% peak
+   outer shadow is now 0 0 1px 0, same .32 alpha; the strip's
+   background tint and inset ring — the bulk of the pulse —
+   are unchanged. Peak-pulse pixel scans after the change:
+   clearance >= 2.33px on every band (main 2.33/3.33 @568,
+   3/4 @915; archive 3.33/2.83 @568, 3.5/4 @915).
+   ============================================================ */
+:root {
+    --gap83: clamp(3.33px, 0.4372dvh, 4px);
+    --kgrow83: calc((clamp(10px, 1.54dvh, 12px) - var(--gap83)) / 2);
+}
+#game #board { margin-top: var(--gap83); }
+#game #answer { margin-top: var(--gap83); }
+#game { padding-bottom: var(--gap83); }
+body.archive-page #board { margin-top: var(--gap83); }
+body.archive-page #answer { margin-top: var(--gap83); }
+body.archive-page br + .keyboard-row { margin-top: var(--gap83) !important; }
+:root {
+    --keyh: calc(clamp(33px, 4.65dvh, 46px) + var(--kgrow83));
+    --key-h: calc(clamp(33px, 4.65dvh, 46px) + var(--kgrow83));
+}
+@media (max-height: 760px) {
+    :root {
+        --keyh: calc(clamp(31px, 4.4dvh, 39px) + var(--kgrow83));
+        --key-h: calc(clamp(31px, 4.4dvh, 39px) + var(--kgrow83));
+    }
+}
+body.archive-page {
+    --keyh: calc(clamp(30px, 4.2dvh, 42px) + var(--kgrow83));
+    --key-h: calc(clamp(30px, 4.2dvh, 42px) + var(--kgrow83));
+}
+.key-tile, .enter-key-tile { min-height: calc(36px + var(--kgrow83)); }
+
+/* ============================================================
+   REDESIGN v84 (2026-11-22, from Sankar): the feedback strip's
+   resting background is now the flat page canvas — the same
+   ground the legend row sits on. The legend has no panel: it
+   sits on body { background: var(--mx-bg) } = #121214 through
+   the transparent #game column. The strip now does the same.
+
+   What the strip's box consisted of before this layer:
+   - fill: #17171A (the base #answer rule, v50 layer) — a
+     raised near-black panel tone, one step above the canvas;
+   - border: none (nothing to keep or remove);
+   - border-radius: 8px — KEPT, with the box geometry
+     (heights, margins, pool pass) byte-for-byte in behaviour.
+
+   The change itself is at the source declarations (edited in
+   place, as v83 did for the keyframe shadows):
+   - base #answer: background #17171A -> transparent, so the
+     strip shows the page canvas exactly like the legend does;
+   - the four pulse keyframes (mxFbGood/Bad/Warn/Win) settle
+     (0% / 100%) to transparent instead of #17171A, and
+     mxFbNeutral's 100% likewise. The 40% peak tints are
+     unchanged: the tint is the strip's own background, so it
+     renders inside the bar's rounded shape (border-radius
+     clips it), flashes at peak, and settles back to flat.
+     The v83 outer-shadow containment (0 0 1px 0) is untouched,
+     so no tint reaches the board or the keyboard.
+   Message text colours are unchanged — green correct, red
+   wrong, amber/yellow everything else, gold win — now read
+   directly on the canvas, the same contrast pairing as the
+   legend's amber text on the same ground.
+   ============================================================ */
