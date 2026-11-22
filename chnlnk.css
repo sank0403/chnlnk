@@ -5328,25 +5328,25 @@ h1.title-scale .title-link {
 
 @keyframes mxFbGood {
     0% { background: #17171A; color: var(--mx-green); box-shadow: 0 0 0 0 rgba(61, 220, 104, 0), inset 0 0 0 1px rgba(61, 220, 104, 0); }
-    40% { background: #1E4D2E; color: #E9FFF0; box-shadow: 0 0 12px 2px rgba(61, 220, 104, .32), inset 0 0 0 1px rgba(61, 220, 104, .55); }
+    40% { background: #1E4D2E; color: #E9FFF0; box-shadow: 0 0 8px 1px rgba(61, 220, 104, .32), inset 0 0 0 1px rgba(61, 220, 104, .55); }
     100% { background: #17171A; color: var(--mx-green); box-shadow: 0 0 0 0 rgba(61, 220, 104, 0), inset 0 0 0 1px rgba(61, 220, 104, 0); }
 }
 
 @keyframes mxFbBad {
     0% { background: #17171A; color: var(--mx-red); box-shadow: 0 0 0 0 rgba(255, 90, 90, 0), inset 0 0 0 1px rgba(255, 90, 90, 0); }
-    40% { background: #4D2323; color: #FFEDED; box-shadow: 0 0 12px 2px rgba(255, 90, 90, .32), inset 0 0 0 1px rgba(255, 90, 90, .55); }
+    40% { background: #4D2323; color: #FFEDED; box-shadow: 0 0 8px 1px rgba(255, 90, 90, .32), inset 0 0 0 1px rgba(255, 90, 90, .55); }
     100% { background: #17171A; color: var(--mx-red); box-shadow: 0 0 0 0 rgba(255, 90, 90, 0), inset 0 0 0 1px rgba(255, 90, 90, 0); }
 }
 
 @keyframes mxFbWarn {
     0% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
-    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 12px 2px rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
+    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 8px 1px rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
     100% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
 }
 
 @keyframes mxFbWin {
     0% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
-    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 12px 2px rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
+    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 8px 1px rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
     100% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
 }
 
@@ -7418,3 +7418,72 @@ body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
     letter-spacing: clamp(-0.5px, -0.13vw, -0.35px);
     line-height: 1.25;
 }
+
+/* ============================================================
+   CHN LNK REDESIGN — v82 (2026-11-22, from Sankar's installed-app test)
+   ============================================================
+   Equal vertical rhythm: the three gaps of the playing column —
+   status section -> board, board -> strip, strip -> keyboard —
+   are now THE SAME scaled value on both games:
+   clamp(10px, 1.54dvh, 12px), the expression v74 set for the two
+   strip gaps. All gaps are measured box-to-box (border edge to
+   border edge), the same way the strip gaps have always been
+   measured.
+
+   BEFORE (measured, 390x844 and 412x915):
+   - Main: A=4 (the status card's 1px bottom border + a stray
+     3px #board margin-top left over from the original layers),
+     B=12, C=12. Gap A was never part of the v71-v74 system.
+   - Archive: A=1 (card border + #board margin-top 0 — the board
+     panel touched the status card), B=3 (the base #answer
+     margin-top), C=14 (an inline margin-top that
+     fitArchiveTiles() writes onto the first keyboard row —
+     CSS cannot move an inline style without !important, so the
+     archive strip->keyboard gap is set with a scoped !important
+     rule below; chnlnkarch.js is untouched, per the CSS-only
+     scope of this pass. The alternative — changing the "14px"
+     literal in fitArchiveTiles to the same clamp — is a
+     one-line JS change if Sankar ever prefers it.)
+
+   HOW, per gap (structural mechanisms only, per the v71 lesson —
+   no lone adjacency margins):
+   - Main A: #game-scoped #board margin-top (two IDs — beats
+     every single-ID #board margin layer in this file). The
+     momentum .top-stack between the card and the board is
+     zero-height with zero margins, so the rendered card->board
+     gap is exactly this margin.
+   - Main B / C: unchanged — v74's #game #answer margin-top and
+     #game padding-bottom already carry the same expression.
+     rdStripPoolPass() still grows the strip's HEIGHT from pooled
+     space; it never touches the gaps.
+   - Archive A: archive-scoped #board margin-top, appended after
+     (and at the same specificity as) the v70 rule whose
+     shorthand sets the board's side margins — only the top
+     changes; the 10px sides and the width:auto fix are kept.
+   - Archive B: archive-scoped #answer margin-top (beats the
+     base 3px rule on specificity).
+   - Archive C: the br + .keyboard-row rule above-mentioned —
+     in the archive the first keyboard row is the only row
+     immediately preceded by a <br> (rows 2-3 follow rows, and
+     keep their var(--kgap) spacing untouched).
+   The extra column cost (main +8px at tall sizes, +6 at 568;
+   archive +19 at tall, +13 at 568) is absorbed by the tile-fit
+   solvers, which measure the live column — verified no-scroll
+   at all six standard sizes plus 412x980, tiles square.
+
+   GLOW CONTAINMENT (same pass): the strip pulse's peak outer
+   shadow (mxFbGood / mxFbBad / mxFbWarn / mxFbWin, 40% keyframe)
+   goes from 0 0 12px 2px to 0 0 8px 1px, same .32 alpha. Pixel
+   scans at the pulse peak (vs the same state with the animation
+   off) showed the 12+2 shadow's visible tint reaching 10-11.5px
+   — the full 10px floor gap at 320x568, i.e. the tint touched
+   the board panel. At 8+1 the tint stays inside the strip's own
+   band with clear air at every size, on both games. The inset
+   ring and the strip's background tint are unchanged; the
+   legacy fbPulse shadow is superseded by these keyframes during
+   every message state and is untouched.
+   ============================================================ */
+#game #board { margin-top: clamp(10px, 1.54dvh, 12px); }
+body.archive-page #board { margin-top: clamp(10px, 1.54dvh, 12px); }
+body.archive-page #answer { margin-top: clamp(10px, 1.54dvh, 12px); }
+body.archive-page br + .keyboard-row { margin-top: clamp(10px, 1.54dvh, 12px) !important; }
