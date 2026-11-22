@@ -2919,8 +2919,28 @@ function showSafetyNetPopup() {
 // carries a mirrored inline default of the building tone for first
 // paint.) The ring colours live in the two conic-gradient values
 // inside updateHintProgress (white arc over a black #000 track).
+// v81 (final): the building shield matches the approved mockup's
+// RENDERED grey #9A9AA3, with a near-white tick. That grey is
+// unreachable under the bulb's standing CSS dimming (opacity 0.4
+// while not ready): even a pure-white shield renders at ~#7F7F82
+// through it, and the v80 mid-grey #6E6E77 rendered almost black
+// (~#2E2E33) on the user's phone. So paintShield exempts the shield
+// from the dimming (inline opacity 1 in every state; the stylesheet
+// is untouched) and paints the target grey directly. The tick is
+// state-driven too: near-white while building, the long-standing
+// dark #121214 on the active gold. (A disabled-yellow building tone
+// was tried first in v81 and dropped at Sankar's direction.)
 const SHIELD_COLOUR_ACTIVE = "#F5B83D";
-const SHIELD_COLOUR_BUILDING = "#6E6E77";
+const SHIELD_COLOUR_BUILDING = "#9A9AA3";
+const SHIELD_TICK_ACTIVE = "#121214";
+const SHIELD_TICK_BUILDING = "#F5F5F7";
+
+function paintShield(bulb, bodyColour, tickColour) {
+    bulb.style.color = bodyColour;
+    bulb.style.opacity = "1";
+    const tick = bulb.querySelector(".shield-tick");
+    if (tick) tick.style.stroke = tickColour;
+}
 
 function updateHintProgress(consecutiveDays, hintAvailable) {
     const circle = document.getElementById("hint-circle");
@@ -2930,7 +2950,7 @@ function updateHintProgress(consecutiveDays, hintAvailable) {
     if (hintAvailable) {
         circle.style.background = `conic-gradient(white 360deg, #000 360deg)`; 
         bulb.classList.add("ready");
-        bulb.style.color = SHIELD_COLOUR_ACTIVE;
+        paintShield(bulb, SHIELD_COLOUR_ACTIVE, SHIELD_TICK_ACTIVE);
         return;
     }
 
@@ -2945,10 +2965,10 @@ function updateHintProgress(consecutiveDays, hintAvailable) {
 
     if (percent === 100) {
         bulb.classList.add("ready");
-        bulb.style.color = SHIELD_COLOUR_ACTIVE;
+        paintShield(bulb, SHIELD_COLOUR_ACTIVE, SHIELD_TICK_ACTIVE);
     } else {
         bulb.classList.remove("ready");
-        bulb.style.color = SHIELD_COLOUR_BUILDING;
+        paintShield(bulb, SHIELD_COLOUR_BUILDING, SHIELD_TICK_BUILDING);
     }
 }
 
