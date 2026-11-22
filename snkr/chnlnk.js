@@ -2362,6 +2362,47 @@ function updateAnswer(text) {
     el.classList.add(fbKind);
 }
 
+// REDESIGN v67: two one-time prompts inside the Summary modal. Both
+// key off stats actually loading — OpenStats/OpenStatsGO call
+// maybeShowStatsPrompts() last, so when the feedback popup or the
+// Dynamite Poll takes the post-win slot, the prompt appears when the
+// stats open afterwards. Each prompt carries a lifetime stamp set at
+// show time, so it can never appear twice; the two are mutually
+// exclusive by construction (played == 1 vs played == 5). Closing
+// the Summary clears both strips and highlights (closeSummary calls
+// hideStatsPrompts), so a later manual reopen never resurrects one.
+function hideStatsPrompts() {
+    var ap = document.getElementById("archivePrompt");
+    var fp = document.getElementById("ffPrompt");
+    if (ap) ap.classList.add("hidden");
+    if (fp) fp.classList.add("hidden");
+    var past = document.getElementById("Archivebutton");
+    var invite = document.getElementById("Rafflebutton");
+    if (past) past.classList.remove("prompt-highlight");
+    if (invite) invite.classList.remove("prompt-highlight");
+}
+
+function maybeShowStatsPrompts() {
+    hideStatsPrompts();
+    var played = Number(localStorage.totalclplayed) || 0;
+    if (played === 1 && !localStorage.clArchivePromptSeen) {
+        // First completed game ever: point at the archive.
+        localStorage.clArchivePromptSeen = 1;
+        var ap = document.getElementById("archivePrompt");
+        if (ap) ap.classList.remove("hidden");
+        var past = document.getElementById("Archivebutton");
+        if (past) past.classList.add("prompt-highlight");
+    } else if (played === 5 && !localStorage.clFFPromptSeen) {
+        // Fifth completed game exactly — new players only, so a
+        // player already past 5 never sees it: point at Invite.
+        localStorage.clFFPromptSeen = 1;
+        var fp = document.getElementById("ffPrompt");
+        if (fp) fp.classList.remove("hidden");
+        var invite = document.getElementById("Rafflebutton");
+        if (invite) invite.classList.add("prompt-highlight");
+    }
+}
+
 //Open Stats at end of game
 async function OpenStats() {
     document.getElementById("statsbutton").click();
@@ -2376,6 +2417,8 @@ async function OpenStats() {
     document.getElementById("leaderboardCollapsible").style.display = "block";
 	document.getElementById("ffCollapsible").style.display = "block";
 
+    // REDESIGN v67: one-time in-stats prompts, keyed off stats loading
+    maybeShowStatsPrompts();
 }
 
 async function OpenStatsGO() {
@@ -2390,6 +2433,8 @@ async function OpenStatsGO() {
     document.getElementById("leaderboardCollapsible").style.display = "block";
 	document.getElementById("ffCollapsible").style.display = "block";
 
+    // REDESIGN v67: one-time in-stats prompts, keyed off stats loading
+    maybeShowStatsPrompts();
 }
 
 
@@ -4071,6 +4116,7 @@ function closeSummary(summary) {
     if (summary == null) return
     summary.classList.remove('active')
     overlay1.classList.remove('active')
+    hideStatsPrompts(); // REDESIGN v67: a shown one-time prompt never survives a close
 }
 
 const openaddmodalButtons = document.querySelectorAll('[data-addmodal-target]')
@@ -5095,6 +5141,15 @@ function shakeBoard() {
             // display takes no clicks. No popup, no disable, nothing.
             if (localStorage.clhardmode == 1) return;
             if (localStorage.clgamestarted == 1) return;        // game started unarmed — locked for the day
+            // REDESIGN v67: the confirmation is one-time. A player who
+            // has already confirmed once (clTimedAck, set only by the
+            // Yes handler below) arms directly — the identical writes
+            // and reload as tapping Yes, with no popup at all.
+            if (localStorage.clTimedAck) {
+                localStorage.clhardmode = 1;
+                setTimeout(() => location.reload(), 150); // his handler's reload, same delay
+                return;
+            }
             openTimedPopup();
         });
     }
@@ -5107,6 +5162,10 @@ function shakeBoard() {
             // clgamestarted is deliberately NOT set here (his toggle set
             // it): processInput sets it on the first letter, and the
             // button keys its started state off that.
+            // REDESIGN v67: remember the confirmation — the popup is
+            // shown only until a player has said Yes once (the nav
+            // button's handler above checks this flag). No never sets it.
+            localStorage.clTimedAck = 1;
             localStorage.clhardmode = 1;
             setTimeout(() => location.reload(), 150); // his handler's reload, same delay
         });

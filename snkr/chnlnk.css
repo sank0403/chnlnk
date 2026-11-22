@@ -7033,3 +7033,37 @@ body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
 }
 .netsaver-keep { background: #3DDC68; border: 1px solid #3DDC68; color: #0B2E17; line-height: 1.3; }
 .netsaver-reset { background: #26262B; border: 1px solid #3A3A41; color: #F2F2F4; line-height: 1.3; }
+
+/* ============================================================
+   REDESIGN v67 — One-time in-stats prompts (archive + Friends &
+   Family) and their button highlights. The strips live in the
+   Summary modal: #ffPrompt directly above the Share / Invite
+   row, #archivePrompt directly above the footer row (Submit a
+   Chain Link / Play Past Chains). Both are hidden by default
+   and shown once per player lifetime by maybeShowStatsPrompts()
+   in chnlnk.js (archive: first completed game; F&F: the fifth
+   completed game exactly). Styling per the approved mockups:
+   amber-tinted panel; the archive strip's count phrase in amber
+   bold; the target button takes a 2px green border, a soft ring
+   and the given-word fill.
+   ============================================================ */
+#summary .stats-prompt {
+    background: rgba(245, 184, 61, .08);
+    border: 1px solid rgba(245, 184, 61, .45);
+    border-radius: 10px;
+    color: #F2F2F4;
+    font-size: 13px;
+    line-height: 1.45;
+    padding: 11px 12px;
+    margin-bottom: 12px;
+    text-align: left;
+}
+#summary .stats-prompt.hidden { display: none; }
+#summary .stats-prompt .prompt-count { color: #F5B83D; font-weight: 700; }
+#summary #archivePrompt { margin: 8px 15px 12px; }
+#summary #Archivebutton.prompt-highlight,
+#summary #Rafflebutton.prompt-highlight {
+    background: #2E4636;
+    border: 2px solid #3DDC68;
+    box-shadow: 0 0 0 3px rgba(61, 220, 104, .18);
+}
