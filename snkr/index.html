@@ -264,10 +264,10 @@
                     </div>
                     <!-- COLLAPSIBLE: SAFETY NET-->
                     <div class="collapsible-section">
-                        <button class="collapsible">😇 Safety Net</button>
+                        <button class="collapsible"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" style="width:1.25em;height:1.25em;vertical-align:-0.22em;margin-right:7px"><path d="M12 2.8 4.5 5.4v5.4c0 4.8 3.2 8.4 7.5 10.4 4.3-2 7.5-5.6 7.5-10.4V5.4Z" fill="#F5B83D"/><path d="M8.8 11.6 11 13.8l4.2-4.6" stroke="#121214" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>Safety Net</button>
                         <div class="content">
                             <ul class="rules-list">
-                                <li>Play <strong style="color:white;">4 Consecutive Days</strong> to activate the Saftey Net.</li>
+                                <li>Play <strong style="color:white;">4 Consecutive Days</strong> to activate the Safety Net.</li>
                                 <li>Once Active — <strong style="color:white;">1 Incorrect Entry</strong> won’t cost a life!</li>
 								<li><strong style="color:white;">Resets </strong>once used or if you <strong style="color:white;">miss playing a day</strong>.</li>
                             </ul>
@@ -745,7 +745,7 @@
 			<div class="tool-item">
 				<div id="hint-progress">
 							<div id="hint-circle">
-								<div id="hint-bulb"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><ellipse cx="12" cy="3.9" rx="5.4" ry="1.85" stroke="#7DD8FF" stroke-width="2.1" fill="rgba(125,216,255,.22)"/><circle cx="12" cy="13.8" r="6.6" fill="#FFC93D" stroke="#FF9F1A" stroke-width=".8"/><circle cx="9.7" cy="13.2" r="1.2" fill="#2B1E08"/><circle cx="14.3" cy="13.2" r="1.2" fill="#2B1E08"/><path d="M9.4 16.1c.7 1 1.6 1.5 2.6 1.5s1.9-.5 2.6-1.5" stroke="#2B1E08" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+								<div id="hint-bulb" style="color:#6E6E77"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><g transform="translate(12 12) scale(1) translate(-12 -12)"><path d="M12 2.8 4.5 5.4v5.4c0 4.8 3.2 8.4 7.5 10.4 4.3-2 7.5-5.6 7.5-10.4V5.4Z" fill="currentColor"/><path d="M8.8 11.6 11 13.8l4.2-4.6" stroke="#121214" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g></svg></div>
 							</div>
 						</div>
 				<span class="tool-label">Safety Net</span>
@@ -925,14 +925,14 @@
 	     the feedback and poll popups. Shown once per missed-day return
 	     when an ACTIVE Safety Net would reset and the player has 10+
 	     dynamites. The badge replicates the board's own Safety Net
-	     ring at 100% (same structure and angel SVG, class-scoped so no
+	     ring at 100% (same structure and shield SVG, class-scoped so no
 	     element IDs are duplicated). Logic: onGameLoad() in chnlnk.js. -->
 	<div id="netSaverPopup" class="feedback-popup hidden">
 		<div class="feedback-box netsaver-box">
 			<button id="netSaverClose" class="poll-close" aria-label="Close">&times;</button>
 			<div class="netsaver-badge">
 				<div class="netsaver-circle">
-					<div class="netsaver-bulb"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><ellipse cx="12" cy="3.9" rx="5.4" ry="1.85" stroke="#7DD8FF" stroke-width="2.1" fill="rgba(125,216,255,.22)"/><circle cx="12" cy="13.8" r="6.6" fill="#FFC93D" stroke="#FF9F1A" stroke-width=".8"/><circle cx="9.7" cy="13.2" r="1.2" fill="#2B1E08"/><circle cx="14.3" cy="13.2" r="1.2" fill="#2B1E08"/><path d="M9.4 16.1c.7 1 1.6 1.5 2.6 1.5s1.9-.5 2.6-1.5" stroke="#2B1E08" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+					<div class="netsaver-bulb"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><g transform="translate(12 12) scale(1) translate(-12 -12)"><path d="M12 2.8 4.5 5.4v5.4c0 4.8 3.2 8.4 7.5 10.4 4.3-2 7.5-5.6 7.5-10.4V5.4Z" fill="#F5B83D"/><path d="M8.8 11.6 11 13.8l4.2-4.6" stroke="#121214" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g></svg></div>
 				</div>
 			</div>
 			<h3 class="poll-question">Your Safety Net resets when you miss a day. Keep yours active for 10 dynamites?</h3>

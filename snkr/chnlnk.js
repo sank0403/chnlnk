@@ -2906,11 +2906,21 @@ function showMysteryAdded() {
 function showSafetyNetPopup() {
     const pop = document.createElement("div");
     pop.id = "life-restored"; // reuse same styling
-    pop.innerText = "😇 SAFETY NET ACTIVE — NO LIFE LOST!";
+    pop.innerText = "SAFETY NET ACTIVE — NO LIFE LOST!";
     document.body.appendChild(pop);
 
     setTimeout(() => pop.remove(), 2000);
 }
+
+// REDESIGN v80: Safety Net shield state colours -- the single swap points
+// for the badge icon tone. The bulb holds the shield SVG (index.html)
+// whose body fills with currentColor; updateHintProgress drives its
+// colour from these two values. (The #hint-bulb element in index.html
+// carries a mirrored inline default of the building tone for first
+// paint.) The ring colours live in the two conic-gradient values
+// inside updateHintProgress (white arc over a black #000 track).
+const SHIELD_COLOUR_ACTIVE = "#F5B83D";
+const SHIELD_COLOUR_BUILDING = "#6E6E77";
 
 function updateHintProgress(consecutiveDays, hintAvailable) {
     const circle = document.getElementById("hint-circle");
@@ -2918,8 +2928,9 @@ function updateHintProgress(consecutiveDays, hintAvailable) {
 
     // If hint is already earned, freeze at 100%
     if (hintAvailable) {
-        circle.style.background = `conic-gradient(white 360deg, #444 360deg)`; 
+        circle.style.background = `conic-gradient(white 360deg, #000 360deg)`; 
         bulb.classList.add("ready");
+        bulb.style.color = SHIELD_COLOUR_ACTIVE;
         return;
     }
 
@@ -2929,13 +2940,15 @@ function updateHintProgress(consecutiveDays, hintAvailable) {
 
     circle.style.background = `conic-gradient(
         white ${degrees}deg,   /* CHANGED from yellow → white */
-        #444 ${degrees}deg
+        #000 ${degrees}deg
     )`;
 
     if (percent === 100) {
         bulb.classList.add("ready");
+        bulb.style.color = SHIELD_COLOUR_ACTIVE;
     } else {
         bulb.classList.remove("ready");
+        bulb.style.color = SHIELD_COLOUR_BUILDING;
     }
 }
 
