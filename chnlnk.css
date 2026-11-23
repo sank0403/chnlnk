@@ -5158,7 +5158,7 @@ h1.title-scale .title-link {
     border-radius: 9px;
     font-size: calc(var(--tile) * .5);
     font-weight: 800;
-    border: 2px solid #6E6E78;
+    border: 2px solid #DCDCE2;
     color: var(--mx-ink);
     background: transparent;
     text-transform: uppercase;
@@ -5181,7 +5181,7 @@ h1.title-scale .title-link {
     border-radius: 7px;
     font-size: calc(var(--tile-small) * .5);
     font-weight: 800;
-    border: 2px solid #6E6E78;
+    border: 2px solid #DCDCE2;
     color: var(--mx-ink);
     background: transparent;
     text-transform: uppercase;
@@ -5235,7 +5235,7 @@ h1.title-scale .title-link {
 }
 
 #board .voweltile.disabled,
-#board .voweltilesmall.disabled { border: 2px dotted rgba(245, 184, 61, 0.7); }
+#board .voweltilesmall.disabled { border: 2px dotted rgba(245, 184, 61, 0.6); }
 
 #board .voweltile:not(.disabled),
 #board .voweltilesmall:not(.disabled) { border-style: solid; }
@@ -6000,8 +6000,12 @@ input:checked + .slider:before { transform: translateX(20px); }
        hidden consonant tile's border (2px solid #55555E, the base tile
        rule) — the first v52 draft used 1px #3A3A41, a different grey.
        REDESIGN v92: brightened together with the base tile rule to
-       #6E6E78 — the two stay literally identical. */
-    border: 2px solid #6E6E78;
+       #6E6E78 — the two stay literally identical.
+       REDESIGN v93: brightened again with the base rule to
+       #AAAAB4 — still literally identical.
+       REDESIGN v94: brightened again with the base rule to
+       #DCDCE2 — still literally identical. */
+    border: 2px solid #DCDCE2;
 }
 #game #board .mystery {
     animation: flash 1.4s ease-in-out infinite;
@@ -7755,5 +7759,65 @@ body.archive-page {
    to the same #6E6E78 in its own rule, so the two stay
    identical; its white face and flash are unchanged.
    Border colour only: width, style, faces and geometry
+   are untouched.
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v93 (2026-11-23, from Sankar): both board
+   borders step up again — "Make the grey even more
+   brighter and the dotted yellow at 80 pct."
+   1. The consonant grey border brightens again in the
+   same blue-grey family: #55555E (v88) → #6E6E78
+   (v92) → #AAAAB4 (v93 — Sankar asked for TWO steps
+   this time, +60 per channel from v92) — edited in
+   place at the two base tile rules (#board
+   .tile/.voweltile and #board .tilesmall/.voweltilesmall).
+   Vowel tiles never show it (amber override); given
+   (.starting #3F6B4F), revealed (.correct) and
+   lose-reveal (.failed) borders untouched. The Mystery
+   Letter tile's border — deliberately LITERALLY the
+   hidden-consonant border, and Sankar explicitly
+   approved including it — is brightened to the same
+   #AAAAB4 in its own rule; white face and flash
+   unchanged.
+   2. The locked-vowel dotted border rises again:
+   0.5 (v85) → 0.6 (v89) → 0.7 (v91) → 0.8 (v93) — the
+   one shorthand at #board .voweltile.disabled /
+   .voweltilesmall.disabled. Dotted style, 2px width
+   and the full-amber lock glyph unchanged. Note the
+   locked border (0.8) now sits slightly ABOVE the v87
+   unlocked standing border (0.75) — that is what was
+   asked; the unlocked border is not changed.
+   Border values only: width, style, faces and geometry
+   are untouched.
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v94 (2026-11-23, from Sankar): the grey goes
+   grey-white (but NOT fully white), and the dotted
+   yellow settles back to 60%.
+   1. The consonant grey border brightens again in the
+   same blue-grey family: #55555E (v88) → #6E6E78
+   (v92) → #AAAAB4 (v93) → #DCDCE2 (v94 — grey-white,
+   deliberately kept in the lower part of the near-white
+   region so it still reads as grey, nowhere near
+   #FFFFFF) — edited in place at the two base tile
+   rules (#board .tile/.voweltile and #board
+   .tilesmall/.voweltilesmall). Vowel tiles never show
+   it (amber override); given (.starting #3F6B4F),
+   revealed (.correct) and lose-reveal (.failed)
+   borders untouched. The Mystery Letter tile's border
+   — deliberately LITERALLY the hidden-consonant
+   border, and Sankar explicitly approved including
+   it — is brightened to the same #DCDCE2 in its own
+   rule; white face and flash unchanged.
+   2. The locked-vowel dotted border comes back DOWN:
+   0.5 (v85) → 0.6 (v89) → 0.7 (v91) → 0.8 (v93) →
+   0.6 (v94) — the one shorthand at #board
+   .voweltile.disabled / .voweltilesmall.disabled.
+   Dotted style, 2px width and the full-amber lock
+   glyph unchanged; the v87 unlocked standing border
+   (0.75) is not changed.
+   Border values only: width, style, faces and geometry
    are untouched.
    ============================================================ */
