@@ -412,6 +412,7 @@ const brags_callouts = [
 ];
 
 function onDailyPuzzleCompleted() {
+    hideInstallTip(); // REDESIGN v97: the one-time install tip auto-hides when the game ends (win or lose)
     let { consecutiveDays, hintAvailable, lastPlayed } = getHintState();
 
     const today = new Date().toDateString();
@@ -1098,6 +1099,54 @@ function resetNetSaver() {
 document.getElementById("netSaverKeep").addEventListener("click", keepNetSaver);
 document.getElementById("netSaverReset").addEventListener("click", resetNetSaver);
 document.getElementById("netSaverClose").addEventListener("click", resetNetSaver);
+
+// REDESIGN v97: one-time Add-to-Home-Screen tip — a slim floating bar
+// over the legend line, NOT a modal: it never pauses the momentum
+// timer, never reflows the one-screen layout and covers nothing
+// interactive (the legend is static text). Browser-tab players are
+// squeezed by browser chrome (the no-scroll design keeps it on
+// screen); the installed app opens full-screen, and the Help
+// section's "Play Full-Screen" steps are the fix — the tip only
+// points there, in Sankar's words, identical for every browser.
+// Trigger: the player's SECOND registered guess — processInput()
+// calls maybeShowInstallTip() when clguesscnt (his own guess
+// counter) reaches 2; a restored mid-game already at 2+ guesses
+// gets it from showGame() instead, so those players aren't
+// skipped. Audience: every browser-tab player, veterans included
+// — no played-count gate — but never when installed/standalone.
+// One time only: the stamp (clInstallHintSeen) is set at SHOW
+// time. The tip then stays up until the player dismisses it (×)
+// or the game ends — onDailyPuzzleCompleted() hides it, and it is
+// called on both the win and the loss paths.
+function isInstalledApp() {
+    if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) return true;
+    return window.navigator.standalone === true; // iOS home-screen app
+}
+
+function shouldShowInstallTip() {
+    // One time only: the stamp is set the moment the tip is shown.
+    if (localStorage.clInstallHintSeen) return false;
+    // Never when already installed / running standalone.
+    if (isInstalledApp()) return false;
+    return true;
+}
+
+function maybeShowInstallTip() {
+    if (!shouldShowInstallTip()) return;
+    showInstallTip();
+}
+
+function showInstallTip() {
+    // Stamp at SHOW time — it never shows again.
+    localStorage.clInstallHintSeen = 1;
+    document.getElementById("installTip").classList.remove("hidden");
+}
+
+function hideInstallTip() {
+    document.getElementById("installTip").classList.add("hidden");
+}
+
+document.getElementById("installTipClose").addEventListener("click", hideInstallTip);
 
 function showError(message) {
     const popup = document.getElementById("errorPopup");
@@ -2307,6 +2356,12 @@ function showGame() {
   // REDESIGN v66: a deferred Safety Net Saver offer (set in onGameLoad)
   // appears over the revealed game.
   if (netSaverPending) showNetSaverPopup();
+  // REDESIGN v97: a restored mid-game already at 2+ guesses gets the
+  // one-time install tip on load, so those players aren't skipped.
+  // Finished games (gameovercl set for today, win or lose) excluded.
+  if (localStorage.getItem("gameovercl" + days) != 1 && Number(localStorage.clguesscnt || 0) >= 2) {
+    maybeShowInstallTip();
+  }
 }
 
 
@@ -2897,7 +2952,10 @@ function showDynamiteAdded() {
 function showMysteryAdded() {
     const pop = document.createElement("div");
     pop.id = "life-restored";
-    pop.innerText = "IDENTIFY MYSTERY LETTER ❓";
+    // REDESIGN v86: the ❓ rides on a white tile-like square (.mq-tile in
+    // chnlnk.css), matching the board's mystery tile. Presentation only —
+    // the toast, its 2s life and the identify flow are unchanged.
+    pop.innerHTML = "IDENTIFY MYSTERY LETTER <span class=\"mq-tile\">❓</span>";
     document.body.appendChild(pop);
 
     setTimeout(() => pop.remove(), 2000);
@@ -4087,6 +4145,20 @@ function openModal(modal) {
     if (modal == null) return
     modal.classList.add('active')
     overlay.classList.add('active')
+    // REDESIGN v97: the Help "Play Full-Screen" section always starts
+    // collapsed when Help opens — its steps show only when a player
+    // taps the header to expand it, even if it was left open last time.
+    if (modal.id === 'modal') {
+        const pfs = document.getElementById('playFullscreenBtn');
+        if (pfs && pfs.classList.contains('active')) {
+            pfs.classList.remove('active');
+            const pfsContent = pfs.nextElementSibling;
+            if (pfsContent) {
+                pfsContent.style.maxHeight = null;
+                pfsContent.classList.remove('open');
+            }
+        }
+    }
 }
 
 function closeModal(modal) {
@@ -6169,7 +6241,8 @@ function processInput(e) {
     if (gameOver) return;
     localStorage.clgamestarted = 1;
     syncTimedButton(); // REDESIGN v54: was "hide the toggle row" — the nav Timer button takes its locked/live state instead
-    localStorage.clguesscnt = Number(localStorage.clguesscnt) + 1;	
+    localStorage.clguesscnt = Number(localStorage.clguesscnt) + 1;
+    if (Number(localStorage.clguesscnt) === 2) maybeShowInstallTip(); // REDESIGN v97: one-time install tip on the 2nd registered guess
     document.getElementById("lives").classList.remove("blink");
     document.getElementById("answer").innerText = "";
     var LetterFound = 0;

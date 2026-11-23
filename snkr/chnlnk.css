@@ -5158,7 +5158,7 @@ h1.title-scale .title-link {
     border-radius: 9px;
     font-size: calc(var(--tile) * .5);
     font-weight: 800;
-    border: 2px solid #55555E;
+    border: 2px solid #B9B9C0;
     color: var(--mx-ink);
     background: transparent;
     text-transform: uppercase;
@@ -5181,7 +5181,7 @@ h1.title-scale .title-link {
     border-radius: 7px;
     font-size: calc(var(--tile-small) * .5);
     font-weight: 800;
-    border: 2px solid #55555E;
+    border: 2px solid #B9B9C0;
     color: var(--mx-ink);
     background: transparent;
     text-transform: uppercase;
@@ -5215,18 +5215,27 @@ h1.title-scale .title-link {
     color: #fff;
 }
 
-/* Hidden vowel tiles (mockup .tile.vowel): dashed amber border
-   and the lock cue. The game marks them .voweltile.disabled and
-   removes .disabled at unlock — the two states map 1:1. */
+/* Hidden vowel tiles (mockup .tile.vowel): amber border and the
+   lock cue. The game marks them .voweltile.disabled and removes
+   .disabled at unlock — the two states map 1:1.
+   REDESIGN v85: while locked, the border is DOTTED at 50% amber
+   (was dashed at full strength — a player called the blocked-out
+   vowel areas distracting, and Sankar picked dotted/50% from
+   mockup rounds; v89 raises the alpha to 60% — see the v89
+   banner at the end of this file). The shorthand below is the one declaration
+   that sets the locked border, overriding the width/colour
+   components inherited from the base tile rules for the
+   .disabled state only; unlocked vowel tiles keep the solid
+   full-amber border from the rule above. */
 #board .voweltile,
 #board .voweltilesmall {
-    border-color: var(--mx-amber);
+    border-color: rgba(245, 184, 61, 0.75);
     color: var(--mx-amber);
     opacity: 1;
 }
 
 #board .voweltile.disabled,
-#board .voweltilesmall.disabled { border-style: dashed; }
+#board .voweltilesmall.disabled { border: 2px dotted rgba(245, 184, 61, 0.6); }
 
 #board .voweltile:not(.disabled),
 #board .voweltilesmall:not(.disabled) { border-style: solid; }
@@ -5290,7 +5299,7 @@ h1.title-scale .title-link {
     min-height: 61px;
     margin: 3px 0 0;
     padding: 4px 10px;
-    background: #17171A;
+    background: transparent;
     border: none;
     border-radius: 8px;
     font-size: 12.5px;
@@ -5327,32 +5336,32 @@ h1.title-scale .title-link {
 #answer.run-border.fb-info { animation: mxFbNeutral .55s ease-out; }
 
 @keyframes mxFbGood {
-    0% { background: #17171A; color: var(--mx-green); box-shadow: 0 0 0 0 rgba(61, 220, 104, 0), inset 0 0 0 1px rgba(61, 220, 104, 0); }
-    40% { background: #1E4D2E; color: #E9FFF0; box-shadow: 0 0 12px 2px rgba(61, 220, 104, .32), inset 0 0 0 1px rgba(61, 220, 104, .55); }
-    100% { background: #17171A; color: var(--mx-green); box-shadow: 0 0 0 0 rgba(61, 220, 104, 0), inset 0 0 0 1px rgba(61, 220, 104, 0); }
+    0% { background: transparent; color: var(--mx-green); box-shadow: 0 0 0 0 rgba(61, 220, 104, 0), inset 0 0 0 1px rgba(61, 220, 104, 0); }
+    40% { background: #1E4D2E; color: #E9FFF0; box-shadow: 0 0 1px 0 rgba(61, 220, 104, .32), inset 0 0 0 1px rgba(61, 220, 104, .55); }
+    100% { background: transparent; color: var(--mx-green); box-shadow: 0 0 0 0 rgba(61, 220, 104, 0), inset 0 0 0 1px rgba(61, 220, 104, 0); }
 }
 
 @keyframes mxFbBad {
-    0% { background: #17171A; color: var(--mx-red); box-shadow: 0 0 0 0 rgba(255, 90, 90, 0), inset 0 0 0 1px rgba(255, 90, 90, 0); }
-    40% { background: #4D2323; color: #FFEDED; box-shadow: 0 0 12px 2px rgba(255, 90, 90, .32), inset 0 0 0 1px rgba(255, 90, 90, .55); }
-    100% { background: #17171A; color: var(--mx-red); box-shadow: 0 0 0 0 rgba(255, 90, 90, 0), inset 0 0 0 1px rgba(255, 90, 90, 0); }
+    0% { background: transparent; color: var(--mx-red); box-shadow: 0 0 0 0 rgba(255, 90, 90, 0), inset 0 0 0 1px rgba(255, 90, 90, 0); }
+    40% { background: #4D2323; color: #FFEDED; box-shadow: 0 0 1px 0 rgba(255, 90, 90, .32), inset 0 0 0 1px rgba(255, 90, 90, .55); }
+    100% { background: transparent; color: var(--mx-red); box-shadow: 0 0 0 0 rgba(255, 90, 90, 0), inset 0 0 0 1px rgba(255, 90, 90, 0); }
 }
 
 @keyframes mxFbWarn {
-    0% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
-    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 12px 2px rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
-    100% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+    0% { background: transparent; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 1px 0 rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
+    100% { background: transparent; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
 }
 
 @keyframes mxFbWin {
-    0% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
-    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 12px 2px rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
-    100% { background: #17171A; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+    0% { background: transparent; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
+    40% { background: #332A14; color: #FFF3C4; box-shadow: 0 0 1px 0 rgba(245, 184, 61, .32), inset 0 0 0 1px rgba(245, 184, 61, .55); }
+    100% { background: transparent; color: var(--mx-amber); box-shadow: 0 0 0 0 rgba(245, 184, 61, 0), inset 0 0 0 1px rgba(245, 184, 61, 0); }
 }
 
 @keyframes mxFbNeutral {
     0% { background: #2A2A30; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
-    100% { background: #17171A; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0); }
+    100% { background: transparent; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0); }
 }
 
 /* ---------- Keyboard (mockup .keyboard / .key) ----------
@@ -5402,7 +5411,7 @@ h1.title-scale .title-link {
 
 /* Unlocked vowels (mockup .key.vowelready) */
 .key-tile.key-tile-enabled {
-    box-shadow: inset 0 0 0 2px var(--mx-amber);
+    box-shadow: inset 0 0 0 2px rgba(245, 184, 61, 0.75);
 }
 
 /* Wrong / eliminated / auto-struck (mockup .key.wrong):
@@ -5989,8 +5998,17 @@ input:checked + .slider:before { transform: translateX(20px); }
     background: white;
     /* finishing-pass correction: the border is now LITERALLY the normal
        hidden consonant tile's border (2px solid #55555E, the base tile
-       rule) — the first v52 draft used 1px #3A3A41, a different grey. */
-    border: 2px solid #55555E;
+       rule) — the first v52 draft used 1px #3A3A41, a different grey.
+       REDESIGN v92: brightened together with the base tile rule to
+       #6E6E78 — the two stay literally identical.
+       REDESIGN v93: brightened again with the base rule to
+       #AAAAB4 — still literally identical.
+       REDESIGN v94: brightened again with the base rule to
+       #DCDCE2 — still literally identical.
+       REDESIGN v95: set with the base rule to #B9B9C0
+       (the --mx-muted label grey) — still literally
+       identical. */
+    border: 2px solid #B9B9C0;
 }
 #game #board .mystery {
     animation: flash 1.4s ease-in-out infinite;
@@ -6575,8 +6593,10 @@ body.archive-page #answer {
 
 /* --- Item 1: Help sample chain as a miniature board ---------
    The five sample words as small letter tiles in the board's own
-   styling values (plain tile: transparent, 2px #55555E border;
-   given tile: #2E4636 fill, #3F6B4F border, #DFF5E4 letters),
+   styling values (plain tile: transparent, 2px #B9B9C0 border
+   — was #55555E until v96, which aligned it with the real
+   board's consonant border; given tile: #2E4636 fill,
+   #3F6B4F border, #DFF5E4 letters),
    stacked with the board's white chevrons between rows. Pure
    presentation inside the Help modal; no pairings line. */
 #modal .sample-board {
@@ -6595,7 +6615,7 @@ body.archive-page #answer {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #55555E;
+    border: 2px solid #B9B9C0;
     border-radius: 5px; /* ~16.5% of the tile, like the board */
     background: transparent;
     color: #FFFFFF;
@@ -7418,3 +7438,501 @@ body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
     letter-spacing: clamp(-0.5px, -0.13vw, -0.35px);
     line-height: 1.25;
 }
+
+/* ============================================================
+   CHN LNK REDESIGN — v82 (2026-11-22, from Sankar's installed-app test)
+   ============================================================
+   Equal vertical rhythm: the three gaps of the playing column —
+   status section -> board, board -> strip, strip -> keyboard —
+   are now THE SAME scaled value on both games:
+   clamp(10px, 1.54dvh, 12px), the expression v74 set for the two
+   strip gaps. All gaps are measured box-to-box (border edge to
+   border edge), the same way the strip gaps have always been
+   measured.
+
+   BEFORE (measured, 390x844 and 412x915):
+   - Main: A=4 (the status card's 1px bottom border + a stray
+     3px #board margin-top left over from the original layers),
+     B=12, C=12. Gap A was never part of the v71-v74 system.
+   - Archive: A=1 (card border + #board margin-top 0 — the board
+     panel touched the status card), B=3 (the base #answer
+     margin-top), C=14 (an inline margin-top that
+     fitArchiveTiles() writes onto the first keyboard row —
+     CSS cannot move an inline style without !important, so the
+     archive strip->keyboard gap is set with a scoped !important
+     rule below; chnlnkarch.js is untouched, per the CSS-only
+     scope of this pass. The alternative — changing the "14px"
+     literal in fitArchiveTiles to the same clamp — is a
+     one-line JS change if Sankar ever prefers it.)
+
+   HOW, per gap (structural mechanisms only, per the v71 lesson —
+   no lone adjacency margins):
+   - Main A: #game-scoped #board margin-top (two IDs — beats
+     every single-ID #board margin layer in this file). The
+     momentum .top-stack between the card and the board is
+     zero-height with zero margins, so the rendered card->board
+     gap is exactly this margin.
+   - Main B / C: unchanged — v74's #game #answer margin-top and
+     #game padding-bottom already carry the same expression.
+     rdStripPoolPass() still grows the strip's HEIGHT from pooled
+     space; it never touches the gaps.
+   - Archive A: archive-scoped #board margin-top, appended after
+     (and at the same specificity as) the v70 rule whose
+     shorthand sets the board's side margins — only the top
+     changes; the 10px sides and the width:auto fix are kept.
+   - Archive B: archive-scoped #answer margin-top (beats the
+     base 3px rule on specificity).
+   - Archive C: the br + .keyboard-row rule above-mentioned —
+     in the archive the first keyboard row is the only row
+     immediately preceded by a <br> (rows 2-3 follow rows, and
+     keep their var(--kgap) spacing untouched).
+   The extra column cost (main +8px at tall sizes, +6 at 568;
+   archive +19 at tall, +13 at 568) is absorbed by the tile-fit
+   solvers, which measure the live column — verified no-scroll
+   at all six standard sizes plus 412x980, tiles square.
+
+   GLOW CONTAINMENT (same pass): the strip pulse's peak outer
+   shadow (mxFbGood / mxFbBad / mxFbWarn / mxFbWin, 40% keyframe)
+   goes from 0 0 12px 2px to 0 0 8px 1px, same .32 alpha. Pixel
+   scans at the pulse peak (vs the same state with the animation
+   off) showed the 12+2 shadow's visible tint reaching 10-11.5px
+   — the full 10px floor gap at 320x568, i.e. the tint touched
+   the board panel. At 8+1 the tint stays inside the strip's own
+   band with clear air at every size, on both games. The inset
+   ring and the strip's background tint are unchanged; the
+   legacy fbPulse shadow is superseded by these keyframes during
+   every message state and is untouched.
+   ============================================================ */
+#game #board { margin-top: clamp(10px, 1.54dvh, 12px); }
+body.archive-page #board { margin-top: clamp(10px, 1.54dvh, 12px); }
+body.archive-page #answer { margin-top: clamp(10px, 1.54dvh, 12px); }
+body.archive-page br + .keyboard-row { margin-top: clamp(10px, 1.54dvh, 12px) !important; }
+
+/* ============================================================
+   CHN LNK REDESIGN — v83 (2026-11-22, from Sankar's installed-app test)
+   ============================================================
+   The reference gap: Sankar loves the space between the 5 nav
+   buttons and the status section — "exactly that". Measured
+   box-to-box (nav row bottom -> status card border edge) it is
+   4px at 412x915 (the card's 3px margin-top + 1px; the <hr> in
+   between is display:none). That gap is NOT touched. Instead the
+   three section gaps v82 equalised — status -> board, board ->
+   strip, strip -> keyboard — are re-anchored to it:
+
+     --gap83 = clamp(3.33px, 0.4372dvh, 4px)
+
+   The coefficient passes through R=4px at his 915px height
+   (0.4372 x 9.15 = 4.00); the cap is R itself; the floor keeps
+   the v74 family's floor-to-cap ratio (10/12 of the cap ->
+   3.33px). Per size: 3.33 @568/640/740, 3.69 @844, 4.00 @915,
+   4 @932/980. All three gaps use the one var on both games, so
+   they stay exactly equal to each other at every height, via
+   the same structural levers v82 used (board margin-top,
+   #answer margin-top, #game padding-bottom; archive-scoped
+   equivalents, its gap C still !important over the inline
+   margin fitArchiveTiles writes).
+
+   THE SAVINGS, SPLIT AS DIRECTED: at 412x915 the three gaps
+   drop 12 -> 4, freeing 24px of column. Half goes to the
+   keyboard, half to the play area:
+   - Keyboard: --kgrow83 = (oldGap - newGap) / 2 is the per-key
+     share of the keyboard's half (3 gaps freed, half to the
+     keyboard, over 3 rows = (old-new)/2 per key). It is added
+     to --keyh in every band that defines it (base, the
+     max-height:760px squeeze, the archive's body override) AND
+     to the keys' 36px min-height — below ~760px tall the
+     min-height is what actually renders, so without that the
+     growth would exist only on paper at small sizes. Keys stay
+     uniform (one var), rows keep their var(--kgap) spacing,
+     the lock glyph still scales at 28% of --keyh.
+   - Play area: nothing is written for it — fitBoardTiles() /
+     fitArchiveTiles() measure the live column, so the other
+     half of the savings lands in the tile budget and is
+     distributed by the solvers exactly as before (tiles grow
+     toward the width limit, then --spread). rdStripPoolPass()
+     is untouched and still claims only residual pool.
+   The nav -> status reference gap and the strip's height
+   system are unchanged by this layer.
+
+   GLOW RE-TIGHTENING (same pass, in the keyframes above):
+   the smaller gaps shrink the pulse glow's clear air — with
+   v82's 0 0 8px 1px peak shadow the tint again filled the
+   whole gap band (measured clearance -0.17px above the strip
+   at 320x568, 0 at 412x915). The four keyframes' 40% peak
+   outer shadow is now 0 0 1px 0, same .32 alpha; the strip's
+   background tint and inset ring — the bulk of the pulse —
+   are unchanged. Peak-pulse pixel scans after the change:
+   clearance >= 2.33px on every band (main 2.33/3.33 @568,
+   3/4 @915; archive 3.33/2.83 @568, 3.5/4 @915).
+   ============================================================ */
+:root {
+    --gap83: clamp(3.33px, 0.4372dvh, 4px);
+    --kgrow83: calc((clamp(10px, 1.54dvh, 12px) - var(--gap83)) / 2);
+}
+#game #board { margin-top: var(--gap83); }
+#game #answer { margin-top: var(--gap83); }
+#game { padding-bottom: var(--gap83); }
+body.archive-page #board { margin-top: var(--gap83); }
+body.archive-page #answer { margin-top: var(--gap83); }
+body.archive-page br + .keyboard-row { margin-top: var(--gap83) !important; }
+:root {
+    --keyh: calc(clamp(33px, 4.65dvh, 46px) + var(--kgrow83));
+    --key-h: calc(clamp(33px, 4.65dvh, 46px) + var(--kgrow83));
+}
+@media (max-height: 760px) {
+    :root {
+        --keyh: calc(clamp(31px, 4.4dvh, 39px) + var(--kgrow83));
+        --key-h: calc(clamp(31px, 4.4dvh, 39px) + var(--kgrow83));
+    }
+}
+body.archive-page {
+    --keyh: calc(clamp(30px, 4.2dvh, 42px) + var(--kgrow83));
+    --key-h: calc(clamp(30px, 4.2dvh, 42px) + var(--kgrow83));
+}
+.key-tile, .enter-key-tile { min-height: calc(36px + var(--kgrow83)); }
+
+/* ============================================================
+   REDESIGN v84 (2026-11-22, from Sankar): the feedback strip's
+   resting background is now the flat page canvas — the same
+   ground the legend row sits on. The legend has no panel: it
+   sits on body { background: var(--mx-bg) } = #121214 through
+   the transparent #game column. The strip now does the same.
+
+   What the strip's box consisted of before this layer:
+   - fill: #17171A (the base #answer rule, v50 layer) — a
+     raised near-black panel tone, one step above the canvas;
+   - border: none (nothing to keep or remove);
+   - border-radius: 8px — KEPT, with the box geometry
+     (heights, margins, pool pass) byte-for-byte in behaviour.
+
+   The change itself is at the source declarations (edited in
+   place, as v83 did for the keyframe shadows):
+   - base #answer: background #17171A -> transparent, so the
+     strip shows the page canvas exactly like the legend does;
+   - the four pulse keyframes (mxFbGood/Bad/Warn/Win) settle
+     (0% / 100%) to transparent instead of #17171A, and
+     mxFbNeutral's 100% likewise. The 40% peak tints are
+     unchanged: the tint is the strip's own background, so it
+     renders inside the bar's rounded shape (border-radius
+     clips it), flashes at peak, and settles back to flat.
+     The v83 outer-shadow containment (0 0 1px 0) is untouched,
+     so no tint reaches the board or the keyboard.
+   Message text colours are unchanged — green correct, red
+   wrong, amber/yellow everything else, gold win — now read
+   directly on the canvas, the same contrast pairing as the
+   legend's amber text on the same ground.
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v85 (2026-11-22, from Sankar): locked-vowel tiles —
+   the border goes DOTTED at 50% amber.
+
+   A player wrote in that the blocked-out vowel areas are "a bit
+   distracting" and suggested a simple yellow line around the box
+   with the lock. Four mockup rounds (real-game renders, runtime
+   injection only) explored solid/dashed/dotted at full, 55%,
+   50% and 35% strength; Sankar picked DOTTED at 50%.
+
+   The change itself is at the source declaration (edited in
+   place, as v83/v84 did): the #board .voweltile.disabled /
+   .voweltilesmall.disabled rule — previously just
+   `border-style: dashed` over the shared full-amber colour —
+   now sets the whole border in one shorthand:
+       border: 2px dotted rgba(245, 184, 61, 0.5);
+   That one rule is the only place the locked border is set, so
+   the computed style is uniform for both tile sizes, in the
+   main game and the archive (shared stylesheet). Unlocked
+   vowel tiles are untouched (solid, full amber), as are the
+   correct/failed/mystery states, the tile interior (already
+   transparent) and the lock glyph (::after, full amber). The
+   border was already 2px, so tile geometry is pixel-identical.
+
+   (A second cosmetic item from the same conversation — the
+   Mystery popup's "?" on a white tile-like square — is NOT in
+   this build: it was rendered as a harness mockup only, pending
+   Sankar's approval.)
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v86 (2026-11-22, from Sankar): the Mystery toast's
+   ❓ rides on a white tile-like square.
+
+   Sankar noticed the board's mystery tile shows its red ❓ on
+   a white square, while the IDENTIFY MYSTERY LETTER toast
+   (showMysteryAdded(), #life-restored) showed the ❓ bare.
+   The mockup (real-game render, runtime injection only —
+   verify-shots/v42-mystery-popup-tile.png) was approved, and
+   this is that mockup built for real: showMysteryAdded() now
+   wraps the ❓ in <span class="mq-tile"> and this one rule
+   styles it to the board tile's own spec (#game #board
+   .tile.mystery: white face, 2px solid #55555E border,
+   radius calc(var(--tile)*.165) ≈ 7px at toast scale),
+   36x36px with the ❓ centred. Presentation ONLY — the
+   toast's 2s life, its trigger, and the identify flow
+   (guess the mystery letter -> +1 dynamite; any other guess
+   clears the mark) are byte-for-byte the game's own logic.
+   The selector is scoped to #life-restored .mq-tile, which
+   only this toast creates, so the archive (no mystery
+   feature) and the Safety Net toast (same #life-restored id,
+   no .mq-tile span) are untouched.
+   ============================================================ */
+#life-restored .mq-tile {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  background: white;
+  border: 2px solid #55555E;
+  border-radius: 7px;
+  font-size: 22px; line-height: 1;
+  vertical-align: middle;
+  margin-left: 8px;
+}
+
+/* ============================================================
+   REDESIGN v87 (2026-11-22, from Sankar): the UNLOCKED vowel
+   border tones down to 75% amber — tiles and keyboard.
+
+   Same conversation as v85: once the vowels unlock, the vowel
+   tiles and the vowel keys carried a full-strength solid amber
+   outline, and Sankar called that too bright too. It is now
+   rgba(245, 184, 61, 0.75) in the only two declarations that
+   produce it (both edited in place, as v83–v85 did):
+
+   - Board tiles: the border-color component of the
+     #board .voweltile / .voweltilesmall rule (was
+     var(--mx-amber), full strength). The same rule's letter
+     colour (color: var(--mx-amber)) is NOT toned — only the
+     border. Locked tiles never see this value: the v85
+     shorthand (2px dotted, 50%) overrides it wholesale, and
+     .correct / .failed tiles override it with their own
+     green / red. Given tiles are plain .tile.starting and
+     never matched this rule.
+   - Keyboard: the vowel keys have no CSS border in the
+     redesign (computed 0px none — the early layer's 1px
+     var(--rd-amber) border does not survive the cascade);
+     their amber outline is the inset box-shadow ring of
+     .key-tile.key-tile-enabled, now
+     inset 0 0 0 2px rgba(245, 184, 61, 0.75). Ring width and
+     placement unchanged; key faces and letters unchanged.
+     The JS only swaps the classes at unlock — no JS was
+     touched.
+
+   One shared layer for both games (the archive's unlock adds
+   the same key-tile-enabled class and removes the same tile
+   .disabled). NOT toned, deliberately: the lock glyphs
+   (full amber — the "locked" signal), the legend icon, the
+   mystery tile's border, and the mxLoseSwapVowel keyframes
+   (the quarter-second pre-flip face of a missed vowel tile
+   in the end-of-game reveal — a transient animation state,
+   not the standing unlocked border). This supersedes the
+   v85 comment's "unlocked vowel tiles keep the solid
+   full-amber border" — solid, yes; full-amber, no longer.
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v91 (2026-11-23, from Sankar): v90's green
+   consonant border was tried live and rejected — "Revert
+   the consonants back to gray." The v90 rule (hidden
+   consonant border-color #3F6B4F) is REMOVED entirely:
+   unrevealed consonant tiles are back to the base tile
+   rule's grey border (#55555E) with transparent faces —
+   the exact v88 state. (v89's green fill was likewise
+   tried and rejected; the consonant tiles stay grey.)
+   The only standing change here is the locked-vowel
+   dotted border, raised again at Sankar's direction:
+   0.5 (v85) → 0.6 (v89) → 0.7 (v91) — the one shorthand
+   at #board .voweltile.disabled / .voweltilesmall.disabled.
+   Dotted style, 2px width, the full-amber lock glyph and
+   the v87 unlocked standing border (0.75) are unchanged.
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v92 (2026-11-23, from Sankar): the consonant
+   tiles' grey border brightens a tad — "Make the gray a
+   tad brighter so that it is clearly distinguished from
+   the dotted yellow." After the v90 green border was
+   reverted (v91), the hidden consonant border sat at the
+   base tile rule's #55555E, close in weight to the
+   locked-vowel dotted amber at 0.7. The base border is
+   now #6E6E78 (+25 per channel, same blue-grey family) —
+   edited in place at the two base tile rules (#board
+   .tile/.voweltile and #board .tilesmall/.voweltilesmall).
+   Vowel tiles never show it (their border-color is the
+   amber override); given (.starting #3F6B4F), revealed
+   (.correct) and lose-reveal (.failed) borders untouched.
+   The Mystery Letter tile's border — deliberately made
+   LITERALLY the hidden-consonant border — is brightened
+   to the same #6E6E78 in its own rule, so the two stay
+   identical; its white face and flash are unchanged.
+   Border colour only: width, style, faces and geometry
+   are untouched.
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v93 (2026-11-23, from Sankar): both board
+   borders step up again — "Make the grey even more
+   brighter and the dotted yellow at 80 pct."
+   1. The consonant grey border brightens again in the
+   same blue-grey family: #55555E (v88) → #6E6E78
+   (v92) → #AAAAB4 (v93 — Sankar asked for TWO steps
+   this time, +60 per channel from v92) — edited in
+   place at the two base tile rules (#board
+   .tile/.voweltile and #board .tilesmall/.voweltilesmall).
+   Vowel tiles never show it (amber override); given
+   (.starting #3F6B4F), revealed (.correct) and
+   lose-reveal (.failed) borders untouched. The Mystery
+   Letter tile's border — deliberately LITERALLY the
+   hidden-consonant border, and Sankar explicitly
+   approved including it — is brightened to the same
+   #AAAAB4 in its own rule; white face and flash
+   unchanged.
+   2. The locked-vowel dotted border rises again:
+   0.5 (v85) → 0.6 (v89) → 0.7 (v91) → 0.8 (v93) — the
+   one shorthand at #board .voweltile.disabled /
+   .voweltilesmall.disabled. Dotted style, 2px width
+   and the full-amber lock glyph unchanged. Note the
+   locked border (0.8) now sits slightly ABOVE the v87
+   unlocked standing border (0.75) — that is what was
+   asked; the unlocked border is not changed.
+   Border values only: width, style, faces and geometry
+   are untouched.
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v94 (2026-11-23, from Sankar): the grey goes
+   grey-white (but NOT fully white), and the dotted
+   yellow settles back to 60%.
+   1. The consonant grey border brightens again in the
+   same blue-grey family: #55555E (v88) → #6E6E78
+   (v92) → #AAAAB4 (v93) → #DCDCE2 (v94 — grey-white,
+   deliberately kept in the lower part of the near-white
+   region so it still reads as grey, nowhere near
+   #FFFFFF) — edited in place at the two base tile
+   rules (#board .tile/.voweltile and #board
+   .tilesmall/.voweltilesmall). Vowel tiles never show
+   it (amber override); given (.starting #3F6B4F),
+   revealed (.correct) and lose-reveal (.failed)
+   borders untouched. The Mystery Letter tile's border
+   — deliberately LITERALLY the hidden-consonant
+   border, and Sankar explicitly approved including
+   it — is brightened to the same #DCDCE2 in its own
+   rule; white face and flash unchanged.
+   2. The locked-vowel dotted border comes back DOWN:
+   0.5 (v85) → 0.6 (v89) → 0.7 (v91) → 0.8 (v93) →
+   0.6 (v94) — the one shorthand at #board
+   .voweltile.disabled / .voweltilesmall.disabled.
+   Dotted style, 2px width and the full-amber lock
+   glyph unchanged; the v87 unlocked standing border
+   (0.75) is not changed.
+   Border values only: width, style, faces and geometry
+   are untouched.
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v95 (2026-11-23, from Sankar): the grey settles
+   on the game's own label grey. Sankar found v94's
+   #DCDCE2 "way too bright", asked what colour the word
+   "Dynamites" beside the pill is, and picked that colour:
+   #B9B9C0 — the --mx-muted muted label grey (the
+   "Dynamites" / "Safety Net" tool labels).
+   1. The consonant grey border: #55555E (v88) → #6E6E78
+   (v92) → #AAAAB4 (v93) → #DCDCE2 (v94) → #B9B9C0 (v95)
+   — edited in place at the two base tile rules (#board
+   .tile/.voweltile and #board .tilesmall/.voweltilesmall).
+   Vowel tiles never show it (amber override); given
+   (.starting #3F6B4F), revealed (.correct) and
+   lose-reveal (.failed) borders untouched. The Mystery
+   Letter tile's border — deliberately LITERALLY the
+   hidden-consonant border, and Sankar explicitly
+   approved including it — is set to the same #B9B9C0
+   in its own rule; white face and flash unchanged.
+   --mx-muted itself and the dynamite pill's own 1px
+   #6E6E78 border are NOT changed — only the three
+   tile-border declarations take the colour.
+   2. UNCHANGED from v94: the locked-vowel dotted border
+   stays at rgba(245, 184, 61, 0.6) — dotted style, 2px
+   width, the full-amber lock glyph and the v87 unlocked
+   border (0.75) all as they were.
+   Border values only: width, style, faces and geometry
+   are untouched.
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v96 (2026-11-23, from Sankar): the Help modal's
+   sample board takes the new border too.
+
+   v92–v95 moved the real board's consonant border step by
+   step (#55555E → #6E6E78 → #AAAAB4 → #DCDCE2 → #B9B9C0)
+   but deliberately left the Help mini-board (.sb-tile) at
+   the old grey, because it is not a board tile. Sankar
+   asked for it to match: "Can you also update the image
+   in the help section with this border." The one
+   declaration — #modal .sb-tile's border — goes #55555E
+   → #B9B9C0, so the sample chain's plain tiles (the
+   TRUCK / STOP / SIGN rows) now carry the same frame as
+   the real board's hidden consonants. The sample board
+   has no locked-vowel tiles (its vowels ride in plain
+   tiles), and its given rows (FIRE / POST) keep their
+   own treatment (#2E4636 fill, #3F6B4F border) — both
+   already mirror the real board. The Mystery toast's
+   .mq-tile square is not the help section and keeps
+   #55555E. Nothing else changes.
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v97 — Add-to-Home-Screen tip. A slim floating bar,
+   NOT a modal: position fixed, centred on the game column,
+   anchored to the bottom of the screen over the legend row,
+   lapping the bottom sliver of the keyboard's last row —
+   the placement Sankar approved from the mockup (in the
+   keyboard area so players notice it). Because the bar is
+   out of flow, the one-screen layout never reflows while
+   it is up. The surface matches the approved mockup: dark
+   panel #1E1E22, 8px radius, amber-tinted border
+   rgba(245,184,61,.45), an amber outline bulb SVG at the
+   left, white ~13px copy, × at the right (mirrors
+   .poll-close). Shown/hidden purely by the .hidden class
+   from chnlnk.js (maybeShowInstallTip / hideInstallTip).
+   ALL tip styling lives in this block — adjust here only.
+   ============================================================ */
+.install-tip {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 6px;
+    width: min(444px, calc(100% - 16px));
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #1E1E22;
+    border: 1px solid rgba(245, 184, 61, .45);
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, .5);
+    color: #F2F2F4;
+    font-size: 12.5px;
+    line-height: 1.35;
+    padding: 5px 5px 5px 10px;
+}
+.install-tip.hidden { display: none; }
+.install-tip-icon { flex: 0 0 auto; display: inline-flex; }
+.install-tip-icon svg { width: 17px; height: 17px; display: block; }
+.install-tip-text { flex: 1 1 auto; }
+.install-tip-close {
+    flex: 0 0 auto;
+    width: 26px;
+    height: 26px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--rd-muted);
+    font-size: 1.25rem;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* v97 (close-out, final): the Play Full-Screen header carries NO
+   glyph indicator — a muted-grey chevron was added, then removed
+   at Sankar's direction so the header matches the modal's other
+   collapsibles exactly (their only affordance is the raised button
+   bar + the active-state shading). No #playFullscreenBtn rules. */
