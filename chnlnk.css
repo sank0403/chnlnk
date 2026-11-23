@@ -5158,7 +5158,7 @@ h1.title-scale .title-link {
     border-radius: 9px;
     font-size: calc(var(--tile) * .5);
     font-weight: 800;
-    border: 2px solid #55555E;
+    border: 2px solid #6E6E78;
     color: var(--mx-ink);
     background: transparent;
     text-transform: uppercase;
@@ -5181,7 +5181,7 @@ h1.title-scale .title-link {
     border-radius: 7px;
     font-size: calc(var(--tile-small) * .5);
     font-weight: 800;
-    border: 2px solid #55555E;
+    border: 2px solid #6E6E78;
     color: var(--mx-ink);
     background: transparent;
     text-transform: uppercase;
@@ -5998,8 +5998,10 @@ input:checked + .slider:before { transform: translateX(20px); }
     background: white;
     /* finishing-pass correction: the border is now LITERALLY the normal
        hidden consonant tile's border (2px solid #55555E, the base tile
-       rule) — the first v52 draft used 1px #3A3A41, a different grey. */
-    border: 2px solid #55555E;
+       rule) — the first v52 draft used 1px #3A3A41, a different grey.
+       REDESIGN v92: brightened together with the base tile rule to
+       #6E6E78 — the two stay literally identical. */
+    border: 2px solid #6E6E78;
 }
 #game #board .mystery {
     animation: flash 1.4s ease-in-out infinite;
@@ -7732,4 +7734,26 @@ body.archive-page {
    at #board .voweltile.disabled / .voweltilesmall.disabled.
    Dotted style, 2px width, the full-amber lock glyph and
    the v87 unlocked standing border (0.75) are unchanged.
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v92 (2026-11-23, from Sankar): the consonant
+   tiles' grey border brightens a tad — "Make the gray a
+   tad brighter so that it is clearly distinguished from
+   the dotted yellow." After the v90 green border was
+   reverted (v91), the hidden consonant border sat at the
+   base tile rule's #55555E, close in weight to the
+   locked-vowel dotted amber at 0.7. The base border is
+   now #6E6E78 (+25 per channel, same blue-grey family) —
+   edited in place at the two base tile rules (#board
+   .tile/.voweltile and #board .tilesmall/.voweltilesmall).
+   Vowel tiles never show it (their border-color is the
+   amber override); given (.starting #3F6B4F), revealed
+   (.correct) and lose-reveal (.failed) borders untouched.
+   The Mystery Letter tile's border — deliberately made
+   LITERALLY the hidden-consonant border — is brightened
+   to the same #6E6E78 in its own rule, so the two stay
+   identical; its white face and flash are unchanged.
+   Border colour only: width, style, faces and geometry
+   are untouched.
    ============================================================ */
