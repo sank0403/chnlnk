@@ -5158,7 +5158,7 @@ h1.title-scale .title-link {
     border-radius: 9px;
     font-size: calc(var(--tile) * .5);
     font-weight: 800;
-    border: 2px solid #DCDCE2;
+    border: 2px solid #B9B9C0;
     color: var(--mx-ink);
     background: transparent;
     text-transform: uppercase;
@@ -5181,7 +5181,7 @@ h1.title-scale .title-link {
     border-radius: 7px;
     font-size: calc(var(--tile-small) * .5);
     font-weight: 800;
-    border: 2px solid #DCDCE2;
+    border: 2px solid #B9B9C0;
     color: var(--mx-ink);
     background: transparent;
     text-transform: uppercase;
@@ -6004,8 +6004,11 @@ input:checked + .slider:before { transform: translateX(20px); }
        REDESIGN v93: brightened again with the base rule to
        #AAAAB4 — still literally identical.
        REDESIGN v94: brightened again with the base rule to
-       #DCDCE2 — still literally identical. */
-    border: 2px solid #DCDCE2;
+       #DCDCE2 — still literally identical.
+       REDESIGN v95: set with the base rule to #B9B9C0
+       (the --mx-muted label grey) — still literally
+       identical. */
+    border: 2px solid #B9B9C0;
 }
 #game #board .mystery {
     animation: flash 1.4s ease-in-out infinite;
@@ -6590,8 +6593,10 @@ body.archive-page #answer {
 
 /* --- Item 1: Help sample chain as a miniature board ---------
    The five sample words as small letter tiles in the board's own
-   styling values (plain tile: transparent, 2px #55555E border;
-   given tile: #2E4636 fill, #3F6B4F border, #DFF5E4 letters),
+   styling values (plain tile: transparent, 2px #B9B9C0 border
+   — was #55555E until v96, which aligned it with the real
+   board's consonant border; given tile: #2E4636 fill,
+   #3F6B4F border, #DFF5E4 letters),
    stacked with the board's white chevrons between rows. Pure
    presentation inside the Help modal; no pairings line. */
 #modal .sample-board {
@@ -6610,7 +6615,7 @@ body.archive-page #answer {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #55555E;
+    border: 2px solid #B9B9C0;
     border-radius: 5px; /* ~16.5% of the tile, like the board */
     background: transparent;
     color: #FFFFFF;
@@ -7820,4 +7825,55 @@ body.archive-page {
    (0.75) is not changed.
    Border values only: width, style, faces and geometry
    are untouched.
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v95 (2026-11-23, from Sankar): the grey settles
+   on the game's own label grey. Sankar found v94's
+   #DCDCE2 "way too bright", asked what colour the word
+   "Dynamites" beside the pill is, and picked that colour:
+   #B9B9C0 — the --mx-muted muted label grey (the
+   "Dynamites" / "Safety Net" tool labels).
+   1. The consonant grey border: #55555E (v88) → #6E6E78
+   (v92) → #AAAAB4 (v93) → #DCDCE2 (v94) → #B9B9C0 (v95)
+   — edited in place at the two base tile rules (#board
+   .tile/.voweltile and #board .tilesmall/.voweltilesmall).
+   Vowel tiles never show it (amber override); given
+   (.starting #3F6B4F), revealed (.correct) and
+   lose-reveal (.failed) borders untouched. The Mystery
+   Letter tile's border — deliberately LITERALLY the
+   hidden-consonant border, and Sankar explicitly
+   approved including it — is set to the same #B9B9C0
+   in its own rule; white face and flash unchanged.
+   --mx-muted itself and the dynamite pill's own 1px
+   #6E6E78 border are NOT changed — only the three
+   tile-border declarations take the colour.
+   2. UNCHANGED from v94: the locked-vowel dotted border
+   stays at rgba(245, 184, 61, 0.6) — dotted style, 2px
+   width, the full-amber lock glyph and the v87 unlocked
+   border (0.75) all as they were.
+   Border values only: width, style, faces and geometry
+   are untouched.
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v96 (2026-11-23, from Sankar): the Help modal's
+   sample board takes the new border too.
+
+   v92–v95 moved the real board's consonant border step by
+   step (#55555E → #6E6E78 → #AAAAB4 → #DCDCE2 → #B9B9C0)
+   but deliberately left the Help mini-board (.sb-tile) at
+   the old grey, because it is not a board tile. Sankar
+   asked for it to match: "Can you also update the image
+   in the help section with this border." The one
+   declaration — #modal .sb-tile's border — goes #55555E
+   → #B9B9C0, so the sample chain's plain tiles (the
+   TRUCK / STOP / SIGN rows) now carry the same frame as
+   the real board's hidden consonants. The sample board
+   has no locked-vowel tiles (its vowels ride in plain
+   tiles), and its given rows (FIRE / POST) keep their
+   own treatment (#2E4636 fill, #3F6B4F border) — both
+   already mirror the real board. The Mystery toast's
+   .mq-tile square is not the help section and keeps
+   #55555E. Nothing else changes.
    ============================================================ */
