@@ -7877,3 +7877,95 @@ body.archive-page {
    .mq-tile square is not the help section and keeps
    #55555E. Nothing else changes.
    ============================================================ */
+
+/* ============================================================
+   REDESIGN v97 — Add-to-Home-Screen tip. A slim floating bar,
+   NOT a modal: position fixed, centred on the game column,
+   anchored to the bottom of the screen over the legend row,
+   lapping the bottom sliver of the keyboard's last row —
+   the placement Sankar approved from the mockup (in the
+   keyboard area so players notice it). Because the bar is
+   out of flow, the one-screen layout never reflows while
+   it is up. The surface matches the approved mockup: dark
+   panel #1E1E22, 8px radius, amber-tinted border
+   rgba(245,184,61,.45), an amber outline bulb SVG at the
+   left, white ~13px copy, × at the right (mirrors
+   .poll-close). Shown/hidden purely by the .hidden class
+   from chnlnk.js (maybeShowInstallTip / hideInstallTip).
+   ALL tip styling lives in this block — adjust here only.
+   ============================================================ */
+.install-tip {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 6px;
+    width: min(444px, calc(100% - 16px));
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #1E1E22;
+    border: 1px solid rgba(245, 184, 61, .45);
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, .5);
+    color: #F2F2F4;
+    font-size: 12.5px;
+    line-height: 1.35;
+    padding: 5px 5px 5px 10px;
+    /* v97 animation (Sankar's pick: "both"): every show replays the
+       entrance pop + double amber glow (the .hidden display:none
+       toggle restarts CSS animations), and the bulb glow below runs
+       for as long as the bar is up. Transform/opacity/shadow only —
+       the resting geometry never moves. */
+    animation: rd97TipIn .3s ease-out, rd97TipGlow 1.2s ease-out;
+}
+.install-tip.hidden { display: none; }
+.install-tip-icon { flex: 0 0 auto; display: inline-flex; }
+.install-tip-icon svg {
+    width: 17px;
+    height: 17px;
+    display: block;
+    animation: rd97BulbGlow 1.6s ease-in-out infinite alternate;
+}
+.install-tip-text { flex: 1 1 auto; }
+.install-tip-close {
+    flex: 0 0 auto;
+    width: 26px;
+    height: 26px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--rd-muted);
+    font-size: 1.25rem;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* v97 tip animations. rd97TipIn: the bar slides up 12px while
+   fading in (.3s ease-out); the keyframes carry the -50% X
+   centring so the end state is exactly the resting transform.
+   rd97TipGlow: a soft amber halo around the bar peaks twice
+   (22% and 68% of 1.2s) over the resting shadow, then settles.
+   rd97BulbGlow: the bulb's drop-shadow swells gently, 1.6s
+   ease-in-out alternate, for as long as the tip is visible. */
+@keyframes rd97TipIn {
+    from { transform: translate(-50%, 12px); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
+}
+@keyframes rd97TipGlow {
+    0%, 100% { box-shadow: 0 4px 18px rgba(0, 0, 0, .5), 0 0 0 rgba(245, 184, 61, 0); border-color: rgba(245, 184, 61, .45); }
+    22% { box-shadow: 0 4px 18px rgba(0, 0, 0, .5), 0 0 16px 2px rgba(245, 184, 61, .5); border-color: rgba(245, 184, 61, .9); }
+    45% { box-shadow: 0 4px 18px rgba(0, 0, 0, .5), 0 0 4px 0 rgba(245, 184, 61, .15); border-color: rgba(245, 184, 61, .55); }
+    68% { box-shadow: 0 4px 18px rgba(0, 0, 0, .5), 0 0 16px 2px rgba(245, 184, 61, .5); border-color: rgba(245, 184, 61, .9); }
+}
+@keyframes rd97BulbGlow {
+    from { filter: drop-shadow(0 0 1px rgba(245, 184, 61, .35)); }
+    to { filter: drop-shadow(0 0 5px rgba(245, 184, 61, .9)); }
+}
+
+/* v97 (close-out, final): the Play Full-Screen header carries NO
+   glyph indicator — a muted-grey chevron was added, then removed
+   at Sankar's direction so the header matches the modal's other
+   collapsibles exactly (their only affordance is the raised button
+   bar + the active-state shading). No #playFullscreenBtn rules. */
