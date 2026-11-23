@@ -5221,7 +5221,8 @@ h1.title-scale .title-link {
    REDESIGN v85: while locked, the border is DOTTED at 50% amber
    (was dashed at full strength — a player called the blocked-out
    vowel areas distracting, and Sankar picked dotted/50% from
-   mockup rounds). The shorthand below is the one declaration
+   mockup rounds; v89 raises the alpha to 60% — see the v89
+   banner at the end of this file). The shorthand below is the one declaration
    that sets the locked border, overriding the width/colour
    components inherited from the base tile rules for the
    .disabled state only; unlocked vowel tiles keep the solid
@@ -5234,7 +5235,7 @@ h1.title-scale .title-link {
 }
 
 #board .voweltile.disabled,
-#board .voweltilesmall.disabled { border: 2px dotted rgba(245, 184, 61, 0.5); }
+#board .voweltilesmall.disabled { border: 2px dotted rgba(245, 184, 61, 0.7); }
 
 #board .voweltile:not(.disabled),
 #board .voweltilesmall:not(.disabled) { border-style: solid; }
@@ -7714,4 +7715,21 @@ body.archive-page {
    not the standing unlocked border). This supersedes the
    v85 comment's "unlocked vowel tiles keep the solid
    full-amber border" — solid, yes; full-amber, no longer.
+   ============================================================ */
+
+/* ============================================================
+   REDESIGN v91 (2026-11-23, from Sankar): v90's green
+   consonant border was tried live and rejected — "Revert
+   the consonants back to gray." The v90 rule (hidden
+   consonant border-color #3F6B4F) is REMOVED entirely:
+   unrevealed consonant tiles are back to the base tile
+   rule's grey border (#55555E) with transparent faces —
+   the exact v88 state. (v89's green fill was likewise
+   tried and rejected; the consonant tiles stay grey.)
+   The only standing change here is the locked-vowel
+   dotted border, raised again at Sankar's direction:
+   0.5 (v85) → 0.6 (v89) → 0.7 (v91) — the one shorthand
+   at #board .voweltile.disabled / .voweltilesmall.disabled.
+   Dotted style, 2px width, the full-amber lock glyph and
+   the v87 unlocked standing border (0.75) are unchanged.
    ============================================================ */
