@@ -3105,7 +3105,7 @@ document.getElementById("dynamite-btn").onclick = () => {
         let dyn = Number(localStorage.cldynamite || 0);
 
         if (dyn <= 0) {
-            shakeDynamiteButton(); // posts the empty-bank message (mockup text, see shakeDynamiteButton)
+            shakeDynamiteButton(); // posts the empty-bank message (see shakeDynamiteButton)
             return;
         }
 
@@ -3210,7 +3210,7 @@ function showDynamiteBlast() {
 function shakeDynamiteButton() {
     const btn = document.getElementById("dynamite-btn");
     if ((!localStorage.cldynamite) || (Number(localStorage.cldynamite) === 0)) {
-        showMessage("NO DYNAMITES AVAILABLE. CHECK ? TO LEARN MORE."); // REDESIGN v57: hard <br> removed — the strip is one line now (words unchanged)
+        showMessage("No Dynamites available. See Help for more."); // REDESIGN v98: Sankar's wording (was "NO DYNAMITES AVAILABLE. CHECK ? TO LEARN MORE.")
     }
     btn.classList.add("shake");
     setTimeout(() => btn.classList.remove("shake"), 400);
