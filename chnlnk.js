@@ -1003,9 +1003,11 @@ document.getElementById("netSaverReset").addEventListener("click", resetNetSaver
 document.getElementById("netSaverClose").addEventListener("click", resetNetSaver);
 
 // REDESIGN v97: one-time Add-to-Home-Screen tip — a slim floating bar
-// over the legend line, NOT a modal: it never pauses the momentum
-// timer, never reflows the one-screen layout and covers nothing
-// interactive (the legend is static text). Browser-tab players are
+// over the keyboard's last row, NOT a modal: it never pauses the
+// momentum timer and never reflows the one-screen layout. (Until
+// v103 it lapped the legend line; the legend is now removed, so it
+// sits on the keyboard's bottom sliver in both modes — the position
+// compact mode always had.) Browser-tab players are
 // squeezed by browser chrome (the no-scroll design keeps it on
 // screen); the installed app opens full-screen. REDESIGN v99: the
 // Help "Play Full-Screen" section it used to point at is removed,
@@ -2326,6 +2328,21 @@ https://thechnlnk.com`;
 }
 
 
+// REDESIGN v103 (Sankar): the landing message IS the old legend line.
+// The legend row under the keyboard is removed (it was an eyesore, and
+// compact mode already played without it), so the line moves into the
+// feedback strip as the game's opening message, keeping the legend's
+// exact format: the amber lock glyph, "Locked vowel" in the legend's
+// grey, then the sentence in amber — WITH a trailing period (Sankar
+// explicitly adds it; the legend had none). It replaces the old intro
+// "Build the chain from Top to Bottom using active letters." at its
+// one posting site (post-wheel, below). The classifier in
+// updateAnswer maps it to fb-locked, so it loads with the yellow
+// highlight pulse. Every other strip message stays plain text.
+function rdLandingMessage() {
+    return '<span class="rd-landing"><span class="legend-icon"></span><span class="legend-label">Locked vowel</span><span class="legend-text">Vowels unlock when you find all the consonants.</span></span>';
+}
+
 function updateAnswer(text) {
     const el = document.getElementById("answer");
 
@@ -2352,7 +2369,7 @@ function updateAnswer(text) {
     if (/great going|you won/.test(fbText)) fbKind = "fb-win";
     else if (/isn't in the chain|out of lives|life lost|last life alert/.test(fbText)) fbKind = "fb-wrong";
     else if (/^correct/.test(fbText)) fbKind = "fb-correct";
-    else if (/vowels are now unlocked|vowels stay locked/.test(fbText)) fbKind = "fb-locked";
+    else if (/vowels are now unlocked|vowels stay locked|vowels unlock when you find all the consonants/.test(fbText)) fbKind = "fb-locked";
     el.classList.remove("fb-correct", "fb-wrong", "fb-locked", "fb-win", "fb-info");
     el.classList.add(fbKind);
 }
@@ -4927,19 +4944,19 @@ function revealSlotMachineRow(rowId, finalWord, delayStart = 0) {
 //   widthFit  = (board inner width − (maxLen − 1) × gap) / maxLen,
 //               measured live, as v52.
 //   columnFit = with that size applied, measure the live playing
-//               column (header top → legend bottom, in document
+//               column (header top → keyboard bottom, in document
 //               coordinates) and shrink the tile until the whole
 //               column — header, nav, status, board, feedback strip,
-//               keyboard, legend — fits inside the viewport height
-//               with no scrolling. Timed Mode may sit below the fold:
-//               the measure deliberately stops at the legend.
+//               keyboard — fits inside the viewport height
+//               with no scrolling. (v103: the legend that used to end
+//               the column is removed; the keyboard is the last row.)
 // REDESIGN v55: the shrink sensitivity is the true ~8.21px of column
 // per 1px of tile (7 rows + 6 connector strips), not 7 — the old
 // divisor over-shrank and stranded dead space under the legend. Any
 // height still left over (width-bound boards, e.g. 11-letter days)
 // is given back to the tile area: tiles grow toward the width limit,
 // then the rest is spread across the connector strips (--spread) so
-// the legend ends at the 12px bottom margin at every size.
+// the column ends at the 12px bottom margin at every size.
 function fitBoardTiles() {
     var board = document.getElementById("board");
     var row = document.getElementById("boardfirst");
@@ -4962,25 +4979,26 @@ function fitBoardTiles() {
     board.style.setProperty("--tile", size + "px");
     board.style.setProperty("--spread", "0px");
     var header = document.querySelector(".header-row");
-    var legend = document.getElementById("vowel-legend");
-    if (header && legend) {
+    if (header) {
         // REDESIGN v54: the fit budget reserves a 12px safety margin
-        // below the legend (edge clipping on scaled/overscan displays).
+        // below the column's bottom (edge clipping on scaled/overscan
+        // displays).
         var target = window.innerHeight - 12;
-        // REDESIGN v99: the column's bottom anchor. Normally the
-        // legend's bottom, exactly as before. In compact mode the
-        // legend is display:none (its bottom would read 0 and the
-        // board would balloon — the failure the prototype proved),
-        // so the anchor moves to the last keyboard row's bottom
-        // plus rdCompactDelta, the offset the legend used to sit
-        // at below the keyboard, captured when compact latched.
-        var legendBottom = function() {
-            if (document.body.classList.contains("rd-compact")) {
-                var kbRows = document.querySelectorAll(".keyboard-row");
-                var lastKb = kbRows[kbRows.length - 1];
-                if (lastKb) { return lastKb.getBoundingClientRect().bottom + window.scrollY + rdCompactDelta; }
-            }
-            return legend.getBoundingClientRect().bottom + window.scrollY;
+        // REDESIGN v103: the column's bottom anchor is the last
+        // keyboard row's bottom — permanently, in both modes. The
+        // legend that used to anchor the fit is removed from the
+        // page; in non-compact mode its freed 17px went to the keys
+        // (CSS --kboost103), so the keyboard's bottom lands exactly
+        // where the legend's bottom used to — same tile sizes. In
+        // compact mode the anchor keeps the v99 form: keyboard
+        // bottom plus rdCompactDelta, the offset the legend used
+        // to sit at below the keyboard (now a constant 3px).
+        var columnBottom = function() {
+            var kbRows = document.querySelectorAll(".keyboard-row");
+            var lastKb = kbRows[kbRows.length - 1];
+            if (!lastKb) { return target; }
+            var extra = document.body.classList.contains("rd-compact") ? rdCompactDelta : 0;
+            return lastKb.getBoundingClientRect().bottom + window.scrollY + extra;
         };
         // REDESIGN v55: the column's true sensitivity to tile size is
         // ~8.21px per 1px of tile (7 word rows + 6 connector strips at
@@ -4989,7 +5007,7 @@ function fitBoardTiles() {
         // the legend (measured: 29px at 320x568, 19px at 360x740-6L).
         var SENS = 8.21;
         for (var pass = 0; pass < 4; pass++) {
-            var over = legendBottom() - target;
+            var over = columnBottom() - target;
             if (!(over > 0)) { break; }
             var next = size - over / SENS - 0.02;
             if (next < 6) { next = 6; }
@@ -5006,18 +5024,18 @@ function fitBoardTiles() {
         // CSS) so the panel fills the column and the legend ends at
         // the bottom margin. Tiles stay square and uniform; chevron
         // clearance only grows (never below the v54 4px).
-        var slack = target - legendBottom();
+        var slack = target - columnBottom();
         for (var g = 0; g < 3 && slack > 2 && size < widthFit; g++) {
             var add = Math.min(widthFit - size, slack / SENS);
             if (!(add > 0.01)) { break; }
             size = Math.floor((size + add) * 100) / 100;
             board.style.setProperty("--tile", size + "px");
-            slack = target - legendBottom();
+            slack = target - columnBottom();
         }
         if (slack > 2) {
             var spread = Math.floor((slack / 6) * 100) / 100;
             board.style.setProperty("--spread", spread + "px");
-            var resid = target - legendBottom();
+            var resid = target - columnBottom();
             if (Math.abs(resid) > 0.5) {
                 spread = Math.floor(Math.max(0, spread + resid / 6) * 100) / 100;
                 board.style.setProperty("--spread", spread + "px");
@@ -5030,14 +5048,15 @@ function fitBoardTiles() {
 
 // =========================
 // REDESIGN v99 (Sankar): COMPACT LAYOUT when the rendered tile
-// comes out under 30px. Decided ONCE per load, at the end of the
-// first fitBoardTiles() that can measure a real tile: at 30px or
+// comes out under 25px. Decided ONCE per load, at the end of the
+// first fitBoardTiles() that can measure a real tile: at 25px or
 // more nothing changes — the layout is exactly the normal one.
-// Under 30px, compact latches for the rest of the load (later
+// Under 25px, compact latches for the rest of the load (later
 // fits re-run through the compact anchor; the mode never flips
 // mid-game):
-//   - the legend and the Safety Net / Dynamites tools row hide
-//     (CSS, body.rd-compact in chnlnk.css);
+//   - the Safety Net / Dynamites tools row hides
+//     (CSS, body.rd-compact in chnlnk.css); (v103: the legend is
+//     removed in EVERY mode — it no longer latches anything);
 //   - the shield badge (#hint-progress) and the dynamite pill
 //     (#dynamite-btn) — the SAME elements — move into the lives
 //     row: shield where "LIVES" was, pill where "5 / 5" was,
@@ -5063,26 +5082,28 @@ function rdApplyKeyBoost(freedPx) {
 function rdMaybeLatchCompact() {
     if (rdCompactDecided) { return; }
     var row = document.getElementById("boardfirst");
-    var legend = document.getElementById("vowel-legend");
     var kbRows = document.querySelectorAll(".keyboard-row");
-    if (!row || !legend || !kbRows.length) { return; }
+    if (!row || !kbRows.length) { return; }
     var tileEl = row.querySelector(".tile, .tilesmall, .voweltile, .voweltilesmall");
     if (!tileEl) { return; }
     var w = tileEl.getBoundingClientRect().width;
     if (!(w > 0)) { return; }
     rdCompactDecided = true;
-    if (w >= 30) { return; }
+    if (w >= 25) { return; } // v102: threshold 25px (was 30px in v99 — phones rendering ~25-30px tiles in real browsers stay normal)
     // Measure everything compact removes BEFORE removing it:
-    // the legend's offset below the keyboard (the compact
-    // anchor's delta), the legend, the tools row, and the lives
-    // row's height — the merged row grows a little (the shield
-    // badge is taller than the hearts line), and that growth
-    // comes off the freed total.
+    // the tools row, and the lives row's height — the merged row
+    // grows a little (the shield badge is taller than the hearts
+    // line), and that growth comes off the freed total.
+    // REDESIGN v103: the legend no longer contributes — it is
+    // removed from the page in every mode, and its column already
+    // went to the keys in non-compact (CSS --kboost103). What
+    // compact still frees is the tools row (and the lives labels,
+    // which cost no height). rdCompactDelta stays its v102
+    // constant 3 — the offset the legend used to sit at below the
+    // keyboard, now just the compact anchor's reserve.
     var toolsRow = document.querySelector(".status-row-tools");
     var livesRow = document.querySelector(".status-row-lives");
-    var legendRect = legend.getBoundingClientRect();
-    rdCompactDelta = legendRect.top - kbRows[kbRows.length - 1].getBoundingClientRect().bottom;
-    var freed = legendRect.height + Math.max(0, rdCompactDelta);
+    var freed = 0;
     if (toolsRow) { freed += toolsRow.getBoundingClientRect().height; }
     var livesBefore = livesRow ? livesRow.getBoundingClientRect().height : 0;
     // Move the shield badge and the dynamite pill into the
@@ -5104,33 +5125,40 @@ function rdMaybeLatchCompact() {
 // only on load / resize / fonts.ready — if the rendered column still
 // ends short of the fit target afterwards (a phone browser settling
 // its toolbar or font metrics after the fit's last run leaves exactly
-// that residue), the leftover pools below the legend while the strip
+// that residue), the leftover pools below the column while the strip
 // sits at its minimum height. This pass is the second claimant: it
-// measures the pool that remains below the legend (past the 12px
+// measures the pool that remains below the keyboard (past the 12px
 // bottom margin the fit targets) and gives ALL of it to the feedback
 // strip's height. The strip is flex-centred, so its message stays
 // vertically centred in the taller box; the box is then fixed for
 // that layout — it never resizes per message. Tiles keep the size
 // the fit gave them: nothing here touches --tile or --spread, and
 // the 14px strip -> keyboard gap is #game's padding (CSS), which
-// this growth does not disturb — the keyboard and legend simply move
-// down by the grown amount and the legend ends at the target.
+// this growth does not disturb — the keyboard simply moves down by
+// the grown amount and the column ends at the target. (v103: the
+// anchor was the removed legend's bottom until this version.)
 // Runs at the end of every fitBoardTiles() and once more shortly
 // after load, to catch post-fit settling. In a layout with no pool
 // (the fit already ended the column at the target) it is a no-op.
 function rdStripPoolPass() {
     var ans = document.getElementById("answer");
-    var legend = document.getElementById("vowel-legend");
     var game = document.getElementById("game");
-    if (!ans || !legend || !game) { return; }
+    if (!ans || !game) { return; }
     if (game.style.display === "none" || ans.hidden) { return; }
-    if (legend.getBoundingClientRect().height === 0) { return; }
+    // REDESIGN v103: the pool is measured below the keyboard — the
+    // column's last row now that the legend is removed. In compact
+    // mode this pass stays a no-op, exactly as it was while the
+    // legend anchor read height 0 there.
+    if (document.body.classList.contains("rd-compact")) { return; }
+    var kbRows = document.querySelectorAll(".keyboard-row");
+    var lastKb = kbRows[kbRows.length - 1];
+    if (!lastKb) { return; }
     ans.style.height = "";
     ans.style.minHeight = "";
     var base = ans.getBoundingClientRect().height;
     if (!(base > 0)) { return; }
     var target = window.innerHeight - 12;
-    var pool = target - (legend.getBoundingClientRect().bottom + window.scrollY);
+    var pool = target - (lastKb.getBoundingClientRect().bottom + window.scrollY);
     if (pool > 1) {
         var h = Math.floor((base + pool) * 100) / 100;
         ans.style.height = h + "px";
@@ -5393,11 +5421,12 @@ window.onload = function() {
 				const settleMs = Math.max(350 + (wordone.length - 1) * 200, 200 + 350 + (wordlast.length - 1) * 200) + 60;
 				setTimeout(() => {
 					if (localStorage.vowelactive != 1 && (!localStorage.clguesscnt || localStorage.clguesscnt == "0")) {
-						// REDESIGN v56: intro copy is Sankar's own (user-directed,
-						// supersedes the mockup-agreed intro — he judged the old
-						// second half redundant with the legend). Colour (yellow
-						// fb-info) and the post-wheel timing are unchanged.
-						updateAnswer("Build the chain from Top to Bottom using active letters.");
+						// REDESIGN v103: the landing message is the old legend
+						// line in the legend's format (rdLandingMessage above),
+						// classified fb-locked — the yellow highlight pulse.
+						// It replaces the v56 intro sentence outright; the
+						// post-wheel timing is unchanged.
+						updateAnswer(rdLandingMessage());
 					}
 				}, settleMs);
 			}, 1000);
@@ -5795,17 +5824,10 @@ function initialize() {
         document.getElementById("KeyO").classList.add("disabled", "key-tile-disabled");
         document.getElementById("KeyU").classList.add("disabled", "key-tile-disabled");
     }
-	// REDESIGN (visual order only): place the vowel legend directly below the
-	// on-screen keyboard — it is now the last element of the page (the Timed Mode
-	// toggle row that used to follow it was removed in v54; Timed Mode lives in
-	// the nav as the Timer button). Every game function references the legend by
-	// id, so relocating the node changes no behaviour.
-	var kbRows = document.querySelectorAll(".keyboard-row");
-	var legendEl = document.getElementById("vowel-legend");
-	if (kbRows.length && legendEl) {
-	    var kbAnchor = kbRows[kbRows.length - 1];
-	    kbAnchor.after(legendEl);
-	}
+	// REDESIGN v103: the vowel legend that used to be placed below the
+	// keyboard here is removed from the page entirely — the keyboard
+	// is now the last element of the playing column, and the fit
+	// anchors on it (fitBoardTiles).
 
 	showGame();
 	fitBoardTiles(); // REDESIGN v52 (presentation only): size the board's tiles now that #game is visible and measurable

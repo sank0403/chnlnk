@@ -18,6 +18,15 @@ function triggerVibration(pattern = [75]) {
     }
 }
 
+// REDESIGN v103 (Sankar): the landing message IS the old legend line,
+// in the legend's format — the same helper as the main game (see
+// chnlnk.js). The legend row is removed from this page too; the line
+// now opens the game from the feedback strip, with a trailing period
+// the legend never had. Classified fb-locked (yellow highlight pulse).
+function rdLandingMessage() {
+    return '<span class="rd-landing"><span class="legend-icon"></span><span class="legend-label">Locked vowel</span><span class="legend-text">Vowels unlock when you find all the consonants.</span></span>';
+}
+
 function updateAnswer(text) {
     const el = document.getElementById("answer");
 
@@ -44,7 +53,7 @@ function updateAnswer(text) {
     if (/great going|you won/.test(fbText)) fbKind = "fb-win";
     else if (/isn't in the chain|out of lives|life lost|last life alert/.test(fbText)) fbKind = "fb-wrong";
     else if (/^correct/.test(fbText)) fbKind = "fb-correct";
-    else if (/vowels are now unlocked|vowels stay locked/.test(fbText)) fbKind = "fb-locked";
+    else if (/vowels are now unlocked|vowels stay locked|vowels unlock when you find all the consonants/.test(fbText)) fbKind = "fb-locked";
     el.classList.remove("fb-correct", "fb-wrong", "fb-locked", "fb-win", "fb-info");
     el.classList.add(fbKind);
 }
@@ -1187,7 +1196,7 @@ var vowelactive = 0;
 if (vowelactive != 1) {
     document.getElementById("answer").style.color = "lightgray";
     // document.getElementById("answer").innerText = "VOWELS ARE DISABLED TILL ALL OTHER LETTERS ARE FOUND";
-	updateAnswer("Build the chain from Top to Bottom using active letters."); // REDESIGN v59: the main game's intro (was "Vowels are disabled till all other letters are found!")
+	updateAnswer(rdLandingMessage()); // REDESIGN v103: the legend line as the landing message (v59-v102 posted the main game's old intro sentence here)
 }
 window.onload = function() {
     intialize();
@@ -2294,12 +2303,11 @@ function processInput(e) {
 //                       #lives-count mirrors it. Archive rule
 //                       kept: lives NEVER become stars — there is
 //                       deliberately no stars branch here.
-//   legend relocation — the main game's: #vowel-legend moves
-//                       below the keyboard (references are by id,
-//                       so nothing behavioural changes).
+//   (v103: the legend relocation is gone — the legend itself
+//                       is removed from the page in every mode.)
 //   fitArchiveTiles() — the main game's fit philosophy: tiles as
 //                       large as the column allows while header →
-//                       legend fits the viewport with the same
+//                       keyboard fits the viewport with the same
 //                       12px bottom margin; leftover height is
 //                       spread across the connector strips. Sets
 //                       only the --tile / --tile-small / --spread
@@ -2330,8 +2338,7 @@ function syncArchiveLives() {
 function fitArchiveTiles() {
     var board = document.getElementById("board");
     var row = document.getElementById("boardfirst");
-    var legend = document.getElementById("vowel-legend");
-    if (!board || !row || !legend) return;
+    if (!board || !row) return;
     var maxLen = Math.max(wordone.length, wordtwo.length, wordthree.length, wordfour.length, wordfive.length, wordsix.length, wordlast.length);
     if (!(maxLen > 0)) return;
     var smallBoard = !!board.querySelector(".tilesmall");
@@ -2354,25 +2361,27 @@ function fitArchiveTiles() {
     apply();
     board.style.setProperty("--spread", "0px");
     var target = window.innerHeight - 12; // the main game's bottom margin
-    // REDESIGN v99: the column's bottom anchor — the legend's
-    // bottom normally; in compact mode the legend is hidden
-    // (bottom would read 0), so the anchor moves to the last
-    // keyboard row's bottom plus archCompactDelta, the offset
-    // the legend used to sit at below the keyboard.
-    var legendBottom = function() {
-        if (document.body.classList.contains("rd-compact")) {
-            var kbRows = document.querySelectorAll(".keyboard-row");
-            var lastKb = kbRows[kbRows.length - 1];
-            if (lastKb) { return lastKb.getBoundingClientRect().bottom + window.scrollY + archCompactDelta; }
-        }
-        return legend.getBoundingClientRect().bottom + window.scrollY;
+    // REDESIGN v103: the column's bottom anchor — the last
+    // keyboard row's bottom, permanently (the legend that used
+    // to anchor the fit is removed; in non-compact mode its
+    // freed 17px went to the keys via CSS --kboost103, so the
+    // keyboard's bottom lands where the legend's bottom used
+    // to). In compact mode the anchor keeps the v99 form:
+    // keyboard bottom plus archCompactDelta, the offset the
+    // legend used to sit at below the keyboard (constant 3).
+    var columnBottom = function() {
+        var kbRows = document.querySelectorAll(".keyboard-row");
+        var lastKb = kbRows[kbRows.length - 1];
+        if (!lastKb) { return target; }
+        var extra = document.body.classList.contains("rd-compact") ? archCompactDelta : 0;
+        return lastKb.getBoundingClientRect().bottom + window.scrollY + extra;
     };
     // Column sensitivity per 1px of active tile: 7 rows + 6 connector
     // strips (each 0.2017 x --tile). Mirrors fitBoardTiles() in the
     // main game, including its grow-then-spread finish.
     var SENS = smallBoard ? (7 + 6 * 0.2017 / RATIO) : 8.21;
     for (var pass = 0; pass < 4; pass++) {
-        var over = legendBottom() - target;
+        var over = columnBottom() - target;
         if (!(over > 0)) break;
         var next = size - over / SENS - 0.02;
         if (next < 6) next = 6;
@@ -2381,67 +2390,68 @@ function fitArchiveTiles() {
         apply();
         if (next === 6) break;
     }
-    var slack = target - legendBottom();
+    var slack = target - columnBottom();
     for (var g = 0; g < 3 && slack > 2 && size < widthFit; g++) {
         var add = Math.min(widthFit - size, slack / SENS);
         if (!(add > 0.01)) break;
         size = Math.floor((size + add) * 100) / 100;
         apply();
-        slack = target - legendBottom();
+        slack = target - columnBottom();
     }
     if (slack > 2) {
         var spread = Math.floor((slack / 6) * 100) / 100;
         board.style.setProperty("--spread", spread + "px");
-        var resid = target - legendBottom();
+        var resid = target - columnBottom();
         if (Math.abs(resid) > 0.5) {
             spread = Math.floor(Math.max(0, spread + resid / 6) * 100) / 100;
             board.style.setProperty("--spread", spread + "px");
         }
     }
-    archMaybeLatchCompact(legend);
+    archMaybeLatchCompact();
 }
 
 // =========================
 // REDESIGN v99 (Sankar): COMPACT LAYOUT, archive form — the
 // legend only. Same trigger as the main game: the first
 // fitArchiveTiles() that can measure a real tile decides, ONCE
-// per load; under 30px the legend hides (CSS body.rd-compact)
+// per load; under 25px the legend hides (CSS body.rd-compact)
 // and the freed column splits 80/20 — the re-anchored solver
 // hands the board its share as tile size, the keyboard's share
 // is added to --keyh. The archive's lives row is untouched and
 // there is no merged row (no Safety Net / Dynamites here). The
 // decision waits for archLegendPlaced: before the load listener
-// moves the legend below the keyboard, a fit's measurements
-// are not the final geometry.
+// finishes the load-time layout, a fit's measurements are not
+// the final geometry.
+// REDESIGN v103: the legend is removed in every mode, so archive
+// compact now changes nothing but the solver's anchor reserve
+// (archCompactDelta) — there is nothing left to hide and no
+// freed column to split (the legend's column went to the keys
+// in non-compact via CSS --kboost103). archApplyKeyBoost is
+// gone with it; the latch below only adds the class + refits.
 // =========================
 var archCompactDecided = false;
 var archCompactDelta = 3;
 var archLegendPlaced = false;
 
-function archApplyKeyBoost(freedPx) {
-    // Same mechanism as the main game: --kboost99 is added by
-    // the shared compact CSS to the key height AND min-height.
-    var perKey = Math.floor((freedPx * 0.2 / 3) * 100) / 100;
-    if (!(perKey > 0)) { return; }
-    document.body.style.setProperty("--kboost99", perKey + "px");
-}
-
-function archMaybeLatchCompact(legend) {
+function archMaybeLatchCompact() {
     if (archCompactDecided || !archLegendPlaced) { return; }
     var board = document.getElementById("board");
     var kbRows = document.querySelectorAll(".keyboard-row");
-    if (!board || !legend || !kbRows.length) { return; }
+    if (!board || !kbRows.length) { return; }
     var tileEl = board.querySelector(".tile, .tilesmall, .voweltile, .voweltilesmall");
     if (!tileEl) { return; }
     var w = tileEl.getBoundingClientRect().width;
     if (!(w > 0)) { return; }
     archCompactDecided = true;
-    if (w >= 30) { return; }
-    var legendRect = legend.getBoundingClientRect();
-    archCompactDelta = legendRect.top - kbRows[kbRows.length - 1].getBoundingClientRect().bottom;
-    var freed = legendRect.height + Math.max(0, archCompactDelta);
+    if (w >= 25) { return; } // v102: threshold 25px (was 30px in v99 — same trigger as the main game)
+    // REDESIGN v103: the archive's compact freed ONLY the legend
+    // (height + its offset) — the legend is now removed in every
+    // mode and its column already went to the keys in non-compact
+    // (CSS --kboost103), so compact frees nothing further here:
+    // no key boost; the board's share still comes from the
+    // re-anchored solver on the refit below. archCompactDelta
+    // stays its constant 3 (the legend's old offset).
     document.body.classList.add("rd-compact");
-    archApplyKeyBoost(freed);
     fitArchiveTiles();
 }
 
@@ -2451,14 +2461,12 @@ function archMaybeLatchCompact(legend) {
         new MutationObserver(syncArchiveLives).observe(livesEl, { childList: true, characterData: true, subtree: true });
     }
     window.addEventListener("load", function() {
-        // The main game's visual order: the legend sits below the
-        // keyboard. The keyboard rows are built by intialize()
-        // (registered on window load before this listener).
+        // The keyboard rows are built by intialize() (registered
+        // on window load before this listener). REDESIGN v103:
+        // the legend this listener used to move below the
+        // keyboard is removed from the page; the flag below now
+        // simply marks the load-time layout as final.
         var kbRows = document.querySelectorAll(".keyboard-row");
-        var legendEl = document.getElementById("vowel-legend");
-        if (kbRows.length && legendEl) {
-            kbRows[kbRows.length - 1].after(legendEl);
-        }
         archLegendPlaced = true; // REDESIGN v99: the compact decision may measure from here on
         // The main game's strip -> keyboard clearance (its glow
         // reaches ~8px below the strip box at pulse peak).

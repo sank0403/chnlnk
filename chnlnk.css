@@ -7896,21 +7896,28 @@ body.archive-page {
     z-index: 900;
     display: flex;
     align-items: center;
-    gap: 5px;
+    /* REDESIGN v101: the flex gaps ARE the tip copy's breathing room —
+       16px of clear space between the bulb and the first glyph, and
+       between the last glyph and the × (Sankar: fill the bar, but
+       don't take the text right up against the bulb or the ×). */
+    gap: 16px;
     background: #1E1E22;
     border: 1px solid rgba(245, 184, 61, .45);
     border-radius: 8px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, .5);
     color: #F2F2F4;
-    /* REDESIGN v99: the copy is longer now (it carries the install
-       instruction itself — the Help section it used to point at is
-       gone) and Sankar's rule is ONE line at every width, so the
-       font scales with the viewport instead of the bar wrapping to
-       the v97 two-line form at 320/360px. The calc tracks the
-       measured fit line for the 67-char string (max fitting size
-       7.4px @320 → 10.9px @430 in the harness) with headroom for
-       device-font differences; the 12.5px cap is the v97 size. */
-    font-size: clamp(6.5px, calc(3.05vw - 2.7px), 12.5px);
+    /* REDESIGN v101 (supersedes the v99 calc): Sankar found the v99
+       size "virtually unreadable" — the copy floated in the middle
+       ~75% of the bar with dead space both sides. The copy is now
+       shorter (56 chars) and the font is sized to FILL the bar: the
+       calc tracks the measured fit line for the new string in the
+       16px-gap layout (max fitting size 7.9px @320 → 11.95px @430
+       in the harness), set 0.2px under that line; the text span is
+       centre-aligned, so the small remainder splits evenly and the
+       clear space lands at ~19px at each end (16px gap + ~3px).
+       Still ONE line at every width; the 13px cap covers viewports
+       wider than the bar's 444px max, where the fit tops out ~13.3. */
+    font-size: clamp(7px, calc(3.68vw - 4.08px), 13px);
     line-height: 1.35;
     padding: 5px 5px 5px 10px;
     /* v97 animation (Sankar's pick: "both"): every show replays the
@@ -7928,7 +7935,7 @@ body.archive-page {
     display: block;
     animation: rd97BulbGlow 1.6s ease-in-out infinite alternate;
 }
-.install-tip-text { flex: 1 1 auto; white-space: nowrap; min-width: 0; }
+.install-tip-text { flex: 1 1 auto; white-space: nowrap; min-width: 0; text-align: center; }
 .install-tip-close {
     flex: 0 0 auto;
     width: 26px;
@@ -7936,7 +7943,9 @@ body.archive-page {
     background: transparent;
     border: none;
     outline: none;
-    color: var(--rd-muted);
+    /* REDESIGN v101: the × is amber #F5B83D, same as the bulb
+       (Sankar's direction; was the muted grey var(--rd-muted)). */
+    color: #F5B83D;
     font-size: 1.25rem;
     font-weight: bold;
     line-height: 1;
@@ -7974,7 +7983,7 @@ body.archive-page {
 /* ============================================================
    REDESIGN v99 (2026-11-23, from Sankar): COMPACT LAYOUT for
    small rendered tiles. When the tile the normal fit produces
-   measures under 30px (decided ONCE per load in chnlnk.js /
+   measures under 25px (v102 threshold; decided ONCE per load in chnlnk.js /
    chnlnkarch.js — the layout never flips mid-game), the body
    gains .rd-compact and:
    - the vowel legend is hidden (BOTH games);
@@ -8014,4 +8023,81 @@ body.rd-compact .key-tile,
 body.rd-compact .enter-key-tile {
     height: calc(var(--keyh) + var(--kboost99, 0px));
     min-height: calc(36px + var(--kgrow83) + var(--kboost99, 0px));
+}
+
+/* ============================================================
+   REDESIGN v103 (2026-11-23, from Sankar): THE LEGEND IS GONE.
+   The vowel legend row under the keyboard is removed from both
+   pages in every mode (Sankar: "the legend is an eye sore" —
+   and compact mode already played without it). Three parts:
+
+   1. THE FREED COLUMN GOES TO THE KEYBOARD (non-compact only).
+      The legend's column was exactly 17px everywhere (14px row
+      + 3px offset below the keyboard, measured). In non-compact
+      mode each key grows by a third of it — --kboost103 =
+      5.67px — added to BOTH the key height and the keys'
+      min-height, mirroring the compact --kboost99 rule above
+      (below ~760px tall the min-height is what renders, the
+      v83 lesson). The board gets none of it: the fit solvers
+      now anchor on the keyboard's bottom, which lands where
+      the legend's bottom used to, so tile sizes are unchanged.
+      In compact mode this rule does not apply — compact keys
+      still take only their --kboost99 share of what compact
+      itself frees (the tools row).
+
+   2. THE LEGEND LINE IS THE LANDING MESSAGE. The strip's
+      opening message (rdLandingMessage() in both JS files) is
+      the old legend line in the legend's own format: the amber
+      lock glyph, "Locked vowel" in the legend's grey, the
+      sentence in amber — with a trailing period the legend
+      never had. The spans reuse the legend's class names; the
+      rules below are scoped to #answer (the #vowel-legend rules
+      earlier in this file are now dead — the element is gone —
+      and are left as history). The line rides the strip's fluid
+      font, capped by its own fitted size so it stays on ONE
+      line at every phone width (the strip is nowrap + fixed
+      height): the calc tracks the measured fit of the full
+      string, icon and gaps included.
+
+   3. The install tip needed no move: it is fixed at bottom:6px,
+      so with the legend gone it laps the keyboard's last-row
+      sliver in BOTH modes — the position compact always had.
+   ============================================================ */
+:root {
+    --kboost103: 5.67px;
+}
+body:not(.rd-compact) .key-tile,
+body:not(.rd-compact) .enter-key-tile {
+    height: calc(var(--keyh) + var(--kboost103));
+    min-height: calc(36px + var(--kgrow83) + var(--kboost103));
+}
+
+/* The landing message, in the strip, in the legend's format. */
+#answer .rd-landing {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    font-size: clamp(8px, calc(3.22vw - 2.1px), 12.5px);
+}
+#answer .rd-landing .legend-icon {
+    display: inline-block;
+    flex: 0 0 auto;
+    line-height: 1;
+}
+#answer .rd-landing .legend-icon::after {
+    content: "🔒";
+    font-size: 10px;
+    line-height: 1;
+    color: var(--mx-amber);
+}
+#answer .rd-landing .legend-label {
+    color: var(--mx-faint);
+    font-weight: 400;
+    white-space: nowrap;
+}
+#answer .rd-landing .legend-text {
+    color: var(--mx-amber);
+    font-weight: 700;
+    white-space: nowrap;
 }
