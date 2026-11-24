@@ -7896,28 +7896,33 @@ body.archive-page {
     z-index: 900;
     display: flex;
     align-items: center;
-    /* REDESIGN v101: the flex gaps ARE the tip copy's breathing room —
-       16px of clear space between the bulb and the first glyph, and
-       between the last glyph and the × (Sankar: fill the bar, but
-       don't take the text right up against the bulb or the ×). */
-    gap: 16px;
+    /* REDESIGN v105 (supersedes the v101 gap): the flex gaps shrink
+       from 16px to 6px — Sankar wants the copy sitting closer to the
+       icons, nearly filling the space between bulb and × instead of
+       floating centred with wide clearances. The 20px freed (10px
+       per side) goes into the font size below. */
+    gap: 6px;
     background: #1E1E22;
     border: 1px solid rgba(245, 184, 61, .45);
     border-radius: 8px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, .5);
+    /* REDESIGN v105 (supersedes the v101 size; colour and weight are
+       Sankar's explicit keep — #F2F2F4, regular 400, exactly as
+       v104): with the gaps at 6px the size was re-fitted by
+       measurement (Range extents, real flow): the max-fit line is
+       3.69vw − 3.17px (8.65px @320 → 12.70px @430; 12.05px @412,
+       up from v101's shipped 11.08px @412 — the freed gap width
+       bought the size), and the shipped calc sits 0.25px under
+       that line, so the copy nearly fills the bar on ONE line at
+       every width with ~9.5px clear at each end (6px gap plus the
+       centred remainder). On short/narrow screens the fluid size
+       simply squeezes down — never wraps, never overflows, and
+       the bar never grows (38px at every width). The 13px cap
+       covers viewports wider than the bar's 444px max, where the
+       fit tops out ~13.1px. Copy, bulb, amber ×, placement and
+       animations are unchanged. */
     color: #F2F2F4;
-    /* REDESIGN v101 (supersedes the v99 calc): Sankar found the v99
-       size "virtually unreadable" — the copy floated in the middle
-       ~75% of the bar with dead space both sides. The copy is now
-       shorter (56 chars) and the font is sized to FILL the bar: the
-       calc tracks the measured fit line for the new string in the
-       16px-gap layout (max fitting size 7.9px @320 → 11.95px @430
-       in the harness), set 0.2px under that line; the text span is
-       centre-aligned, so the small remainder splits evenly and the
-       clear space lands at ~19px at each end (16px gap + ~3px).
-       Still ONE line at every width; the 13px cap covers viewports
-       wider than the bar's 444px max, where the fit tops out ~13.3. */
-    font-size: clamp(7px, calc(3.68vw - 4.08px), 13px);
+    font-size: clamp(7px, calc(3.69vw - 3.42px), 13px);
     line-height: 1.35;
     padding: 5px 5px 5px 10px;
     /* v97 animation (Sankar's pick: "both"): every show replays the
