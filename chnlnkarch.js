@@ -23,8 +23,10 @@ function triggerVibration(pattern = [75]) {
 // chnlnk.js). The legend row is removed from this page too; the line
 // now opens the game from the feedback strip, with a trailing period
 // the legend never had. Classified fb-locked (yellow highlight pulse).
+// v104 (Sankar): the yellow sentence is his shorter "Vowels unlock
+// once all consonants are found." — the classifier below matches it.
 function rdLandingMessage() {
-    return '<span class="rd-landing"><span class="legend-icon"></span><span class="legend-label">Locked vowel</span><span class="legend-text">Vowels unlock when you find all the consonants.</span></span>';
+    return '<span class="rd-landing"><span class="legend-icon"></span><span class="legend-label">Locked vowel</span><span class="legend-text">Vowels unlock once all consonants are found.</span></span>';
 }
 
 function updateAnswer(text) {
@@ -53,7 +55,7 @@ function updateAnswer(text) {
     if (/great going|you won/.test(fbText)) fbKind = "fb-win";
     else if (/isn't in the chain|out of lives|life lost|last life alert/.test(fbText)) fbKind = "fb-wrong";
     else if (/^correct/.test(fbText)) fbKind = "fb-correct";
-    else if (/vowels are now unlocked|vowels stay locked|vowels unlock when you find all the consonants/.test(fbText)) fbKind = "fb-locked";
+    else if (/vowels are now unlocked|vowels stay locked|vowels unlock once all consonants are found/.test(fbText)) fbKind = "fb-locked";
     el.classList.remove("fb-correct", "fb-wrong", "fb-locked", "fb-win", "fb-info");
     el.classList.add(fbKind);
 }

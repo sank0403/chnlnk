@@ -2339,8 +2339,12 @@ https://thechnlnk.com`;
 // one posting site (post-wheel, below). The classifier in
 // updateAnswer maps it to fb-locked, so it loads with the yellow
 // highlight pulse. Every other strip message stays plain text.
+// v104 (Sankar, from live-testing v103): the yellow sentence is now
+// his shorter "Vowels unlock once all consonants are found." (the
+// classifier below matches it, so it still lands fb-locked), and the
+// lock is a plain glyph — see the .legend-icon reset in chnlnk.css.
 function rdLandingMessage() {
-    return '<span class="rd-landing"><span class="legend-icon"></span><span class="legend-label">Locked vowel</span><span class="legend-text">Vowels unlock when you find all the consonants.</span></span>';
+    return '<span class="rd-landing"><span class="legend-icon"></span><span class="legend-label">Locked vowel</span><span class="legend-text">Vowels unlock once all consonants are found.</span></span>';
 }
 
 function updateAnswer(text) {
@@ -2369,7 +2373,7 @@ function updateAnswer(text) {
     if (/great going|you won/.test(fbText)) fbKind = "fb-win";
     else if (/isn't in the chain|out of lives|life lost|last life alert/.test(fbText)) fbKind = "fb-wrong";
     else if (/^correct/.test(fbText)) fbKind = "fb-correct";
-    else if (/vowels are now unlocked|vowels stay locked|vowels unlock when you find all the consonants/.test(fbText)) fbKind = "fb-locked";
+    else if (/vowels are now unlocked|vowels stay locked|vowels unlock once all consonants are found/.test(fbText)) fbKind = "fb-locked";
     el.classList.remove("fb-correct", "fb-wrong", "fb-locked", "fb-win", "fb-info");
     el.classList.add(fbKind);
 }

@@ -8072,18 +8072,36 @@ body:not(.rd-compact) .enter-key-tile {
     min-height: calc(36px + var(--kgrow83) + var(--kboost103));
 }
 
-/* The landing message, in the strip, in the legend's format. */
+/* The landing message, in the strip, in the legend's format.
+   v104 (Sankar): the font is recalibrated for his shorter sentence
+   ("Vowels unlock once all consonants are found.") — the strip's
+   regular font (clamp(10px, 3.5714vw - 1.43px, 12.5px)) cannot hold
+   the full line on one line below ~430px wide, so this is the
+   largest fitted line that keeps one line at every width 320-430;
+   it reaches the regular 12.5px at the top of the range. */
 #answer .rd-landing {
     display: inline-flex;
     align-items: center;
     gap: 5px;
     white-space: nowrap;
-    font-size: clamp(8px, calc(3.22vw - 2.1px), 12.5px);
+    font-size: clamp(8px, calc(3.45vw - 2.11px), 12.5px);
 }
 #answer .rd-landing .legend-icon {
     display: inline-block;
     flex: 0 0 auto;
     line-height: 1;
+    /* v104: the legend's own final override (the old #vowel-legend
+       rule) stripped the base .legend-icon box — auto size, no
+       border, no background — leaving the plain amber glyph. The
+       v103 landing missed that reset and inherited the base rule's
+       1.5px border + tinted box. Sankar: "The legend lock icon
+       didnt have a border..so we dont need it." */
+    width: auto;
+    height: auto;
+    border: none;
+    border-radius: 0;
+    background: none;
+    margin: 0;
 }
 #answer .rd-landing .legend-icon::after {
     content: "🔒";
