@@ -2354,7 +2354,19 @@ function fitArchiveTiles() {
     apply();
     board.style.setProperty("--spread", "0px");
     var target = window.innerHeight - 12; // the main game's bottom margin
-    var legendBottom = function() { return legend.getBoundingClientRect().bottom + window.scrollY; };
+    // REDESIGN v99: the column's bottom anchor — the legend's
+    // bottom normally; in compact mode the legend is hidden
+    // (bottom would read 0), so the anchor moves to the last
+    // keyboard row's bottom plus archCompactDelta, the offset
+    // the legend used to sit at below the keyboard.
+    var legendBottom = function() {
+        if (document.body.classList.contains("rd-compact")) {
+            var kbRows = document.querySelectorAll(".keyboard-row");
+            var lastKb = kbRows[kbRows.length - 1];
+            if (lastKb) { return lastKb.getBoundingClientRect().bottom + window.scrollY + archCompactDelta; }
+        }
+        return legend.getBoundingClientRect().bottom + window.scrollY;
+    };
     // Column sensitivity per 1px of active tile: 7 rows + 6 connector
     // strips (each 0.2017 x --tile). Mirrors fitBoardTiles() in the
     // main game, including its grow-then-spread finish.
@@ -2386,6 +2398,51 @@ function fitArchiveTiles() {
             board.style.setProperty("--spread", spread + "px");
         }
     }
+    archMaybeLatchCompact(legend);
+}
+
+// =========================
+// REDESIGN v99 (Sankar): COMPACT LAYOUT, archive form — the
+// legend only. Same trigger as the main game: the first
+// fitArchiveTiles() that can measure a real tile decides, ONCE
+// per load; under 30px the legend hides (CSS body.rd-compact)
+// and the freed column splits 80/20 — the re-anchored solver
+// hands the board its share as tile size, the keyboard's share
+// is added to --keyh. The archive's lives row is untouched and
+// there is no merged row (no Safety Net / Dynamites here). The
+// decision waits for archLegendPlaced: before the load listener
+// moves the legend below the keyboard, a fit's measurements
+// are not the final geometry.
+// =========================
+var archCompactDecided = false;
+var archCompactDelta = 3;
+var archLegendPlaced = false;
+
+function archApplyKeyBoost(freedPx) {
+    // Same mechanism as the main game: --kboost99 is added by
+    // the shared compact CSS to the key height AND min-height.
+    var perKey = Math.floor((freedPx * 0.2 / 3) * 100) / 100;
+    if (!(perKey > 0)) { return; }
+    document.body.style.setProperty("--kboost99", perKey + "px");
+}
+
+function archMaybeLatchCompact(legend) {
+    if (archCompactDecided || !archLegendPlaced) { return; }
+    var board = document.getElementById("board");
+    var kbRows = document.querySelectorAll(".keyboard-row");
+    if (!board || !legend || !kbRows.length) { return; }
+    var tileEl = board.querySelector(".tile, .tilesmall, .voweltile, .voweltilesmall");
+    if (!tileEl) { return; }
+    var w = tileEl.getBoundingClientRect().width;
+    if (!(w > 0)) { return; }
+    archCompactDecided = true;
+    if (w >= 30) { return; }
+    var legendRect = legend.getBoundingClientRect();
+    archCompactDelta = legendRect.top - kbRows[kbRows.length - 1].getBoundingClientRect().bottom;
+    var freed = legendRect.height + Math.max(0, archCompactDelta);
+    document.body.classList.add("rd-compact");
+    archApplyKeyBoost(freed);
+    fitArchiveTiles();
 }
 
 (function() {
@@ -2402,6 +2459,7 @@ function fitArchiveTiles() {
         if (kbRows.length && legendEl) {
             kbRows[kbRows.length - 1].after(legendEl);
         }
+        archLegendPlaced = true; // REDESIGN v99: the compact decision may measure from here on
         // The main game's strip -> keyboard clearance (its glow
         // reaches ~8px below the strip box at pulse peak).
         if (kbRows.length) kbRows[0].style.marginTop = "14px";

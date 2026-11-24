@@ -247,33 +247,6 @@
                     </li>
                 </ul>
             </div>
-            <!-- COLLAPSIBLE: PLAY FULL-SCREEN (REDESIGN v97) — a TOP-LEVEL
-                 section placed AFTER the game rules as the last part,
-                 directly before Additional Rules (Sankar's final
-                 placement call; NOT inside Additional Rules, so the
-                 one-time install tip's "see Help" lands players on it
-                 without opening the master collapsible). The heading carries
-                 the SAME amber bulb as the install tip (Sankar's call,
-                 replacing the phone emoji), and the section always
-                 starts collapsed when Help opens — the steps show
-                 only on tap (reset in openModal, chnlnk.js). The header
-                 carries no glyph indicator — matching the modal's other
-                 collapsibles (a chevron was tried and removed at
-                 Sankar's direction). -->
-            <div class="collapsible-section">
-                <button class="collapsible" id="playFullscreenBtn"><svg viewBox="0 0 24 24" fill="none" stroke="#F5B83D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:1.25em;height:1.25em;vertical-align:-0.22em;margin-right:7px"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.7.5 1.1 1.2 1.3 2.1h4.4c.2-.9.6-1.6 1.3-2.1A6 6 0 0 0 12 3z"/></svg>Play Full‑Screen</button>
-                <div class="content">
-                    <ul class="rules-list">
-                        <li>Add CHN LNK to your home screen and it opens <strong style="color:white;">full‑screen — more space, more clarity!</strong>
-                            <ul class="rules-list">
-                                <li><strong style="color:white;">iPhone (Safari):</strong> tap the <strong style="color:white;">Share</strong> button, then <strong style="color:white;">Add to Home Screen</strong>, then <strong style="color:white;">Add</strong>.</li>
-                                <li><strong style="color:white;">Android (Chrome):</strong> tap the <strong style="color:white;">⋮ menu</strong>, then <strong style="color:white;">Add to Home screen</strong> (or <strong style="color:white;">Install app</strong>).</li>
-                                <li><strong style="color:white;">Other Browsers:</strong> look for <strong style="color:white;">Install</strong> or <strong style="color:white;">Add to Home screen</strong> in the menu. Installed apps land in your apps list — long-press to add them to your home screen.</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
             <!-- MASTER COLLAPSIBLE -->
             <div class="collapsible-section">
                 <button class="collapsible master">📘 Additional Rules</button>
@@ -866,11 +839,13 @@
          lapping the last keyboard row's bottom sliver — the placement
          Sankar approved from the mockup; out of flow, so the one-screen
          layout never reflows). Shown once per player, mid-game, by
-         maybeShowInstallTip() in chnlnk.js; it points at the Help
-         section's "Play Full-Screen" steps. -->
+         maybeShowInstallTip() in chnlnk.js. REDESIGN v99: the Help
+         "Play Full-Screen" section is gone, so the tip now carries
+         the instruction itself (Sankar's words), set on ONE line at
+         every width by the fluid font in chnlnk.css. -->
     <div id="installTip" class="install-tip hidden">
         <span class="install-tip-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#F5B83D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.7.5 1.1 1.2 1.3 2.1h4.4c.2-.9.6-1.6 1.3-2.1A6 6 0 0 0 12 3z"/></svg></span>
-        <span class="install-tip-text">Too cramped for space? Go Full Screen - see Help.</span>
+        <span class="install-tip-text">Too cramped for space? Install/Add to Home Screen for Full Screen.</span>
         <button id="installTipClose" class="install-tip-close" aria-label="Dismiss">&times;</button>
     </div>
     <!-- <br><br> -->
@@ -947,22 +922,8 @@
 			</div>
 		</div>
 	</div>
-	<!-- REDESIGN v63: one-time Dynamite Poll popup — sibling of the feedback
-	     popup (same overlay/box family). Shown at most once, Nov 2026 only,
-	     to players with >25 dynamites, on a day the feedback popup is
-	     neither due nor shown. Logic: shouldShowDynamitePoll() in chnlnk.js. -->
-	<div id="dynamitePollPopup" class="feedback-popup hidden">
-		<div class="feedback-box poll-box">
-			<button id="pollClose" class="poll-close" aria-label="Close">&times;</button>
-			<h3 class="poll-question">Level the playing field — should Dynamites reset every month?</h3>
-			<div class="poll-buttons">
-				<button id="pollYes" class="poll-yes">Yes, reset<br>them!</button>
-				<button id="pollNo" class="poll-no">No, don't touch<br>them!</button>
-			</div>
-		</div>
-	</div>
 	<!-- REDESIGN v66: Safety Net Saver popup — same overlay/box family as
-	     the feedback and poll popups. Shown once per missed-day return
+	     the feedback popup. Shown once per missed-day return
 	     when an ACTIVE Safety Net would reset and the player has 10+
 	     dynamites. The badge replicates the board's own Safety Net
 	     ring at 100% (same structure and shield SVG, class-scoped so no
@@ -984,9 +945,6 @@
 	</div>
 	<div id="thankYouToast" class="thankyou-toast hidden">
     Your feedback fuels CHN LNK. Enjoy +5 Dynamites on us!
-	</div>
-	<div id="pollThankYouToast" class="thankyou-toast hidden">
-    Thanks for voting! Your voice helps shape CHN LNK.
 	</div>
     <script src="chnlnk.js?v=74"></script>
 </div>

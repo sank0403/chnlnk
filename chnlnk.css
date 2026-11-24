@@ -6957,19 +6957,13 @@ body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
 }
 
 /* ============================================================
-   REDESIGN v63 — Dynamite Poll popup (Item B). A sibling of the
-   feedback popup: it reuses .feedback-popup / .feedback-box for
-   the overlay and box, so it inherits the family surface, border
-   and width. The × mirrors .name-edit-close.
-   The poll thank-you toast reuses .thankyou-toast unchanged.
-   REDESIGN v64: both answer buttons get IDENTICAL neutral styling
-   (medium grey #45454E, border #55555E, white text) — a green Yes
-   could bias the vote. Scoped to .poll-yes / .poll-no only; the
-   Timed popup's green Yes and the feedback Submit are untouched.
-   Labels carry explicit <br>s so both wrap symmetrically
-   ("Yes, reset / them!" and "No, don't touch / them!").
+   REDESIGN v100 — the Dynamite Poll (v63/v64) is REMOVED.
+   What remains in this block is the shared popup-family
+   chrome the poll introduced — .poll-close (the ×),
+   .poll-question and .poll-buttons — now used by the
+   Safety Net Saver popup (v66, below). The poll-only
+   rules (.poll-box, .poll-yes / .poll-no) went with it.
    ============================================================ */
-.poll-box { position: relative; }
 .poll-close {
     position: absolute;
     top: 6px;
@@ -6988,11 +6982,10 @@ body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
 .poll-question { font-size: 16px; line-height: 1.45; margin: 8px 0 2px; }
 .poll-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
 .poll-buttons button { flex: 1 1 0; max-width: 160px; padding: 10px 4px; border-radius: 8px; font-size: 14px; font-weight: 800; cursor: pointer; }
-.poll-yes, .poll-no { background: #45454E; border: 1px solid #55555E; color: #FFFFFF; line-height: 1.3; }
 
 /* ============================================================
-   REDESIGN v66 — Safety Net Saver popup. A third sibling in the
-   feedback/poll family: it reuses .feedback-popup / .feedback-box
+   REDESIGN v66 — Safety Net Saver popup. Another sibling in the
+   feedback family: it reuses .feedback-popup / .feedback-box
    for the overlay and box, .poll-close for the ×, .poll-question
    for the text and .poll-buttons for the button row.
    The badge replicates the board's OWN Safety Net ring badge at
@@ -7091,10 +7084,10 @@ body.archive-page #board .correct.poptile { animation: rdTileFlip .45s ease; }
 /* ============================================================
    REDESIGN v68 — Thank-you toast muted (Sankar, from v67 test).
    The v56 pairing (bright #3DDC68 slab, dark text #0B2E17)
-   read too bright after a feedback submit and after a
-   Dynamite Poll vote. Variant A, chosen from a mockup: the
-   .thankyou-toast family (#thankYouToast + #pollThankYouToast
-   — the only two elements carrying the class) now takes the
+   read too bright after a feedback submit. Variant A, chosen
+   from a mockup: the .thankyou-toast family (#thankYouToast
+   — the only element carrying the class since the poll
+   toast was removed in v100) now takes the
    given-word fill #2E4636 with white text: the muted
    counterpart of the bright green, exactly as the error toast
    is the muted counterpart of red. Colour only — position,
@@ -7909,7 +7902,15 @@ body.archive-page {
     border-radius: 8px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, .5);
     color: #F2F2F4;
-    font-size: 12.5px;
+    /* REDESIGN v99: the copy is longer now (it carries the install
+       instruction itself — the Help section it used to point at is
+       gone) and Sankar's rule is ONE line at every width, so the
+       font scales with the viewport instead of the bar wrapping to
+       the v97 two-line form at 320/360px. The calc tracks the
+       measured fit line for the 67-char string (max fitting size
+       7.4px @320 → 10.9px @430 in the harness) with headroom for
+       device-font differences; the 12.5px cap is the v97 size. */
+    font-size: clamp(6.5px, calc(3.05vw - 2.7px), 12.5px);
     line-height: 1.35;
     padding: 5px 5px 5px 10px;
     /* v97 animation (Sankar's pick: "both"): every show replays the
@@ -7927,7 +7928,7 @@ body.archive-page {
     display: block;
     animation: rd97BulbGlow 1.6s ease-in-out infinite alternate;
 }
-.install-tip-text { flex: 1 1 auto; }
+.install-tip-text { flex: 1 1 auto; white-space: nowrap; min-width: 0; }
 .install-tip-close {
     flex: 0 0 auto;
     width: 26px;
@@ -7969,3 +7970,48 @@ body.archive-page {
    at Sankar's direction so the header matches the modal's other
    collapsibles exactly (their only affordance is the raised button
    bar + the active-state shading). No #playFullscreenBtn rules. */
+
+/* ============================================================
+   REDESIGN v99 (2026-11-23, from Sankar): COMPACT LAYOUT for
+   small rendered tiles. When the tile the normal fit produces
+   measures under 30px (decided ONCE per load in chnlnk.js /
+   chnlnkarch.js — the layout never flips mid-game), the body
+   gains .rd-compact and:
+   - the vowel legend is hidden (BOTH games);
+   - MAIN game only: the Safety Net / Dynamites tools row is
+     hidden, the "LIVES" label and the "5 / 5" counter are
+     hidden, and the shield badge (#hint-progress) + dynamite
+     pill (#dynamite-btn) — the SAME elements, moved by JS into
+     the lives row — sit where the label and counter were, so
+     one status row carries shield · hearts · dynamites with
+     no words. The freed column is split by the JS: 80% to the
+     board (the re-anchored solver), 20% to the keys via the
+     --kboost99 share below. The archive hides the legend
+     only; its lives row is untouched.
+   The lives row is a 1fr auto 1fr grid (label start / hearts
+   centre / count end); the moved badge and pill take the same
+   start/end slots, so the hearts stay exactly centred. The
+   row's bottom border separated it from the tools row — with
+   that row gone the border goes too.
+   ============================================================ */
+body.rd-compact #vowel-legend { display: none; }
+/* The merged-row rules are MAIN-game only: the archive hides
+   the legend and nothing else — its lives row (label, hearts,
+   counter) renders exactly as in the normal layout. */
+body:not(.archive-page).rd-compact .status-row-tools { display: none; }
+body:not(.archive-page).rd-compact #lives-label,
+body:not(.archive-page).rd-compact #lives-count { display: none; }
+body:not(.archive-page).rd-compact .status-row-lives { border-bottom: none; }
+body:not(.archive-page).rd-compact .status-row-lives #hint-progress { justify-self: start; align-self: center; }
+body:not(.archive-page).rd-compact .status-row-lives #dynamite-btn { justify-self: end; align-self: center; }
+
+/* The keyboard's 20% share: --kboost99 (set inline on <body> by
+   the JS latch, per-key px) is added to BOTH the key height and
+   the keys' min-height — below ~760px tall the min-height is
+   what actually renders (the v83 lesson), so boosting --keyh
+   alone would vanish at exactly the sizes that go compact. */
+body.rd-compact .key-tile,
+body.rd-compact .enter-key-tile {
+    height: calc(var(--keyh) + var(--kboost99, 0px));
+    min-height: calc(36px + var(--kgrow83) + var(--kboost99, 0px));
+}

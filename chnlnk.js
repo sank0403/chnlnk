@@ -954,106 +954,8 @@ function showThankYouToast() {
     }, 3500);
 }
 
-// REDESIGN v63: one-time Dynamite Poll popup — a sibling of the feedback
-// popup above, taking the same post-game slot (INSTEAD of OpenStats). Shown
-// at most once per player, only in November 2026, only with more than 25
-// dynamites banked, and only on a day the feedback popup is neither due nor
-// already shown (the feedback popup's own logic is untouched and always
-// wins the slot). A vote is written to the SAME Firestore "feedback"
-// collection as regular feedback, with rating fixed at 1 and the answer
-// carried in text. Voting shows a thank-you toast in the feedback toast's
-// family — but awards NO dynamites and mentions none. Closing with the
-// × records nothing.
-const DYNAMITE_POLL_QUESTION = "Level the playing field — should Dynamites reset every month?";
-
-function shouldShowDynamitePoll() {
-    // November 2026 only (player's local date) — never after.
-    const now = new Date();
-    if (now.getFullYear() !== 2026 || now.getMonth() !== 10) return false;
-    // One time only: the stamp is set the moment the popup is shown.
-    if (localStorage.clDynPollDate) return false;
-    // More than 25 dynamites banked.
-    if (!(Number(localStorage.cldynamite || 0) > 25)) return false;
-    // Not on a feedback-popup day: neither due nor already shown today.
-    if (shouldShowFeedbackPopup()) return false;
-    if (localStorage.lastFeedbackDate === now.toLocaleDateString('en-CA')) return false;
-    return true;
-}
-
-function showDynamitePoll() {
-    // Stamp at SHOW time — vote or ×, it never shows again.
-    localStorage.clDynPollDate = new Date().toLocaleDateString('en-CA');
-    document.getElementById("dynamitePollPopup").classList.remove("hidden");
-    pauseMomentumTimer(); // modal rule: an open popup pauses the momentum timer
-}
-
-function hideDynamitePoll() {
-    document.getElementById("dynamitePollPopup").classList.add("hidden");
-    resumeMomentumTimer();
-}
-
-function showPollThankYouToast() {
-    const toast = document.getElementById("pollThankYouToast");
-    toast.classList.remove("hidden");
-
-    // fade in
-    setTimeout(() => toast.classList.add("show"), 10);
-
-    // fade out after 3.5 seconds
-    setTimeout(() => {
-        toast.classList.remove("show");
-
-        // fully hide after fade-out
-        setTimeout(() => toast.classList.add("hidden"), 400);
-    }, 3500);
-}
-
-// REDESIGN v79: same in-flight guard as the feedback submit — the first
-// tap (Yes or No) wins and any further vote call is ignored, so a fast
-// Yes→No double-tap can't write two vote documents. The poll is shown at
-// most once ever (stamped at show time), so this guard never needs to
-// clear.
-let dynamiteVoteSubmitted = false;
-
-async function submitDynamiteVote(answerLabel) {
-    if (dynamiteVoteSubmitted) return;
-    dynamiteVoteSubmitted = true;
-    document.getElementById("pollYes").disabled = true;
-    document.getElementById("pollNo").disabled = true;
-
-    const voteData = {
-        uid: auth.currentUser?.uid || null,
-        playerName: localStorage.playerName || null,
-        rating: 1,
-        text: DYNAMITE_POLL_QUESTION + " — " + answerLabel,
-        updated: serverTimestamp()
-    };
-
-    try {
-        await addDoc(collection(db, "feedback"), voteData);
-
-        // Thank-you toast — no dynamites awarded, none mentioned.
-        showPollThankYouToast();
-    } catch (err) {
-        console.error("Dynamite poll save error:", err);
-    }
-
-    hideDynamitePoll();
-
-    // Delay stats opening slightly so toast is visible (mirrors fbSubmit)
-    setTimeout(OpenStats, 1500);
-}
-
-document.getElementById("pollYes").addEventListener("click", () => submitDynamiteVote("Yes, reset them!"));
-document.getElementById("pollNo").addEventListener("click", () => submitDynamiteVote("No, don't touch them!"));
-document.getElementById("pollClose").addEventListener("click", () => {
-    // Close without answering: nothing is recorded (mirrors fbCancel's flow).
-    hideDynamitePoll();
-    OpenStats();
-});
-
 // REDESIGN v66: Safety Net Saver — a second use for dynamites, in the
-// feedback/poll popup family. When onGameLoad finds an ACTIVE Safety
+// feedback popup family. When onGameLoad finds an ACTIVE Safety
 // Net whose owner missed a day (the reset branch), the reset is
 // deferred instead of executed IF the player has 10+ dynamites:
 // netSaverPending carries the pre-reset state, and showGame() pops
@@ -1105,9 +1007,10 @@ document.getElementById("netSaverClose").addEventListener("click", resetNetSaver
 // timer, never reflows the one-screen layout and covers nothing
 // interactive (the legend is static text). Browser-tab players are
 // squeezed by browser chrome (the no-scroll design keeps it on
-// screen); the installed app opens full-screen, and the Help
-// section's "Play Full-Screen" steps are the fix — the tip only
-// points there, in Sankar's words, identical for every browser.
+// screen); the installed app opens full-screen. REDESIGN v99: the
+// Help "Play Full-Screen" section it used to point at is removed,
+// so the tip's copy (Sankar's words, identical for every browser)
+// now carries the install instruction itself.
 // Trigger: the player's SECOND registered guess — processInput()
 // calls maybeShowInstallTip() when clguesscnt (his own guess
 // counter) reaches 2; a restored mid-game already at 2+ guesses
@@ -2456,9 +2359,9 @@ function updateAnswer(text) {
 
 // REDESIGN v67: two one-time prompts inside the Summary modal. Both
 // key off stats actually loading — OpenStats/OpenStatsGO call
-// maybeShowStatsPrompts() last, so when the feedback popup or the
-// Dynamite Poll takes the post-win slot, the prompt appears when the
-// stats open afterwards. Each prompt carries a lifetime stamp set at
+// maybeShowStatsPrompts() last, so when the feedback popup takes
+// the post-win slot, the prompt appears when the stats open
+// afterwards. Each prompt carries a lifetime stamp set at
 // show time, so it can never appear twice; the two are mutually
 // exclusive by construction (played == 1 vs played == 5). Closing
 // the Summary clears both strips and highlights (closeSummary calls
@@ -4145,20 +4048,6 @@ function openModal(modal) {
     if (modal == null) return
     modal.classList.add('active')
     overlay.classList.add('active')
-    // REDESIGN v97: the Help "Play Full-Screen" section always starts
-    // collapsed when Help opens — its steps show only when a player
-    // taps the header to expand it, even if it was left open last time.
-    if (modal.id === 'modal') {
-        const pfs = document.getElementById('playFullscreenBtn');
-        if (pfs && pfs.classList.contains('active')) {
-            pfs.classList.remove('active');
-            const pfsContent = pfs.nextElementSibling;
-            if (pfsContent) {
-                pfsContent.style.maxHeight = null;
-                pfsContent.classList.remove('open');
-            }
-        }
-    }
 }
 
 function closeModal(modal) {
@@ -5078,7 +4967,21 @@ function fitBoardTiles() {
         // REDESIGN v54: the fit budget reserves a 12px safety margin
         // below the legend (edge clipping on scaled/overscan displays).
         var target = window.innerHeight - 12;
-        var legendBottom = function() { return legend.getBoundingClientRect().bottom + window.scrollY; };
+        // REDESIGN v99: the column's bottom anchor. Normally the
+        // legend's bottom, exactly as before. In compact mode the
+        // legend is display:none (its bottom would read 0 and the
+        // board would balloon — the failure the prototype proved),
+        // so the anchor moves to the last keyboard row's bottom
+        // plus rdCompactDelta, the offset the legend used to sit
+        // at below the keyboard, captured when compact latched.
+        var legendBottom = function() {
+            if (document.body.classList.contains("rd-compact")) {
+                var kbRows = document.querySelectorAll(".keyboard-row");
+                var lastKb = kbRows[kbRows.length - 1];
+                if (lastKb) { return lastKb.getBoundingClientRect().bottom + window.scrollY + rdCompactDelta; }
+            }
+            return legend.getBoundingClientRect().bottom + window.scrollY;
+        };
         // REDESIGN v55: the column's true sensitivity to tile size is
         // ~8.21px per 1px of tile (7 word rows + 6 connector strips at
         // 0.2017 x tile). The v53/v54 shrink divided the overflow by 7,
@@ -5122,6 +5025,78 @@ function fitBoardTiles() {
         }
     }
     rdStripPoolPass();
+    rdMaybeLatchCompact();
+}
+
+// =========================
+// REDESIGN v99 (Sankar): COMPACT LAYOUT when the rendered tile
+// comes out under 30px. Decided ONCE per load, at the end of the
+// first fitBoardTiles() that can measure a real tile: at 30px or
+// more nothing changes — the layout is exactly the normal one.
+// Under 30px, compact latches for the rest of the load (later
+// fits re-run through the compact anchor; the mode never flips
+// mid-game):
+//   - the legend and the Safety Net / Dynamites tools row hide
+//     (CSS, body.rd-compact in chnlnk.css);
+//   - the shield badge (#hint-progress) and the dynamite pill
+//     (#dynamite-btn) — the SAME elements — move into the lives
+//     row: shield where "LIVES" was, pill where "5 / 5" was,
+//     hearts centred between them, no words anywhere;
+//   - the freed column splits 80/20: the re-anchored solver
+//     hands the board its share as tile size, and the keyboard's
+//     share rides in as --kboost99 (rdApplyKeyBoost).
+// =========================
+var rdCompactDecided = false;
+var rdCompactDelta = 3;
+
+function rdApplyKeyBoost(freedPx) {
+    // 20% of the freed column goes to the keyboard, spread over
+    // its 3 rows. The per-key share is published as --kboost99;
+    // the compact CSS rules add it to both the key height and
+    // the keys' min-height (at short viewports the min-height
+    // is what renders, so it must grow too — the v83 lesson).
+    var perKey = Math.floor((freedPx * 0.2 / 3) * 100) / 100;
+    if (!(perKey > 0)) { return; }
+    document.body.style.setProperty("--kboost99", perKey + "px");
+}
+
+function rdMaybeLatchCompact() {
+    if (rdCompactDecided) { return; }
+    var row = document.getElementById("boardfirst");
+    var legend = document.getElementById("vowel-legend");
+    var kbRows = document.querySelectorAll(".keyboard-row");
+    if (!row || !legend || !kbRows.length) { return; }
+    var tileEl = row.querySelector(".tile, .tilesmall, .voweltile, .voweltilesmall");
+    if (!tileEl) { return; }
+    var w = tileEl.getBoundingClientRect().width;
+    if (!(w > 0)) { return; }
+    rdCompactDecided = true;
+    if (w >= 30) { return; }
+    // Measure everything compact removes BEFORE removing it:
+    // the legend's offset below the keyboard (the compact
+    // anchor's delta), the legend, the tools row, and the lives
+    // row's height — the merged row grows a little (the shield
+    // badge is taller than the hearts line), and that growth
+    // comes off the freed total.
+    var toolsRow = document.querySelector(".status-row-tools");
+    var livesRow = document.querySelector(".status-row-lives");
+    var legendRect = legend.getBoundingClientRect();
+    rdCompactDelta = legendRect.top - kbRows[kbRows.length - 1].getBoundingClientRect().bottom;
+    var freed = legendRect.height + Math.max(0, rdCompactDelta);
+    if (toolsRow) { freed += toolsRow.getBoundingClientRect().height; }
+    var livesBefore = livesRow ? livesRow.getBoundingClientRect().height : 0;
+    // Move the shield badge and the dynamite pill into the
+    // lives row. Every reference to them is by id (paintShield,
+    // the bulb's click handler, both dynamite handlers), so the
+    // move changes nothing behavioural.
+    var shield = document.getElementById("hint-progress");
+    var dyn = document.getElementById("dynamite-btn");
+    if (livesRow && shield) { livesRow.insertBefore(shield, livesRow.firstElementChild); }
+    if (livesRow && dyn) { livesRow.appendChild(dyn); }
+    document.body.classList.add("rd-compact");
+    if (livesRow) { freed -= Math.max(0, livesRow.getBoundingClientRect().height - livesBefore); }
+    rdApplyKeyBoost(freed);
+    fitBoardTiles();
 }
 
 // REDESIGN v71 (Sankar): pooled space goes to the STRIP. The tile fit
@@ -5267,7 +5242,7 @@ function flashTimedButton() {
 // chnlnk.css): a click that somehow still reaches the button while
 // a modal is up does nothing. Covers the class-based modal families
 // (Help / Summary / hint / add / time / past + the timed popup
-// itself), the full-screen popups (name, feedback, dynamite poll, net saver, streak) and the
+// itself), the full-screen popups (name, feedback, net saver, streak) and the
 // dynamically built ones (name edit, life trade). Transient toasts
 // (Safety Net, dynamite, mystery) are NOT modals — the other nav
 // buttons stay live under them, so Timer does too.
@@ -5277,8 +5252,6 @@ function anyModalOpen() {
     if (np && !np.classList.contains("hidden")) return true;
     var fp = document.getElementById("feedbackPopup");
     if (fp && !fp.classList.contains("hidden")) return true;
-    var dp = document.getElementById("dynamitePollPopup");
-    if (dp && !dp.classList.contains("hidden")) return true;
     var ns = document.getElementById("netSaverPopup");
     if (ns && !ns.classList.contains("hidden")) return true;
     var sp = document.getElementById("streakPopup");
@@ -6925,8 +6898,6 @@ function processInput(e) {
 			// Must have a name AND must be past the 50‑day cooldown
 			if (playerName && playerName.trim() !== "" && shouldShowFeedbackPopup()) {
 				showFeedbackPopup();
-			} else if (playerName && playerName.trim() !== "" && shouldShowDynamitePoll()) {
-				showDynamitePoll();
 			} else {
 				OpenStats();
 			}
